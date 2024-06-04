@@ -1,0 +1,266 @@
+.portal-logo {
+    width: 50%;
+    margin: 3rem;
+}
+
+.portal-box.blackout {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+}
+
+.portal-box.blackout .portal-info {
+    display: block;
+}
+
+.portal-box {
+    position: relative;
+    border: 1px solid #ccc;
+    border-radius: 0.625rem;
+    padding: 1.25rem;
+    text-align: center;
+    transition: background-color ease-in-out;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.portal-box:last-child {
+    margin-right: 0;
+}
+
+.portal-box.blackout img {
+    filter: brightness(0.2);
+}
+
+.portal-info {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+
+}
+
+.badge {
+    background-color: #cce7cf94;
+    color: #37a137;
+    border-radius: 10px;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+.badge-red {
+    background-color: #ead3d394;
+    color: #e61818;
+    border-radius: 10px;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+.my-class {
+    position: fixed;
+    width: -webkit-fill-available;
+    margin: 0rem 1rem 1rem 0rem;
+    height: -webkit-fill-available;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.grid-style {
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr 0.5fr 0.5fr;
+    gap: 1.1rem;
+}
+
+.main_header_cls {
+    padding: 1rem;
+    border-bottom: 0.3px solid #00000045;
+}
+
+.portal_mapping {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 2.198rem;
+    text-align: left;
+}
+
+.details_cls {
+    padding-left: 3.5rem;
+}
+
+.details_cls p {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.318rem;
+    text-align: left;
+}
+
+.back_button {
+    border-radius: 6px;
+    border: 1px solid #D2D2D2;
+    background: white;
+    padding: 8px 15px;
+    margin-right: 10px;
+}
+
+.main_body_cls {
+    padding: 1rem;
+}
+
+.portal-name {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.465rem;
+    text-align: center;
+    padding-bottom: 1rem;
+}
+
+.available_css {
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 1.831rem;
+    padding-bottom: 1rem;
+}
+
+.availale_css1 {
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 1.831rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.small-logo {
+    width: 5rem;
+}
+
+.settings {
+    padding: 8px 30px;
+    border: 0.1px solid black;
+    border-radius: 5px;
+    background-color: white;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1.25rem;
+}
+
+.tableContainer {
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: -webkit-fill-available;
+    width: -webkit-fill-available;
+}
+
+.portalMapping_header-row {
+    display: grid;
+    grid-template-columns: 0.1fr 0.5fr 0.5fr 0.5fr 0.5fr;
+    gap: 0.5rem;
+    position: sticky;
+    padding: 1rem;
+    background: #0176D3;
+    color: white;
+}
+
+.header-text {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.318rem;
+}
+
+.portalMapping_data-row {
+    display: grid;
+    grid-template-columns: 0.1fr 0.5fr 0.5fr 0.5fr 0.5fr;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-bottom: 1px solid #d3d3d3;
+    align-items: center;
+}
+
+.portalMapping_recordValues {
+    max-height: 25rem;
+    overflow: auto;
+    user-select: none;
+}
+
+.field-mapping-container {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin: 1rem;
+    margin-top: 0;
+    /* height: -webkit-fill-available;
+    position: absolute;
+    width: -webkit-fill-available; */
+}
+
+.no_portal_css {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.318rem;
+    text-align: left;
+}
+
+.font_style_css {
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.067rem;
+    text-align: left;
+}
+
+.header_block_css {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.sub_header_css {
+    display: flex;
+    flex-direction: row;
+}
+
+@media only screen and (max-width: 1500px) {
+    .portalMapping_recordValues {
+        max-height: 10rem;
+        overflow: auto;
+        user-select: none;
+    }
+
+    .portal-logo {
+        width: 50%;
+        margin: 2rem;
+    }
+
+    .available_css {
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 1.25rem;
+        padding-bottom: 10px;
+    }
+    
+    .availale_css1 {
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 1.25rem;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
