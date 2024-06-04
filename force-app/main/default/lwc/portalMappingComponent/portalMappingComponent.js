@@ -4,51 +4,35 @@ import { NavigationMixin } from 'lightning/navigation';
 import getPortalRecords from '@salesforce/apex/PortalMappingController.getPortalRecords';
 export default class PortalMapping extends NavigationMixin(LightningElement) {
 
-    iconImg = iconimg;
-    isInitalRender = true;
-    @track clickedPortalName;
-    @track clickedPortalIconURL;
-    @track portalRecordList;
+    @track iconImg = iconimg;
+    @track isInitalRender = true;
+    @track clickedPortalName = '';
+    @track clickedPortalIconURL = '';
+    @track portalRecordList = [];
     @track isPortalData = true;
-    showModal;
-
-    connectedCallback() {
-        this.getPortalRecord();
-    }
-
-    getPortalRecord() {
-        getPortalRecords()
-            .then(result => {
-                console.log('data--->', result);
-                if (result.length > 0) {
-                    this.portalRecordList = result.map((val, index) => ({
-                        number: index + 1,
-                        val: val
-                    }));;
-                } else {
-                    this.isPortalData = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Listing field data', error);
-            });
-    }
-
-    handlehidepopup(event) {
-        this.showModal = event.details;
-    }
-
-    handlehideandrefreshpage(event) {
-        this.showModal = event.details;
-        this.getPortalRecord()
-    }
-
+    @track showModal = false;
     @track portals = [
         { id: 1, name: 'Property Finder', logo: '/resource/propertyfinder' },
         { id: 2, name: 'Bayut', logo: '/resource/bayut' },
         { id: 3, name: 'Dubizzle', logo: '/resource/dubizzle' }
     ];
 
+    /**
+    * Method Name: connectedCallback
+    * @description: Used to call getPortalRecord method.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
+    connectedCallback() {
+        this.getPortalRecord();
+    }
+
+    /**
+    * Method Name: renderedCallback
+    * @description: Used to overwrite standard css.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     renderedCallback() {
         if (this.isInitalRender) {
             const body = document.querySelector("body");
@@ -77,16 +61,79 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
 
     }
 
+    /**
+    * Method Name: handleMouseOver
+    * @description: Used to add a class on mouse over.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleMouseOver(event) {
         const portalBox = event.currentTarget;
         portalBox.classList.add('blackout');
     }
 
+    /**
+    * Method Name: handleMouseOut
+    * @description: Used to remove a class on mouse out.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleMouseOut(event) {
         const portalBox = event.currentTarget;
         portalBox.classList.remove('blackout');
     }
 
+    /**
+    * Method Name: getPortalRecord
+    * @description: Used to make an Apex callout to retrieve all records of the Portal__c object.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
+    getPortalRecord() {
+        getPortalRecords()
+            .then(result => {
+                console.log('data--->', result);
+                if (result.length > 0) {
+                    this.portalRecordList = result.map((val, index) => ({
+                        number: index + 1,
+                        val: val
+                    }));;
+                } else {
+                    this.isPortalData = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching Listing field data', error);
+            });
+    }
+
+    /**
+    * Method Name: handleHidePopup
+    * @description: Used to close the new popup modal.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
+    handleHidePopup(event) {
+        this.showModal = event.details;
+    }
+
+    /**
+    * Method Name: handleHideAndRefreshPage
+    * @description: Used to close the new popup modal and refresh the page.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
+    handleHideAndRefreshPage(event) {
+        this.showModal = event.details;
+        this.getPortalRecord()
+    }
+
+    /**
+    * Method Name: handleClick
+    * @description: Used to open portalMappingLandingPage LWC component.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleClick(event) {
         try {
             event.preventDefault();
@@ -126,12 +173,24 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
         }
     }
 
+    /**
+    * Method Name: handleNew
+    * @description: Used to pass Portal name and Portal icon image URL to newPopUp lwc component.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleNew(event) {
         this.clickedPortalName = event.currentTarget.dataset.portalname;
         this.clickedPortalIconURL = event.currentTarget.dataset.portaliconurl;
         this.showModal = true;
     }
 
+    /**
+    * Method Name: backToControlCenter
+    * @description: Used to Navigate to the main ControlCenter page.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     backToControlCenter(event) {
         event.preventDefault();
         let componentDef = {

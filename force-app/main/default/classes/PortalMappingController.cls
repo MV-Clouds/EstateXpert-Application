@@ -16,22 +16,19 @@ public with sharing class PortalMappingController {
     @AuraEnabled
     public static List<Portal__c> getPortalRecords(){
         try {
-            if (Portal__c.SObjectType.getDescribe().isAccessible() && 
-                Schema.SObjectType.Portal__c.fields.Id.isAccessible() && 
-                Schema.SObjectType.Portal__c.fields.endpoint__c.isAccessible() && 
-                Schema.SObjectType.Portal__c.fields.generator__c.isAccessible() && 
-                Schema.SObjectType.Portal__c.fields.Name.isAccessible() && 
-                Schema.SObjectType.Portal__c.fields.isActive__c.isAccessible()) {
-                    List<Portal__c> listOfPortalRecords = [SELECT Id, endpoint__c, generator__c, Name, isActive__c FROM Portal__c WITH SECURITY_ENFORCED ORDER BY Name];
-                    return listOfPortalRecords;
-                } else {
-                    return null;
-                }
+
+            List<Portal__c> listOfPortalRecords = [SELECT Id, endpoint__c, generator__c, Name, isActive__c FROM Portal__c WITH SECURITY_ENFORCED ORDER BY Name];
+            return listOfPortalRecords;
+
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
+    /**
+    * Wrapper Class Name : FieldWrapper
+    * @description : This Wrapper class used for method name getObjectFields to return Custom Metadata, Custom Setting and Listing fields datas.
+    */
     public class FieldWrapper {
         @AuraEnabled
         public List<Map<String, String>> portalMetadataRecords { get; set; }
@@ -61,29 +58,11 @@ public with sharing class PortalMappingController {
 
         List<SObject> portalMetadata;
 
-        if (portalName == 'Property_Finder__mdt' &&
-            Property_Finder__mdt.SObjectType.getDescribe().isAccessible() && 
-            Schema.SObjectType.Property_Finder__mdt.fields.MasterLabel.isAccessible() && 
-            Schema.SObjectType.Property_Finder__mdt.fields.Listing_Field_API_Name__c.isAccessible() && 
-            Schema.SObjectType.Property_Finder__mdt.fields.Portal_Field_Description__c.isAccessible() && 
-            Schema.SObjectType.Property_Finder__mdt.fields.Portal_Field_Example__c.isAccessible() && 
-            Schema.SObjectType.Property_Finder__mdt.fields.Required__c.isAccessible()) {
+        if (portalName == 'Property_Finder__mdt') {
             portalMetadata = [SELECT MasterLabel, Listing_Field_API_Name__c, Portal_Field_Description__c, Portal_Field_Example__c, Required__c FROM Property_Finder__mdt WITH SECURITY_ENFORCED ORDER BY MasterLabel];
-        } else if (portalName == 'Bayut__mdt' &&
-            Bayut__mdt.SObjectType.getDescribe().isAccessible() && 
-            Schema.SObjectType.Bayut__mdt.fields.MasterLabel.isAccessible() && 
-            Schema.SObjectType.Bayut__mdt.fields.Listing_Field_API_Name__c.isAccessible() && 
-            Schema.SObjectType.Bayut__mdt.fields.Portal_Field_Description__c.isAccessible() && 
-            Schema.SObjectType.Bayut__mdt.fields.Portal_Field_Example__c.isAccessible() && 
-            Schema.SObjectType.Bayut__mdt.fields.Required__c.isAccessible()) {
+        } else if (portalName == 'Bayut__mdt') {
             portalMetadata = [SELECT MasterLabel, Listing_Field_API_Name__c, Portal_Field_Description__c, Portal_Field_Example__c, Required__c FROM Bayut__mdt WITH SECURITY_ENFORCED ORDER BY MasterLabel];
-        } else if (portalName == 'Dubizzle__mdt' &&
-            Dubizzle__mdt.SObjectType.getDescribe().isAccessible() && 
-            Schema.SObjectType.Dubizzle__mdt.fields.MasterLabel.isAccessible() && 
-            Schema.SObjectType.Dubizzle__mdt.fields.Listing_Field_API_Name__c.isAccessible() && 
-            Schema.SObjectType.Dubizzle__mdt.fields.Portal_Field_Description__c.isAccessible() && 
-            Schema.SObjectType.Dubizzle__mdt.fields.Portal_Field_Example__c.isAccessible() && 
-            Schema.SObjectType.Dubizzle__mdt.fields.Required__c.isAccessible()) {
+        } else if (portalName == 'Dubizzle__mdt') {
             portalMetadata = [SELECT MasterLabel, Listing_Field_API_Name__c, Portal_Field_Description__c, Portal_Field_Example__c, Required__c FROM Dubizzle__mdt WITH SECURITY_ENFORCED ORDER BY MasterLabel];
         } 
     
@@ -188,10 +167,7 @@ public with sharing class PortalMappingController {
 
             if (Portal__c.SObjectType.getDescribe().isAccessible() && 
                 Portal__c.SObjectType.getDescribe().isUpdateable() &&
-                Portal__c.SObjectType.getDescribe().isDeletable() &&
-                Schema.SObjectType.Portal__c.fields.Id.isAccessible() &&
-                Schema.SObjectType.Portal__c.fields.isActive__c.isAccessible() &&
-                Schema.SObjectType.Portal__c.fields.isActive__c.isUpdateable()) {
+                Portal__c.SObjectType.getDescribe().isDeletable()) {
                     if (portalId != null) {
                         portalAct = [SELECT Id, isActive__c FROM Portal__c WHERE Id =: portalId WITH SECURITY_ENFORCED];
                         if (portalAct.isEmpty()) {
@@ -227,7 +203,7 @@ public with sharing class PortalMappingController {
 
     /**
     * Method Name : updatePortalStatus
-    * @description : Method is used to check accessibility for Portal__c object and it's fields and update the isActive__c field value.
+    * @description : Method is used to update the isActive__c field value.
     * @param portal Portal__c value.
     * @param status Boolean value.
     * @param action String value.
@@ -241,7 +217,7 @@ public with sharing class PortalMappingController {
 
     /**
     * Method Name : updatePortalStatus
-    * @description : Method is used to check accessibility for deleting the Portal__c object record.
+    * @description : Method is used for deleting the Portal__c object record.
     * @param portal Portal__c value.
     * @return delete status.
     */

@@ -5,22 +5,20 @@ export default class NewPopUp extends LightningElement {
 
     @api getPortalName;
     @api getPortalIconUrl;
-    isInitalRender = true;
-    isSaveBtn = true;
+    @track isInitalRender = true;
+    @track isSaveBtn = true;
     @track title = '';
     @track email = '';
     @track url = '';
     @track externalImage = '';
 
-    handleDialogueClose() {
-        let custEvent = new CustomEvent('hidepopup', {
-            details: false
-        });
-        this.dispatchEvent(custEvent);
-    }
-
+    /**
+    * Method Name: renderedCallback
+    * @description: Used to overwrite standard css.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     renderedCallback() {
-
         if (this.isInitalRender) {
             const body = document.querySelector("body");
 
@@ -40,9 +38,14 @@ export default class NewPopUp extends LightningElement {
             body.appendChild(style);
             this.isInitalRender = false;
         }
-
     }
 
+    /**
+    * Method Name: getTheFieldValue
+    * @description: Used to get the fields value and set it to corresponding variables.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     getTheFieldValue(event) {
         this.isSaveBtn = false;
         var fieldname = event.target.dataset.field;
@@ -58,6 +61,12 @@ export default class NewPopUp extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: savePortalRecord
+    * @description: Used to make apex callout for creating records in Portal Object.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     savePortalRecord() {
         if (this.title == '' || this.url == '') {
             this.showToast('Error', 'Required field is empty. Please fill the required field.', 'error');
@@ -86,6 +95,28 @@ export default class NewPopUp extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: handleDialogueClose
+    * @description: Used to call parent lwc component method.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
+    handleDialogueClose() {
+        let custEvent = new CustomEvent('hidepopup', {
+            details: false
+        });
+        this.dispatchEvent(custEvent);
+    }
+
+    /**
+    * Method Name: showToast
+    * @description: Used to show toast message.
+    * @param: title - title of toast message.
+    * @param: mesaage - message to show in toast message.
+    * @param: variant- type of toast message.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     showToast(title, message, variant) {
         const event = new ShowToastEvent({
             title: title,

@@ -7,30 +7,90 @@ import { NavigationMixin } from 'lightning/navigation';
 
 export default class PortalMappingLandingPage extends NavigationMixin(LightningElement) {
 
-    isInitalRender = true;
     @api portalId;
     @api portalGen;
     @api portalName;
     @api portalIconUrl;
     @api portalStatus;
-
-    showModal;
-
+    @track isInitalRender = true;
+    @track showModal = false;
     @track originalMappingData = [];
     @track fieldWrapperList = [];
     @track finalList = [];
     @track MainListingOptions = [];
-    isDataChanged = false;
-    isRecordAvailable = true;
+    @track isDataChanged = false;
+    @track isRecordAvailable = true;
 
+    /**
+    * Method Name: connectedCallback
+    * @description: Used to call getListingFields method.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     connectedCallback() {
         this.getListingFields();
     }
 
+    /**
+    * Method Name: renderedCallback
+    * @description: Used to overwrite standard css.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
+    renderedCallback() {
+        try {
+            if (this.isInitalRender) {
+                const body = document.querySelector("body");
+
+                const style = document.createElement('style');
+                style.innerText = `
+                    .portalMapping_data-row .slds-form-element__label:empty {
+                        margin: 0;
+                        display: none;
+                    }
+
+                    .view_input .slds-form-element__icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding-top: 0.5rem;
+                    }
+
+                    .slds-col abbr {
+                        cursor: help;
+                        display: none;
+                    }
+
+                    .slds-col  .slds-form-element__label {
+                        display: none;
+                    }
+                `;
+
+                body.appendChild(style);
+                this.isInitalRender = false;
+            }
+        } catch (error) {
+            console.log(' error in render : ', error.messsage);
+
+        }
+    }
+
+    /**
+    * Method Name: activeInactive
+    * @description: Used to change the status as per portalStatus value.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     get activeInactive(){
         return this.portalStatus == 'true' ? true : false;
     }
 
+    /**
+    * Method Name: getListingFields
+    * @description: Used to get all custom metadata, blocked fields and Listing object fields values.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     getListingFields() {
         getObjectFields({ portalName: this.portalGen })
             .then(data => {
@@ -48,6 +108,12 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
             });
     }
 
+    /**
+    * Method Name: processFieldWrapperData
+    * @description: Used to prepare list of all fields mapping to show in html.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     processFieldWrapperData(fieldWrapperList) {
         fieldWrapperList.forEach(fieldWrapper => {
             const { portalMetadataRecords, blockfields, listingFields } = fieldWrapper;
@@ -89,53 +155,33 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
         this.originalMappingData = this.finalList;
     }
 
+    /**
+    * Method Name: getListingLabel
+    * @description: Used to return Listing field label by getting the field api name.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     getListingLabel(listingFieldValue) {
         const listingOption = this.MainListingOptions.find(option => option.apiName === listingFieldValue);
         return listingOption ? listingOption.label : '';
     }
 
-    renderedCallback() {
-        try {
-            if (this.isInitalRender) {
-                const body = document.querySelector("body");
-
-                const style = document.createElement('style');
-                style.innerText = `
-                    .portalMapping_data-row .slds-form-element__label:empty {
-                        margin: 0;
-                        display: none;
-                    }
-
-                    .view_input .slds-form-element__icon {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        padding-top: 0.5rem;
-                    }
-
-                    .slds-col abbr {
-                        cursor: help;
-                        display: none;
-                    }
-
-                    .slds-col  .slds-form-element__label {
-                        display: none;
-                    }
-                `;
-
-                body.appendChild(style);
-                this.isInitalRender = false;
-            }
-        } catch (error) {
-            console.log(' error in render : ', error.messsage);
-
-        }
-    }
-
-    handlehidepopup(event) {
+    /**
+    * Method Name: handleHidePopup
+    * @description: Used to close the settingPopUp modal.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
+    handleHidePopup(event) {
         this.showModal = event.details;
     }
 
+    /**
+    * Method Name: handleBack
+    * @description: Used to navigate back to Portal Mapping main page.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleBack(event) {
         event.preventDefault();
         let componentDef = {
@@ -150,6 +196,12 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
         });
     }
 
+    /**
+    * Method Name: handleSave
+    * @description: Used to save custom metadata records.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleSave() {
         if (this.isDataChanged) {
             let isValid = true;
@@ -192,6 +244,15 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
         }
     }
 
+    /**
+    * Method Name: showToast
+    * @description: Used to show toast message.
+    * @param: title - title of toast message.
+    * @param: mesaage - message to show in toast message.
+    * @param: variant- type of toast message.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     showToast(title, message, variant) {
         const event = new ShowToastEvent({
             title: title,
@@ -201,10 +262,22 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
         this.dispatchEvent(event);
     }
 
+    /**
+    * Method Name: handleHidePopup
+    * @description: Used to open the settingPopUp modal.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleSetting() {
         this.showModal = true;
     }
 
+    /**
+    * Method Name: handleComboboxChange
+    * @description: Used to update the combobox list of each mapping.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleComboboxChange(event) {
         try {
             const selectedIndex = event.target.dataset.index;
@@ -255,6 +328,12 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
         this.saveBtnDisable = false;
     }
 
+    /**
+    * Method Name: revertTheChanges
+    * @description: Used to revert back to the previous changes.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     revertTheChanges() {
         if (this.isDataChanged) {
             this.finalList = this.originalMappingData;
@@ -262,6 +341,12 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
         }
     }
 
+    /**
+    * Method Name: currentPortalAction
+    * @description: Used to change the active status and deleting the portal record by making apex callout.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     currentPortalAction(event) {
         var btnName = event.target.dataset.name;
         portalAction({ portalId: this.portalId, actionName: btnName })
