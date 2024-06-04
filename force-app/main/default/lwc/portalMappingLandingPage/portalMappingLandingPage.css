@@ -33,7 +33,7 @@
   margin-left: 10px;
   font-size: 18px;
   font-weight: 400;
-  line-height: 21.09px;
+  line-height: 1.318rem;
   letter-spacing: 0.05em;
   padding-right: 1rem;
 }
@@ -126,7 +126,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  line-height: 21.09px;
+  line-height: 1.318rem;
 }
 
 .portalMapping_data-row {
@@ -183,7 +183,7 @@ button[disabled] {
 }
 
 .empty-state__content {
-  padding: 48px;
+  padding: 3rem;
   display: flex;
   align-items: center;
   flex-direction: column;

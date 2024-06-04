@@ -15,8 +15,8 @@
 .portal-box {
     position: relative;
     border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 0.625rem;
+    padding: 1.25rem;
     text-align: center;
     transition: background-color ease-in-out;
     width: 100%;
@@ -90,7 +90,7 @@
 .portal_mapping {
     font-size: 28px;
     font-weight: 600;
-    line-height: 35.16px;
+    line-height: 2.198rem;
     text-align: left;
 }
 
@@ -101,7 +101,7 @@
 .details_cls p {
     font-size: 17px;
     font-weight: 300;
-    line-height: 21.09px;
+    line-height: 1.318rem;
     text-align: left;
 }
 
@@ -120,7 +120,7 @@
 .portal-name {
     font-size: 20px;
     font-weight: 600;
-    line-height: 23.44px;
+    line-height: 1.465rem;
     text-align: center;
     padding-bottom: 1rem;
 }
@@ -128,14 +128,14 @@
 .available_css {
     font-size: 25px;
     font-weight: 500;
-    line-height: 29.3px;
+    line-height: 1.831rem;
     padding-bottom: 1rem;
 }
 
 .availale_css1 {
     font-size: 25px;
     font-weight: 500;
-    line-height: 29.3px;
+    line-height: 1.831rem;
     padding-top: 1rem;
     padding-bottom: 1rem;
 }
@@ -152,7 +152,7 @@
     color: #007bff;
     cursor: pointer;
     font-size: 15px;
-    line-height: 20px;
+    line-height: 1.25rem;
 }
 
 .tableContainer {
@@ -178,7 +178,7 @@
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    line-height: 21.09px;
+    line-height: 1.318rem;
 }
 
 .portalMapping_data-row {
@@ -214,7 +214,7 @@
     padding: 2rem;
     font-size: 18px;
     font-weight: 400;
-    line-height: 21.09px;
+    line-height: 1.318rem;
     text-align: left;
 }
 
@@ -222,7 +222,7 @@
     font-family: Montserrat;
     font-size: 14px;
     font-weight: 500;
-    line-height: 17.07px;
+    line-height: 1.067rem;
     text-align: left;
 }
 
@@ -252,14 +252,14 @@
     .available_css {
         font-size: 22px;
         font-weight: 500;
-        line-height: 20px;
+        line-height: 1.25rem;
         padding-bottom: 10px;
     }
     
     .availale_css1 {
         font-size: 22px;
         font-weight: 500;
-        line-height: 20px;
+        line-height: 1.25rem;
         padding-top: 10px;
         padding-bottom: 10px;
     }
