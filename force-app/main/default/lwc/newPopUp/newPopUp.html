@@ -1,0 +1,80 @@
+<template>
+    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+        class="slds-modal slds-fade-in-open slds-modal_small section_css">
+        <div class="slds-modal__container">
+
+            <lightning-button-icon class="slds-modal__close" title="Close" size="large" icon-name="utility:close"
+                icon-class="slds-button_icon-inverse" variant="bare-inverse"
+                onclick={handleDialogueClose}></lightning-button-icon>
+
+            <div class="slds-modal__header blue-header">
+                <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">New Portal</h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium slds-p-bottom_small" id="modal-content-id-1">
+
+                <div class="input-container">
+                    <div class="slds-form-element flex_css">
+                        <label class="label_css">Selected
+                            Portal</label>
+                        <div class="slds-form-element__control width_css">
+                            {getPortalName}
+                        </div>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="slds-form-element flex_css">
+                        <label class="label_css"><abbr class="slds-required"
+                                title="required">*</abbr>Title<lightning-helptext
+                                content="Define a characteristic title for the portal."></lightning-helptext></label>
+                        <div class="slds-form-element__control width_css">
+                            <input type="text" class="slds-input" placeholder={getPortalName} data-field="title"
+                                onkeyup={getTheFieldValue}>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="slds-form-element flex_css">
+                        <label class="label_css">Notification
+                            Email<lightning-helptext
+                                content="Email address to recieve error notifications."></lightning-helptext></label>
+                        <div class="slds-form-element__control width_css">
+                            <input type="email" class="slds-input" placeholder="email@me.com" data-field="email"
+                                onkeyup={getTheFieldValue}>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="slds-form-element flex_css">
+                        <label class="label_css"><abbr class="slds-required" title="required">*</abbr>Force Site
+                            URL<lightning-helptext
+                                content="The URL of your Force.com site."></lightning-helptext></label>
+                        <div class="slds-form-element__control width_css">
+                            <input type="text" class="slds-input"
+                                placeholder="https://my-salesforce-domain-name.my.salesforce-sites.com/"
+                                data-field="validurl" onkeyup={getTheFieldValue}>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="slds-form-element flex_css">
+                        <label class="label_css">Include
+                            'External' Images<lightning-helptext
+                                content="When set to 'true' all images that are external links with the category value 'Images' will be included for all listings published on this portal"></lightning-helptext></label>
+                        <div class="slds-form-element__control width_css">
+                            <input type="text" class="slds-input" placeholder="true" data-field="booleanimage"
+                                onkeyup={getTheFieldValue}>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" aria-label="Cancel and close"
+                    onclick={handleDialogueClose}>Cancel</button>
+                <button class="slds-button slds-button_brand" disabled={isSaveBtn} onclick={savePortalRecord}>Create
+                    Portal</button>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+</template>

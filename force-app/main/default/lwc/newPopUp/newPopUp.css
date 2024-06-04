@@ -1,0 +1,55 @@
+.input-container {
+    position: relative;
+    margin-bottom: 10px;
+    width: calc(100% - 40px);
+}
+
+.blue-header {
+    background-color: #0070d2;
+    color: white;
+}
+
+.slds-modal__footer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.slds-form-element {
+    display: flex;
+    align-items: center;
+}
+
+.slds-form-element__control {
+    flex: 1 1 auto;
+}
+
+.slds-modal__container {
+    width: -webkit-fill-available;
+    height: auto;
+}
+
+.section_css {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.label_css {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 17.58px;
+    text-align: left;
+    width: 35%;
+}
+
+.flex_css {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.width_css {
+    width: 65%;
+    font-size: 15px;
+}
