@@ -1,0 +1,10 @@
+.main .slds-card__body{
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+}
+.slds-coordinates{
+    display:none;
+}
+.mapCmp .slds-has-coordinates{
+    overflow:unset;
+}

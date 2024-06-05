@@ -1,0 +1,102 @@
+.mainDiv{
+    overflow: auto;
+    height: 83%;
+}
+
+.outerCover{
+    border: 1px solid #c9c9c9;
+    border-radius: 0.25rem;
+}
+
+.imageSection{
+    height: 10rem;
+    width: 100%;
+    position: relative;
+    /* background-color: aqua; */
+}
+
+.imageSection img{
+    height: 100%;
+    width: 100%;
+    /* background-color: aqua; */
+}
+.imageSection .checkboxDiv
+{
+    position: absolute;
+    top: 0.5rem;
+    right: -0.2rem;
+    cursor: pointer;
+}
+.imageSection .checkboxDiv input{
+    height: 1rem;
+    width: 1rem;
+    /* background-color: aqua; */
+}
+
+.bodySection{
+    height: 4rem;
+    width: 100%;
+    position: relative;
+    padding: 0.2rem;
+    /* background-color: aquamarine; */
+}
+
+.nameSection{
+    padding:0.2rem;
+}
+
+.nameSection p{
+    color: #2282D6;
+    font-weight: 600;
+}
+
+.addSection{
+    padding:0.2rem;
+}
+
+.addSection p{
+    color: rgb(26,26,26);
+    font-weight: 600;
+}
+
+.descSection{
+    padding:0.2rem;
+}
+
+.descSection p{
+    color: rgb(26,26,26);
+    font-weight: 600;
+}
+
+.shareIconDiv{
+    position: absolute;
+    bottom: 0.7rem;
+    right: 0.7rem;
+    cursor: pointer;;
+}
+.shareIconDiv svg{
+    fill: #757575;
+    width: 1rem;
+    height: 1rem;
+}
+.shareIconDiv:hover svg{
+    fill:  #2282D6;
+}
+
+/* pagination css */
+
+.paginationDiv{
+    height: 17%;
+    background-color: rgb(243,243,243);
+}
+
+.paginationDiv .btnCover{
+    display: flex;
+    justify-content: left;
+}
+
+.paginationDiv .pageNumberDiv{
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
