@@ -1,118 +1,81 @@
 <template>
     <div class="slds-p-around_large">
-        <!-- <div class="slds-form-element">
-            <label class="slds-form-element__label" for="searchInput">Select Options</label>
-            <div class="slds-form-element__control">
-                <lightning-input type="text" placeholder="Search options" value={searchTerm}
-                    onchange={handleSearchChange}></lightning-input>
-            </div>
-        </div>
-        <template if:true={filteredOptions.length}>
-            <div class="slds-box slds-theme_default">
-                <template for:each={filteredOptions} for:item="option">
-                    <div key={option.value} class="slds-box slds-box_x-small slds-m-bottom_x-small">
-                        <lightning-button variant="base" label={option.label} data-id={option.value}
-                            onclick={selectOption}></lightning-button>
-                    </div>
-                </template>
-            </div>
-        </template>
-        <template if:true={selectedOptions.length}>
-            <div class="slds-form-element slds-m-top_medium">
-                <label class="slds-form-element__label">Selected Options</label>
-                <div class="slds-form-element__control">
-                    <template for:each={selectedOptions} for:item="option">
-                        <span key={option.value} class="slds-pill">
-                            <span class="slds-pill__label">{option.label}</span>
-                            <button class="slds-button slds-button_icon slds-button_icon-border-filled"
-                                aria-label="Remove" title="Remove" onclick={removeOption} data-id={option.value}>
-                                <lightning-icon icon-name="utility:close" alternative-text="Remove"></lightning-icon>
-                            </button>
-                        </span>
-                    </template>
-                </div>
-            </div>
-        </template> -->
 
-        <!-- <lightning-combobox
-        name="combobox"
-        label="Select Options"
-        placeholder="Select options"
-        options={options}
-        onchange={handleSelectionChange}
-        value={selectedValue}
-    >
-    </lightning-combobox>
-        <template if:true={selectedOptions.length}>
-            <div class="slds-form-element">
-                <label class="slds-form-element__label">Selected Options</label>
-                <div class="slds-form-element__control">
-                    <template for:each={selectedOptions} for:item="option">
-                        <span key={option.value} class="slds-pill">
-                            <span class="slds-pill__label">{option.label}</span>
-                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-label="Remove" title="Remove" onclick={removeOption} data-id={option.value}>
-                                <lightning-icon icon-name="utility:close" alternative-text="Remove"></lightning-icon>
-                            </button>
-                        </span>
-                    </template>
-                </div>
-            </div>
-        </template> -->
+        <!-- Listing Type Fields -->
+
         <div class="slds-form-element combobox">
-            <label class="slds-form-element__label" for="combobox-id-19" id="combobox-label-id-132">Relate To</label>
+            <label class="slds-form-element__label">Listing Type</label>
+            <span>
+                <label class="slds-form-element__label operator-div">Includes </label>
+            </span>
+
             <div class="slds-form-element__control">
                 <div class="slds-combobox_container slds-has-selection">
-                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
-                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
-                            role="none">
-                            <input type="text" class="slds-input slds-combobox__input" placeholder="Search options" value={searchTerm} onchange={handleSearchChange} />
-                            <span
-                                class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z"/></svg>
-                            </span>
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click combobox-cover">
+                        <div class="input-delete-cover">
+                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
+                                role="none">
+                                <input type="text" class="slds-input slds-combobox__input"
+                                    placeholder="Filter for the Listing Type" value={searchTerm}
+                                    onchange={handleSearchChange} onfocus={handleFocus} onblur={handleBlur} />
+                                <span
+                                    class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
+                                        fill="#fff">
+                                        <path
+                                            d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="delete-icon-cover">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
+                                    fill="#fff">
+                                    <path
+                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
+                                </svg>
+                            </div>
                         </div>
-                        <template if:true={filteredOptions.length}>        
-                            <div id="listbox-id-13"
-                                class="slds-dropdown slds-dropdown_length-with-icon-7" role="listbox"
-                                 tabindex="0" aria-busy="false">
-                                <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                        <template if:true={filteredOptions.length}>
+                            <div class="options-box">
+                                <ul class="options-cover">
                                     <template for:each={filteredOptions} for:item="option">
-                                        <li key={option.value} data-id={option.value}
-                                        onclick={selectOption} role="presentation" class="slds-listbox__item">
-                                            <div
-                                                class="slds-media slds-listbox__option slds-listbox__option_entity slds-media_center"
-                                                role="option">
-                                                <span class="slds-media__figure slds-listbox__option-icon">
-                                                    <span class="slds-icon_container slds-icon-standard-account">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M191 425 26 259c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l124 125a10 10 0 0 0 15 0L452 95c6-6 16-6 22 0l22 22c6 6 6 16 0 22L213 425c-6 7-16 7-22 0z"/></svg>
-                                                    </span>
-                                                </span>
-                                                <span class="slds-media__body">
-                                                    <span
-                                                        class="_entity">{option.label}</span>
-                                                </span>
-                                            </div>
+                                        <li key={option.value} data-id={option.value} onclick={selectOption}
+                                            class="options-value">
+                                            <!-- <span class="slds-media__figure slds-listbox__option-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
+                                                        viewBox="0 0 520 520" fill="#fff">
+                                                        <path
+                                                            d="M191 425 26 259c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l124 125a10 10 0 0 0 15 0L452 95c6-6 16-6 22 0l22 22c6 6 6 16 0 22L213 425c-6 7-16 7-22 0z" />
+                                                    </svg>
+                                            </span> -->
+                                            <span class="slds-media__body">
+                                                <span class="_entity">{option.label}</span>
+                                            </span>
                                         </li>
                                     </template>
                                 </ul>
                             </div>
                         </template>
+
                     </div>
                 </div>
                 <template if:true={selectedOptions.length}>
-                    <div class="slds-listbox_selection-group">
+                    <div class="pill-section">
                         <ul class="slds-listbox slds-listbox_horizontal" aria-label="Selected Options:">
                             <template for:each={selectedOptions} for:item="option">
-                                <li key={option.value} class="slds-listbox-item">
+                                <li key={option.value} class="slds-listbox-item pill-body">
                                     <span class="slds-pill">
-                                        <span class="slds-pill__label" title="Burlington Textiles Corp of America">{option.label}</span>
+                                        <span class="slds-pill__label"
+                                            title="Burlington Textiles Corp of America">{option.label}</span>
                                         <span class="slds-icon_container slds-pill__remove" title="Remove">
-                                            <button class="slds-button slds-button_icon slds-button_icon slds-pill__remove"
+                                            <button
+                                                class="slds-button slds-button_icon slds-button_icon slds-pill__remove pill-remove"
                                                 title="Remove" onclick={removeOption} data-id={option.value}>
-                                                <!-- <svg class="slds-button__icon" aria-hidden="true">
-                                                    <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
-                                                </svg> -->
-                                                <lightning-icon icon-name="utility:close" alternative-text="Remove"></lightning-icon>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
+                                                    viewBox="0 0 520 520" fill="#fff">
+                                                    <path
+                                                        d="m310 254 130-131c6-6 6-15 0-21l-20-21c-6-6-15-6-21 0L268 212a10 10 0 0 1-14 0L123 80c-6-6-15-6-21 0l-21 21c-6 6-6 15 0 21l131 131c4 4 4 10 0 14L80 399c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l131-131a10 10 0 0 1 14 0l131 131c6 6 15 6 21 0l21-21c6-6 6-15 0-21L310 268a10 10 0 0 1 0-14z" />
+                                                </svg>
                                                 <span class="slds-assistive-text">Remove</span>
                                             </button>
                                         </span>
@@ -124,5 +87,269 @@
                 </template>
             </div>
         </div>
+
+        <!-- status field -->
+
+        <div class="slds-form-element combobox">
+            <label class="slds-form-element__label">Status</label>
+            <span>
+                <label class="slds-form-element__label operator-div">Includes </label>
+            </span>
+
+            <div class="slds-form-element__control">
+                <div class="slds-combobox_container slds-has-selection">
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click combobox-cover">
+                        <div class="input-delete-cover">
+                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
+                                role="none">
+                                <input type="text" class="slds-input slds-combobox__input"
+                                    placeholder="Filter for the Status" value={searchTerm1}
+                                    onchange={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1} />
+                                <span
+                                    class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
+                                        fill="#fff">
+                                        <path
+                                            d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="delete-icon-cover">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
+                                    fill="#fff">
+                                    <path
+                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <template if:true={filteredOptions1.length}>
+                            <div class="options-box">
+                                <ul class="options-cover">
+                                    <template for:each={filteredOptions1} for:item="option">
+                                        <li key={option.value} data-id={option.value} onclick={selectOption1}
+                                            class="options-value">
+                                            <!-- <span class="slds-media__figure slds-listbox__option-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
+                                                        viewBox="0 0 520 520" fill="#fff">
+                                                        <path
+                                                            d="M191 425 26 259c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l124 125a10 10 0 0 0 15 0L452 95c6-6 16-6 22 0l22 22c6 6 6 16 0 22L213 425c-6 7-16 7-22 0z" />
+                                                    </svg>
+                                            </span> -->
+                                            <span class="slds-media__body">
+                                                <span class="_entity">{option.label}</span>
+                                            </span>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
+                <template if:true={selectedOptions1.length}>
+                    <div class="pill-section">
+                        <ul class="slds-listbox slds-listbox_horizontal" aria-label="Selected Options:">
+                            <template for:each={selectedOptions1} for:item="option">
+                                <li key={option.value} class="slds-listbox-item pill-body">
+                                    <span class="slds-pill">
+                                        <span class="slds-pill__label"
+                                            title="Burlington Textiles Corp of America">{option.label}</span>
+                                        <span class="slds-icon_container slds-pill__remove" title="Remove">
+                                            <button
+                                                class="slds-button slds-button_icon slds-button_icon slds-pill__remove pill-remove"
+                                                title="Remove" onclick={removeOption1} data-id={option.value}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
+                                                    viewBox="0 0 520 520" fill="#fff">
+                                                    <path
+                                                        d="m310 254 130-131c6-6 6-15 0-21l-20-21c-6-6-15-6-21 0L268 212a10 10 0 0 1-14 0L123 80c-6-6-15-6-21 0l-21 21c-6 6-6 15 0 21l131 131c4 4 4 10 0 14L80 399c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l131-131a10 10 0 0 1 14 0l131 131c6 6 15 6 21 0l21-21c6-6 6-15 0-21L310 268a10 10 0 0 1 0-14z" />
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove</span>
+                                            </button>
+                                        </span>
+                                    </span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- city field -->
+
+        <div class="slds-form-element combobox">
+            <label class="slds-form-element__label">City</label>
+            <span>
+                <label class="slds-form-element__label operator-div">Contains </label>
+            </span>
+
+            <div class="slds-form-element__control">
+                <div class="slds-form-element__control">
+                    <div class="slds-combobox_container slds-has-selection">
+                        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click combobox-cover">
+                            <div class="input-delete-cover">
+                                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
+                                    role="none">
+                                    <input type="text" class="slds-input slds-combobox__input"
+                                        placeholder="Filter for the City" value={searchCityTerm}
+                                        oninput={handleSearchChangeCity} onfocus={handleCityFocus}
+                                        onblur={handleCityBlur} />
+                                    <span
+                                        class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
+                                            viewBox="0 0 520 520" fill="#fff">
+                                            <path
+                                                d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z" />
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="plus" onclick={addTheCity}><svg xmlns="http://www.w3.org/2000/svg"
+                                        height="52" width="52" viewBox="0 0 520 520" fill="#fff">
+                                        <path
+                                            d="M300 290h165c8 0 15-7 15-15v-30c0-8-7-15-15-15H300c-6 0-10-4-10-10V55c0-8-7-15-15-15h-30c-8 0-15 7-15 15v165c0 6-4 10-10 10H55c-8 0-15 7-15 15v30c0 8 7 15 15 15h165c6 0 10 4 10 10v165c0 8 7 15 15 15h30c8 0 15-7 15-15V300c0-6 4-10 10-10z" />
+                                    </svg></div>
+                                <div class="delete-icon-cover" onclick={clearSearch}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
+                                        fill="#fff">
+                                        <path
+                                            d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <template if:true={selectedOptionsCity.length}>
+                    <div class="pill-section">
+                        <ul class="slds-listbox slds-listbox_horizontal" aria-label="Selected Options:">
+                            <template for:each={selectedOptionsCity} for:item="option">
+                                <li key={option.value} class="slds-listbox-item pill-body">
+                                    <span class="slds-pill">
+                                        <span class="slds-pill__label" title={option.label}>{option.label}</span>
+                                        <span class="slds-icon_container slds-pill__remove" title="Remove">
+                                            <button
+                                                class="slds-button slds-button_icon slds-button_icon slds-pill__remove pill-remove"
+                                                title="Remove" onclick={removeOption} data-id={option.value}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
+                                                    viewBox="0 0 520 520" fill="#fff">
+                                                    <path
+                                                        d="m310 254 130-131c6-6 6-15 0-21l-20-21c-6-6-15-6-21 0L268 212a10 10 0 0 1-14 0L123 80c-6-6-15-6-21 0l-21 21c-6 6-6 15 0 21l131 131c4 4 4 10 0 14L80 399c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l131-131a10 10 0 0 1 14 0l131 131c6 6 15 6 21 0l21-21c6-6 6-15 0-21L310 268a10 10 0 0 1 0-14z" />
+                                                </svg>
+                                                <span class="slds-assistive-text">Remove</span>
+                                            </button>
+                                        </span>
+                                    </span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- max fields  -->
+
+        <div class="slds-form-element combobox min-max-field">
+            <label class="slds-form-element__label">Bedrooms</label>
+            <span>
+                <label class="slds-form-element__label operator-div">Is In Range </label>
+            </span>
+
+            <div class="slds-form-element__control">
+                <div class="slds-combobox_container slds-has-selection">
+                    <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click combobox-cover">
+                        <div class="input-delete-cover">
+                            <div class="min-max-input-cover">
+                                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div "
+                                    role="none">
+                                    <input type="text" class="slds-input slds-combobox__input min-max-input-div"
+                                        placeholder="Min.." value={minValue} oninput={handleMinValueChange} />
+                                    <svg class="up-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
+                                        width="52" viewBox="0 0 520 520" fill="#fff" onclick={incrementMinValue}>
+                                        <path
+                                            d="M437 380H83c-10 0-17-13-9-22l173-212c6-8 19-8 25 0l175 212c7 9 1 22-10 22z" />
+                                    </svg>
+                                    <svg class="down-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
+                                        width="52" viewBox="0 0 520 520" fill="#fff" onclick={decrementMinValue}>
+                                        <path
+                                            d="M83 140h354c10 0 17 13 9 22L273 374c-6 8-19 8-25 0L73 162c-7-9-1-22 10-22z" />
+                                    </svg>
+                                </div>
+                                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
+                                    role="none">
+                                    <input type="text" class="slds-input slds-combobox__input min-max-input-div"
+                                        placeholder="Max.." value={maxValue} oninput={handleMaxValueChange} />
+                                    <svg class="up-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
+                                        width="52" viewBox="0 0 520 520" fill="#fff" onclick={incrementMaxValue}>
+                                        <path
+                                            d="M437 380H83c-10 0-17-13-9-22l173-212c6-8 19-8 25 0l175 212c7 9 1 22-10 22z" />
+                                    </svg>
+                                    <svg class="down-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
+                                        width="52" viewBox="0 0 520 520" fill="#fff" onclick={decrementMaxValue}>
+                                        <path
+                                            d="M83 140h354c10 0 17 13 9 22L273 374c-6 8-19 8-25 0L73 162c-7-9-1-22 10-22z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="delete-icon-cover" onclick={clearFields}>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
+                                    fill="#fff">
+                                    <path
+                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- add button -->
+
+        <div class="field-add-btn plus">
+            <div class="add-btn-cover">
+                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff">
+                    <path
+                        d="M300 290h165c8 0 15-7 15-15v-30c0-8-7-15-15-15H300c-6 0-10-4-10-10V55c0-8-7-15-15-15h-30c-8 0-15 7-15 15v165c0 6-4 10-10 10H55c-8 0-15 7-15 15v30c0 8 7 15 15 15h165c6 0 10 4 10 10v165c0 8 7 15 15 15h30c8 0 15-7 15-15V300c0-6 4-10 10-10z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- checkbox help text -->
+
+        <lightning-checkbox-group
+            options={checkboxOptions}
+            value={selectedValues}
+            onchange={handleCheckboxChange}>
+        </lightning-checkbox-group>
+
+        <!-- radio group -->
+
+        <div class="radio-div">
+            <lightning-radio-group
+            class="radio-group"
+                name="fruitOptions"
+                label="Show me"
+                options={radioOptions}
+                value={selectedRadio}
+                onchange={handleChange}>
+            </lightning-radio-group>
+        </div>
+
+        <!-- refresh button and search button -->
+
+        <div class="field-reset-btn plus">
+            <div class="add-btn-cover">
+                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M465 40h-30c-8 0-15 7-15 15v70c0 9-5 13-12 7l-10-10a210 210 0 1 0-12 309c7-6 7-16 1-22l-21-21c-5-5-14-6-20-1a152 152 0 0 1-172 14 152 152 0 0 1 77-281 150 150 0 0 1 118 58c3 8-4 12-13 12h-70c-8 0-15 7-15 15v31c0 8 6 14 14 14h183c7 0 13-6 13-13V55c-1-8-8-15-16-15z"/></svg>
+            </div>
+            <lightning-button disabled label="Search" onclick={handleSearch} class="slds-m-left_x-small"></lightning-button>
+        </div>
+
+        
     </div>
 </template>
+
+<!-- 
+<svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M437 380H83c-10 0-17-13-9-22l173-212c6-8 19-8 25 0l175 212c7 9 1 22-10 22z"/></svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M83 140h354c10 0 17 13 9 22L273 374c-6 8-19 8-25 0L73 162c-7-9-1-22 10-22z"/></svg> -->

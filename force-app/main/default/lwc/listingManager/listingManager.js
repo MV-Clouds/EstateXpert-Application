@@ -134,7 +134,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             .then(result => {
                 console.log('Data:'+ JSON.stringify(result));
                 if (result) {
-                    this.fields = result.Fields;
+                    this.fields = result.fieldsData;
                     console.log(this.fields);
                 }
                 // this.isLoading = false;
@@ -241,7 +241,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     }
 
     sortData() {
-        this.processedListingData = [...this.processedListingData].sort((a, b) => {
+        this.shownProcessedListingData = [...this.shownProcessedListingData].sort((a, b) => {
             let aValue, bValue;
 
             if (this.sortField === 'Name') {

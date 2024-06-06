@@ -17,7 +17,7 @@ public with sharing class ListingManagerController {
         throw new AuraHandledException('You do not have permission to access Listing records.');
     }
         try {
-            List<Listing__c> listings = [SELECT Id,imageUrl__c,Name,Name__c,Listing_Price__c,Number_Of_Bathrooms__c,Number_Of_Bedrooms__c,Size__c,	Status__c,Year_Built__c,City__c,Country__c,Postal_Code__c,State__c,Street__c,Sq_Ft__c FROM Listing__c ];
+            List<Listing__c> listings = [SELECT Id,imageUrl__c,Name,Name__c,Listing_Price__c,Number_Of_Bathrooms__c,Number_Of_Bedrooms__c,Size__c,	Status__c,Year_Built__c,City__c,Country__c,Postal_Code__c,State__c,Street__c,Sq_Ft__c FROM Listing__c  WITH SECURITY_ENFORCED];
             return listings;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -28,7 +28,7 @@ public with sharing class ListingManagerController {
     public static FieldSetForm getForm(Id recordId, String objectName, String fieldSetName) {
         System.debug('Entering getForm method');
         FieldSetForm form = new FieldSetForm();
-        form.Fields = getFields(recordId, objectName, fieldSetName);
+        form.fieldsData = getFields(recordId, objectName, fieldSetName);
         System.debug('Exiting getForm method with form: ' + form);
         return form;
     }
@@ -82,10 +82,10 @@ public with sharing class ListingManagerController {
     // Inner class representing a form field
     public class FieldSetForm {
         @AuraEnabled
-        public List<FormField> Fields { get; set; }
+        public List<FormField> fieldsData { get; set; }
 
         public FieldSetForm() {
-            Fields = new List<FormField>();
+            fieldsData = new List<FormField>();
         }
     }
 
