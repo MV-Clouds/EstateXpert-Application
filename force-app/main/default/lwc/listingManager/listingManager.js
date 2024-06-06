@@ -46,34 +46,9 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     }
 
      /**
-    * Method Name : handleMenuTabClick
-    * @description : handle the menu clicks in the header
-    */
-    handleMenuTabClick(evt){
-        let target = evt.currentTarget.dataset.tabId;
-        this.showList = false;
-        this.showTile = false;
-        this.showMap = false;
-        if(target == "1"){
-            this.showList = true;
-        }else if(target == "2"){
-            this.showTile = true;
-        }else if(target == "3"){
-            this.showMap = true;
-        }
-                this.template.querySelectorAll(".menuButton").forEach(tabel => {
-                        tabel.classList.remove("activeButton");
-                });
-                this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("activeButton");
-                this.template.querySelectorAll(".menuButton svg").forEach(tabdata => {
-                    tabdata.classList.remove("activeSvg");
-                });
-                this.template.querySelector('[data-id="' + target + '"]').classList.add("activeSvg");
-    }
-
-     /**
     * Method Name : getListingData
     * @description : retrieve the data listing data from the salesforce
+    * Created By:Vyom Soni
     */
     getListingData(){
         getListingData()
@@ -95,6 +70,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : processListings
     * @description : set the listing data inorder of the fields data
+    * Created By:Vyom Soni
     */
     processListings() {
         // Process the listing data and create the required data structure
@@ -128,6 +104,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : loadFormData
     * @description : retrieve the fields data from the salesforce
+    * Created By:Vyom Soni
     */
     loadFormData() {
         getForm({ recordId: this.recordId, objectName: this.objectName, fieldSetName: this.fieldSet })
@@ -147,9 +124,38 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             });
     }
 
+
+     /**
+    * Method Name : handleMenuTabClick
+    * @description : handle the menu clicks in the header
+    * Created By:Vyom Soni
+    */
+     handleMenuTabClick(evt){
+        let target = evt.currentTarget.dataset.tabId;
+        this.showList = false;
+        this.showTile = false;
+        this.showMap = false;
+        if(target == "1"){
+            this.showList = true;
+        }else if(target == "2"){
+            this.showTile = true;
+        }else if(target == "3"){
+            this.showMap = true;
+        }
+                this.template.querySelectorAll(".menuButton").forEach(tabel => {
+                        tabel.classList.remove("activeButton");
+                });
+                this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("activeButton");
+                this.template.querySelectorAll(".menuButton svg").forEach(tabdata => {
+                    tabdata.classList.remove("activeSvg");
+                });
+                this.template.querySelector('[data-id="' + target + '"]').classList.add("activeSvg");
+    }
+
     /**
     * Method Name : redirectToRecord
     * @description : redirect to recordPage
+    * Created By:Vyom Soni
     */
     redirectToRecord(event){
         const recordId = event.target.dataset.id;
@@ -167,6 +173,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : checkBoxValueChange
     * @description : handle the checkbox change
+    * Created By:Vyom Soni
     */
     checkBoxValueChange(event){
         try{
@@ -196,6 +203,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : updateSelectedProperties
     * @description : update the properties as selected
+    * Created By:Vyom Soni
     */
     updateSelectedProperties() {
         this.selectedProperties = this.processedListingData.filter(listing => listing.isChecked);
@@ -227,6 +235,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : sortClick
     * @description : this methods apply the sorting on the all fields
+    * Created By:Vyom Soni
     */
     sortClick(event) {
         const fieldName = event.currentTarget.dataset.id;
@@ -240,6 +249,11 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.updateSortIcons();
     }
 
+     /**
+    * Method Name : sortData
+    * @description : this methods apply the sorting on the all fields
+    * Created By:Vyom Soni
+    */
     sortData() {
         this.shownProcessedListingData = [...this.shownProcessedListingData].sort((a, b) => {
             let aValue, bValue;
@@ -283,6 +297,11 @@ export default class ListingManager extends NavigationMixin(LightningElement){
 
     //pagination login
 
+      /**
+    * Method Name : updateProcessedListingData,updatePaginationButtons,goToPrevFeaturedProperty,goToNextFeaturedProperty
+    * @description : this all method is used for the pagination in list view
+    * Created By:Vyom Soni
+    */
     updateProcessedListingData() {
         const start = (this.pageNumber - 1) * this.pageSize;
         const end = start + this.pageSize;
@@ -314,9 +333,11 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         return this.processedListingData.filter(listing => listing.isChecked).length;
     }
 
-
-    // filter section wrap code
-
+    /**
+    * Method Name : wrapFilter
+    * @description : this method is used for the wrap the filter
+    * Created By:Vyom Soni
+    */
     wrapFilter(){
         if(this.wrapOn == true){
             const div1 = this.template.querySelectorAll('.innerDiv1');

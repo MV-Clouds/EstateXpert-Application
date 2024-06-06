@@ -101,4 +101,5 @@ public with sharing class ListingManagerController {
             this.fieldLabel = fieldSetMember.getLabel();
         }
     }
+
 }

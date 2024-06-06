@@ -1,4 +1,5 @@
-import { LightningElement,track } from 'lwc';
+
+import { LightningElement,track,api } from 'lwc';
 
 export default class ListingManagerFilterCmp extends LightningElement {
     @track searchTerm = '';
@@ -16,6 +17,13 @@ export default class ListingManagerFilterCmp extends LightningElement {
     @track selectedValues = [];
     @track showAboutInfo = false;
     @track selectedRadio = 'allListings';
+    @track addModal = false;
+
+    // dyanamic fields selctor variables
+    @track objectApiName = '';
+    @track fields;
+    @track error;
+    @track selectedField;
 
     radioOptions = [
         { label: 'All listings', value: 'allListings' },
@@ -239,5 +247,21 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.showAboutInfo = !this.showAboutInfo;
     }
 
-                                                   
+
+    // Modal cmp 
+
+
+    handleClose() {
+        this.addModal = false;
+    }
+
+    handleSave() {
+        this.addModal = false;
+    }
+
+    openModal(){
+        this.addModal = true;
+    }
+               
+    
 }

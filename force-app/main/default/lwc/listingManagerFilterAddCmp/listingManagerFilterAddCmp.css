@@ -1,0 +1,26 @@
+*{
+    user-select: none;
+}
+.add-modal-cover{
+    display: flex;
+}
+.add-modal-cover .add-modal-combobox{
+    margin-top: -1.5rem;
+}
+.add-modal-cover .bread-crumb-cover{
+    display: flex;
+}
+.bread-crumb-cover svg{
+    fill: black;
+    width: 0.8rem;
+    height: fit-content;
+}
+.slds-combobox__option-text.lookup-field::after {
+    content: '';
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    background: url('/path/to/utility/right.svg') no-repeat center center;
+    background-size: contain;
+    margin-left: 0.5rem;
+}

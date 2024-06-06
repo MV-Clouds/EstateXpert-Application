@@ -21,9 +21,9 @@
                         <div class="slds-page-header__col-actions">
                             <div class="slds-page-header__controls">
                                 <div class="slds-page-header__control">
-                                    <lightning-button disabled label="Send Email" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
-                                    <lightning-button disabled label="Create PDF" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
-                                    <lightning-button label="New Listing" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+                                    <lightning-button disabled label="Send Email" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                                    <lightning-button disabled label="Create PDF" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
+                                    <lightning-button label="New Listing" onclick={handleClick} class="slds-var-m-left_x-small"></lightning-button>
                                 </div>
                             </div>
                         </div>
@@ -156,15 +156,15 @@
                             </tbody>
                           </table>
                     </div>
-                    <div class="paginationDiv slds-p-around_medium">
+                    <div class="paginationDiv slds-var-p-around_medium">
                         <div class="btnCover">
-                            <div class="leftButton slds-m-right_small">
+                            <div class="leftButton slds-var-m-right_small">
                                 <lightning-button-icon icon-name="utility:chevronleft" size="large"
                                 variant="Bordered" onclick={goToPrevFeaturedProperty}
                                 class="arrow1 left-arrow"
                                 disabled={isPrevDisabled}></lightning-button-icon>
                             </div>
-                            <div class="slds-m-right_small pageNumberDiv">
+                            <div class="slds-var-m-right_small pageNumberDiv">
                                 <p>{pageNumber}/{totalPages}</p>
                             </div>
                             <div class="rightButton">
@@ -178,7 +178,6 @@
                   </template>
                   <templete if:true={showTile}>
                       <c-listing-manager-tile-view-cmp
-                        
                         onlistingselect={handleListingSelect}
                         onnavigateout={handleNavigateOut}
                         listings={processedListingData}

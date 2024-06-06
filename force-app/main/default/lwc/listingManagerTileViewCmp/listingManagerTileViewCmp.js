@@ -24,6 +24,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
      /**
     * Method Name : getListingData
     * @description : retrieve the lisitngs from the salesforce
+    * Created By: Vyom Soni
     */
     getListingData(){
         getListingData()
@@ -43,6 +44,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     /**
     * Method Name : checkBoxValueChange
     * @description : change the listing state when the checkboxs is updated
+    * Created By: Vyom Soni
     */
     checkBoxValueChange(event){
         const checkboxId = Number(event.target.dataset.id);
@@ -53,6 +55,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
      /**
     * Method Name : redirectToRecord
     * @description : use for the redirect the listing manager to record page of the property
+    * Created By: Vyom Soni
     */
     redirectToRecord(event){
         event.preventDefault();
@@ -71,8 +74,9 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     }
 
     /**
-    * Method Name : updateProcessedListingData
+    * Method Name : updateProcessedListingData,updatePaginationButtons,goToPrevFeaturedProperty,goToNextFeaturedProperty
     * @description : use for the pagination
+    * Created By: Vyom Soni
     */
     updateProcessedListingData() {
         const start = (this.pageNumber - 1) * this.pageSize;

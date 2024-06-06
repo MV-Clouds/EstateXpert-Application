@@ -135,6 +135,7 @@
     border: 1px solid #747474;
     border-radius: 0.3rem;
     margin: 1rem;
+    cursor: pointer;
 }
 .field-add-btn .add-btn-cover svg{
     fill: #747474;
@@ -158,4 +159,30 @@
 }
 .radio-div{
     margin-top: 1rem;
+}
+.slds-modal__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slds-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.modal-body{
+    height: 17rem;
+
+}
+
+.slds-m-around_medium {
+    margin: 1rem;
+}
+.slds-m-top_medium {
+    margin-top: 1rem;
+}
+.slds-text-color_error {
+    color: red;
 }
