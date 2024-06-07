@@ -1,39 +1,48 @@
 import { LightningElement, track, wire } from 'lwc';
-import getObjectFields from '@salesforce/apex/ListingManagerFilterController.getObjectFields';
+import getListingFields from '@salesforce/apex/ListingManagerFilterController.getListingFields';
 
 export default class ListingManagerFilterAddCmp extends LightningElement {
     @track fieldOptions = [];
     @track selectedFields = [];
     @track breadcrumbs = [];
     @track selectedValues = [];
+    @track showCombobox = true;
+    @track options1 = []; // Updated to hold the current set of combobox options
 
     // Custom combobox properties
     @track searchTerm1 = '';
     @track selectedOptions1 = [];
     @track isFocused1 = false;
-    @track options1 = [];
+    @track notOption = [
+        { label: 'Not', value: 'not' }
+    ];
+    @track comboboxOptions = [
+        {lable:'Is', value:'is'},
+        {lable:'Is Not', value:'isnot'},
+        {lable:'Includes', value:'includes'},
+        {lable:'Excludes', value:'excludes'},
+        {lable:'Starts With', value: 'startswith'}
+    ]
+    @track valueIsField = true;
+    @track notCheckboxValue;
+    @track comboBoxValue;
 
-    
+
     connectedCallback() {
         // Fetch fields of Listing__c object when component loads
         this.fetchObjectFields('Listing__c');
     }
 
-    
     fetchObjectFields(objectApiName) {
-        if (!objectApiName) {
-            console.error('Error: objectApiName is null or undefined');
-            return;
-        }
-        
-        getObjectFields({ objectApiName })
+        getListingFields({ objectApiName })
             .then(fields => {
                 if (fields) {
                     this.fieldOptions = fields.map(field => {
-                        return { 
+                        return {
                             label: field.label, // Only show the label
                             value: field.apiName,
-                            type: field.type // Add type to identify lookup fields
+                            type: field.type, // Add type to identify lookup fields
+                            referenceFields: field.referenceFields || [], // Include reference fields if any
                         };
                     });
                     this.options1 = this.fieldOptions;
@@ -45,12 +54,8 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     }
 
     changeFields(event){
-        const selectedValue = event.currentTarget.dataset.id;
-        console.log('Hi'+selectedValue);
-        setTimeout(() => {
-            this.fetchObjectFields('Account');
-        }, 200);
-
+        this.showCombobox = false;
+        this.handleFieldSelect(event);
     }
 
     isAuditField(fieldName) {
@@ -84,6 +89,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         const clickedIndex = parseInt(event.currentTarget.dataset.index, 10);
         this.selectedFields = this.selectedFields.slice(0, clickedIndex);
         this.selectedValues = this.selectedValues.slice(0, clickedIndex);
+        this.showCombobox = true;
         this.updateBreadcrumbs();
     }
 
@@ -100,6 +106,24 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         setTimeout(() => {
             this.isFocused1 = false;
         }, 700);
+    }
+
+    changeTheCheckboxValue(event){
+        const selectedValue = event.currentTarget.dataset.id;
+        const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
+        console.log('selectedFiedls'+JSON.stringify(selectedField));
+        if (selectedField.type === 'REFERENCE' && selectedField.referenceFields.length > 0) {
+            this.options1 = selectedField.referenceFields.map(refField => {
+                return {
+                    label: refField.label,
+                    value: refField.apiName,
+                    type: refField.type,
+                    referenceFields: refField.referenceFields || []
+                };
+            });
+            this.handleFieldSelect(event);
+            console.log('Hi'+JSON.stringify(this.options1));
+        }
     }
 
     get showOptions1() {
@@ -130,5 +154,13 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
 
     get computedDropdownClass() {
         return `slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ${this.isFocused1 ? 'slds-is-open' : ''}`;
+    }
+
+    handleNotCheckboxChange(event){
+        this.notCheckboxValue = event.target.checked;
+    }
+
+    handleComboboxChange(event){
+        this.comboBoxValue =  event.target.value;
     }
 }
