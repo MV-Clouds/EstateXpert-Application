@@ -14,6 +14,10 @@
     fill: black;
     width: 0.8rem;
     height: fit-content;
+    display: inline;
+}
+.bread-crumb-cover:last-of-type svg{
+    display: none;
 }
 .slds-combobox__option-text.lookup-field::after {
     content: '';
@@ -24,3 +28,36 @@
     background-size: contain;
     margin-left: 0.5rem;
 }
+.selected-popup{
+    margin-top:1rem ;
+}
+.selected-popup .selected-field{
+    display: flex;
+    padding: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgb(181, 181, 181);
+    border-radius: 0.5rem;
+}
+.selected-popup .selected-field .field-label{
+    margin-left: 1rem;
+    font-size: .875rem;
+    font-weight: 700;
+}
+.selected-popup .selected-field .field-type{
+    margin-left: 0.6rem;
+    font-size: .875rem;
+}
+.selected-popup .selected-field .operator-combobox{
+    margin-top: -1rem;
+}
+.selected-popup .not-operation-cover{
+    display: flex;
+    position: relative;
+}
+.selected-popup .not-cover{
+    position: absolute;
+    left: -4rem;
+    top: 0.4rem;
+}
+

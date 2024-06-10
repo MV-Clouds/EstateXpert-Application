@@ -1,77 +1,69 @@
-public with sharing class ListingManagerFilterController {
+/**
+* Class Name : ListingManagerFilterController
+* Test Class : Pending
+* Created By : Vyom Soni
+* Last Modified Date : 07-06-2024
+* Last Modified By : Vyom Soni
+* @description : Used in portalMappingComponent and portalMappingLandingPage LWC components
+*/
+
+public without sharing class ListingManagerFilterController {
+
+     /**
+    * Method Name : getListingFields
+    * @description : get the fields by parent object name.
+    * @return List of Fields of all references of Listing.
+    */
     @AuraEnabled
-    public static List<Map<String, Object>> getListingFields(String objectApiName) {
-        return getFieldsForObject(objectApiName, new Set<String>());
+    public static List<FieldDetails> getListingFields(String objectApiName) {
+        List<FieldDetails> fieldDetailsList = new List<FieldDetails>();
+
+        // Get the Describe result for the given object
+        Schema.DescribeSObjectResult objDescribe = Schema.getGlobalDescribe().get(objectApiName).getDescribe();
+
+        // Get the fields map for the object
+        Map<String, Schema.SObjectField> fieldsMap = objDescribe.fields.getMap();
+
+        // Iterate through each field
+        for (String fieldName : fieldsMap.keySet()) {
+            Schema.SObjectField field = fieldsMap.get(fieldName);
+            Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
+
+            // Create a new FieldDetails object for each field
+            FieldDetails fieldDetails = new FieldDetails();
+            fieldDetails.fieldName = fieldDescribe.getLabel();
+            fieldDetails.fieldAPIName = fieldDescribe.getName();
+            fieldDetails.fieldType = String.valueOf(fieldDescribe.getType());
+
+            // Check if the field is a reference field
+            if (fieldDescribe.getType() == Schema.DisplayType.Reference) {
+                // Get the reference to the related objects
+                List<Schema.SObjectType> referenceTo = fieldDescribe.getReferenceTo();
+                if (!referenceTo.isEmpty()) {
+                    fieldDetails.referenceObjectName = referenceTo[0].getDescribe().getName();
+                }
+            }
+
+            // Add the field details object to the list
+            fieldDetailsList.add(fieldDetails);
+        }
+
+        return fieldDetailsList;
     }
 
-    private static List<Map<String, Object>> getFieldsForObject(String objectApiName, Set<String> visitedObjects) {
-        List<Map<String, Object>> fieldsList = new List<Map<String, Object>>();
-
-        // Avoid circular references by checking if the object has already been visited
-        if (visitedObjects.contains(objectApiName)) {
-            return fieldsList;
-        }
-
-        // Mark the current object as visited
-        visitedObjects.add(objectApiName);
-
-        // Ensure the object is valid and fetch its describe result
-        if (Schema.getGlobalDescribe().containsKey(objectApiName)) {
-            Schema.DescribeSObjectResult describeResult = Schema.getGlobalDescribe().get(objectApiName).getDescribe();
-            Map<String, Schema.SObjectField> fieldsMap = describeResult.fields.getMap();
-
-            for (String fieldName : fieldsMap.keySet()) {
-                Map<String, Object> fieldDetails = new Map<String, Object>();
-                Schema.SObjectField field = fieldsMap.get(fieldName);
-                Schema.DescribeFieldResult fieldResult = field.getDescribe();
-                fieldDetails.put('apiName', fieldName);
-                fieldDetails.put('label', fieldResult.getLabel());
-                fieldDetails.put('type', fieldResult.getType().name());
-
-                // Handle reference fields
-                if (fieldResult.getType() == Schema.DisplayType.REFERENCE) {
-                    List<Map<String, Object>> referenceFieldsList = new List<Map<String, Object>>();
-                    for (Schema.SObjectType referenceTo : fieldResult.getReferenceTo()) {
-                        referenceFieldsList.addAll(getFieldsForReference(referenceTo.getDescribe().getName(), visitedObjects));
-                    }
-                    fieldDetails.put('referenceFields', referenceFieldsList);
-                }
-
-                fieldsList.add(fieldDetails);
-            }
-        } else {
-            throw new AuraHandledException('Object ' + objectApiName + ' does not exist.');
-        }
-
-        return fieldsList;
-    }
-
-    // Separate method to fetch fields for reference objects
-    private static List<Map<String, Object>> getFieldsForReference(String referenceApiName, Set<String> visitedObjects) {
-        List<Map<String, Object>> referenceFieldsList = new List<Map<String, Object>>();
-        
-        // Ensure the reference object is valid and fetch its describe result
-        if (Schema.getGlobalDescribe().containsKey(referenceApiName)) {
-            Schema.DescribeSObjectResult describeResult = Schema.getGlobalDescribe().get(referenceApiName).getDescribe();
-            Map<String, Schema.SObjectField> fieldsMap = describeResult.fields.getMap();
-
-            for (String fieldName : fieldsMap.keySet()) {
-                Map<String, Object> fieldDetails = new Map<String, Object>();
-                Schema.SObjectField field = fieldsMap.get(fieldName);
-                Schema.DescribeFieldResult fieldResult = field.getDescribe();
-                fieldDetails.put('apiName', fieldName);
-                fieldDetails.put('label', fieldResult.getLabel());
-                fieldDetails.put('type', fieldResult.getType().name());
-
-                // Avoid further recursion for nested references at this level
-                if (fieldResult.getType() == Schema.DisplayType.REFERENCE) {
-                    fieldDetails.put('referenceFields', new List<Map<String, Object>>());
-                }
-
-                referenceFieldsList.add(fieldDetails);
-            }
-        }
-
-        return referenceFieldsList;
+     /**
+    * Class Name : FieldDetails
+    * @description : this is wrapper class for the pass mutiple value to lwc component.
+    * @return List of Fields of all references of Listing.
+    */
+    public class FieldDetails {
+        @AuraEnabled
+        public String fieldName { get; set; }
+        @AuraEnabled
+        public String fieldAPIName { get; set; }
+        @AuraEnabled
+        public String fieldType { get; set; }
+        @AuraEnabled
+        public String referenceObjectName { get; set; }
     }
 }

@@ -24,15 +24,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     @track fields;
     @track error;
     @track selectedField;
-
-    radioOptions = [
-        { label: 'All listings', value: 'allListings' },
-        { label: 'My lisitngs', value: 'myListings' }
-    ];
-
-    handleChange(event) {
-        this.selectedFruit = event.target.value;
-    }
+    @track valueFromChild;
     @track options = [
         { label: 'Sale', value: 'sale' },
         { label: 'Rent', value: 'rent' }
@@ -45,11 +37,37 @@ export default class ListingManagerFilterCmp extends LightningElement {
         { label: 'Exact matching', value: 'option1' },
         { label: 'Advanced', value: 'option2' }
     ];
+    @track radioOptions = [
+        { label: 'All listings', value: 'allListings' },
+        { label: 'My lisitngs', value: 'myListings' }
+    ];
 
+     /**
+    * Method Name: handleChange
+    * @description: handle the radio button select.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
+    handleChange(event) {
+        this.selectedFruit = event.target.value;
+    }
+
+     /**
+    * Method Name: showOptions
+    * @description: this method is for the multi-search-combobox show/unshow options.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     get showOptions() {
         return this.isFocused || this.searchTerm !== '';
     }
 
+      /**
+    * Method Name: filteredOptions
+    * @description: this method is for the multi-search-combobox search options.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     get filteredOptions() {
         if (this.searchTerm === '' && !this.isFocused) {
             return [];
@@ -60,6 +78,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
         );
     }
 
+    /**
+    * Method Name: handleSearchChange,handleFocus,handleBlur,selectOption,removeOption
+    * @description: handle the multi-select-combobox search,focus,blur,selection, and option remove feature.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     handleSearchChange(event) {
         this.searchTerm = event.target.value;
     }
@@ -89,6 +113,19 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const optionToRemove = event.currentTarget.dataset.id;
         this.selectedOptions = this.selectedOptions.filter(option => option.value !== optionToRemove);
     }
+
+      /**
+    * Method Name: handleValueSelected
+    * @description: this method is set the field from the child field-add cmp .
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
+    handleValueSelected(event) {
+        // Get the value from the event detail and store it in a property
+        this.valueFromChild = event.detail;
+        console.log('child Value:'+JSON.stringify(this.valueFromChild));
+    }
+
     get showOptions1() {
         return this.isFocused || this.searchTerm1 !== '';
     }
@@ -257,6 +294,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
 
     handleSave() {
         this.addModal = false;
+        const childComponent = this.template.querySelector('c-listing-manager-filter-add-cmp');
+
+        if (childComponent) {
+            // Call the method on the child component
+            childComponent.handleButtonClick();
+        }
     }
 
     openModal(){

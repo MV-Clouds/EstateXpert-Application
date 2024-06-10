@@ -1,9 +1,10 @@
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, track, wire,api } from 'lwc';
 import getListingFields from '@salesforce/apex/ListingManagerFilterController.getListingFields';
 
 export default class ListingManagerFilterAddCmp extends LightningElement {
     @track fieldOptions = [];
     @track selectedFields = [];
+    @track selectedField = [];
     @track breadcrumbs = [];
     @track selectedValues = [];
     @track showCombobox = true;
@@ -13,19 +14,10 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track searchTerm1 = '';
     @track selectedOptions1 = [];
     @track isFocused1 = false;
-    @track notOption = [
-        { label: 'Not', value: 'not' }
-    ];
-    @track comboboxOptions = [
-        {lable:'Is', value:'is'},
-        {lable:'Is Not', value:'isnot'},
-        {lable:'Includes', value:'includes'},
-        {lable:'Excludes', value:'excludes'},
-        {lable:'Starts With', value: 'startswith'}
-    ]
-    @track valueIsField = true;
-    @track notCheckboxValue;
+    @track valueIsField = false;
+    @track notCheckboxValue = false;
     @track comboBoxValue;
+    @track operationValue;
 
 
     connectedCallback() {
@@ -33,16 +25,24 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.fetchObjectFields('Listing__c');
     }
 
+     /**
+    * Method Name: fetchObjectFields
+    * @description: fetch the fields values.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     fetchObjectFields(objectApiName) {
         getListingFields({ objectApiName })
             .then(fields => {
+                // console.log('fields'+JSON.stringify(fields));
                 if (fields) {
                     this.fieldOptions = fields.map(field => {
                         return {
-                            label: field.label, // Only show the label
-                            value: field.apiName,
-                            type: field.type, // Add type to identify lookup fields
-                            referenceFields: field.referenceFields || [], // Include reference fields if any
+                            label: field.fieldName, // Only show the label
+                            value: field.fieldAPIName,
+                            type: field.fieldType, // Add type to identify lookup fields
+                            referenceObjectName: field.referenceFields || [], 
+                            objectApiName : field.referenceObjectName || ''// Include reference fields if any
                         };
                     });
                     this.options1 = this.fieldOptions;
@@ -53,9 +53,85 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
             });
     }
 
+     /**
+    * Method Name: currentFieldOptions
+    * @description: getter for the set the current selectedfield operator options.
+    * Date: 09/06/2024
+    * Created By: Vyom Soni
+    **/
+    get currentFieldOptions() {
+        if (this.selectedField.length === 0) return [];
+
+        const fieldType = this.selectedField[0].type;
+        let options = [];
+
+        switch (fieldType) {
+            case 'PICKLIST':
+                options = [
+                    { label: 'Includes', value: 'includes' },
+                    { label: 'Equals', value: 'equals' }
+                ];
+                break;
+            case 'BOOLEAN':
+                options = [
+                    { label: 'True/False', value: 'boolean' }
+                ];
+                break;
+            case 'DOUBLE':
+                options = [
+                    { label: 'Range', value: 'range' },
+                    { label: 'Minimum', value: 'minimum' },
+                    { label: 'Maximum', value: 'maximum' }
+                ];
+                break;
+            case 'STRING':
+                options = [
+                    { label: 'Equals', value: 'equals' },
+                    { label: 'Contains', value: 'contains' },
+                    { label: 'Starts With', value: 'startswith' }
+                ];
+                break;
+            case 'DATE':
+                options = [
+                    { label: 'Date Range', value: 'daterange' },
+                    { label: 'Date Minimum', value: 'dateminimum' },
+                    { label: 'Date Maximum', value: 'datemaximum' }
+                ];
+                break;
+            case 'ID':
+                options = [
+                    { label: 'Equals', value: 'equals' }
+                ];
+            case 'EMAIL':
+                options = [
+                    { label: 'Equals', value: 'equals' }
+                ];
+            case 'PHONE':
+                options = [
+                    { label: 'Equals', value: 'equals' }
+                ];
+            case 'URL':
+                options = [
+                    { label: 'Equals', value: 'equals' }
+                ];
+                break;
+            default:
+                options = [];
+        }
+        return options;
+    }
+
+     /**
+    * Method Name: changeFields,isAuditField,isStandardField,handleFieldSelect
+    * @description: handle the fields select of non-reference field.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     changeFields(event){
-        this.showCombobox = false;
         this.handleFieldSelect(event);
+        this.showCombobox = false;
+        this.valueIsField = true;
+        this.selectedField= [this.selectedFields.length > 0 ? this.selectedFields[this.selectedFields.length - 1] : null];
     }
 
     isAuditField(fieldName) {
@@ -68,31 +144,115 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
 
     handleFieldSelect(event) {
         const selectedValue = event.currentTarget.dataset.id;
-        const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
-
+        // const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
+        const selectedField = this.findFieldRecursively(this.fieldOptions, selectedValue);
+    
         if (selectedValue && selectedField && !this.selectedValues.includes(selectedValue)) {
             this.selectedValues.push(selectedValue);
-            this.selectedFields.push(selectedField.label); // Only store the label
+            this.selectedFields.push({ label: selectedField.label, objectApiName: selectedField.objectApiName,value:selectedField.value,type:selectedField.type }); // Only store the label
+            // console.log(JSON.stringify(this.selectedValues));
             this.updateBreadcrumbs();
         }
         this.searchTerm1 = ''; // Clear the search term to reset the search
         this.isFocused1 = false; // Close the dropdown
     }
+    
 
+      /**
+    * Method Name: changeTheCheckboxValue
+    * @description: handle the fields select of reference field.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
+    changeTheCheckboxValue(event){
+        this.selectedField = [];
+        const selectedValue = event.currentTarget.dataset.id;
+        // console.log('Id'+selectedValue);
+        const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
+        //this.options1.forEach(elem => console.log('hi'+elem.value +'1'+ elem.referenceFields.length));
+        // console.log('selectedFiedls'+JSON.stringify(selectedField));
+        // console.log('1'+selectedField.objectApiName);
+        if(selectedField != null){
+            this.handleFieldSelect(event);
+            // console.log('2'+selectedField.objectApiName);
+            this.fetchObjectFields(selectedField.objectApiName);
+
+        }
+    }
+
+     /**
+    * Method Name: findFieldRecursively
+    * @description: this method check the from fiedls hierarchy.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
+    findFieldRecursively(fields, selectedValue) {
+        for (let field of fields) {
+            if (field.apiName === selectedValue || field.value === selectedValue) {
+                // console.log("Field found:", field);
+                return field; // Return the field if found
+            }
+            // If the current field is a reference field and has referenceFields, recursively search them
+            if (field.type === 'REFERENCE' && field.referenceFields && field.referenceFields.length > 0) {
+                // console.log("Recursing into referenceFields:", field.referenceFields);
+                const foundField = this.findFieldRecursively(field.referenceFields, selectedValue);
+                if (foundField) {
+                    // console.log("Found field in referenceFields:", foundField);
+                    return foundField; // Return the found field if it exists
+                }
+            }
+        }
+        return null; // Return null if the field is not found
+    }
+
+     /**
+    * Method Name: updateBreadcrumbs,handleBreadcrumbClick
+    * @description: handle the combobox values when the bread crumbs is clicked.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     updateBreadcrumbs() {
-        this.breadcrumbs = this.selectedFields.map(label => {
-            return { label };
+        this.breadcrumbs = this.selectedFields.map(selectedValue => {
+            return { label: selectedValue.label };
         });
+        console.log('this.breadcrumbs'+JSON.stringify(this.breadcrumbs));
+        console.log('this.breadcrumbs'+JSON.stringify(this.selectedValues));
     }
+    
+        handleBreadcrumbClick(event) {
+             const clickedIndex = parseInt(event.currentTarget.dataset.index, 10);
+            this.selectedFields = this.selectedFields.slice(0, clickedIndex);
+            this.selectedValues = this.selectedValues.slice(0, clickedIndex);
+            console.log('selectedFields'+this.selectedFields);
+            console.log('selectedValues'+this.selectedValues);
+    
+            if (this.selectedValues.length > 0) {
+                const lastSelectedValue = this.selectedValues[this.selectedValues.length - 1];
+                const lastSelectedField = this.selectedFields[this.selectedFields.length - 1].objectApiName;
+                console.log('lastSelectedValue'+lastSelectedValue);
+                console.log('lastSelectedValue2'+typeof lastSelectedField);
+                if(lastSelectedField == null){
+                    lastSelectedField='Listing__c'
+                }
+                console.log('lastSelec'+lastSelectedField);
+                console.log('lastSelec2'+lastSelectedValue);
+                this.fetchObjectFields(lastSelectedField);
+                
+            } else {
+                this.fetchObjectFields('Listing__c');
+            }
+    
+            this.showCombobox = true;
+            this.updateBreadcrumbs();
+    
+        }
 
-    handleBreadcrumbClick(event) {
-        const clickedIndex = parseInt(event.currentTarget.dataset.index, 10);
-        this.selectedFields = this.selectedFields.slice(0, clickedIndex);
-        this.selectedValues = this.selectedValues.slice(0, clickedIndex);
-        this.showCombobox = true;
-        this.updateBreadcrumbs();
-    }
-
+     /**
+    * Method Name: handleSearchChange1,handleFocus1,handleBlur1,filteredOptions1,isLookupField
+    * @description: handle combobox option show and handle search function.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     handleSearchChange1(event) {
         this.searchTerm1 = event.target.value;
     }
@@ -108,24 +268,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         }, 700);
     }
 
-    changeTheCheckboxValue(event){
-        const selectedValue = event.currentTarget.dataset.id;
-        const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
-        console.log('selectedFiedls'+JSON.stringify(selectedField));
-        if (selectedField.type === 'REFERENCE' && selectedField.referenceFields.length > 0) {
-            this.options1 = selectedField.referenceFields.map(refField => {
-                return {
-                    label: refField.label,
-                    value: refField.apiName,
-                    type: refField.type,
-                    referenceFields: refField.referenceFields || []
-                };
-            });
-            this.handleFieldSelect(event);
-            console.log('Hi'+JSON.stringify(this.options1));
-        }
-    }
-
+    
     get showOptions1() {
         return this.isFocused1 || this.searchTerm1 !== '';
     }
@@ -144,13 +287,14 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     }
 
     isLookupField(fieldType) {
-        return fieldType === 'REFERENCE' || fieldType === 'Lookup'; // Adjust this condition based on your field types
+        return fieldType === 'REFERENCE' || fieldType === 'Lookup' ; // Adjust this condition based on your field types
     }
 
     removeOption1(event) {
         const optionToRemove = event.currentTarget.dataset.id;
         this.selectedOptions1 = this.selectedOptions1.filter(option => option.value !== optionToRemove);
     }
+
 
     get computedDropdownClass() {
         return `slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ${this.isFocused1 ? 'slds-is-open' : ''}`;
@@ -163,4 +307,49 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     handleComboboxChange(event){
         this.comboBoxValue =  event.target.value;
     }
+
+    // operation checkbox change login
+
+     /**
+    * Method Name: handleNotCheckboxChange
+    * @description: handle the not checkbox change.
+    * Date: 09/06/2024
+    * Created By: Vyom Soni
+    **/
+    handleNotCheckboxChange(event) {
+        this.notCheckboxValue = event.target.checked;
+        this.selectedField[0].isNot = event.target.checked;
+        console.log('1'+JSON.stringify(this.selectedField));
+    }
+
+    /**
+    * Method Name: operationSelect
+    * @description: handle the operation combobox change.
+    * Date: 09/06/2024
+    * Created By: Vyom Soni
+    **/
+    operationSelect(event){
+        this.operationValue = event.target.value;
+        this.selectedField[0].operation = event.target.value;
+        console.log('2'+JSON.stringify(this.selectedField));
+    }
+
+    /**
+    * Method Name: handleButtonClick
+    * @description: It is call from the parent component and it send teh selected field to parent component.
+    * Date: 09/06/2024
+    * Created By: Vyom Soni
+    **/
+    @api
+    handleButtonClick() {
+        // Create a custom event with the value you want to pass to the parent
+        const customEvent = new CustomEvent('valueselected', {
+            detail: this.selectedField
+        });
+        
+        // Dispatch the custom event
+        this.dispatchEvent(customEvent);
+    }
+
+
 }

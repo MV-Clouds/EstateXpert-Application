@@ -328,7 +328,6 @@
         <div class="radio-div">
             <lightning-radio-group
             class="radio-group"
-                name="fruitOptions"
                 label="Show me"
                 options={radioOptions}
                 value={selectedRadio}
@@ -362,13 +361,13 @@
                         <!-- Modal/Popup Body -->
                         <div class="slds-modal__content slds-p-around_medium modal-body">
                             <slot>
-                                <c-listing-manager-filter-add-cmp></c-listing-manager-filter-add-cmp>
+                                <c-listing-manager-filter-add-cmp onvalueselected={handleValueSelected}></c-listing-manager-filter-add-cmp>
                             </slot>
                         </div>
                         <!-- Modal/Popup Footer -->
                         <footer class="slds-modal__footer">
                             <button class="slds-button slds-button_neutral" onclick={handleClose}>Cancel</button>
-                            <button class="slds-button slds-button_brand" onclick={handleSave}>Save</button>
+                            <button class="slds-button slds-button_brand" onclick={handleSave}>Add</button>
                         </footer>
                     </div>
                 </section>
