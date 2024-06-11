@@ -3,13 +3,13 @@
         <div class="header">
             <div class="combobox">
                 <lightning-combobox
-                name="objectSelector"
-                label="Select Object"
-                value={selectedObject}
-                placeholder="Select an Object"
-                options={objectOptions}
-                onchange={handleObjectChange}>
-            </lightning-combobox>
+                    name="objectSelector"
+                    label="Select Object"
+                    value={selectedObject}
+                    placeholder="Select an Object"
+                    options={objectOptions}
+                    onchange={handleObjectChange}>
+                </lightning-combobox>
             </div>
 
             <lightning-button label="Create Template" onclick={handleCreateScreen} disabled={IsSelectedObject}></lightning-button>
@@ -31,6 +31,6 @@
             <p class="no-data">No data to show</p>
         </template>
  
-        <c-template-modal-child if:true={isModalOpen} myrecord-id={currentRecordId} selected-object={selectedObject} onclose={handleCloseModal}></c-template-modal-child>
+        <c-template-modal-child if:true={isModalOpen} myrecord-id={currentRecordId} selected-object={selectedObject} onclose={handleCloseModal} onrefresh={handleRefresh}>></c-template-modal-child>
     </div>
 </template>

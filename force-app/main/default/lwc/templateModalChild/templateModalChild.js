@@ -311,6 +311,7 @@ export default class TemplateModalChild extends LightningElement {
     }
 
     handleClose() {
+        this.dispatchEvent(new CustomEvent('refresh', { detail: { refresh: true } }));
         const closeEvent = new CustomEvent('close');
         this.dispatchEvent(closeEvent);
     }

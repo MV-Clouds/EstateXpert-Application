@@ -1,6 +1,9 @@
 import { LightningElement, track, wire } from 'lwc';
 import getAllObjectNames from '@salesforce/apex/TemplateBuilderController.getAllObjectNames';
 import getTemplatesForObject from '@salesforce/apex/TemplateBuilderController.getTemplatesForObject';
+import deleteTemplate from '@salesforce/apex/TemplateBuilderController.deleteTemplate';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { refreshApex } from '@salesforce/apex';
 
 export default class TemplateBuilder extends LightningElement {
     @track selectedObject;
@@ -23,6 +26,7 @@ export default class TemplateBuilder extends LightningElement {
         this.selectedObject = event.detail.value;
         this.IsSelectedObject = false;
         this.fetchRecords();
+        // refreshApex(this.records);
     }
 
     fetchRecords() {
@@ -40,6 +44,20 @@ export default class TemplateBuilder extends LightningElement {
             });
     }
 
+    handleDelete(event) {
+        const templateId = event.target.dataset.id;
+        deleteTemplate({ templateId: templateId })
+            .then(() => {
+                this.showToast('Success', 'Template deleted successfully', 'success');
+                this.fetchRecords();
+                // refreshApex(this.records);
+            })
+            .catch(error => {
+                console.error('Error deleting template:', error);
+                this.showToast('Error', 'Error deleting template', 'error');
+            });
+    }
+
     handleCreateScreen() {
         this.currentRecordId = null;
         this.isModalOpen = true;
@@ -54,6 +72,22 @@ export default class TemplateBuilder extends LightningElement {
 
     handleCloseModal() {
         this.isModalOpen = false;
-        this.fetchRecords();
+        // refreshApex(this.records);
+    }
+
+    handleRefresh(event) {
+        if (event.detail.refresh) {
+            console.log('In the refresh');
+            this.fetchRecords();
+        }
+    }
+
+    showToast(title, message, variant) {
+        const event = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant,
+        });
+        this.dispatchEvent(event);
     }
 }

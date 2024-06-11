@@ -74,12 +74,22 @@ public with sharing class TemplateBuilderController {
         return objectNames;
     }
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<Template__c> getTemplatesForObject(String objectName) {
         if (!Schema.sObjectType.Template__c.isAccessible()) {
             throw new AuraHandledException('No access to Template__c object.');
         }
         
-        return [SELECT Label__c	 FROM Template__c WHERE Object_Name__c = :objectName];
+        return [SELECT Id ,Label__c , Template_Body__c FROM Template__c WHERE Object_Name__c = :objectName];
+    }
+
+
+    @AuraEnabled
+    public static void deleteTemplate(String templateId) {
+
+        Template__c template = [SELECT Id FROM Template__c WHERE Id = :templateId LIMIT 1];
+        if (template != null&& Schema.sObjectType.Template__c.isAccessible()) {
+            delete template;
+        }
     }
 }
