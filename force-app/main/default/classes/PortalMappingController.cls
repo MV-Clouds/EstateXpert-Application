@@ -3,7 +3,7 @@
 * Test Class : Pending
 * Created By : Karan Singh
 * Last Modified Date : 03/06/2024
-* Last Modified By : Karan Singh
+* Last Modified By : Karan Singh b
 * @description : Used in portalMappingComponent and portalMappingLandingPage LWC components
 */
 public with sharing class PortalMappingController {
