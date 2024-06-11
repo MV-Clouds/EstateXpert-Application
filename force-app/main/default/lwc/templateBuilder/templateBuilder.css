@@ -1,0 +1,50 @@
+.container {
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0 auto;
+  min-height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.record-list {
+  margin-top: 20px;
+}
+
+.record-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  background-color: aliceblue;
+  margin-bottom: 2rem;
+}
+
+.record-name {
+  flex: 1;
+  text-align: left;
+}
+
+.record-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.no-data{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.combobox{
+  width: 30%;
+}

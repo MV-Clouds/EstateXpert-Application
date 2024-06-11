@@ -1,0 +1,36 @@
+<template>
+    <div class="container">
+        <div class="header">
+            <div class="combobox">
+                <lightning-combobox
+                name="objectSelector"
+                label="Select Object"
+                value={selectedObject}
+                placeholder="Select an Object"
+                options={objectOptions}
+                onchange={handleObjectChange}>
+            </lightning-combobox>
+            </div>
+
+            <lightning-button label="Create Template" onclick={handleCreateScreen} disabled={IsSelectedObject}></lightning-button>
+        </div>
+        <template if:true={records}>
+            <div class="record-list">
+                <template for:each={records} for:item="record">
+                    <div key={record.Id} class="record-item">
+                        <p class="record-name">{record.Label__c}</p>
+                        <div class="record-actions">
+                            <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" data-id={record.Id} onclick={handleEdit}></lightning-button-icon>
+                            <lightning-button-icon icon-name="utility:delete" alternative-text="Delete" data-id={record.Id} onclick={handleDelete}></lightning-button-icon>    
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template if:false={records}>
+            <p class="no-data">No data to show</p>
+        </template>
+ 
+        <c-template-modal-child if:true={isModalOpen} myrecord-id={currentRecordId} selected-object={selectedObject} onclose={handleCloseModal}></c-template-modal-child>
+    </div>
+</template>
