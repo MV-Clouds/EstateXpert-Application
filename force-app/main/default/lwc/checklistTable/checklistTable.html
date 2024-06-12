@@ -1,0 +1,62 @@
+<template>
+    <lightning-card title="Checklist Table">
+        <div class="slds-m-around_medium">
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="slds-truncate">Checklist Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Field Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Operator</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Value</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Order</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Action</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={checklistItems} for:item="item" for:index="index">
+                        <tr key={item.id}>
+                            
+                            <td>
+                                <lightning-input type="text" value={item.checklistName} data-id={item.id} data-field="checklistName" onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="text" value={item.fieldName} data-id={item.id} data-field="fieldName" onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td>
+                                <lightning-combobox value={item.operator} data-id={item.id} data-field="operator" options={operatorOptions} onchange={handleInputChange}></lightning-combobox>
+                            </td>
+                            <td>
+                                <lightning-input type="text" value={item.value} data-id={item.id} data-field="value" onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td>
+                                <div class="slds-button-group" role="group">
+                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" data-id={item.id} data-action="up" onclick={handleOrderChange}>
+                                        <lightning-icon icon-name="utility:up" alternative-text="Move Up"></lightning-icon>
+                                    </button>
+                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" data-id={item.id} data-action="down" onclick={handleOrderChange}>
+                                        <lightning-icon icon-name="utility:down" alternative-text="Move Down"></lightning-icon>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <lightning-button-icon icon-name="utility:delete" alternative-text="Delete" onclick={handleDelete} data-id={item.id}></lightning-button-icon>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </lightning-card>
+</template>
