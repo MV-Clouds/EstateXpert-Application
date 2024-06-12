@@ -92,4 +92,11 @@ public with sharing class TemplateBuilderController {
             delete template;
         }
     }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Template__c> getTemplates() {
+        List<Template__c> templates = [SELECT Id, Name, Label__c , Object_Name__c , Status__c, Template_Body__c	, Template_Type__c	, Description__c,CreatedDate  FROM Template__c];
+        return templates;
+    }
 }
+

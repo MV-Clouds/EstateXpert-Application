@@ -1,85 +1,124 @@
-import { LightningElement, track, wire } from 'lwc';
-import getAllObjectNames from '@salesforce/apex/TemplateBuilderController.getAllObjectNames';
-import getTemplatesForObject from '@salesforce/apex/TemplateBuilderController.getTemplatesForObject';
-import deleteTemplate from '@salesforce/apex/TemplateBuilderController.deleteTemplate';
+import { LightningElement, wire, track } from 'lwc';
+import getTemplates from '@salesforce/apex/TemplateBuilderController.getTemplates';
+import { loadStyle } from 'lightning/platformResourceLoader';
+import externalCss from '@salesforce/resourceUrl/templateCss';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { refreshApex } from '@salesforce/apex';
+
+const PAGE_SIZE = 10; // Number of templates per page
 
 export default class TemplateBuilder extends LightningElement {
-    @track selectedObject;
-    @track objectOptions = [];
-    @track records;
-    @track isModalOpen = false;
-    @track currentRecordId;
-    @track IsSelectedObject = true;
+    @track templates = [];
+    @track filteredTemplates = [];
+    @track visibleTemplates = [];
+    @track currentPage = 1;
+    @track totalPages = 0;
+    @track error;
 
-    @wire(getAllObjectNames)
-    wiredSObjectNames({ error, data }) {
+    connectedCallback(){
+        loadStyle(this, externalCss)
+            .then(() => {
+                console.log('External Css Loaded');
+            })
+            .catch(error => {
+                console.log('Error occurring during loading external css', error);
+            });
+    }
+
+    @wire(getTemplates)
+    wiredTemplates({ error, data }) {
         if (data) {
-            this.objectOptions = data.map(objName => ({ label: objName, value: objName }));
+            this.templates = data.map((template, index) => ({
+                ...template,
+                rowIndex: index + 1,
+                isActive: template.Status__c === 'Active'
+            }));
+            this.filteredTemplates = this.templates;
+            this.calculateTotalPages();
+            this.displayTemplates();
         } else if (error) {
-            console.error('Error fetching SObject names:', error);
+            this.error = error;
         }
     }
 
-    handleObjectChange(event) {
-        this.selectedObject = event.detail.value;
-        this.IsSelectedObject = false;
-        this.fetchRecords();
-        // refreshApex(this.records);
+    calculateTotalPages() {
+        this.totalPages = Math.ceil(this.filteredTemplates.length / PAGE_SIZE);
     }
 
-    fetchRecords() {
-        getTemplatesForObject({ objectName: this.selectedObject })
-            .then(result => {
-                if (result != null && result.length > 0) {
-                    this.records = result;
-                    console.log(result);
-                } else {
-                    this.records = [];
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching records: ', error);
-            });
+    displayTemplates() {
+        const startIndex = (this.currentPage - 1) * PAGE_SIZE;
+        this.visibleTemplates = this.filteredTemplates.slice(startIndex, startIndex + PAGE_SIZE);
+    }
+
+    previousPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.displayTemplates();
+        }
+    }
+
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.displayTemplates();
+        }
+    }
+
+    handleSearch(event) {
+        const searchTerm = event.target.value.toLowerCase();
+        this.filteredTemplates = this.templates.filter(template =>
+            template.Label__c.toLowerCase().includes(searchTerm)
+        );
+        this.calculateTotalPages();
+        this.currentPage = 1;
+        this.displayTemplates();
+    }
+
+    handleStatusChange(event) {
+        const templateId = event.target.dataset.id;
+        const template = this.templates.find(tmpl => tmpl.Id === templateId);
+        if (template) {
+            template.isActive = event.target.checked;
+            template.Status__c = event.target.checked ? 'Active' : 'Inactive';
+            this.filteredTemplates = [...this.templates];
+            this.displayTemplates();
+            this.showToast('Status Change', `Template status changed to: ${template.Status__c}`, 'success');
+        }
+    }
+
+    handlePreview(event) {
+        const templateId = event.target.dataset.id;
+        const template = this.templates.find(tmpl => tmpl.Id === templateId);
+        if (template) {
+            this.showToast('Preview', `Preview template: ${template.Label__c}`, 'info');
+        }
+    }
+
+    handleEdit(event) {
+        const templateId = event.target.dataset.id;
+        const template = this.templates.find(tmpl => tmpl.Id === templateId);
+        if (template) {
+            this.showToast('Edit', `Edit template: ${template.Label__c}`, 'info');
+        }
     }
 
     handleDelete(event) {
         const templateId = event.target.dataset.id;
-        deleteTemplate({ templateId: templateId })
-            .then(() => {
-                this.showToast('Success', 'Template deleted successfully', 'success');
-                this.fetchRecords();
-                // refreshApex(this.records);
-            })
-            .catch(error => {
-                console.error('Error deleting template:', error);
-                this.showToast('Error', 'Error deleting template', 'error');
-            });
-    }
-
-    handleCreateScreen() {
-        this.currentRecordId = null;
-        this.isModalOpen = true;
-        console.log('this.currentRecordId>>'+this.currentRecordId);
-    }
-
-    handleEdit(event) {
-        this.currentRecordId = event.target.dataset.id;
-        this.isModalOpen = true;
-        console.log('this.currentRecordId 1>>'+this.currentRecordId);
-    }
-
-    handleCloseModal() {
-        this.isModalOpen = false;
-        // refreshApex(this.records);
-    }
-
-    handleRefresh(event) {
-        if (event.detail.refresh) {
-            console.log('In the refresh');
-            this.fetchRecords();
+        const template = this.templates.find(tmpl => tmpl.Id === templateId);
+        if (template) {
+            this.showToast('Delete', `Delete template: ${template.Label__c}`, 'error');
         }
+    }
+
+    handleAdd(event) {
+        console.log('Clicked');
+    }
+
+    get isPreviousDisabled() {
+        return this.currentPage === 1;
+    }
+
+    get isNextDisabled() {
+        return this.currentPage === this.totalPages;
     }
 
     showToast(title, message, variant) {

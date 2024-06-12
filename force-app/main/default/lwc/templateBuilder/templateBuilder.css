@@ -1,50 +1,120 @@
-.container {
+.wrapper{
   background-color: white;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin: 0 auto;
-  min-height: 100%;
+  height: 100%;
+  width: 100%;
 }
 
-.header {
+.slds-card {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.input-text{
+  width: 30%;
+}
+
+.navbar{
   display: flex;
+  align-items: end;
   justify-content: space-between;
+}
+
+.add-btn{
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+
+.input-text .slds-input{
+  border: none !important;
+}
+
+.search-container {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.25rem;
   margin-bottom: 20px;
 }
 
-.record-list {
-  margin-top: 20px;
-}
-
-.record-item {
+.search-input-wrapper {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  background-color: aliceblue;
-  margin-bottom: 2rem;
+  width: 100%;
+  position: relative;
 }
 
-.record-name {
-  flex: 1;
-  text-align: left;
+.search-input {
+  flex-grow: 1;
+  padding-right: 2.5rem;
 }
 
-.record-actions {
+.search-button {
+  position: absolute;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+}
+
+.pagination-container {
+  margin-top: 20px;
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 5%;
 }
 
-.no-data{
+.pagination {
+  display: flex;
+  align-items: center;
+}
+
+.pagination .page-info {
+  margin: 0 10px;
+}
+
+.page-info{
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 60vh;
 }
 
-.combobox{
-  width: 30%;
+.slds-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.slds-table th, .slds-table td {
+  border: 1px solid #d9dbdd;
+  padding: 0.3rem;
+  padding-left: 2%;
+  max-width: 45vw !important;
+}
+
+.slds-table th {
+  background-color: #0176D3;
+  text-align: left;
+  font-weight: bold;
+  color: white;
+}
+
+.slds-table tr:nth-child(odd) {
+  background-color: aliceblue;
+}
+
+.slds-table .slds-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col4{
+  width: 20vw !important;
+}
+
+lightning-button-icon{
+  margin-right: 10% ;
 }

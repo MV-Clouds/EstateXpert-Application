@@ -1,36 +1,114 @@
 <template>
-    <div class="container">
-        <div class="header">
-            <div class="combobox">
-                <lightning-combobox
-                    name="objectSelector"
-                    label="Select Object"
-                    value={selectedObject}
-                    placeholder="Select an Object"
-                    options={objectOptions}
-                    onchange={handleObjectChange}>
-                </lightning-combobox>
-            </div>
-
-            <lightning-button label="Create Template" onclick={handleCreateScreen} disabled={IsSelectedObject}></lightning-button>
+    <div class="wrapper">
+        <div class="slds-m-around_medium navbar">
+            <div class="input-text">
+                <lightning-input 
+                type="search" 
+                onchange={handleSearch} 
+                placeholder="Search Template">
+            </lightning-input>
         </div>
-        <template if:true={records}>
-            <div class="record-list">
-                <template for:each={records} for:item="record">
-                    <div key={record.Id} class="record-item">
-                        <p class="record-name">{record.Label__c}</p>
-                        <div class="record-actions">
-                            <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" data-id={record.Id} onclick={handleEdit}></lightning-button-icon>
-                            <lightning-button-icon icon-name="utility:delete" alternative-text="Delete" data-id={record.Id} onclick={handleDelete}></lightning-button-icon>    
-                        </div>
-                    </div>
-                </template>
+
+
+        <div class="add-btn">
+            <lightning-button variant="brand" label="+ Add New" title="Primary action" class="slds-m-left_x-small"></lightning-button>
+        </div>
+
+        </div>
+
+
+        <div class="slds-m-around_medium">
+            <table class="slds-table slds-table_bordered slds-table_col-bordered">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col">
+                            <div class="slds-truncate" title="S.No.">No.</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Template Name">Template Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Status">Status</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Description">Description</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Created Date">Created Date</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Actions">Actions</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={visibleTemplates} for:item="template" for:index="index">
+                        <tr key={template.Id}>
+                            <td data-label="S.No.">
+                                <div class="slds-truncate">{template.rowIndex}</div>
+                            </td>
+                            <td data-label="Template Name">
+                                <div class="slds-truncate" title={template.Label__c}>{template.Label__c}</div>
+                            </td>
+                            <td data-label="Status">
+                                <lightning-input 
+                                    type="toggle" 
+                                    checked={template.isActive} 
+                                    onchange={handleStatusChange} 
+                                    data-id={template.Id}>
+                                </lightning-input>
+                            </td>
+                            <td data-label="Description">
+                                <div class="slds-truncate" title={template.Description__c}>{template.Description__c}</div>
+                            </td>
+                            <td data-label="Created Date">
+                                <div class="slds-truncate" title={template.CreatedDate}>{template.CreatedDate}</div>
+                            </td>
+                            <td data-label="Actions">
+                                <lightning-button-icon 
+                                    icon-name="utility:preview" 
+                                    alternative-text="Preview" 
+                                    title="Preview" 
+                                    onclick={handlePreview} 
+                                    data-id={template.Id}>
+                                </lightning-button-icon>
+                                <lightning-button-icon 
+                                    icon-name="utility:edit" 
+                                    alternative-text="Edit" 
+                                    title="Edit" 
+                                    onclick={handleEdit} 
+                                    data-id={template.Id}>
+                                </lightning-button-icon>
+                                <lightning-button-icon 
+                                    icon-name="utility:delete" 
+                                    alternative-text="Delete" 
+                                    title="Delete" 
+                                    onclick={handleDelete} 
+                                    data-id={template.Id}>
+                                </lightning-button-icon>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            <div class="pagination-container">
+                <lightning-button 
+                class="previous" 
+                label="Previous" 
+                onclick={previousPage} 
+                disabled={isPreviousDisabled}>
+                </lightning-button>
+
+                <div class="page-info"> Page {currentPage} / {totalPages}</div>
+
+                <lightning-button 
+                    class="next" 
+                    label="Next" 
+                    onclick={nextPage} 
+                    disabled={isNextDisabled}>
+                </lightning-button>
             </div>
-        </template>
-        <template if:false={records}>
-            <p class="no-data">No data to show</p>
-        </template>
- 
-        <c-template-modal-child if:true={isModalOpen} myrecord-id={currentRecordId} selected-object={selectedObject} onclose={handleCloseModal} onrefresh={handleRefresh}>></c-template-modal-child>
+        </div>
     </div>
+
 </template>
