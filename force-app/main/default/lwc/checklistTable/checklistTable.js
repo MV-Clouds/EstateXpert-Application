@@ -19,13 +19,28 @@ export default class ChecklistTable extends LightningElement {
     ];
 
     handleInputChange(event) {
-        const id = event.target.dataset.id;
-        const field = event.target.dataset.field;
-        const value = event.target.value;
+        try {
+            const id = event.target.dataset.id;
+            const field = event.target.dataset.field;
+            const value = event.target.value;
+    
+            this.checklistItems = this.checklistItems.map(item =>
+                item.id === parseInt(id) ? { ...item, [field]: value } : item
+            );
 
-        this.checklistItems = this.checklistItems.map(item =>
-            item.id === parseInt(id) ? { ...item, [field]: value } : item
-        );
+            console.log('test');
+            this.testmethod()
+            
+        } catch (error) {
+
+                console.log('There is an error', {error})
+                console.log('There is an error', JSON.stringify(error))
+                let errorMessage = error.body?.output?.errors[0]?.message
+                errorMessage = errorMessage || error.body?.pageErrors[0]?.message
+                errorMessage = errorMessage || 'There is an error with this application, please check with your system administrator'
+                this.showToast('Error', errorMessage, 'error')
+
+        }
     }
 
     handleOrderChange(event) {
