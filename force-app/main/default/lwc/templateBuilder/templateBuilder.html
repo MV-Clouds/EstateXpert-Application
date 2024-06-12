@@ -3,19 +3,17 @@
         <div class="slds-m-around_medium navbar">
             <div class="input-text">
                 <lightning-input 
-                type="search" 
-                onchange={handleSearch} 
-                placeholder="Search Template">
-            </lightning-input>
+                    type="search" 
+                    onchange={handleSearch} 
+                    placeholder="Search Template"
+                    class="input-template">
+                </lightning-input>
+            </div>
+
+            <div class="add-btn">
+                <lightning-button variant="brand" label="+ Add New" title="Primary action" class="slds-m-left_x-small addbtn" id="myButton" onclick={handleAdd}></lightning-button>
+            </div>
         </div>
-
-
-        <div class="add-btn">
-            <lightning-button variant="brand" label="+ Add New" title="Primary action" class="slds-m-left_x-small"></lightning-button>
-        </div>
-
-        </div>
-
 
         <div class="slds-m-around_medium">
             <table class="slds-table slds-table_bordered slds-table_col-bordered">
@@ -31,19 +29,19 @@
                             <div class="slds-truncate" title="Status">Status</div>
                         </th>
                         <th scope="col">
-                            <div class="slds-truncate" title="Description">Description</div>
+                            <div class="slds-truncate" title="Description">Object Name</div>
                         </th>
                         <th scope="col">
                             <div class="slds-truncate" title="Created Date">Created Date</div>
                         </th>
-                        <th scope="col">
+                        <th scope="col" style="width: 15% !important;">
                             <div class="slds-truncate" title="Actions">Actions</div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <template for:each={visibleTemplates} for:item="template" for:index="index">
-                        <tr key={template.Id}>
+                        <tr key={template.Id} class={template.cssClass}>
                             <td data-label="S.No.">
                                 <div class="slds-truncate">{template.rowIndex}</div>
                             </td>
@@ -58,11 +56,11 @@
                                     data-id={template.Id}>
                                 </lightning-input>
                             </td>
-                            <td data-label="Description">
-                                <div class="slds-truncate" title={template.Description__c}>{template.Description__c}</div>
+                            <td data-label="Object Name">
+                                <div class="slds-truncate" title={template.Object_Name__c}>{template.Object_Name__c}</div>
                             </td>
                             <td data-label="Created Date">
-                                <div class="slds-truncate" title={template.CreatedDate}>{template.CreatedDate}</div>
+                                <div class="slds-truncate" title={template.CreatedDate}>{template.CreatedDateformatted}</div>
                             </td>
                             <td data-label="Actions">
                                 <lightning-button-icon 
@@ -91,15 +89,18 @@
                     </template>
                 </tbody>
             </table>
+
+            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose}></c-custom-modal>
+
             <div class="pagination-container">
                 <lightning-button 
-                class="previous" 
-                label="Previous" 
-                onclick={previousPage} 
-                disabled={isPreviousDisabled}>
+                    class="previous" 
+                    label="Previous" 
+                    onclick={previousPage} 
+                    disabled={isPreviousDisabled}>
                 </lightning-button>
 
-                <div class="page-info"> Page {currentPage} / {totalPages}</div>
+                <div class="page-info"> Page {currentPage} Of {totalPages}</div>
 
                 <lightning-button 
                     class="next" 
@@ -110,5 +111,4 @@
             </div>
         </div>
     </div>
-
 </template>

@@ -2,6 +2,7 @@
   background-color: white;
   height: 100%;
   width: 100%;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
 .slds-card {
@@ -90,7 +91,6 @@
 .slds-table th, .slds-table td {
   border: 1px solid #d9dbdd;
   padding: 0.3rem;
-  padding-left: 2%;
   max-width: 45vw !important;
 }
 
@@ -117,4 +117,21 @@
 
 lightning-button-icon{
   margin-right: 10% ;
+}
+
+th{
+  text-transform: capitalize;
+  padding: 10px !important;
+}
+
+.addbtn{
+  --slds-c-button-radius-border : 10px !important;
+  --slds-c-button-spacing-block-start : 4px;
+  --slds-c-button-spacing-inline-end : 16px;
+  --slds-c-button-spacing-block-end : 4px;
+  --slds-c-button-spacing-inline-start : 16px;
+}
+
+.input-template{
+--slds-c-input-radius-border : 10px !important;
 }

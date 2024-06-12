@@ -13,31 +13,49 @@ export default class TemplateBuilder extends LightningElement {
     @track currentPage = 1;
     @track totalPages = 0;
     @track error;
+    @track isModalOpen = false;
 
-    connectedCallback(){
-        loadStyle(this, externalCss)
-            .then(() => {
-                console.log('External Css Loaded');
-            })
-            .catch(error => {
-                console.log('Error occurring during loading external css', error);
-            });
+    connectedCallback() {
+        Promise.all([
+            loadStyle(this, externalCss)
+        ])
+        .then(res => {
+            console.log('External Css Loaded');
+        })
+        .catch(error => {
+            console.log('Error occuring during loading external css', error);
+        });
     }
 
     @wire(getTemplates)
     wiredTemplates({ error, data }) {
         if (data) {
+            console.log(JSON.stringify(data));
             this.templates = data.map((template, index) => ({
                 ...template,
                 rowIndex: index + 1,
-                isActive: template.Status__c === 'Active'
+                CreatedDateformatted: this.formatDate(template.CreatedDate)
             }));
+
             this.filteredTemplates = this.templates;
             this.calculateTotalPages();
             this.displayTemplates();
         } else if (error) {
             this.error = error;
         }
+    }
+
+    formatDate(dateStr) {
+        var formatdate = new Date(dateStr);
+        formatdate.setDate(formatdate.getDate());
+        var formattedDate = new Date(formatdate.getFullYear(), formatdate.getMonth(), formatdate.getDate(), 0, 0, 0);
+        const day = formattedDate.getDate();
+        const month = formattedDate.getMonth() + 1; // Month is zero-based, so we add 1
+        const year = formattedDate.getFullYear();
+        const paddedDay = day < 10 ? `0${day}` : day;
+        const paddedMonth = month < 10 ? `0${month}` : month;
+        const formattedDateStr = `${paddedDay}/${paddedMonth}/${year}`;
+        return formattedDateStr;
     }
 
     calculateTotalPages() {
@@ -85,6 +103,10 @@ export default class TemplateBuilder extends LightningElement {
         }
     }
 
+    handleModalClose() {
+        this.isModalOpen = false;
+    }
+
     handlePreview(event) {
         const templateId = event.target.dataset.id;
         const template = this.templates.find(tmpl => tmpl.Id === templateId);
@@ -109,8 +131,9 @@ export default class TemplateBuilder extends LightningElement {
         }
     }
 
-    handleAdd(event) {
+    handleAdd() {
         console.log('Clicked');
+        this.isModalOpen = true;
     }
 
     get isPreviousDisabled() {

@@ -1,0 +1,38 @@
+*{
+    font-family: Arial, Helvetica, sans-serif;
+    --slds-c-icon-color-foreground-default : white !important;
+    --slds-c-modal-footer-color-background : white !important
+}
+
+.custom-modal-header {
+    background-color: #0176D3 !important;
+    color: white;
+}
+
+.custom-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15%;
+}
+
+.custom-input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    line-height: 1;
+}
+
+.label-container {
+    flex: 0 0 35%;
+    margin-right: 15px;
+    margin-top: 2%;
+}
+
+.input-container {
+    flex: 1;
+}
+
+.red{
+    color: red;
+}

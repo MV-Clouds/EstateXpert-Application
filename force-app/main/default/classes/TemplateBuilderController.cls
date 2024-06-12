@@ -29,32 +29,41 @@ public with sharing class TemplateBuilderController {
     }
     
 
+    // @AuraEnabled
+    // public static void saveTemplate(String objectName, String templateName, String templateContent) {
+    //     if (!Schema.sObjectType.Template__c.isCreateable()) {
+    //         throw new AuraHandledException('No create access to Template__c object.');
+    //     }
+    //     if (!Schema.sObjectType.Template__c.isUpdateable()) {
+    //         throw new AuraHandledException('No update access to Template__c object.');
+    //     }
+        
+    //     Template__c template;
+    //     try {
+    //         template = [SELECT Id, Label__c	, Template_Body__c FROM Template__c WHERE Object_Name__c = :objectName AND Label__c = :templateName LIMIT 1];
+    //     } catch (Exception e) {
+    //         template = null;
+    //     }
+        
+    //     if (template == null) {
+    //         template = new Template__c(
+    //             Label__c = templateName,
+    //             Template_Body__c = templateContent,
+    //             Object_Name__c = objectName
+    //         );
+    //         insert template;
+    //     } else {
+    //         template.Template_Body__c = templateContent;
+    //         update template;
+    //     }
+    // }
+
     @AuraEnabled
-    public static void saveTemplate(String objectName, String templateName, String templateContent) {
-        if (!Schema.sObjectType.Template__c.isCreateable()) {
-            throw new AuraHandledException('No create access to Template__c object.');
-        }
-        if (!Schema.sObjectType.Template__c.isUpdateable()) {
-            throw new AuraHandledException('No update access to Template__c object.');
-        }
-        
-        Template__c template;
+    public static void saveTemplate(Template__c template) {
         try {
-            template = [SELECT Id, Label__c	, Template_Body__c FROM Template__c WHERE Object_Name__c = :objectName AND Label__c = :templateName LIMIT 1];
-        } catch (Exception e) {
-            template = null;
-        }
-        
-        if (template == null) {
-            template = new Template__c(
-                Label__c = templateName,
-                Template_Body__c = templateContent,
-                Object_Name__c = objectName
-            );
             insert template;
-        } else {
-            template.Template_Body__c = templateContent;
-            update template;
+        } catch (Exception e) {
+            throw new AuraHandledException('Error saving template: ' + e.getMessage());
         }
     }
 
@@ -72,6 +81,19 @@ public with sharing class TemplateBuilderController {
         objectNames.sort();
         
         return objectNames;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<String> getTemplateTypePicklistValues() {
+        Schema.DescribeFieldResult fieldResult = Template__c.Template_Type__c.getDescribe();
+        List<Schema.PicklistEntry> picklistValues = fieldResult.getPicklistValues();
+        
+        List<String> picklistValueStrings = new List<String>();
+        for(Schema.PicklistEntry picklistEntry : picklistValues) {
+            picklistValueStrings.add(picklistEntry.getValue());
+        }
+        
+        return picklistValueStrings;
     }
 
     @AuraEnabled

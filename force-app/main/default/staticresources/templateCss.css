@@ -3,14 +3,19 @@
     display: flex !important;
   }
   
-  .slds-checkbox_on {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
+  .slds-checkbox_on , .slds-checkbox_off{
     font-size: small !important;
   }
   
   .slds-checkbox_faux{
     margin-right: 1rem !important;
   }
-  
+  .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_off{
+    display: none !important;
+  }
+
+  .input-template .slds-input-has-icon_left-right .slds-input, .slds-input-has-icon_left-right .slds-input_faux, .slds-input-has-icon_left-right .slds-input_bare, .slds-input-has-icon_left-right .slds-input--bare, .slds-input-has-icon--left-right .slds-input, .slds-input-has-icon--left-right .slds-input_faux, .slds-input-has-icon--left-right .slds-input_bare, .slds-input-has-icon--left-right .slds-input--bare{
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
