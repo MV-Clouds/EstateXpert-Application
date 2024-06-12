@@ -1,16 +1,19 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import saveTemplate from '@salesforce/apex/TemplateBuilderController.saveTemplate';
 import getAllObjectNames from '@salesforce/apex/TemplateBuilderController.getAllObjectNames';
 import getTemplateTypePicklistValues from '@salesforce/apex/TemplateBuilderController.getTemplateTypePicklistValues';
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class CustomModal extends LightningElement {
-    @track templateName = '';
-    @track description = '';
-    @track objectSelect = '';
-    @track typeSelect = '';
+export default class CustomModal extends NavigationMixin(LightningElement) {
+    @api templateName = '';
+    @api description = '';
+    @api objectSelect = '';
+    @api typeSelect = '';
     @track objectOptions;
     @track typeOptions;
+    @track IsChildModal = false;
+    @track currentRecordId;
+    @api name = ''
 
     @wire(getAllObjectNames)
     wiredSObjectNames({ error, data }) {
@@ -30,6 +33,17 @@ export default class CustomModal extends LightningElement {
         }
     }
 
+    connectedCallback(){
+        console.log('name ==> ' , this.name);
+        if(this.name == 'New'){
+            this.templateName = '';
+            this.description = '';
+            this.objectSelect = '';
+            this.typeSelect = '';
+        }
+    }
+
+
     closeModal() {
         const closeEvent = new CustomEvent('close');
         this.dispatchEvent(closeEvent);
@@ -37,22 +51,19 @@ export default class CustomModal extends LightningElement {
 
     handleSave() {
         if (this.templateName && this.objectSelect && this.typeSelect) {
-            const newTemplate = {
-                Name: this.templateName,
-                Description__c: this.description,
-                Object_Name__c: this.objectSelect,
-                Template_Type__c: this.typeSelect
-            };
+            console.log('selectedobject' , this.objectSelect);
 
-            saveTemplate({ template: newTemplate })
-                .then(() => {
-                    this.closeModal();
-                    this.showToast('Success', 'Template saved successfully', 'success');
-                })
-                .catch(error => {
-                    console.error('Error saving template:', error);
-                    this.showToast('Error', 'An error occurred while saving the template', 'error');
-                });
+            this[NavigationMixin.Navigate]({
+                type: 'standard__navItemPage',
+                attributes: {
+                    apiName: 'Template_Editor',
+                },
+                state: {
+                    c__selectedObject: this.objectSelect,
+                    c__myrecordId: this.currentRecordId
+                }
+            });
+
         } else {
             this.showToast('Error', 'Please fill in all required fields', 'error');
         }

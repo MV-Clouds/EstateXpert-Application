@@ -1,5 +1,18 @@
-.slds-modal__container{
-    max-width: 80vw !important;
-    margin-top: 5%;
-    height: 90vh;
+
+.full-screen-container {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    height: 100%;
+    width: 100%;
 }
+
+.full-screen-content {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.template-info {
+    margin-bottom: 1rem;
+}
+

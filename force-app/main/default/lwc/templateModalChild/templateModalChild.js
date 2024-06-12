@@ -5,66 +5,62 @@ import getFieldsForObject from '@salesforce/apex/TemplateBuilderController.getAl
 import saveTemplate from '@salesforce/apex/TemplateBuilderController.saveTemplate';
 import getTemplateContent from '@salesforce/apex/TemplateBuilderController.getTemplateContentById';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { CurrentPageReference } from 'lightning/navigation';
 
 export default class TemplateModalChild extends LightningElement {
     @api selectedObject;
     @api myrecordId;
     @track selectedField = '';
     @track fieldOptions = [];
-    @track templateLabel = '';
+    @api templateLabel = '';
     @track isLoading = true;
     @track isInitialRender = true;
-    @track isDisplayedData = true; //For rendering data first time
+    @track isDisplayedData = true;
 
-    connectedCallback() {
-        console.log('selectedObject ==> ', this.selectedObject);
-        console.log('recId ==> ', this.myrecordId);
-
+    @wire(CurrentPageReference)
+    getStateParameters(currentPageReference) {
+        if (currentPageReference && currentPageReference.state) {
+            this.selectedObject = currentPageReference.state.c__selectedObject || '';
+            this.myrecordId = currentPageReference.state.c__myrecordId || '';
+            this.fetchFields();
+        }
     }
 
-    @wire(getFieldsForObject, { objectName: '$selectedObject' })
-    wiredFields({ error, data }) {
-        if (data) {
-            this.fieldOptions = data.map(field => ({ label: field, value: field }));
-        } else if (error) {
-            console.error('Error fetching fields: ', error);
+    fetchFields() {
+        if (!this.selectedObject) {
+            console.error('No selected object found.');
+            return;
         }
+
+        getFieldsForObject({ objectName: this.selectedObject })
+            .then(data => {
+                this.fieldOptions = data.map(field => ({ label: field, value: field }));
+            })
+            .catch(error => {
+                console.error('Error fetching fields:', error);
+            });
     }
 
     renderedCallback(){
-        try {
-            if(this.isInitialRender){
+        if(this.isInitialRender){
             Promise.all([
                 loadScript(this, summerNote_Editor + '/jquery-3.7.1.min.js'),
             ])
-            .then(result => { 
-                Promise.all([
-                    
+            .then(() => { 
+                return Promise.all([
                     loadStyle(this, summerNote_Editor + '/summernote-lite.css'),
                     loadScript(this, summerNote_Editor + '/summernote-lite.js'),
-                    
-                ])
-                .then(res => {
-                    this.isInitialRender = false;
-                    this.initializeSummerNote(this,'editor')
-
-                    console.log('library loaded SuccessFully', {res});
-                    this.isLoading = false;                   
-                })
-                .catch(err => {
-                    console.log('Error To Load summerNote_Editor >> ', {err}) 
-                    this.isLoading = false;
-                })
+                ]);
+            })
+            .then(() => {
+                this.isInitialRender = false;
+                this.initializeSummerNote(this,'editor')
+                this.isLoading = false;
             })
             .catch(error => { 
-                console.log('Error To Load Jquery >> ', {error}) ;
-                this.isLoading = false; 
-            })
-                
-        }
-        }
-        catch(error){
-            console.log('error in richTextEditor_custom.renderedCallback : ', error.stack);
+                console.log('Error loading libraries', error);
+                this.isLoading = false;
+            });
         }
     }
 
@@ -96,15 +92,16 @@ export default class TemplateModalChild extends LightningElement {
                         col: 10,
                         row: 10,
                       },
-                      toolbar: [
-                        ['style', ['style']],
-                        ['font', ['bold', 'underline', 'clear']],
-                        ['fontname', ['fontname']],
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                        ['insert', ['link', 'picture', 'video']],
-                        ['view', ['fullscreen', 'codeview', 'help']],
+                    toolbar: [
+
+                        // Customized Toolbar 
+                        ['custom_paragraphFormatting', ['ul', 'ol', 'paragraph', 'height']],
+                        ['custom_style', ['style']],
+                        ['custom_fontFormattings', ['fontname', 'fontsize','forecolor', 'backcolor', 'bold','italic', 'underline', 'strikethrough','superscript', 'subscript']],
+                        ['custom_insert', ['table','link', 'picture', 'hr']],
+                        ['custom_clearFormatting', ['clear']],
+                        // ['custom_decisions', ['setdecisionBtns']],
+      
                       ],
                   
                     popover: {
@@ -119,10 +116,6 @@ export default class TemplateModalChild extends LightningElement {
                           table: [
                             ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
                             ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
-                            ['tablerowcolor', ['setTableRowColor']],
-                            ['tablebordercolor', ['setTableBorder']],
-                            ['tablecellcolor', ['setTableCellColor']],
-                            ['cellVerticalAlightn', ['setCellVeticalAlign']],
                             ['merge', ['jMerge']],
                             ['style', ['jBackcolor', 'jBorderColor', 'jAlign']],
                             ['info', ['jTableInfo']],
@@ -250,47 +243,19 @@ export default class TemplateModalChild extends LightningElement {
             return false;
         }
     }
-    
+
     loadTemplateContent() {
         getTemplateContent({ templateId: this.myrecordId })
             .then(result => {
-                console.log(result);
                 const editor = this.template.querySelector('[data-name="editor"]');
-                console.log({editor});
-                this.displayText(editor,result);
-                // $(editor).summernote('code', result.Template_Body__c);
-                // this.templateLabel = result.Label__c;
-                // this.isLoading = false;
+                $(editor).summernote('code', result.Template_Body__c);
+                this.templateLabel = result.Label__c;
+                this.isLoading = false;
             })
             .catch(error => {
                 console.error('Error fetching template content:', error);
                 this.isLoading = false;
             });
-    }
-
-    async displayText(editor,result){
-        let content = await result.Template_Body__c;
-        let label = await result.Label__c;
-        console.log('label ==> ', label);
-        console.log('content ==> ' , content);
-        $(editor).summernote('code', $(editor).summernote('code') + ' ' + content);
-        this.templateLabel = label ;
-        this.isLoading = false;
-    }
-    
-    handleFieldChange(event) {
-        this.selectedField = event.detail.value;
-        this.appendFieldToEditor();
-    }
-
-    handleTemplateLabelChange(event) {
-        this.templateLabel = event.target.value;
-    }
-
-    appendFieldToEditor() {
-        const editor = this.template.querySelector('[data-name="editor"]');
-        const content = `<span>{!${this.selectedObject}.${this.selectedField}}</span>`;
-        $(editor).summernote('code', $(editor).summernote('code') + ' ' + content);
     }
 
     handleSave() {

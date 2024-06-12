@@ -1,5 +1,6 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, wire, track , api } from 'lwc';
 import getTemplates from '@salesforce/apex/TemplateBuilderController.getTemplates';
+import deleteTemplate from '@salesforce/apex/TemplateBuilderController.deleteTemplate';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import externalCss from '@salesforce/resourceUrl/templateCss';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -14,6 +15,11 @@ export default class TemplateBuilder extends LightningElement {
     @track totalPages = 0;
     @track error;
     @track isModalOpen = false;
+    @api nameForTemplate = 'New';
+    @track selectedobject = '';
+    @track selectedTemplate = '';
+    @track selectedDescription = '';
+    @track selectedType = '';
 
     connectedCallback() {
         Promise.all([
@@ -119,20 +125,42 @@ export default class TemplateBuilder extends LightningElement {
         const templateId = event.target.dataset.id;
         const template = this.templates.find(tmpl => tmpl.Id === templateId);
         if (template) {
-            this.showToast('Edit', `Edit template: ${template.Label__c}`, 'info');
+            console.log(JSON.stringify(template));
+            this.nameForTemplate = 'Edit';
+            this.selectedobject = template.Object_Name__c ? template.Object_Name__c : '';
+            this.selectedTemplate = template.Label__c ? template.Label__c : '';
+            this.selectedDescription = template.Description__c ? template.Description__c : '';
+            this.selectedType = template.Template_Type__c ? template.Template_Type__c : '';
+            this.isModalOpen = true;
+
         }
     }
 
     handleDelete(event) {
         const templateId = event.target.dataset.id;
-        const template = this.templates.find(tmpl => tmpl.Id === templateId);
-        if (template) {
-            this.showToast('Delete', `Delete template: ${template.Label__c}`, 'error');
+        const templateIndex = this.templates.findIndex(tmpl => tmpl.Id === templateId);
+        if (templateIndex !== -1) {
+            const template = this.templates[templateIndex];
+            deleteTemplate({ templateId: template.Id })
+                .then(() => {
+                    this.templates.splice(templateIndex, 1);
+                    this.filteredTemplates = [...this.templates];
+                    this.calculateTotalPages();
+                    this.displayTemplates();
+                    // Show success toast
+                    this.showToast('Success', `Template '${template.Label__c}' deleted successfully.`, 'success');
+                })
+                .catch(error => {
+                    // Show error toast
+                    this.showToast('Error', `Error deleting template: ${error.body.message}`, 'error');
+                });
         }
     }
+    
 
     handleAdd() {
         console.log('Clicked');
+        this.nameForTemplate = 'New';
         this.isModalOpen = true;
     }
 
