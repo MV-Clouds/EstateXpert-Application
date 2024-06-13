@@ -42,7 +42,9 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                             value: field.fieldAPIName,
                             type: field.fieldType, // Add type to identify lookup fields
                             referenceObjectName: field.referenceFields || [], 
-                            objectApiName : field.referenceObjectName || ''// Include reference fields if any
+                            objectApiName : field.referenceObjectName || '',
+                            picklistValues: field.picklistValues || []
+                            // Include reference fields if any
                         };
                     });
                     this.options1 = this.fieldOptions;
@@ -84,7 +86,21 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                     { label: 'Maximum', value: 'maximum' }
                 ];
                 break;
+            case 'CURRENCY':
+                options = [
+                    { label: 'Range', value: 'range' },
+                    { label: 'Minimum', value: 'minimum' },
+                    { label: 'Maximum', value: 'maximum' }
+                ];
+                break;
             case 'STRING':
+                options = [
+                    { label: 'Equals', value: 'equals' },
+                    { label: 'Contains', value: 'contains' },
+                    { label: 'Starts With', value: 'startswith' }
+                ];
+                break;
+            case 'TEXTAREA':
                 options = [
                     { label: 'Equals', value: 'equals' },
                     { label: 'Contains', value: 'contains' },
@@ -98,18 +114,28 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                     { label: 'Date Maximum', value: 'datemaximum' }
                 ];
                 break;
+            case 'DATETIME':
+                options = [
+                    { label: 'Date Range', value: 'daterange' },
+                    { label: 'Date Minimum', value: 'dateminimum' },
+                    { label: 'Date Maximum', value: 'datemaximum' }
+                ];
+                break;
             case 'ID':
                 options = [
                     { label: 'Equals', value: 'equals' }
                 ];
+                break;
             case 'EMAIL':
                 options = [
                     { label: 'Equals', value: 'equals' }
                 ];
+                break;
             case 'PHONE':
                 options = [
                     { label: 'Equals', value: 'equals' }
                 ];
+                break;
             case 'URL':
                 options = [
                     { label: 'Equals', value: 'equals' }
@@ -132,6 +158,8 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.showCombobox = false;
         this.valueIsField = true;
         this.selectedField= [this.selectedFields.length > 0 ? this.selectedFields[this.selectedFields.length - 1] : null];
+        console.log('log'+JSON.stringify(this.selectedField));
+        console.log('if'+JSON.stringify(this.selectedFields.length > 0 ? this.selectedFields[this.selectedFields.length - 1] : null));
     }
 
     isAuditField(fieldName) {
@@ -144,13 +172,14 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
 
     handleFieldSelect(event) {
         const selectedValue = event.currentTarget.dataset.id;
-        // const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
-        const selectedField = this.findFieldRecursively(this.fieldOptions, selectedValue);
+        const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
+        // const selectedField = this.findFieldRecursively(this.fieldOptions, selectedValue);
     
         if (selectedValue && selectedField && !this.selectedValues.includes(selectedValue)) {
+            
+            this.selectedFields.push({ label: selectedField.label, objectApiName: selectedField.objectApiName,value:selectedField.value,type:selectedField.type,picklistValues:selectedField.picklistValues,prevApiName:this.selectedValues.length > 0 ? this.selectedValues[this.selectedValues.length - 1]:''}); // Only store the label
+            console.log('selected'+JSON.stringify(this.selectedFields));
             this.selectedValues.push(selectedValue);
-            this.selectedFields.push({ label: selectedField.label, objectApiName: selectedField.objectApiName,value:selectedField.value,type:selectedField.type }); // Only store the label
-            // console.log(JSON.stringify(this.selectedValues));
             this.updateBreadcrumbs();
         }
         this.searchTerm1 = ''; // Clear the search term to reset the search

@@ -58,6 +58,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                     listing.isChecked = false;
                     listing.imageUrl__c = listing.imageUrl__c ? listing.imageUrl__c : this.blankImage;
                 })
+                console.log(JSON.stringify(this.listingData));
                 this.processListings();
             })
             .catch(error => {
