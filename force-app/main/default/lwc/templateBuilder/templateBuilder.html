@@ -1,5 +1,13 @@
+<!--
+* Component Name: templateBuilder 
+* @description: Main component to display template
+* Date: 11/06/2024 
+* Created By: Rachit Shah 
+-->
+
 <template>
     <div class="wrapper">
+        <lightning-spinner if:true={isLoading} alternative-text="Loading" size="medium" variant="brand"></lightning-spinner>
         <div class="slds-m-around_medium navbar">
             <div class="input-text">
                 <lightning-input 
@@ -43,78 +51,89 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <template for:each={visibleTemplates} for:item="template" for:index="index">
-                        <tr key={template.Id} class={template.cssClass}>
-                            <td data-label="S.No.">
-                                <div >{template.rowIndex}</div>
-                            </td>
-                            <td data-label="Template Name">
-                                <div  title={template.Label__c}>{template.Label__c}</div>
-                            </td>
-                            <td data-label="Status">
-                                <lightning-input 
-                                    type="toggle" 
-                                    checked={template.isActive} 
-                                    onchange={handleStatusChange} 
-                                    data-id={template.Id}>
-                                </lightning-input>
-                            </td>
-                            <td data-label="Object Name">
-                                <div  title={template.Object_Name__c}>{template.Object_Name__c}</div>
-                            </td>
-                            <td>
-                                <div title={template.Description__c}>{template.Description__c}</div>
-                            </td>
-                            <td data-label="Created Date">
-                                <div  title={template.CreatedDate}>{template.CreatedDateformatted}</div>
-                            </td>
-                            <td data-label="Actions">
-                                <lightning-button-icon 
-                                    icon-name="utility:preview" 
-                                    alternative-text="Preview" 
-                                    title="Preview" 
-                                    onclick={handlePreview} 
-                                    data-id={template.Id}>
-                                </lightning-button-icon>
-                                <lightning-button-icon 
-                                    icon-name="utility:edit" 
-                                    alternative-text="Edit" 
-                                    title="Edit" 
-                                    onclick={handleEdit} 
-                                    data-id={template.Id}>
-                                </lightning-button-icon>
-                                <lightning-button-icon 
-                                    icon-name="utility:delete" 
-                                    alternative-text="Delete" 
-                                    title="Delete" 
-                                    onclick={handleDelete} 
-                                    data-id={template.Id}>
-                                </lightning-button-icon>
+                    <template if:true={visibleTemplates.length}>
+                        <template for:each={visibleTemplates} for:item="template" for:index="index">
+                            <tr key={template.Id} class={template.cssClass}>
+                                <td data-label="S.No.">
+                                    <div >{template.rowIndex}</div>
+                                </td>
+                                <td data-label="Template Name">
+                                    <div  title={template.Label__c}>{template.Label__c}</div>
+                                </td>
+                                <td data-label="Status">
+                                    <lightning-input 
+                                        type="toggle" 
+                                        checked={template.isActive} 
+                                        onchange={handleStatusChange} 
+                                        data-id={template.Id}>
+                                    </lightning-input>
+                                </td>
+                                <td data-label="Object Name">
+                                    <div  title={template.Object_Name__c}>{template.Object_Name__c}</div>
+                                </td>
+                                <td>
+                                    <div title={template.Description__c}>{template.Description__c}</div>
+                                </td>
+                                <td data-label="Created Date">
+                                    <div  title={template.CreatedDate}>{template.CreatedDateformatted}</div>
+                                </td>
+                                <td data-label="Actions">
+                                    <lightning-button-icon 
+                                        icon-name="utility:preview" 
+                                        alternative-text="Preview" 
+                                        title="Preview" 
+                                        onclick={handlePreview} 
+                                        data-id={template.Id}>
+                                    </lightning-button-icon>
+                                    <lightning-button-icon 
+                                        icon-name="utility:edit" 
+                                        alternative-text="Edit" 
+                                        title="Edit" 
+                                        onclick={handleEdit} 
+                                        data-id={template.Id}>
+                                    </lightning-button-icon>
+                                    <lightning-button-icon 
+                                        icon-name="utility:delete" 
+                                        alternative-text="Delete" 
+                                        title="Delete" 
+                                        onclick={handleDelete} 
+                                        data-id={template.Id}>
+                                    </lightning-button-icon>
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+                    <template if:false={visibleTemplates.length}>
+                        <tr>
+                            <td colspan="7" style="text-align: center;">
+                                No data to display
                             </td>
                         </tr>
                     </template>
                 </tbody>
             </table>
 
-            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate} object-select={selectedobject} type-select={selectedType} description={selectedDescription} name={nameForTemplate} current-record-id={currentRecId}></c-custom-modal>
+            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate} object-select={selectedobject} type-select={selectedType} description={selectedDescription} name={nameForTemplate} current-record-id={currentRecId} is-edit="false" ></c-custom-modal>
 
-            <div class="pagination-container">
-                <lightning-button 
-                    class="previous" 
-                    label="Previous" 
-                    onclick={previousPage} 
-                    disabled={isPreviousDisabled}>
-                </lightning-button>
+            <template if:true={visibleTemplates.length}>
+                <div class="pagination-container">
+                    <lightning-button 
+                        class="previous" 
+                        label="Previous" 
+                        onclick={previousPage} 
+                        disabled={isPreviousDisabled}>
+                    </lightning-button>
 
-                <div class="page-info"> Page {currentPage} Of {totalPages}</div>
+                    <div class="page-info"> Page {currentPage} Of {totalPages}</div>
 
-                <lightning-button 
-                    class="next" 
-                    label="Next" 
-                    onclick={nextPage} 
-                    disabled={isNextDisabled}>
-                </lightning-button>
-            </div>
+                    <lightning-button 
+                        class="next" 
+                        label="Next" 
+                        onclick={nextPage} 
+                        disabled={isNextDisabled}>
+                    </lightning-button>
+                </div>
+            </template>
         </div>
     </div>
 </template>

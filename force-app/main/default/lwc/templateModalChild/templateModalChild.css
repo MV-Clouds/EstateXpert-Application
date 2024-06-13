@@ -93,5 +93,5 @@
 }
 
 .max-width{
-    width: -webkit-fill-available;
+    width: max-content;
 }

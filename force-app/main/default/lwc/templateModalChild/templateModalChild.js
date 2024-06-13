@@ -7,7 +7,6 @@ import getTemplateContent from '@salesforce/apex/TemplateBuilderController.getTe
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CurrentPageReference } from 'lightning/navigation';
 import { NavigationMixin } from 'lightning/navigation';
-import { RefreshEvent } from "lightning/refresh";
 
 export default class TemplateModalChild extends NavigationMixin(LightningElement) {
     @api selectedObject;
@@ -21,7 +20,15 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track isDisplayedData = true;
     @track isModalOpen = false;
     @track selectedType = '';
+    @track bodyOfTemplate = '';
+    @track editValue = true;
 
+    /**
+    * Method Name: getStateParameters
+    * @description: Method to get values from attribute from the currentpagereference
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
         if (currentPageReference && currentPageReference.attributes) {
@@ -36,7 +43,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.currentRecordId = parseObject.myrecordId;
                     this.templateLabel = parseObject.label;
                     this.description = parseObject.description;
-                    this.selectedType = parseObject.type
+                    this.selectedType = parseObject.type,
+                    this.bodyOfTemplate = parseObject.bodyoftemplate
                     this.fetchFields();
                 } catch (error) {
                     console.error('Error parsing navigation state:', error);
@@ -49,6 +57,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         }
     }
 
+    /**
+    * Method Name: fetchFields
+    * @description: Method to fetch the fields for the selected object
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     fetchFields() {
         if (!this.selectedObject) {
             console.error('No selected object found.');
@@ -64,6 +78,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             });
     }
 
+    /**
+    * Method Name: renderedCallback
+    * @description: Method to load external libraries and jquery
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     renderedCallback() {
         if (this.isInitialRender) {
             Promise.all([
@@ -87,6 +107,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         }
     }
 
+    /**
+    * Method Name: initializeSummerNote
+    * @description: Method to initialize library
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     async initializeSummerNote(self, editorSelector) {
         try {
             console.log('self : ', self.activeTabName);
@@ -234,11 +260,14 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             page.setAttribute('data-editor', note.selector);
             page.setAttribute('contenteditable', 'true');
 
-            if (this.currentRecordId) {
+            if (this.currentRecordId && (this.bodyOfTemplate == null || this.bodyOfTemplate == '')) {
                 if (this.isDisplayedData) {
                     this.loadTemplateContent();
                     this.isDisplayedData = false;
                 }
+            }
+            else{
+                this.setEmailBody();
             }
 
             return true;
@@ -248,6 +277,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         }
     }
 
+    /**
+    * Method Name: loadTemplateContent
+    * @description: load the template body and add that in library editor
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     loadTemplateContent() {
         getTemplateContent({ templateId: this.currentRecordId })
             .then(result => {
@@ -261,60 +296,102 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             });
     }
 
+    /**
+    * Method Name: handleFieldChange
+    * @description: handle field change and call appendFieldToEditor method
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     handleFieldChange(event) {
         this.selectedField = event.detail.value;
         this.appendFieldToEditor();
     }
 
+    /**
+    * Method Name: appendFieldToEditor
+    * @description: append the selected field in the editor of the library
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     appendFieldToEditor() {
         const editor = this.template.querySelector('[data-name="editor"]');
         const content = `<span>{!${this.selectedObject}.${this.selectedField}}</span>`;
         $(editor).summernote('code', $(editor).summernote('code') + ' ' + content);
     }
 
+    /**
+    * Method Name: setEmailBody
+    * @description: get the body of the template and set in the currentpagereference method
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    setEmailBody(){
+        const editor = this.template.querySelector('[data-name="editor"]');
+        $(editor).summernote('code', this.bodyOfTemplate);
+    }
 
-handleSave() {
-    const editor = this.template.querySelector('[data-name="editor"]');
-    const content = $(editor).summernote('code');
-    this.isLoading = true;
+    /**
+    * Method Name: handleSave
+    * @description: save the record with alll the data
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    handleSave() {
+        const editor = this.template.querySelector('[data-name="editor"]');
+        const content = $(editor).summernote('code');
+        this.isLoading = true;
 
-    const template = {
-        Object_Name__c: this.selectedObject,
-        Label__c: this.templateLabel,
-        Template_Body__c: content,
-        Description__c : this.description
-    };
+        const template = {
+            Object_Name__c: this.selectedObject,
+            Label__c: this.templateLabel,
+            Template_Body__c: content,
+            Description__c : this.description,
+            Template_Type__c : this.selectedType
+        };
 
-    saveTemplate({ template : template , recId : this.currentRecordId })
-        .then((res) => {
-            this.showToast('Success', 'Template saved successfully', 'success');
-            this.isLoading = false;
+        saveTemplate({ template : template , recId : this.currentRecordId })
+            .then((res) => {
+                this.showToast('Success', 'Template saved successfully', 'success');
+                this.isLoading = false;
+                this.handleCancel();
+            })
+            .catch(error => {
+                console.error('Error saving template:', error);
+                this.showToast('Error', 'Error saving template', 'error');
+                this.isLoading = false;
+            });
+    }
 
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: {
-                    recordId: res,
-                    objectApiName: 'Template__c',
-                    actionName: 'view'
-                }
-            });       
-        })
-        .catch(error => {
-            console.error('Error saving template:', error);
-            this.showToast('Error', 'Error saving template', 'error');
-            this.isLoading = false;
-        });
-}
-
-
+    /**
+    * Method Name: handleEdit
+    * @description: send the data of body in the modal and open popup to edit the template details
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     handleEdit() {
+        const editor = this.template.querySelector('[data-name="editor"]');
+        const content = $(editor).summernote('code');
+        this.bodyOfTemplate = content;
+    
         this.isModalOpen = true;
     }
 
+    /**
+    * Method Name: handleModalClose
+    * @description: Method to close the modal
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     handleModalClose() {
         this.isModalOpen = false;
     }
 
+    /**
+    * Method Name: handleCancel
+    * @description: Method to close tab and go back to the previous tab
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     handleCancel() {
         this[NavigationMixin.Navigate]({
             type: 'standard__navItemPage',
@@ -324,6 +401,12 @@ handleSave() {
         });
     }
 
+    /**
+    * Method Name: showToast
+    * @description: Method to display toast message
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     showToast(title, message, variant) {
         const event = new ShowToastEvent({
             title: title,

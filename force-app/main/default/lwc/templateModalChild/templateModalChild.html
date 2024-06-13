@@ -1,3 +1,10 @@
+<!--
+* Component Name: templateModalChild 
+* @description: Component to display library and save record
+* Date: 11/06/2024 
+* Created By: Rachit Shah 
+-->
+
 <template>
     <div class="full-screen-container">
         <div class="full-screen-content">
@@ -53,6 +60,8 @@
             type-select={selectedType} 
             description={description} 
             name= "Edit" 
+            body-of-template={bodyOfTemplate}
+            is-edit={editValue}
             current-record-id={myrecordId}>
         </c-custom-modal>
 

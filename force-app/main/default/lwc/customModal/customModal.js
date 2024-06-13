@@ -3,6 +3,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAllObjectNames from '@salesforce/apex/TemplateBuilderController.getAllObjectNames';
 import getTemplateTypePicklistValues from '@salesforce/apex/TemplateBuilderController.getTemplateTypePicklistValues';
 import { NavigationMixin } from 'lightning/navigation';
+import Error_PopUp from 'c/error_PopUp';
 
 export default class CustomModal extends NavigationMixin(LightningElement) {
     @api templateName = '';
@@ -14,7 +15,16 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @track IsChildModal = false;
     @api currentRecordId;
     @api name = ''
+    @api bodyOfTemplate = '';
+    @api isEdit = false;
+    @track showWarningPopup = false;
 
+    /**
+    * Method Name: wiredSObjectNames
+    * @description: Method to retrive objectName for picklist value
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
     @wire(getAllObjectNames)
     wiredSObjectNames({ error, data }) {
         if (data) {
@@ -24,6 +34,12 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         }
     }
 
+    /**
+    * Method Name: wiredPicklistValues
+    * @description: Method to retrive type options for the picklist
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
     @wire(getTemplateTypePicklistValues)
     wiredPicklistValues({ error, data }) {
         if (data) {
@@ -33,8 +49,13 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         }
     }
 
-    connectedCallback(){
-        console.log('name ==> ' , this.name);
+    /**
+    * Method Name: connectedCallback
+    * @description: Method to remove default things if there is new templatencreation
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
+    connectedCallback(){    
         if(this.name == 'New'){
             this.templateName = '';
             this.description = '';
@@ -43,24 +64,33 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         }
     }
 
-
+    /**
+    * Method Name: closeModal
+    * @description: Method to close the modal
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
     closeModal() {
         const closeEvent = new CustomEvent('close');
         this.dispatchEvent(closeEvent);
     }
 
+    /**
+    * Method Name: handleSave
+    * @description: Method to save the details and pass to another component
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
     handleSave() {
-        // Ensure all required fields are filled
         if (this.templateName && this.objectSelect && this.typeSelect) {
-            console.log('selectedObject:', this.objectSelect);
-            console.log('recordId:', this.currentRecordId);
-    
+
             const navigationState = {
                 selectedObject: this.objectSelect,
                 myrecordId: this.currentRecordId,
                 label: this.templateName,
                 description: this.description,
-                type : this.typeSelect
+                type : this.typeSelect,
+                bodyoftemplate : this.bodyOfTemplate
             };
     
             const serializedState = JSON.stringify(navigationState);
@@ -81,9 +111,13 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             this.showToast('Error', 'Please fill in all required fields', 'error');
         }
     }
-    
-    
 
+    /**
+    * Method Name: handleInputChange
+    * @description: Method to save values in variable when any input changes
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
     handleInputChange(event) {
         const field = event.target.name;
         const value = event.target.value;
@@ -97,6 +131,13 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             this.typeSelect = value;
         }
     }
+
+    /**
+    * Method Name: showToast
+    * @description: Method to show toast message for success or error
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
 
     showToast(title, message, variant) {
         const toastEvent = new ShowToastEvent({
