@@ -135,3 +135,27 @@ th{
 .input-template{
 --slds-c-input-radius-border : 10px !important;
 }
+
+.sno{
+  width: 3% !important;
+}
+
+.template-name{
+  width: 15% !important;
+}
+
+.status{
+  width: 10% !important;
+}
+
+.object-name{
+  width: 10% !important;
+}
+
+.created-date{
+  width: 10% !important;
+}
+
+.actions{
+  width: 12% !important;
+}

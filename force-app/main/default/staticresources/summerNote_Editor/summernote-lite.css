@@ -1818,6 +1818,7 @@ a.note-dropdown-item:hover {
                 align-items: flex-start;
                 flex-wrap: nowrap;
                 flex-direction: row;
+                width: max-content;
 
             }
             .footerEditorFrame .note-toolbar{

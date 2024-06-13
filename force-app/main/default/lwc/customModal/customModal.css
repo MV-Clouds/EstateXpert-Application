@@ -13,7 +13,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15%;
+    gap: 10%;
 }
 
 .custom-input-container {
@@ -35,4 +35,8 @@
 
 .red{
     color: red;
+}
+
+.cancel-btn , .save-btn{
+    --slds-c-button-radius-border : 10px !important;
 }

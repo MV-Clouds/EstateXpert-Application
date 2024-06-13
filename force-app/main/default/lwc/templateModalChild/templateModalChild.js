@@ -14,18 +14,35 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track selectedField = '';
     @track fieldOptions = [];
     @api templateLabel = '';
+    @track description = '';
     @track isLoading = true;
     @track isInitialRender = true;
     @track isDisplayedData = true;
+    @track isModalOpen = false;
 
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
-        if (currentPageReference && currentPageReference.state) {
-            this.selectedObject = currentPageReference.state.c__selectedObject || '';
-            this.myrecordId = currentPageReference.state.c__myrecordId || '';
-            console.log('recId ==> ', this.myrecordId);
-            this.templateLabel = currentPageReference.state.c__label || '-';
-            this.fetchFields();
+        if (currentPageReference && currentPageReference.attributes) {
+            const navigationStateString = currentPageReference.attributes.c__navigationState;
+            console.log('navigationStateString ==>' , navigationStateString);
+            if (navigationStateString) {
+                try {
+                    const parseObject = JSON.parse(navigationStateString);
+                    console.log('navigationState2 ==>', parseObject);
+
+                    this.selectedObject = parseObject.selectedObject;
+                    this.myrecordId = parseObject.myrecordId;
+                    this.templateLabel = parseObject.label;
+                    this.description = parseObject.description;
+                    this.fetchFields();
+                } catch (error) {
+                    console.error('Error parsing navigation state:', error);
+                }
+            } else {
+                console.error('navigationState not found in currentPageReference.state');
+            }
+        } else {
+            console.error('currentPageReference or currentPageReference.state is not defined');
         }
     }
 
@@ -252,26 +269,39 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         $(editor).summernote('code', $(editor).summernote('code') + ' ' + content);
     }
 
-    handleSave() {
-        const editor = this.template.querySelector('[data-name="editor"]');
-        const content = $(editor).summernote('code');
-        this.isLoading = true;
-        saveTemplate({ objectName: this.selectedObject, templateName: this.templateLabel, templateContent: content })
-            .then(() => {
-                this.showToast('Success', 'Template saved successfully', 'success');
-                this.isLoading = false;
-                this.handleCancel();
-            })
-            .catch(error => {
-                console.error('Error saving template:', error);
-                this.showToast('Error', 'Error saving template', 'error');
-                this.isLoading = false;
-            });
-    }
+
+handleSave() {
+    const editor = this.template.querySelector('[data-name="editor"]');
+    const content = $(editor).summernote('code');
+    this.isLoading = true;
+
+    const template = {
+        Object_Name__c: this.selectedObject,
+        Label__c: this.templateLabel,
+        Template_Body__c: content,
+        Description__c : this.description
+    };
+
+    saveTemplate({ template })
+        .then(() => {
+            this.showToast('Success', 'Template saved successfully', 'success');
+            this.isLoading = false;
+            this.handleCancel();
+        })
+        .catch(error => {
+            console.error('Error saving template:', error);
+            this.showToast('Error', 'Error saving template', 'error');
+            this.isLoading = false;
+        });
+}
+
 
     handleEdit() {
-        // Implement edit button functionality here
-        console.log('Edit button clicked.');
+        this.isModalOpen = true;
+    }
+
+    handleModalClose() {
+        this.isModalOpen = false;
     }
 
     handleCancel() {

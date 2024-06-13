@@ -4,10 +4,11 @@ import deleteTemplate from '@salesforce/apex/TemplateBuilderController.deleteTem
 import { loadStyle } from 'lightning/platformResourceLoader';
 import externalCss from '@salesforce/resourceUrl/templateCss';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { NavigationMixin } from 'lightning/navigation';
 
 const PAGE_SIZE = 10; // Number of templates per page
 
-export default class TemplateBuilder extends LightningElement {
+export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     @track templates = [];
     @track filteredTemplates = [];
     @track visibleTemplates = [];
@@ -123,19 +124,54 @@ export default class TemplateBuilder extends LightningElement {
         }
     }
 
+    // handleEdit(event) {
+    //     const templateId = event.target.dataset.id;
+    //     const template = this.templates.find(tmpl => tmpl.Id === templateId);
+    //     if (template) {
+    //         console.log(JSON.stringify(template));ß
+
+    //         //Here we have to call the main tab component
+    //         // this.nameForTemplate = 'Edit';
+    //         // this.currentRecId = templateId;
+    //         // this.selectedobject = template.Object_Name__c ? template.Object_Name__c : '';
+    //         // this.selectedTemplate = template.Label__c ? template.Label__c : '';
+    //         // this.selectedDescription = template.Description__c ? template.Description__c : '';
+    //         // this.selectedType = template.Template_Type__c ? template.Template_Type__c : '';
+    //         // this.isModalOpen = true;
+
+
+
+    //     }
+    // }
+
     handleEdit(event) {
         const templateId = event.target.dataset.id;
         const template = this.templates.find(tmpl => tmpl.Id === templateId);
-        if (template) {
-            console.log(JSON.stringify(template));
-            this.nameForTemplate = 'Edit';
-            this.currentRecId = templateId;
-            this.selectedobject = template.Object_Name__c ? template.Object_Name__c : '';
-            this.selectedTemplate = template.Label__c ? template.Label__c : '';
-            this.selectedDescription = template.Description__c ? template.Description__c : '';
-            this.selectedType = template.Template_Type__c ? template.Template_Type__c : '';
-            this.isModalOpen = true;
 
+        if (template) {    
+            const navigationState = {
+                selectedObject: template.Object_Name__c ? template.Object_Name__c : '',
+                label: template.Label__c ? template.Label__c : '',
+                description: template.Description__c ? template.Description__c  : '',
+                type : template.Template_Type__c ? template.Template_Type__c : ''
+            };
+    
+            const serializedState = JSON.stringify(navigationState);
+            console.log('serializedState:', serializedState);
+    
+            this[NavigationMixin.Navigate]({
+                type: 'standard__navItemPage',
+                attributes: {
+                    apiName: 'Template_Editor',
+                    c__navigationState: serializedState,
+                    c__recordId : templateId
+                }
+            });
+
+            this.closeModal();
+    
+        } else {
+            this.showToast('Error', 'Please fill in all required fields', 'error');
         }
     }
 

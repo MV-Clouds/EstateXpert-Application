@@ -12,23 +12,27 @@
                         <div><strong>Object:</strong></div>
                         <div>{selectedObject}</div>
                     </div>
+                </div>
 
-                    <div class="">
+                <div class="right-content">
+                    <div class="field-select">
                         <lightning-combobox
                             name="fieldSelector"
+                            label = "Select merge field here"
                             value={selectedField}
                             placeholder="Select a Field"
                             options={fieldOptions}
-                            onchange={handleFieldChange}>
+                            onchange={handleFieldChange}
+                            class="field-combobox">
                         </lightning-combobox>
                     </div>
+                    <div class="edit-btn">
+                        <button class="slds-button slds-button_icon slds-button_icon-border-filled edit" onclick={handleClick}>
+                            <lightning-icon icon-name="utility:edit" alternative-text="Edit" size="small"></lightning-icon>
+                        </button>
+                     </div>
                 </div>
-
-                <div class="edit-btn">
-                    <button class="edit-button" onclick={handleEdit}>✎</button>
-
-                </div>
-  
+ 
             </div>
 
             <div class="dotted-border"></div>
@@ -36,11 +40,33 @@
             <!-- Rich Text Editor -->
             <div class="editor" data-name="editor"></div>
         </div>
+
+        <c-custom-modal 
+            if:true={isModalOpen} 
+            onclose={handleModalClose}
+            template-name={selectedTemplate} 
+            object-select={selectedObject} 
+            type-select={selectedType} 
+            description={description} 
+            name={nameForTemplate} 
+            current-record-id={myrecordId}>
+        </c-custom-modal>
+
         
         <!-- Footer with Save and Cancel buttons -->
         <div class="footer">
-            <button class="slds-button slds-button_neutral custombtn" onclick={handleCancel}>Cancel</button>
-            <button class="slds-button slds-button_brand custombtn" onclick={handleSave}>Save</button>
+            <lightning-button 
+              class="custombtn"
+              variant="neutral"
+              label="Cancel" 
+              onclick={handleCancel}></lightning-button>
+            <!-- <button class="slds-button slds-button_neutral custombtn" onclick={handleCancel}>Cancel</button> -->
+            <lightning-button 
+            class="custombtn"
+            variant="Brand"
+            label="Save" 
+            onclick={handleCancel}></lightning-button>
+            <!-- <button class="slds-button slds-button_brand custombtn" onclick={handleSave}>Save</button> -->
         </div>
     </div>
 

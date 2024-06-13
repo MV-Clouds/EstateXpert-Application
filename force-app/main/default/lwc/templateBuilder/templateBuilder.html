@@ -19,23 +19,26 @@
             <table class="slds-table slds-table_bordered slds-table_col-bordered">
                 <thead>
                     <tr class="slds-text-title_caps">
-                        <th scope="col">
-                            <div class="slds-truncate" title="S.No.">No.</div>
+                        <th scope="col" class="sno">
+                            <div  title="S.No.">No.</div>
                         </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Template Name">Template Name</div>
+                        <th scope="col" class="template-name">
+                            <div  title="Template Name">Template Name</div>
                         </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Status">Status</div>
+                        <th scope="col" class="status">
+                            <div  title="Status">Status</div>
                         </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Description">Object Name</div>
+                        <th scope="col" class="object-name">
+                            <div  title="Description">Object Name</div>
                         </th>
-                        <th scope="col">
-                            <div class="slds-truncate" title="Created Date">Created Date</div>
+                        <th scope="col" class="description">
+                            <div  title="description">Description</div>
                         </th>
-                        <th scope="col" style="width: 15% !important;">
-                            <div class="slds-truncate" title="Actions">Actions</div>
+                        <th scope="col" class="created-date">
+                            <div  title="Created Date">Created Date</div>
+                        </th>
+                        <th scope="col" class="actions">
+                            <div  title="Actions">Actions</div>
                         </th>
                     </tr>
                 </thead>
@@ -43,10 +46,10 @@
                     <template for:each={visibleTemplates} for:item="template" for:index="index">
                         <tr key={template.Id} class={template.cssClass}>
                             <td data-label="S.No.">
-                                <div class="slds-truncate">{template.rowIndex}</div>
+                                <div >{template.rowIndex}</div>
                             </td>
                             <td data-label="Template Name">
-                                <div class="slds-truncate" title={template.Label__c}>{template.Label__c}</div>
+                                <div  title={template.Label__c}>{template.Label__c}</div>
                             </td>
                             <td data-label="Status">
                                 <lightning-input 
@@ -57,10 +60,13 @@
                                 </lightning-input>
                             </td>
                             <td data-label="Object Name">
-                                <div class="slds-truncate" title={template.Object_Name__c}>{template.Object_Name__c}</div>
+                                <div  title={template.Object_Name__c}>{template.Object_Name__c}</div>
+                            </td>
+                            <td>
+                                <div title={template.Description__c}>{template.Description__c}</div>
                             </td>
                             <td data-label="Created Date">
-                                <div class="slds-truncate" title={template.CreatedDate}>{template.CreatedDateformatted}</div>
+                                <div  title={template.CreatedDate}>{template.CreatedDateformatted}</div>
                             </td>
                             <td data-label="Actions">
                                 <lightning-button-icon 

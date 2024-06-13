@@ -1,4 +1,3 @@
-
 .full-screen-container {
     display: flex;
     flex-direction: column;
@@ -27,19 +26,18 @@
     display: flex;
     flex-direction: column;
     font-size: 1rem;
+    width: 100%;
 }
 
 .template-data{
     display: flex;
-    gap: 10%;
+    gap: 1%;
 }
 
 .dotted-border{
     border: 1px dashed black;
     width: 100%;
     margin-bottom: 1rem;
-    position: relative;
-    right: 2%;
 }
 
 .footer {
@@ -60,13 +58,33 @@
     --slds-c-button-spacing-block-end : 4px;
     --slds-c-button-spacing-inline-start : 16px;  
     font-size: 0.9rem;
+    --sds-c-button-radius-border : 10px;
+
 }
 
 .edit-btn{
     margin-right: 3%;
+    margin-top: 8%;
 }
 
-.edit-btn button{
-    height: 2.3rem;
-    width: 2.3rem;
+.field-select{
+    /* width: 15%; */
+    width: -webkit-fill-available;
+}
+
+.field-combobox{
+    --sds-c-input-radius-border: 10px;
+    --lwc-formLabelFontSize : 14px;
+    margin-right: 2rem;
+}
+
+.right-content{
+    min-width: 20%;
+    display: flex;
+    height: min-content;
+    align-items: center;
+}
+
+.edit{
+    --slds-g-color-border-base-4 : blue;
 }

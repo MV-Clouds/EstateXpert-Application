@@ -50,25 +50,38 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     }
 
     handleSave() {
+        // Ensure all required fields are filled
         if (this.templateName && this.objectSelect && this.typeSelect) {
-            console.log('selectedobject' , this.objectSelect);
-            console.log('recordId ==> ' , this.currentRecordId);
+            console.log('selectedObject:', this.objectSelect);
+            console.log('recordId:', this.currentRecordId);
+    
+            const navigationState = {
+                selectedObject: this.objectSelect,
+                myrecordId: this.currentRecordId,
+                label: this.templateName,
+                description: this.description 
+            };
+    
+            const serializedState = JSON.stringify(navigationState);
+            console.log('serializedState:', serializedState);
+    
             this[NavigationMixin.Navigate]({
                 type: 'standard__navItemPage',
                 attributes: {
                     apiName: 'Template_Editor',
-                },
-                state: {
-                    c__selectedObject: this.objectSelect,
-                    c__myrecordId: this.currentRecordId,
-                    c__label:this.templateName
+                    c__navigationState: serializedState,
+                    c__recordId : this.currentRecordId
                 }
             });
 
+            this.closeModal();
+    
         } else {
             this.showToast('Error', 'Please fill in all required fields', 'error');
         }
     }
+    
+    
 
     handleInputChange(event) {
         const field = event.target.name;
