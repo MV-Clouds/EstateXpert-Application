@@ -7,10 +7,11 @@ import getTemplateContent from '@salesforce/apex/TemplateBuilderController.getTe
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CurrentPageReference } from 'lightning/navigation';
 import { NavigationMixin } from 'lightning/navigation';
+import { RefreshEvent } from "lightning/refresh";
 
 export default class TemplateModalChild extends NavigationMixin(LightningElement) {
     @api selectedObject;
-    @api myrecordId;
+    @api currentRecordId = '';
     @track selectedField = '';
     @track fieldOptions = [];
     @api templateLabel = '';
@@ -19,6 +20,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track isInitialRender = true;
     @track isDisplayedData = true;
     @track isModalOpen = false;
+    @track selectedType = '';
 
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
@@ -31,9 +33,10 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     console.log('navigationState2 ==>', parseObject);
 
                     this.selectedObject = parseObject.selectedObject;
-                    this.myrecordId = parseObject.myrecordId;
+                    this.currentRecordId = parseObject.myrecordId;
                     this.templateLabel = parseObject.label;
                     this.description = parseObject.description;
+                    this.selectedType = parseObject.type
                     this.fetchFields();
                 } catch (error) {
                     console.error('Error parsing navigation state:', error);
@@ -231,7 +234,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             page.setAttribute('data-editor', note.selector);
             page.setAttribute('contenteditable', 'true');
 
-            if (this.myrecordId) {
+            if (this.currentRecordId) {
                 if (this.isDisplayedData) {
                     this.loadTemplateContent();
                     this.isDisplayedData = false;
@@ -246,7 +249,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     }
 
     loadTemplateContent() {
-        getTemplateContent({ templateId: this.myrecordId })
+        getTemplateContent({ templateId: this.currentRecordId })
             .then(result => {
                 const editor = this.template.querySelector('[data-name="editor"]');
                 $(editor).summernote('code', result.Template_Body__c);
@@ -282,11 +285,19 @@ handleSave() {
         Description__c : this.description
     };
 
-    saveTemplate({ template })
-        .then(() => {
+    saveTemplate({ template : template , recId : this.currentRecordId })
+        .then((res) => {
             this.showToast('Success', 'Template saved successfully', 'success');
             this.isLoading = false;
-            this.handleCancel();
+
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: {
+                    recordId: res,
+                    objectApiName: 'Template__c',
+                    actionName: 'view'
+                }
+            });       
         })
         .catch(error => {
             console.error('Error saving template:', error);

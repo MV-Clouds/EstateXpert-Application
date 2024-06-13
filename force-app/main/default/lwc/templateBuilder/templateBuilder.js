@@ -147,13 +147,15 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     handleEdit(event) {
         const templateId = event.target.dataset.id;
         const template = this.templates.find(tmpl => tmpl.Id === templateId);
+        this.currentRecId = templateId;
 
         if (template) {    
             const navigationState = {
                 selectedObject: template.Object_Name__c ? template.Object_Name__c : '',
                 label: template.Label__c ? template.Label__c : '',
                 description: template.Description__c ? template.Description__c  : '',
-                type : template.Template_Type__c ? template.Template_Type__c : ''
+                type : template.Template_Type__c ? template.Template_Type__c : '',
+                myrecordId : templateId
             };
     
             const serializedState = JSON.stringify(navigationState);

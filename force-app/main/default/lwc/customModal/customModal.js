@@ -59,7 +59,8 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 selectedObject: this.objectSelect,
                 myrecordId: this.currentRecordId,
                 label: this.templateName,
-                description: this.description 
+                description: this.description,
+                type : this.typeSelect
             };
     
             const serializedState = JSON.stringify(navigationState);

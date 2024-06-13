@@ -27,45 +27,33 @@ public with sharing class TemplateBuilderController {
         Template__c template = [SELECT Label__c, Template_Body__c FROM Template__c WHERE Id = :templateId LIMIT 1];
         return template;
     }
-    
-
-    // @AuraEnabled
-    // public static void saveTemplate(String objectName, String templateName, String templateContent) {
-    //     if (!Schema.sObjectType.Template__c.isCreateable()) {
-    //         throw new AuraHandledException('No create access to Template__c object.');
-    //     }
-    //     if (!Schema.sObjectType.Template__c.isUpdateable()) {
-    //         throw new AuraHandledException('No update access to Template__c object.');
-    //     }
-        
-    //     Template__c template;
-    //     try {
-    //         template = [SELECT Id, Label__c	, Template_Body__c FROM Template__c WHERE Object_Name__c = :objectName AND Label__c = :templateName LIMIT 1];
-    //     } catch (Exception e) {
-    //         template = null;
-    //     }
-        
-    //     if (template == null) {
-    //         template = new Template__c(
-    //             Label__c = templateName,
-    //             Template_Body__c = templateContent,
-    //             Object_Name__c = objectName
-    //         );
-    //         insert template;
-    //     } else {
-    //         template.Template_Body__c = templateContent;
-    //         update template;
-    //     }
-    // }
 
     @AuraEnabled
-    public static void saveTemplate(Template__c template) {
+    public static String saveTemplate(Template__c template, String recId) {
         try {
-            insert template;
+            if (recId != null && recId != '') {
+                // Query the existing template record
+                Template__c existingTemplate = [SELECT Id, Object_Name__c, Label__c, Template_Body__c, Description__c 
+                                                FROM Template__c WHERE Id = :recId LIMIT 1];
+                
+                existingTemplate.Object_Name__c = template.Object_Name__c;
+                existingTemplate.Label__c = template.Label__c;
+                existingTemplate.Template_Body__c = template.Template_Body__c;
+                existingTemplate.Description__c = template.Description__c;
+                System.debug('existingTemplate ==> ' + existingTemplate);
+                update existingTemplate;
+
+                return existingTemplate.Id;
+            } else {
+                insert template;
+
+                return template.Id;
+            }
         } catch (Exception e) {
             throw new AuraHandledException('Error saving template: ' + e.getMessage());
         }
     }
+    
 
     @AuraEnabled(cacheable=true)
     public static List<String> getAllObjectNames() {

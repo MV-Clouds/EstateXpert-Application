@@ -4,15 +4,25 @@
             <!-- Template Name and Object -->
             <div class="template-info">
                 <div class="template-dataset">
-                    <div class="template-data">
-                        <div><strong>Template Name:</strong></div>
-                        <div>{templateLabel}</div>
-                    </div> 
-                    <div class="template-data">
-                        <div><strong>Object:</strong></div>
-                        <div>{selectedObject}</div>
+                    <div class="template-content">
+                        <div class="template-data">
+                            <div class="max-width"><strong>Template Name:</strong></div>
+                            <div class="max-width">{templateLabel}</div>
+                        </div> 
+                        <div class="template-data">
+                            <div class="max-width"><strong>Object:</strong></div>
+                            <div class="max-width">{selectedObject}</div>
+                        </div>
+                    </div>
+
+                    <div class="edit-btn">
+                        <button class="slds-button slds-button_icon slds-button_icon-border-filled edit" onclick={handleEdit}>
+                            <lightning-icon icon-name="utility:edit" alternative-text="Edit" size="small"></lightning-icon>
+                        </button>
                     </div>
                 </div>
+
+                <div class="dotted-border"></div>
 
                 <div class="right-content">
                     <div class="field-select">
@@ -26,16 +36,10 @@
                             class="field-combobox">
                         </lightning-combobox>
                     </div>
-                    <div class="edit-btn">
-                        <button class="slds-button slds-button_icon slds-button_icon-border-filled edit" onclick={handleClick}>
-                            <lightning-icon icon-name="utility:edit" alternative-text="Edit" size="small"></lightning-icon>
-                        </button>
-                     </div>
                 </div>
  
             </div>
 
-            <div class="dotted-border"></div>
 
             <!-- Rich Text Editor -->
             <div class="editor" data-name="editor"></div>
@@ -44,11 +48,11 @@
         <c-custom-modal 
             if:true={isModalOpen} 
             onclose={handleModalClose}
-            template-name={selectedTemplate} 
+            template-name={templateLabel} 
             object-select={selectedObject} 
             type-select={selectedType} 
             description={description} 
-            name={nameForTemplate} 
+            name= "Edit" 
             current-record-id={myrecordId}>
         </c-custom-modal>
 
@@ -59,14 +63,15 @@
               class="custombtn"
               variant="neutral"
               label="Cancel" 
-              onclick={handleCancel}></lightning-button>
-            <!-- <button class="slds-button slds-button_neutral custombtn" onclick={handleCancel}>Cancel</button> -->
+              onclick={handleCancel}>
+            </lightning-button>
+
             <lightning-button 
-            class="custombtn"
-            variant="Brand"
-            label="Save" 
-            onclick={handleCancel}></lightning-button>
-            <!-- <button class="slds-button slds-button_brand custombtn" onclick={handleSave}>Save</button> -->
+                class="custombtn"
+                variant="Brand"
+                label="Save" 
+                onclick={handleSave}>
+            </lightning-button>
         </div>
     </div>
 
