@@ -5,6 +5,9 @@
     background: white;
     height: 100%;
     width: 100%;
+    padding: 1.5rem;
+    font-family:Arial, Helvetica, sans-serif;
+    border-radius: 10px;
 }
 
 .full-screen-content {
@@ -13,6 +16,57 @@
 }
 
 .template-info {
-    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+.template-dataset{
+    gap: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+}
+
+.template-data{
+    display: flex;
+    gap: 10%;
+}
+
+.dotted-border{
+    border: 1px dashed black;
+    width: 100%;
+    margin-bottom: 1rem;
+    position: relative;
+    right: 2%;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    margin-top: 1rem;
+    gap: 5rem;
+}
+
+.slds-button {
+    margin-left: 1rem;
+}
+
+.custombtn{
+    --slds-c-button-spacing-block-start : 4px;
+    --slds-c-button-spacing-inline-end : 16px;
+    --slds-c-button-spacing-block-end : 4px;
+    --slds-c-button-spacing-inline-start : 16px;  
+    font-size: 0.9rem;
+}
+
+.edit-btn{
+    margin-right: 3%;
+}
+
+.edit-btn button{
+    height: 2.3rem;
+    width: 2.3rem;
+}

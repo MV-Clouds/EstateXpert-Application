@@ -90,7 +90,7 @@
                 </tbody>
             </table>
 
-            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate} object-select={selectedobject} type-select={selectedType} description={selectedDescription} name={nameForTemplate}></c-custom-modal>
+            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate} object-select={selectedobject} type-select={selectedType} description={selectedDescription} name={nameForTemplate} current-record-id={currentRecId}></c-custom-modal>
 
             <div class="pagination-container">
                 <lightning-button 

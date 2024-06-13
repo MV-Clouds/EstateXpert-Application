@@ -1,17 +1,48 @@
 <template>
-        <div class="full-screen-container">
+    <div class="full-screen-container">
+        <div class="full-screen-content">
+            <!-- Template Name and Object -->
+            <div class="template-info">
+                <div class="template-dataset">
+                    <div class="template-data">
+                        <div><strong>Template Name:</strong></div>
+                        <div>{templateLabel}</div>
+                    </div> 
+                    <div class="template-data">
+                        <div><strong>Object:</strong></div>
+                        <div>{selectedObject}</div>
+                    </div>
 
-            <div class="full-screen-content">
-                <!-- Template Name and Object -->
-                <div class="template-info">
-                    <p><strong>Template Name:</strong> {templateLabel}</p>
-                    <p><strong>Object:</strong> {selectedObject}</p>
+                    <div class="">
+                        <lightning-combobox
+                            name="fieldSelector"
+                            value={selectedField}
+                            placeholder="Select a Field"
+                            options={fieldOptions}
+                            onchange={handleFieldChange}>
+                        </lightning-combobox>
+                    </div>
                 </div>
 
-                <!-- Rich Text Editor -->
-                <div class="editor" data-name="editor"></div>
+                <div class="edit-btn">
+                    <button class="edit-button" onclick={handleEdit}>✎</button>
+
+                </div>
+  
             </div>
+
+            <div class="dotted-border"></div>
+
+            <!-- Rich Text Editor -->
+            <div class="editor" data-name="editor"></div>
         </div>
+        
+        <!-- Footer with Save and Cancel buttons -->
+        <div class="footer">
+            <button class="slds-button slds-button_neutral custombtn" onclick={handleCancel}>Cancel</button>
+            <button class="slds-button slds-button_brand custombtn" onclick={handleSave}>Save</button>
+        </div>
+    </div>
 
     <template if:true={isLoading}>
         <div class="slds-backdrop slds-backdrop_open"></div>

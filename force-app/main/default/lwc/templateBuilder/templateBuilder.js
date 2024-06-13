@@ -20,6 +20,7 @@ export default class TemplateBuilder extends LightningElement {
     @track selectedTemplate = '';
     @track selectedDescription = '';
     @track selectedType = '';
+    @track currentRecId = '';
 
     connectedCallback() {
         Promise.all([
@@ -40,6 +41,7 @@ export default class TemplateBuilder extends LightningElement {
             this.templates = data.map((template, index) => ({
                 ...template,
                 rowIndex: index + 1,
+                isActive: template.Status__c === true ? 'Active' : 'Inactive',
                 CreatedDateformatted: this.formatDate(template.CreatedDate)
             }));
 
@@ -127,6 +129,7 @@ export default class TemplateBuilder extends LightningElement {
         if (template) {
             console.log(JSON.stringify(template));
             this.nameForTemplate = 'Edit';
+            this.currentRecId = templateId;
             this.selectedobject = template.Object_Name__c ? template.Object_Name__c : '';
             this.selectedTemplate = template.Label__c ? template.Label__c : '';
             this.selectedDescription = template.Description__c ? template.Description__c : '';

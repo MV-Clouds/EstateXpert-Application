@@ -12,7 +12,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @track objectOptions;
     @track typeOptions;
     @track IsChildModal = false;
-    @track currentRecordId;
+    @api currentRecordId;
     @api name = ''
 
     @wire(getAllObjectNames)
@@ -52,7 +52,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     handleSave() {
         if (this.templateName && this.objectSelect && this.typeSelect) {
             console.log('selectedobject' , this.objectSelect);
-
+            console.log('recordId ==> ' , this.currentRecordId);
             this[NavigationMixin.Navigate]({
                 type: 'standard__navItemPage',
                 attributes: {
@@ -60,7 +60,8 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 },
                 state: {
                     c__selectedObject: this.objectSelect,
-                    c__myrecordId: this.currentRecordId
+                    c__myrecordId: this.currentRecordId,
+                    c__label:this.templateName
                 }
             });
 
