@@ -4,7 +4,7 @@
             <div slot="title" class="slds-media slds-media_centre header_block_css">
                 <div class="sub_header_css">
                     <div class="slds-media__figure">
-                        <img src={iconImg} alt="Portal Icon" class="icon">
+                        <img src="/resource/iconimg" alt="Portal Icon" class="icon">
                     </div>
                     <div class="slds-p-left_xxx-small portal_mapping">
                         Portal Mapping
@@ -93,22 +93,22 @@
                                             {record.number}
                                         </div>
                                         <div class="slds-col font_style_css">
-                                            <img src={record.val.endpoint__c} alt={record.val.generator__c}
+                                            <img src={record.val.Endpoint__c} alt={record.val.Generator__c}
                                                 class="small-logo">
                                         </div>
                                         <div class="slds-col font_style_css">
                                             {record.val.Name}
                                         </div>
                                         <div class="slds-col">
-                                            <template if:true={record.val.isActive__c}>
+                                            <template if:true={record.val.Is_Active__c}>
                                                 <span class="badge">Active</span>
                                             </template>
-                                            <template if:false={record.val.isActive__c}>
+                                            <template if:false={record.val.Is_Active__c}>
                                                 <span class="badge-red">Inactive</span>
                                             </template>
                                         </div>
                                         <div class="slds-col">
-                                            <lightning-button label="View details" data-portalname={record.val.Name} data-portaliconurl={record.val.endpoint__c} data-portalstatus={record.val.isActive__c} data-portalgen={record.val.generator__c} data-portalid={record.val.Id} onclick={handleClick}></lightning-button>
+                                            <lightning-button label="View details" data-portalname={record.val.Name} data-portaliconurl={record.val.Endpoint__c} data-portalstatus={record.val.Is_Active__c} data-portalgen={record.val.Generator__c} data-portalid={record.val.Id} onclick={handleClick}></lightning-button>
                                         </div>
                                     </div>
                                 </template>

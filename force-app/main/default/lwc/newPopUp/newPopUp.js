@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
-import savePropertyPortalRecord from '@salesforce/apex/controlCenterController.savePropertyPortalRecord';
+import savePropertyPortalRecord from '@salesforce/apex/PortalMappingController.savePropertyPortalRecord';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class NewPopUp extends LightningElement {
 
