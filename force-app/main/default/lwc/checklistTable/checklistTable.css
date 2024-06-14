@@ -3,6 +3,7 @@
 }
 .mainDiv{
     font-family: sans-serif;
+    background-color: white;
 }
 .subdiv{
     display: flex;
@@ -24,4 +25,49 @@
 }
 .headerdiv{
     border-bottom: 1px solid lightgray;
+}
+
+/*Buttons Start*/
+
+ .navbar {
+    display: flex;
+    align-items: center;
+}
+.nav-button {
+    padding: 10px 40px;
+    margin-right: 10px;
+    border: 1px solid #d0d9e8;
+    background-color: #e8f0fe;
+    color: black;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-button {
+    padding: 10px 20px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;    
+    margin-left: auto;
+}
+
+/*Buttons End*/
+
+.tablediv{
+    box-shadow: 0px 0px 10px 0px #00000040;
+    border-radius: 8px;
+}
+.objdiv{
+    width: 47%;
+}
+
+.objdiv .slds-input_faux{
+    padding: 5px !important;
+}
+th{
+    background-color: #e8f0fe !important;
+    line-height: 24px !important;
 }
