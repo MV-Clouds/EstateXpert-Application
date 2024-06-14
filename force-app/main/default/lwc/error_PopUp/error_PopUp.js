@@ -6,6 +6,8 @@ export default class Error_PopUp extends LightningElement {
     @track isSuccess = false;
     @track isWarning = false;
     @track iconUrl = errorImage + '/ErrorIcons/ErrorIcon.png';
+    @track message = '';
+    @track title = '';
     backGroundUrl = errorImage + '/ErrorIcons/ErrorPopUpBg.png';
 
     // connectedCallback(){

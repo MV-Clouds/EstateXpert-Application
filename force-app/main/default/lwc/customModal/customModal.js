@@ -3,7 +3,6 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAllObjectNames from '@salesforce/apex/TemplateBuilderController.getAllObjectNames';
 import getTemplateTypePicklistValues from '@salesforce/apex/TemplateBuilderController.getTemplateTypePicklistValues';
 import { NavigationMixin } from 'lightning/navigation';
-import Error_PopUp from 'c/error_PopUp';
 
 export default class CustomModal extends NavigationMixin(LightningElement) {
     @api templateName = '';
@@ -17,7 +16,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api name = ''
     @api bodyOfTemplate = '';
     @api isEdit = false;
-    @track showWarningPopup = false;
+    @track isObjectChanged = false;
 
     /**
     * Method Name: wiredSObjectNames
@@ -90,7 +89,9 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 label: this.templateName,
                 description: this.description,
                 type : this.typeSelect,
-                bodyoftemplate : this.bodyOfTemplate
+                bodyoftemplate : this.bodyOfTemplate,
+                isObjectChanged : this.isObjectChanged,
+                oldObject: this.oldObject
             };
     
             const serializedState = JSON.stringify(navigationState);
@@ -108,7 +109,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             this.closeModal();
     
         } else {
-            this.showToast('Error', 'Please fill in all required fields', 'error');
+            // this.showToast('Error', 'Please fill in all required fields', 'error');
         }
     }
 
@@ -126,11 +127,16 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         } else if (field === 'description') {
             this.description = value;
         } else if (field === 'objectSelect') {
+            if(this.objectSelect != value){
+                this.isObjectChanged = true;
+                this.oldObject = this.objectSelect; // Store oldObject when changed
+            }
             this.objectSelect = value;
         } else if (field === 'typeSelect') {
             this.typeSelect = value;
         }
     }
+
 
     /**
     * Method Name: showToast
@@ -139,12 +145,12 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
 
-    showToast(title, message, variant) {
-        const toastEvent = new ShowToastEvent({
-            title: title,
-            message: message,
-            variant: variant
-        });
-        this.dispatchEvent(toastEvent);
-    }
+    // showToast(title, message, variant) {
+    //     const toastEvent = new ShowToastEvent({
+    //         title: title,
+    //         message: message,
+    //         variant: variant
+    //     });
+    //     this.dispatchEvent(toastEvent);
+    // }
 }

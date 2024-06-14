@@ -22,6 +22,10 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track selectedType = '';
     @track bodyOfTemplate = '';
     @track editValue = true;
+    @track isObjectChanged = false;
+    @track oldObject = '';
+    @track cancelBtn = false;
+    
 
     /**
     * Method Name: getStateParameters
@@ -45,6 +49,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.description = parseObject.description;
                     this.selectedType = parseObject.type,
                     this.bodyOfTemplate = parseObject.bodyoftemplate
+                    this.isObjectChanged = parseObject.isObjectChanged
+                    this.oldObject = parseObject.oldObject
                     this.fetchFields();
                 } catch (error) {
                     console.error('Error parsing navigation state:', error);
@@ -72,6 +78,14 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         getFieldsForObject({ objectName: this.selectedObject })
             .then(data => {
                 this.fieldOptions = data.map(field => ({ label: field, value: field }));
+
+                if(this.isObjectChanged){
+                    const errorPopup = this.template.querySelector('c-error_-pop-up');
+                    console.log('errorPopup ==> ' , errorPopup);
+                    if(errorPopup){
+                        errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
+                    }
+                }
             })
             .catch(error => {
                 console.error('Error fetching fields:', error);
@@ -348,12 +362,13 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             Description__c : this.description,
             Template_Type__c : this.selectedType
         };
+        console.log('recId ==> ' , this.currentRecordId);
 
         saveTemplate({ template : template , recId : this.currentRecordId })
             .then((res) => {
                 this.showToast('Success', 'Template saved successfully', 'success');
                 this.isLoading = false;
-                this.handleCancel();
+                this.navigationToTemplatePage();
             })
             .catch(error => {
                 console.error('Error saving template:', error);
@@ -392,15 +407,40 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
-    handleCancel() {
-        this[NavigationMixin.Navigate]({
-            type: 'standard__navItemPage',
-            attributes: {
-                apiName: 'template_builder',
-            },
-        });
+    async handleCancel() {
+        console.log('In handlecancel');
+
+        this.isObjectChanged =  true;
+        this.cancelBtn = true;
+
+        setTimeout(async () => {
+            const errorPopup = this.template.querySelector('c-error_-pop-up');
+            console.log('errorPopup ==> ', errorPopup);
+
+            if (errorPopup) {
+                errorPopup.showToast('warning', 'You will lose all saved data here', 'Warning');
+            } else {
+                console.error('Error popup component not found');
+            }
+
+            // Navigate to a different page if necessary
+            // this[NavigationMixin.Navigate]({
+            //     type: 'standard__navItemPage',
+            //     attributes: {
+            //         apiName: 'template_builder',
+            //     },
+            // });
+        }, 100); // delay of 100ms
     }
 
+    navigationToTemplatePage(){
+            this[NavigationMixin.Navigate]({
+                type: 'standard__navItemPage',
+                attributes: {
+                    apiName: 'template_builder',
+                },
+            });
+    }
     /**
     * Method Name: showToast
     * @description: Method to display toast message
@@ -415,4 +455,31 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         });
         this.dispatchEvent(event);
     }
+
+    handlePopUpCancel(){
+        this.isObjectChanged  = false;
+        this.selectedObject = this.oldObject;
+        this.cancelBtn = false;
+        console.log(this.selectedObject , 'SelectedObject');
+    }
+
+    handleContinue() {
+        if (this.isObjectChanged && !this.cancelBtn) {
+            const editor = this.template.querySelector('[data-name="editor"]');
+            const editorContent = $(editor).summernote('code');
+            
+            const mergeFieldRegex = /\{\![^\}]+\}/g;
+            
+            const replacedContent = editorContent.replace(mergeFieldRegex, '{!Merge field text}');
+            
+            $(editor).summernote('code', replacedContent);
+            
+            this.isObjectChanged = false;
+        }
+
+        else{
+            this.navigationToTemplatePage();
+        }
+    }
+    
 }

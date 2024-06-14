@@ -50,6 +50,16 @@
 
             <!-- Rich Text Editor -->
             <div class="editor" data-name="editor"></div>
+
+
+        <template if:true={isObjectChanged}>
+            <div class="popup-container">
+                <c-error_-pop-up
+                    oncancel={handlePopUpCancel}
+                    oncontinue={handleContinue}
+                ></c-error_-pop-up>
+            </div>
+        </template>
         </div>
 
         <c-custom-modal 

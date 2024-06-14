@@ -7,8 +7,8 @@
     <div class="slds-modal__container">
         <div class="popup">
             <img src={iconUrl} alt="Error Image" />
-            <h1>Title</h1>
-            <p>Error Message goes here</p>
+            <h1>{title}</h1>
+            <p>{message}</p>
             <div if:true={isError} class="code-section code">
                 <div class="copy">v2rF93A5</div>
                 <button class="btn" onclick={copyCode}>Copy Code</button>

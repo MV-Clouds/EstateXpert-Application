@@ -24,6 +24,8 @@
     width: 16%;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+    height: auto;
+
 }
 .popup h1 {
     margin: 20px 0 10px;
