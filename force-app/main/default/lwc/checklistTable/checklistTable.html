@@ -1,4 +1,93 @@
+
 <template>
+    <div class="mainDiv">
+        <div>
+            <div class="subdiv">
+                <div class="backicon"><lightning-icon icon-name="utility:chevronleft" alternative-text="Back" title="Back" size="small"></lightning-icon>
+                </div>
+                <div class="slds-m-left_x-small chicon"><img src={ChecklistIcon} height="30px" width="30px"></img></div>
+                <div class="managechecklist slds-m-left_x-small">Manage Your Checklist</div>
+            </div>
+            <div class="managechecklistdesc slds-m-top_medium">
+                These settings allow you to configure how filtering works for both Marketing. Lists and the Listing Manager. Options. include default filter types, default fields, default values, help text, and selecting which Columns are displayed. Don't forget to save your changes! 
+                <p class="slds-m-top_medium">For more information about this feature, click here.</p>
+            </div>
+            <hr class="slds-m-top_medium"/>
+        </div>
+        <div>
+            <div>Property</div>
+            <div>Listing</div>
+            <div>Offers</div>
+        </div>
+        <div>
+            <div>
+                <div>Select Object</div>
+                <div>Select Field</div>
+            </div>
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="slds-truncate">Checklist Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Field Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Operator</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Value</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Order</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate">Action</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={checklistItems} for:item="item" for:index="index">
+                        <tr key={item.id}>
+                            
+                            <td>
+                                <lightning-input type="text" value={item.checklistName} data-id={item.id} data-field="checklistName" onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="text" value={item.fieldName} data-id={item.id} data-field="fieldName" onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td>
+                                <lightning-combobox value={item.operator} data-id={item.id} data-field="operator" options={operatorOptions} onchange={handleInputChange}></lightning-combobox>
+                            </td>
+                            <td>
+                                <lightning-input type="text" value={item.value} data-id={item.id} data-field="value" onchange={handleInputChange}></lightning-input>
+                            </td>
+                            <td>
+                                <div class="slds-button-group" role="group">
+                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" data-id={item.id} data-action="up" onclick={handleOrderChange}>
+                                        <lightning-icon icon-name="utility:up" alternative-text="Move Up"></lightning-icon>
+                                    </button>
+                                    <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" data-id={item.id} data-action="down" onclick={handleOrderChange}>
+                                        <lightning-icon icon-name="utility:down" alternative-text="Move Down"></lightning-icon>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <lightning-button-icon icon-name="utility:delete" alternative-text="Delete" onclick={handleDelete} data-id={item.id}></lightning-button-icon>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>        
+        <div>
+            <lightning-button variant="brand" label="Brand" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+            <lightning-button label="Neutral" title="Non-primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+        </div>
+    </div>
+</template>
+<!-- <template>
     <lightning-card title="Checklist Table">
         <div class="slds-m-around_medium">
             <table class="slds-table slds-table_bordered slds-table_cell-buffer">
@@ -59,4 +148,4 @@
             </table>
         </div>
     </lightning-card>
-</template>
+</template> -->

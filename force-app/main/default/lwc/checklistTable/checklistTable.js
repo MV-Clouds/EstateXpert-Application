@@ -1,8 +1,12 @@
 import { LightningElement, track, api} from 'lwc';
+import Backbutton from '@salesforce/resourceUrl/Backbutton';
+import ChecklistIcon from '@salesforce/resourceUrl/ChecklistIcon';
 
 export default class ChecklistTable extends LightningElement {
 
     @track myVariable;
+    Backbutton = Backbutton;
+    ChecklistIcon = ChecklistIcon;
 
   
     @track checklistItems = [

@@ -1,3 +1,27 @@
 .slds-button-group .slds-button_icon {
     margin: 0 0.2rem;
 }
+.mainDiv{
+    font-family: sans-serif;
+}
+.subdiv{
+    display: flex;
+}
+.managechecklist{    
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 30px;
+}
+.chicon{
+    line-height: 30px;
+}
+.managechecklistdesc{
+    font-size: 14px;
+    margin-left: 4.5rem;
+}
+.backicon{
+    line-height: 30px;
+}
+.headerdiv{
+    border-bottom: 1px solid lightgray;
+}
