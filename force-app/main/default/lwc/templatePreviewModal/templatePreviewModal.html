@@ -31,7 +31,10 @@
                                 <h1>{recordName}</h1>
                             </div>
                             <div class="scrollable-content">
-                                <div>{updatedBody}</div>
+                                <!-- <div>{updatedBody}</div> -->
+                                <lightning-formatted-rich-text
+                                value={updatedBody}
+                            ></lightning-formatted-rich-text>                        
                             </div>
                         </template>
                         <template if:false={selectedRecord}>

@@ -70,7 +70,7 @@ export default class TemplatePreviewModal extends LightningElement {
             }
         });
         
-        tempUpdatedBody = tempUpdatedBody.replace(/(<([^>]+)>)/ig, '');
+        // tempUpdatedBody = tempUpdatedBody.replace(/(<([^>]+)>)/ig, '');
         this.updatedBody = tempUpdatedBody;
     }
 }

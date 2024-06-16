@@ -63,7 +63,7 @@
     padding: 1rem;
     font-size: 1rem;
     transition: margin-left 0.3s ease;
-    overflow: hidden;
+    overflow: scroll;
 }
 
 .content.collapsed {
