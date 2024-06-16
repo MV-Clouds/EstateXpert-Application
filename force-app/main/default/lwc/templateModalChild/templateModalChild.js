@@ -418,7 +418,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             console.log('errorPopup ==> ', errorPopup);
 
             if (errorPopup) {
-                errorPopup.showToast('warning', 'You will lose all saved data here', 'Warning');
+                errorPopup.showToast('warning', 'You will lose all changed data here', 'Warning');
             } else {
                 console.error('Error popup component not found');
             }
@@ -458,7 +458,11 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
 
     handlePopUpCancel(){
         this.isObjectChanged  = false;
-        this.selectedObject = this.oldObject;
+        console.log('oldobject ==> ' , this.oldObject);
+        
+        if(this.oldObject){
+            this.selectedObject = this.oldObject;
+        }
         this.cancelBtn = false;
         console.log(this.selectedObject , 'SelectedObject');
     }

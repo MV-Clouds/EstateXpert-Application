@@ -103,15 +103,17 @@
                             </tr>
                         </template>
                     </template>
-                    <template if:false={visibleTemplates.length}>
-                        <tr>
-                            <td colspan="7" style="text-align: center;">
-                                No data to display
-                            </td>
-                        </tr>
-                    </template>
                 </tbody>
             </table>
+
+            <template if:false={visibleTemplates.length}>
+                <div class="no-data-container">
+                    <div class="no-data-message">
+                        No data to display
+                    </div>
+                </div>
+
+            </template>
 
             <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate} object-select={selectedobject} type-select={selectedType} description={selectedDescription} name={nameForTemplate} current-record-id={currentRecId} is-edit="false" ></c-custom-modal>
 

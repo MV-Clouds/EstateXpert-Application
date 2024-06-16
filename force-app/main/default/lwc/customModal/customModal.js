@@ -25,11 +25,17 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     @wire(getAllObjectNames)
-    wiredSObjectNames({ error, data }) {
+    wiredObjectNames({ error, data }) {
         if (data) {
-            this.objectOptions = data.map(objName => ({ label: objName, value: objName }));
+            this.objectOptions = Object.keys(data)
+                .map(key => ({
+                    label: data[key],
+                    value: key
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)); 
         } else if (error) {
-            console.error('Error fetching SObject names:', error);
+            // Handle error
+            console.error('Error fetching object names:', error);
         }
     }
 
@@ -55,6 +61,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     connectedCallback(){    
+        console.log('currentRecordId ==> ' , this.currentRecordId);
         if(this.name == 'New'){
             this.templateName = '';
             this.description = '';
@@ -109,7 +116,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             this.closeModal();
     
         } else {
-            // this.showToast('Error', 'Please fill in all required fields', 'error');
+            this.showToast('Error', 'Please fill in all required fields', 'error');
         }
     }
 
@@ -127,7 +134,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         } else if (field === 'description') {
             this.description = value;
         } else if (field === 'objectSelect') {
-            if(this.objectSelect != value){
+            if(this.oldObject != value && this.name == 'Edit'){
                 this.isObjectChanged = true;
                 this.oldObject = this.objectSelect; // Store oldObject when changed
             }
@@ -145,12 +152,12 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
 
-    // showToast(title, message, variant) {
-    //     const toastEvent = new ShowToastEvent({
-    //         title: title,
-    //         message: message,
-    //         variant: variant
-    //     });
-    //     this.dispatchEvent(toastEvent);
-    // }
+    showToast(title, message, variant) {
+        const toastEvent = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant
+        });
+        this.dispatchEvent(toastEvent);
+    }
 }

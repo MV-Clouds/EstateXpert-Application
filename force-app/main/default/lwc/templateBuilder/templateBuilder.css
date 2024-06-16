@@ -159,3 +159,16 @@ th{
 .actions{
   width: 12% !important;
 }
+
+.no-data-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+.no-data-message {
+  text-align: center;
+  font-size: 18px; 
+  color: #ccc; 
+}

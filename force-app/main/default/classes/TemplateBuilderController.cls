@@ -110,22 +110,25 @@ public with sharing class TemplateBuilderController {
     * Date: 11/06/2024 
     * Created By: Rachit Shah 
     */ 
-
     @AuraEnabled(cacheable=true)
-    public static List<String> getAllObjectNames() {
-        List<String> objectNames = new List<String>();
+    public static Map<String, String> getAllObjectNames() {
+        Map<String, String> objectNamesMap = new Map<String, String>();
         
-        List<Schema.SObjectType> objectTypes = Schema.getGlobalDescribe().Values();
-        for(Schema.SObjectType objectType : objectTypes) {
-            Schema.DescribeSObjectResult objResult = objectType.getDescribe();
-            if(!objResult.isCustom() && !objResult.isCustomSetting() && !objResult.isDeprecatedAndHidden()) {
-                objectNames.add(objResult.getName());
+        Map<String, Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
+        for (String objectName : globalDescribe.keySet()) {
+            Schema.SObjectType objectType = globalDescribe.get(objectName);
+            if (objectType != null && !objectType.getDescribe().isDeprecatedAndHidden()) {
+                Schema.DescribeSObjectResult objResult = objectType.getDescribe();
+                objectNamesMap.put(objResult.getName(), objResult.getLabel());
             }
         }
-        objectNames.sort();
         
-        return objectNames;
+        return objectNamesMap;
     }
+    
+    
+    
+    
 
     /** 
     * Method Name: getTemplateTypePicklistValues
@@ -193,10 +196,8 @@ public with sharing class TemplateBuilderController {
     public static List<Map<String, Object>> getRecordsByObject(String objectName) {
         List<Map<String, Object>> recordsList = new List<Map<String, Object>>();
 
-        // Get all accessible field names for the specified sObject
         List<String> fieldNames = getAllFieldNames(objectName);
         
-        // Build the dynamic SOQL query
         String query = 'SELECT ' + String.escapeSingleQuotes(String.join(fieldNames, ', ')) + ' FROM ' + String.escapeSingleQuotes(objectName);
         
         List<SObject> records = Database.query(query);
