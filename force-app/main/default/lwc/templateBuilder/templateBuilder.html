@@ -138,6 +138,6 @@
     </div>
 
     <template if:true={isPreviewModal}>
-        <c-template-preview-modal onclosemodal={handleCloseModal}></c-template-preview-modal>
+        <c-template-preview-modal object-name={selectedobject} template-body={selectedTemplateBody} onclosemodal={handleCloseModal}></c-template-preview-modal>
     </template>
 </template>

@@ -23,6 +23,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     @track currentRecId = '';
     @track isLoading = false; 
     @track isPreviewModal = false;
+    @track selectedTemplateBody = ''; 
 
     /**
     * Method Name: setCurrentPageReference
@@ -226,11 +227,10 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     handlePreview(event) {
-        // const templateId = event.target.dataset.id;
-        // const template = this.templates.find(tmpl => tmpl.Id === templateId);
-        // if (template) {
-        //     this.showToast('Preview', `Preview template: ${template.Label__c}`, 'info');
-        // }
+        const templateId = event.target.dataset.id;
+        const template = this.templates.find(tmpl => tmpl.Id === templateId);
+        this.selectedobject = template.Object_Name__c;
+        this.selectedTemplateBody = template.Template_Body__c;
         this.isPreviewModal = true;
     }
 

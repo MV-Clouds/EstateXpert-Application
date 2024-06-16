@@ -180,5 +180,43 @@ public with sharing class TemplateBuilderController {
         List<Template__c> templates = [SELECT Id, Name, Label__c , Object_Name__c , Status__c, Template_Body__c	, Template_Type__c	, Description__c,CreatedDate  FROM Template__c WITH SECURITY_ENFORCED];
         return templates;
     }
+
+    /**
+     * Method Name: getRecordsByObject
+     * @description: Retrieves records of a specified sObject.
+     * @param objectName Name of the sObject.
+     * @return List of records as Map<String, Object>.
+     * Date: 11/06/2024
+     * Created By: Rachit Shah
+     */
+    @AuraEnabled
+    public static List<Map<String, Object>> getRecordsByObject(String objectName) {
+        List<Map<String, Object>> recordsList = new List<Map<String, Object>>();
+
+        // Get all accessible field names for the specified sObject
+        List<String> fieldNames = getAllFieldNames(objectName);
+        
+        // Build the dynamic SOQL query
+        String query = 'SELECT ' + String.escapeSingleQuotes(String.join(fieldNames, ', ')) + ' FROM ' + String.escapeSingleQuotes(objectName);
+        
+        List<SObject> records = Database.query(query);
+        
+        for (SObject record : records) {
+            Map<String, Object> recordMap = new Map<String, Object>();
+            Map<String, Schema.SObjectField> fieldMap = record.getSObjectType().getDescribe().fields.getMap();
+        
+            for (String fieldName : fieldMap.keySet()) {
+                Schema.SObjectField field = fieldMap.get(fieldName);
+        
+                if (field.getDescribe().isAccessible()) {
+                    recordMap.put(fieldName, record.get(fieldName));
+                }
+            }
+        
+            recordsList.add(recordMap);
+        }
+        
+        return recordsList;
+    }
 }
 

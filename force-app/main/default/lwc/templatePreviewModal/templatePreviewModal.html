@@ -6,33 +6,30 @@
                     <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
                     <span class="slds-assistive-text">Close</span>
                 </button>
-                <h2 class="slds-text-heading_medium custom-modal-title">Preview Section</h2>
+                <h2 class="slds-text-heading_medium custom-modal-title">{recordName}</h2>
             </header>
             <div class="slds-modal__content custom-modal-content">
                 <div class="custom-modal-body">
-
+                    <div class={collapsibleSectionClass}>
+                        <div class="record-select-section" if:true={isRecordSelectOpen}>
+                            <lightning-combobox
+                                name="recordSelect"
+                                label="Record Select:"
+                                placeholder="Please select the record"
+                                options={recordOptions}
+                                value={selectedRecord}
+                                onchange={handleRecordChange}>
+                            </lightning-combobox>
+                        </div>
+                    </div>
                     <div class="chevron-btn" onclick={toggleRecordSelectSection}>
                         <lightning-icon icon-name={toggleIconName} alternative-text="Toggle Record Select" size="small"></lightning-icon>
                     </div>
-
-                    <div class={collapsibleSectionClass}>
-                        <div class="record-select-section" if:true={isRecordSelectOpen}>
-                            <label for="recordSelect">Record Select:</label>
-                            <select id="recordSelect" class="slds-select">
-                                <option value="">Please select the record</option>
-                                <option value="1">Record 1</option>
-                                <option value="2">Record 2</option>
-                                <option value="3">Record 3</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="content">
+                    <div class={contentClass}>
                         <div class="content-header">
-                            <h1>WYSIWYG</h1>
+                            <h1>{recordName}</h1>
                         </div>
-                        <p>WYSIWYG stands for 'what you see is what you get.' It refers to an interface that allows users to see exactly how content will look when published live or submitted to the web. The WYSIWYG editors are designed to make it convenient for everyone to build and edit emails, landing pages, articles, and other text-based pages. They are easy to use and have become powerful tools for developing digital media without relying on HTML coding skills.</p>
-                        <p>The rich text editor component allows you to modify text and add elements to a stackable content layout. It has a top menu bar for selecting available commands, a toolbar with quick actions for the most commonly used commands, and a content zone with a footer to provide a grabber for stretching the component content.</p>
-                        <p>Tip: Select the Playground frame to switch between available variable modes from the Layer section in the right sidebar.</p>
+                        <div >{updatedBody}</div>
                     </div>
                 </div>
             </div>
