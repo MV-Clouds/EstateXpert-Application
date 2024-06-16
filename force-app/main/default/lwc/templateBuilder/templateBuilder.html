@@ -136,4 +136,8 @@
             </template>
         </div>
     </div>
+
+    <template if:true={isPreviewModal}>
+        <c-template-preview-modal onclosemodal={handleCloseModal}></c-template-preview-modal>
+    </template>
 </template>

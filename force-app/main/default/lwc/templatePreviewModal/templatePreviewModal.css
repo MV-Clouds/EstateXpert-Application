@@ -1,0 +1,91 @@
+*{
+    --slds-c-icon-color-foreground-default : white;
+}
+
+.custom-modal-container{
+    min-width: 80vw;
+}
+
+.custom-modal-header {
+    background-color: #0176D3 !important;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+}
+
+.custom-modal-title {
+    color: white;
+    margin: 0;
+}
+
+.custom-modal-content {
+    background-color: white;
+    border-radius: 0.25rem;
+}
+
+.custom-modal-body {
+    display: flex;
+    background-color: #F0F7FF;
+    height: 75vh;
+    position: relative;
+}
+
+.collapsible-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: white;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 0px 2px 0px, rgba(60, 64, 67, 0.15) 0px 0px 6px 2px;
+    max-width: 20%;
+    transition: max-width 0.3s ease;
+}
+
+.collapsible-section.collapsed {
+    max-width: 5%;
+    background-color: #0176D3;
+}
+
+.record-select-section {
+    margin-top: 1rem;
+}
+
+.content {
+    flex: 2;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 0px 2px 0px, rgba(60, 64, 67, 0.15) 0px 0px 6px 2px;
+    background-color: white;
+    margin: 2rem !important;
+    padding: 1rem;
+    font-size: 1rem;
+}
+
+.content h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.content p {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.chevron-btn {
+    position: absolute;
+    background-color: #0176D3;
+    height: 4%;
+    width: 4%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: 0;
+    top: 15%;
+    cursor: pointer;
+    transition: right 0.3s ease;
+}
+
+.collapsible-section.collapsed ~ .chevron-btn {
+    right: 95%;
+}
