@@ -30,6 +30,7 @@
     background-color: #F0F7FF;
     height: 75vh;
     position: relative;
+    overflow: hidden;
 }
 
 .collapsible-section {
@@ -62,6 +63,7 @@
     padding: 1rem;
     font-size: 1rem;
     transition: margin-left 0.3s ease;
+    overflow: hidden;
 }
 
 .content.collapsed {
@@ -108,4 +110,13 @@
     right: 0.5rem !important;
     bottom: 0.5rem ;
     margin-left: 0
+}
+
+.no-record-selected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.25rem;
+    color: #bdbdbd; 
 }

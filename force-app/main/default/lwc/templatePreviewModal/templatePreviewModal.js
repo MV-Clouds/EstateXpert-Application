@@ -64,9 +64,9 @@ export default class TemplatePreviewModal extends LightningElement {
 
         tempUpdatedBody = tempUpdatedBody.replace(regex, (match, fieldName) => {
             if (record.hasOwnProperty(fieldName)) {
-                return record[fieldName] != null ? record[fieldName] : `{${fieldName} data not found}`;
+                return record[fieldName] != null ? record[fieldName] : `{${fieldName} data is empty}`;
             } else {
-                return `{${fieldName} data not found}`;
+                return `{${fieldName} data is empty}`;
             }
         });
         

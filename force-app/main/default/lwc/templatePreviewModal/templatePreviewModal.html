@@ -26,10 +26,19 @@
                         <lightning-icon icon-name={toggleIconName} alternative-text="Toggle Record Select" size="small"></lightning-icon>
                     </div>
                     <div class={contentClass}>
-                        <div class="content-header">
-                            <h1>{recordName}</h1>
-                        </div>
-                        <div >{updatedBody}</div>
+                        <template if:true={selectedRecord}>
+                            <div class="content-header">
+                                <h1>{recordName}</h1>
+                            </div>
+                            <div class="scrollable-content">
+                                <div>{updatedBody}</div>
+                            </div>
+                        </template>
+                        <template if:false={selectedRecord}>
+                            <div class="no-record-selected">
+                                No record selected
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
