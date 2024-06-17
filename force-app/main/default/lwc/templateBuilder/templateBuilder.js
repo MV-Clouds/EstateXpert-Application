@@ -260,7 +260,8 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 label: template.Label__c ? template.Label__c : '',
                 description: template.Description__c ? template.Description__c  : '',
                 type : template.Template_Type__c ? template.Template_Type__c : '',
-                myrecordId : templateId
+                myrecordId : templateId,
+                templateTypeForCreation : 'Edit'
             };
     
             const serializedState = JSON.stringify(navigationState);

@@ -10,7 +10,7 @@ import { NavigationMixin } from 'lightning/navigation';
 
 export default class TemplateModalChild extends NavigationMixin(LightningElement) {
     @api selectedObject;
-    @api currentRecordId = '';
+    @api currentRecordId = null;
     @track selectedField = '';
     @track fieldOptions = [];
     @api templateLabel = '';
@@ -25,6 +25,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track isObjectChanged = false;
     @track oldObject = '';
     @track cancelBtn = false;
+    @track templateTypeForCreation = 'New';
+    @track editor;
+
+    get recordId(){
+        return this.currentRecordId ? this.currentRecordId : 'tempId';
+    }
     
 
     /**
@@ -51,6 +57,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.bodyOfTemplate = parseObject.bodyoftemplate
                     this.isObjectChanged = parseObject.isObjectChanged
                     this.oldObject = parseObject.oldObject
+                    this.templateTypeForCreation = parseObject.templateTypeForCreation
                     this.fetchFields();
                 } catch (error) {
                     console.error('Error parsing navigation state:', error);
@@ -99,7 +106,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     renderedCallback() {
-        if (this.isInitialRender) {
+        // if (this.isInitialRender) {
             Promise.all([
                 loadScript(this, summerNote_Editor + '/jquery-3.7.1.min.js'),
             ])
@@ -111,14 +118,16 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 })
                 .then(() => {
                     this.isInitialRender = false;
-                    this.initializeSummerNote(this, 'editor');
+                    setTimeout(() => {
+                        this.initializeSummerNote(this, 'editor');
+                    }, 100);
                     this.isLoading = false;
                 })
                 .catch(error => {
                     console.log('Error loading libraries', error);
                     this.isLoading = false;
                 });
-        }
+        // }
     }
 
     /**
@@ -130,19 +139,13 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     async initializeSummerNote(self, editorSelector) {
         try {
             console.log('self : ', self.activeTabName);
-            var note = {
-                summerNote: null,
-                selector: null,
-                noteEditorFrame: null,
-            }
 
-            var _self;
-            _self = self;
-            note.selector = editorSelector;
-            note.summerNote = _self.template.querySelector(`[data-name="${note.selector}"]`);
+
+            const selector = this.currentRecordId ? this.currentRecordId : 'tempId';
+            this.editor = this.template.querySelector(`[data-id="${selector}"]`);
 
             // Initialize SummerNote Editor...
-            $(note.summerNote).summernote({
+            $(this.editor).summernote({
                 editing: true,
                 styleTags: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
                 fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '26', '28', '30', '32', '34', '36', '38', '40', '42', '44', '46', '48', '52', '56', '60', '64', '68', '72', '76', '80', '86', '92', '98'],
@@ -270,17 +273,18 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 },
             });
 
-            const page = document.querySelector('.note-editable');
-            page.setAttribute('data-editor', note.selector);
+            const noteFrame = this.editor.nextSibling;
+            const page = noteFrame.querySelector('.note-editable');
             page.setAttribute('contenteditable', 'true');
 
-            if (this.currentRecordId && (this.bodyOfTemplate == null || this.bodyOfTemplate == '')) {
+            if (this.currentRecordId && this.templateTypeForCreation == 'Edit') {
                 if (this.isDisplayedData) {
                     this.loadTemplateContent();
                     this.isDisplayedData = false;
                 }
             }
             else{
+                console.log('templateTypeForCreation ==> ' ,this.templateTypeForCreation);
                 this.setEmailBody();
             }
 
@@ -300,9 +304,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     loadTemplateContent() {
         getTemplateContent({ templateId: this.currentRecordId })
             .then(result => {
+                console.log('result : ', result);
                 this.description = result.Description__c;
-                const editor = this.template.querySelector('[data-name="editor"]');
-                $(editor).summernote('code', result.Template_Body__c);
+                $(this.editor).summernote('code', result.Template_Body__c);
+                const page = editor.querySelector('.note-editable');
+
+                console.log('page 2=>' ,page);
                 this.isLoading = false;
             })
             .catch(error => {
@@ -329,9 +336,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     appendFieldToEditor() {
-        const editor = this.template.querySelector('[data-name="editor"]');
         const content = `<span>{!${this.selectedObject}.${this.selectedField}}</span>`;
-        $(editor).summernote('code', $(editor).summernote('code') + ' ' + content);
+        $(this.editor).summernote('code', $(this.editor).summernote('code') + ' ' + content);
+
     }
 
     /**
@@ -341,8 +348,18 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     setEmailBody(){
-        const editor = this.template.querySelector('[data-name="editor"]');
-        $(editor).summernote('code', this.bodyOfTemplate);
+        console.log('In setEmailbody method');
+        console.log('bodyOfTemplate ==> ' , this.bodyOfTemplate);
+        if(this.bodyOfTemplate != '' || this.bodyOfTemplate != null){
+            $(this.editor).summernote('code', $(this.editor).summernote('code') + ' ' + this.bodyOfTemplate);
+        }
+
+        const page = document.querySelector('.note-editable');
+        page.innerHTML = '';
+        console.log('page ==> ', page);
+        page.setAttribute('data-editor', note.selector);
+        page.setAttribute('contenteditable', 'true');
+
     }
 
     /**
@@ -352,8 +369,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     handleSave() {
-        const editor = this.template.querySelector('[data-name="editor"]');
-        const content = $(editor).summernote('code');
+        const content = $(this.editor).summernote('code');
         this.isLoading = true;
 
         const template = {
@@ -385,8 +401,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     handleEdit() {
-        const editor = this.template.querySelector('[data-name="editor"]');
-        const content = $(editor).summernote('code');
+        const content = $(this.editor).summernote('code');
         this.bodyOfTemplate = content;
     
         this.isModalOpen = true;
@@ -465,19 +480,19 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             this.selectedObject = this.oldObject;
         }
         this.cancelBtn = false;
+        $(this.editor).summernote('destroy');
         console.log(this.selectedObject , 'SelectedObject');
     }
 
     handleContinue() {
         if (this.isObjectChanged && !this.cancelBtn) {
-            const editor = this.template.querySelector('[data-name="editor"]');
-            const editorContent = $(editor).summernote('code');
+            const editorContent = $(this.editor).summernote('code');
             
             const mergeFieldRegex = /\{\![^\}]+\}/g;
             
             const replacedContent = editorContent.replace(mergeFieldRegex, '{!Merge field text}');
             
-            $(editor).summernote('code', replacedContent);
+            $(this.editor).summernote('code', replacedContent);
             
             this.isObjectChanged = false;
         }

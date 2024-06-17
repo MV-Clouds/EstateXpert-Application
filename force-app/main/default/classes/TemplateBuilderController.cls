@@ -119,12 +119,16 @@ public with sharing class TemplateBuilderController {
             Schema.SObjectType objectType = globalDescribe.get(objectName);
             if (objectType != null && !objectType.getDescribe().isDeprecatedAndHidden()) {
                 Schema.DescribeSObjectResult objResult = objectType.getDescribe();
-                objectNamesMap.put(objResult.getName(), objResult.getLabel());
+                
+                if (objResult.isAccessible() && objResult.isUpdateable()) {
+                    objectNamesMap.put(objResult.getName(), objResult.getLabel());
+                }
             }
         }
         
         return objectNamesMap;
     }
+    
 
     /** 
     * Method Name: getTemplateTypePicklistValues
@@ -228,7 +232,6 @@ public with sharing class TemplateBuilderController {
     @AuraEnabled
     public static void updateTemplateStatus(String templateId, Boolean status) {
         try {
-            System.debug('status ==> ' + status);
             Template__c template = [SELECT Id, Status__c FROM Template__c WHERE Id = :templateId WITH SECURITY_ENFORCED LIMIT 1];
             if (template != null && Schema.sObjectType.Template__c.fields.Status__c.isUpdateable()) {
                 template.Status__c = status;
