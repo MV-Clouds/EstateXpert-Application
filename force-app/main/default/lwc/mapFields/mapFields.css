@@ -20,6 +20,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    /* margin-top: 1.3rem; */
 }
 
 .mapping-symbol {
@@ -92,15 +93,25 @@
     font-size:15px
 }
 
-.icon-button-del{
-    display: flex; 
-    justify-content: center; 
+.icon-button-del {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 8px;
 }
 
-.del-button{
+.del-button {
     margin-top: 15%;
+    background-color: #FFD2D2;
+    border-radius: 5px; 
+    --slds-g-color-neutral-base-50 : black;
+}
+
+.del-button:hover {
+    background-color: #FFD2D2; 
+}
+
+.del-button lightning-button-icon {
+    padding: 0.5rem;
 }
 
 .picklist-div{
@@ -118,5 +129,9 @@
 }
 
 .mapping-symbol img{
-    max-width: 3rem;
+    max-width: 2.5rem;
+}
+
+.add-btn{
+    margin-top: 1rem;
 }
