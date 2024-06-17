@@ -125,10 +125,6 @@ public with sharing class TemplateBuilderController {
         
         return objectNamesMap;
     }
-    
-    
-    
-    
 
     /** 
     * Method Name: getTemplateTypePicklistValues
@@ -218,6 +214,30 @@ public with sharing class TemplateBuilderController {
         }
         
         return recordsList;
+    }
+
+    /**
+     * Method Name: updateTemplateStatus
+     * @description: Updates the status of a Template__c record by its Id.
+     * @param templateId Id of the template to update.
+     * @param status New status value.
+     * @return void.
+     * Date: 12/06/2024
+     * Created By: Rachit Shah
+     */
+    @AuraEnabled
+    public static void updateTemplateStatus(String templateId, Boolean status) {
+        try {
+            Template__c template = [SELECT Id, Status__c FROM Template__c WHERE Id = :templateId WITH SECURITY_ENFORCED LIMIT 1];
+            if (template != null && Schema.sObjectType.Template__c.fields.Status__c.isUpdateable()) {
+                template.Status__c = status;
+                update template;
+            } else {
+                throw new AuraHandledException('No access to update the status field on Template__c.');
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException('Error updating template status: ' + e.getMessage());
+        }
     }
 }
 

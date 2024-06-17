@@ -5,6 +5,7 @@ import { loadStyle } from 'lightning/platformResourceLoader';
 import externalCss from '@salesforce/resourceUrl/templateCss';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import updateTemplateStatus from '@salesforce/apex/TemplateBuilderController.updateTemplateStatus';
 
 const PAGE_SIZE = 10;
 
@@ -200,14 +201,22 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     handleStatusChange(event) {
         const templateId = event.target.dataset.id;
-        const template = this.templates.find(tmpl => tmpl.Id === templateId);
-        if (template) {
-            template.isActive = event.target.checked;
-            template.Status__c = event.target.checked ? 'Active' : 'Inactive';
-            this.filteredTemplates = [...this.templates];
-            this.displayTemplates();
-            this.showToast('Status Change', `Template status changed to: ${template.Status__c}`, 'success');
-        }
+        const isActive = event.target.checked;
+
+        updateTemplateStatus({ templateId: templateId, status: isActive })
+            .then(() => {
+                const template = this.templates.find(tmpl => tmpl.Id === templateId);
+                if (template) {
+                    template.isActive = isActive;
+                    template.Status__c = isActive ? 'Active' : 'Inactive';
+                    this.filteredTemplates = [...this.templates];
+                    this.displayTemplates();
+                    this.showToast('Status Change', `Template status changed to: ${template.Status__c}`, 'success');
+                }
+            })
+            .catch(error => {
+                this.showToast('Error', `Error updating template status: ${error.body.message}`, 'error');
+            });
     }
 
     /**
