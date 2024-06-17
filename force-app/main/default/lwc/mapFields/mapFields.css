@@ -1,0 +1,108 @@
+.mainDiv{
+    background-color: rgb(255, 255, 255);
+    /* display: flex; */
+    margin: 5px;
+    border-radius: 5px;
+    
+}
+.listingDiv{
+    width: 50%;
+    margin: 5px;
+    margin-right: 10px;
+}
+.propertyDiv{
+    width: 50%;
+    margin: 5px;
+    margin-left: 10px;
+}
+
+.symbol-container {
+    display: flex;
+    margin:5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.mapping-symbol {
+    font-size: 22px;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    margin-right: 20px; /* Add margin to separate the heading from the buttons */
+}
+
+.checkbox-group {
+    flex: 1; /* Allow the checkbox group to grow and fill remaining space */
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push buttons to the right */
+}
+
+.add-button {
+    margin-right: 25px; /* Add margin between the buttons */
+}
+
+.checkbox{
+    height: 25px;width: 25px;
+}
+
+.checkbox-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.title {
+    font-size: 25px;
+    font-family: Arial, sans-serif; /* Use your preferred font-family */
+    font-weight: bold; /* Optionally, make the font bold */
+    color: #333; /* Optionally, specify the font color */
+}
+
+.checkbox-group .slds-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px; /* Add some margin for spacing */
+}
+
+.scrollable-container{
+    height: 400px;
+    overflow-y: auto;
+    padding-left: 3%;
+}
+
+.custom-width-33 {
+    width: 33%;
+}
+
+.label-text{
+    margin-left: 10px;
+    font-size:15px
+}
+
+.icon-button-del{
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.del-button{
+    margin-top: 15%;
+}
+
+.picklist-div{
+    width: 100%;
+}
+
+.con-msg{
+    margin-top: 13px;
+}
