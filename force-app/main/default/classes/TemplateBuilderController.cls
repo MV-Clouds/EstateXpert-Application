@@ -49,7 +49,7 @@ public with sharing class TemplateBuilderController {
             throw new AuraHandledException('No access to Template_Body__c field.');
         }
         
-        Template__c template = [SELECT Label__c, Template_Body__c FROM Template__c WHERE Id = :templateId WITH SECURITY_ENFORCED LIMIT 1] ;
+        Template__c template = [SELECT Label__c, Description__c,Template_Body__c FROM Template__c WHERE Id = :templateId WITH SECURITY_ENFORCED LIMIT 1] ;
         return template;
     }
 
@@ -228,6 +228,7 @@ public with sharing class TemplateBuilderController {
     @AuraEnabled
     public static void updateTemplateStatus(String templateId, Boolean status) {
         try {
+            System.debug('status ==> ' + status);
             Template__c template = [SELECT Id, Status__c FROM Template__c WHERE Id = :templateId WITH SECURITY_ENFORCED LIMIT 1];
             if (template != null && Schema.sObjectType.Template__c.fields.Status__c.isUpdateable()) {
                 template.Status__c = status;

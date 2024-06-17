@@ -97,12 +97,12 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     processTemplates(data) {
-        // console.log('processtemplate:- ',JSON.stringify(data));
+        console.log('processtemplate:- ',JSON.stringify(data));
         this.templates = data
         this.templates = this.templates.map((template, index) => ({
             ...template,
             rowIndex: index + 1,
-            isActive: template.Status__c === true ? 'Active' : 'Inactive',
+            isActive: template.Status__c,
             CreatedDateformatted: this.formatDate(template.CreatedDate)
         }));
 

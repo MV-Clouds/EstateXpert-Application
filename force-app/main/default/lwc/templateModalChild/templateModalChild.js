@@ -300,6 +300,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     loadTemplateContent() {
         getTemplateContent({ templateId: this.currentRecordId })
             .then(result => {
+                this.description = result.Description__c;
                 const editor = this.template.querySelector('[data-name="editor"]');
                 $(editor).summernote('code', result.Template_Body__c);
                 this.isLoading = false;
