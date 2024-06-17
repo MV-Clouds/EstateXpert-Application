@@ -8,7 +8,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track breadcrumbs = [];
     @track selectedValues = [];
     @track showCombobox = true;
-    @track options1 = []; // Updated to hold the current set of combobox options
+     // Updated to hold the current set of combobox options
 
     // Custom combobox properties
     @track searchTerm1 = '';
@@ -18,6 +18,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track notCheckboxValue = false;
     @track comboBoxValue;
     @track operationValue;
+    @track ListingFields=[];
 
 
     connectedCallback() {
@@ -35,8 +36,38 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         getListingFields({ objectApiName })
             .then(fields => {
                 // console.log('fields'+JSON.stringify(fields));
+                const filteredFields = fields;
+                if(this.breadcrumbs.length >0){
+                    filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
+                }
                 if (fields) {
-                    this.fieldOptions = fields.map(field => {
+                    this.fieldOptions = filteredFields.map(field => {
+                        return {
+                            label: field.fieldName, // Only show the label
+                            value: field.fieldAPIName,
+                            type: field.fieldType, // Add type to identify lookup fields
+                            referenceObjectName: field.referenceFields || [], 
+                            objectApiName : field.referenceObjectName || '',
+                            picklistValues: field.picklistValues || []
+                            // Include reference fields if any
+                        };
+                    });
+                    this.options1 = this.fieldOptions;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching object fields:', error);
+            });
+    }
+
+    fetchObjectFieldsWithoutReference(objectApiName) {
+        getListingFields({ objectApiName })
+            .then(fields => {
+                // console.log('fields'+JSON.stringify(fields));
+                const filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
+
+                if (fields) {
+                    this.fieldOptions = filteredFields.map(field => {
                         return {
                             label: field.fieldName, // Only show the label
                             value: field.fieldAPIName,
@@ -144,6 +175,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
             default:
                 options = [];
         }
+        this.selectedField[0].operation = options[0].value;
         return options;
     }
 
@@ -158,6 +190,8 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.showCombobox = false;
         this.valueIsField = true;
         this.selectedField= [this.selectedFields.length > 0 ? this.selectedFields[this.selectedFields.length - 1] : null];
+        
+        
         console.log('log'+JSON.stringify(this.selectedField));
         console.log('if'+JSON.stringify(this.selectedFields.length > 0 ? this.selectedFields[this.selectedFields.length - 1] : null));
     }
@@ -195,6 +229,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     **/
     changeTheCheckboxValue(event){
         this.selectedField = [];
+        this.valueIsField = false;
         const selectedValue = event.currentTarget.dataset.id;
         // console.log('Id'+selectedValue);
         const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
@@ -203,9 +238,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         // console.log('1'+selectedField.objectApiName);
         if(selectedField != null){
             this.handleFieldSelect(event);
-            // console.log('2'+selectedField.objectApiName);
-            this.fetchObjectFields(selectedField.objectApiName);
-
+            this.fetchObjectFieldsWithoutReference(selectedField.objectApiName);
         }
     }
 
@@ -241,20 +274,21 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     updateBreadcrumbs() {
+        this.valueIsField = false;
         this.breadcrumbs = this.selectedFields.map(selectedValue => {
             return { label: selectedValue.label };
         });
+        
         console.log('this.breadcrumbs'+JSON.stringify(this.breadcrumbs));
         console.log('this.breadcrumbs'+JSON.stringify(this.selectedValues));
     }
-    
         handleBreadcrumbClick(event) {
-             const clickedIndex = parseInt(event.currentTarget.dataset.index, 10);
+            const clickedIndex = parseInt(event.currentTarget.dataset.index, 10);
             this.selectedFields = this.selectedFields.slice(0, clickedIndex);
             this.selectedValues = this.selectedValues.slice(0, clickedIndex);
-            console.log('selectedFields'+this.selectedFields);
-            console.log('selectedValues'+this.selectedValues);
-    
+           this.selectedField = [];
+           this.handleAddButtonDisable();
+
             if (this.selectedValues.length > 0) {
                 const lastSelectedValue = this.selectedValues[this.selectedValues.length - 1];
                 const lastSelectedField = this.selectedFields[this.selectedFields.length - 1].objectApiName;
@@ -263,9 +297,16 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                 if(lastSelectedField == null){
                     lastSelectedField='Listing__c'
                 }
-                console.log('lastSelec'+lastSelectedField);
-                console.log('lastSelec2'+lastSelectedValue);
-                this.fetchObjectFields(lastSelectedField);
+                if(clickedIndex == 0){
+                    this.fieldOptions = this.options1;
+                }else if(clickedIndex == this.breadcrumbs.length-1){
+                    console.log('byr');
+                    
+                }else{
+                    console.log('lastSelec'+lastSelectedField);
+                    console.log('lastSelec2'+lastSelectedValue);
+                    this.fetchObjectFields(lastSelectedField);
+                }
                 
             } else {
                 this.fetchObjectFields('Listing__c');
@@ -358,9 +399,13 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     operationSelect(event){
-        this.operationValue = event.target.value;
         this.selectedField[0].operation = event.target.value;
         console.log('2'+JSON.stringify(this.selectedField));
+        this.handleAddButtonDisable();
+    }
+
+    handleAddButtonDisable(){
+        this.dispatchEvent(new CustomEvent('fieldchange', { detail: this.selectedField }));
     }
 
     /**

@@ -107,8 +107,102 @@ public without sharing class ListingManagerFilterController {
         
         for (Schema.PicklistEntry entry : picklistEntries) {
             picklistValues.add(new Map<String, String>{'label' => entry.getLabel(), 'value' => entry.getValue()});
+        }     
+        return picklistValues;
+    }
+
+
+    public class ListingWrapper {
+        public Listing__c listing { get; set; }
+        public Contact contact { get; set; }
+        public Property__c property { get; set; }
+        
+        public ListingWrapper(Listing__c listing, Contact contact, Property__c property) {
+            this.listing = listing;
+            this.contact = contact;
+            this.property = property;
+        }
+
+        public String toJson() {
+            Map<String, Object> result = new Map<String, Object>();
+            result.put('Id', listing.Id);
+            result.put('Name', listing.Name);
+            result.put('Listing__c', getAllFieldsWithValues(listing));
+            result.put('Contact', getAllFieldsWithValues(contact));
+            result.put('Property__r', getAllFieldsWithValues(property));
+            return JSON.serialize(result);
+        }
+
+        private Map<String, Object> getAllFieldsWithValues(SObject obj) {
+            Map<String, Object> fieldMap = new Map<String, Object>();
+            if (obj != null) {
+                for (SObjectField field : obj.getSObjectType().getDescribe().fields.getMap().values()) {
+                    String fieldName = field.getDescribe().getName();
+                    fieldMap.put(fieldName, obj.get(fieldName));
+                }
+            }
+            return fieldMap;
+        }
+    }
+
+    @AuraEnabled
+    public static List<String> getListingsWithRelatedRecords() {
+        List<String> listingJsons = new List<String>();
+
+        // Dynamically build the SOQL query to include all fields
+        String listingFields = getAllFields('Listing__c');
+        String contactFields = getAllFieldsWithPrefix('Contact', 'Contact__r');
+        String propertyFields = getAllFieldsWithPrefix('Property__c', 'Property__r');
+
+        // Constructing the SOQL query
+        String query = 'SELECT ' + listingFields + ', ' +
+                       contactFields + ', ' +
+                       propertyFields + ' ' +
+                       'FROM Listing__c';
+
+        // Debug the constructed query
+        System.debug('SOQL Query: ' + query);
+
+        // Fetch the listings with related records
+        List<Listing__c> listings = Database.query(query);
+
+        // Iterate through the listings and create wrapper instances
+        for (Listing__c listing : listings) {
+            Contact relatedContact = listing.Contact__r;
+            Property__c relatedProperty = listing.Property__r;
+            ListingWrapper lw = new ListingWrapper(listing, relatedContact, relatedProperty);
+            listingJsons.add(lw.toJson());
+        }
+
+        // Debug the listing wrapper records
+        System.debug('Listing Wrappers JSON: ' + listingJsons);
+
+        return listingJsons;
+    }
+
+    private static String getAllFields(String sObjectName) {
+        // Get all fields of the given sObject
+        Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
+        List<String> fieldNames = new List<String>();
+        
+        for (String fieldName : fieldMap.keySet()) {
+            fieldNames.add(fieldName);
         }
         
-        return picklistValues;
+        // Join the field names into a single comma-separated string
+        return String.join(fieldNames, ', ');
+    }
+
+    private static String getAllFieldsWithPrefix(String sObjectName, String prefix) {
+        // Get all fields of the given sObject and prefix them for a parent relationship query
+        Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
+        List<String> fieldNames = new List<String>();
+        
+        for (String fieldName : fieldMap.keySet()) {
+            fieldNames.add(prefix + '.' + fieldName);
+        }
+        
+        // Join the field names into a single comma-separated string
+        return String.join(fieldNames, ', ');
     }
 }

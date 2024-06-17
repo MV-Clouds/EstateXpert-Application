@@ -4,7 +4,7 @@ import getListingData from '@salesforce/apex/ListingManagerController.getListing
 import { NavigationMixin } from 'lightning/navigation';
 
 export default class ListingManagerTileViewCmp extends NavigationMixin(LightningElement) {
-    @track listingData;
+    @track listingData ;
     @track blankImage = blankImage;
     @api listings = [];
     @track isPrevDisabled = true;
@@ -15,7 +15,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     @track shownProcessedListingData = [];
 
     connectedCallback(){
-        this.getListingData();
+        // this.getListingData();
         this.totalPages = Math.ceil(this.listings.length / this.pageSize);
         this.updateProcessedListingData();
         this.updatePaginationButtons();
@@ -26,19 +26,28 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     * @description : retrieve the lisitngs from the salesforce
     * Created By: Vyom Soni
     */
-    getListingData(){
-        getListingData()
-            .then(result => {
-                this.listingData = result;
-                this.listingData.forEach((listing)=>{
-                    listing.isChecked = false;
-                    listing.imageUrl__c = listing.imageUrl__c ? listing.imageUrl__c : this.blankImage;
-                })
-            })
-            .catch(error => {
-                this.error = error;
-                this.data = undefined;
-            });
+    // getListingData(){
+    //     getListingData()
+    //         .then(result => {
+    //             this.listingData = result;
+    //             this.listingData.forEach((listing)=>{
+    //                 listing.isChecked = false;
+    //                 listing.imageUrl__c = listing.imageUrl__c ? listing.imageUrl__c : this.blankImage;
+    //             })
+    //         })
+    //         .catch(error => {
+    //             this.error = error;
+    //             this.data = undefined;
+    //         });
+    // }
+    setValueInParent(){
+          // Create a custom event with the value you want to pass to the parent
+          const customEvent = new CustomEvent('valueselected', {
+            detail: this.listings
+        });
+        
+        // Dispatch the custom event
+        this.dispatchEvent(customEvent);
     }
 
     /**
@@ -46,10 +55,41 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     * @description : change the listing state when the checkboxs is updated
     * Created By: Vyom Soni
     */
-    checkBoxValueChange(event){
-        const checkboxId = Number(event.target.dataset.id);
-        console.log('hi'+typeof checkboxId);
-        this.listingData[checkboxId].ischeked = true;
+    checkBoxValueChange(event) {
+        try {
+            const checkboxId = Number(event.target.dataset.id);
+            const isChecked = event.target.checked;
+
+            console.log(`Checkbox ID: ${checkboxId}, Checked: ${isChecked}`);
+
+            // Update the shownProcessedListingData array
+            this.shownProcessedListingData = this.shownProcessedListingData.map((item, index) => {
+                if (index === checkboxId) {
+                    console.log(`Updating shownProcessedListingData at index ${index} with isChecked: ${isChecked}`);
+                    return { ...item, isChecked: isChecked };
+                }
+                return item;
+            });
+
+            console.log('Updated shownProcessedListingData:', JSON.stringify(this.shownProcessedListingData));
+
+            // Sync the changes with the listings array
+            this.listings = this.listings.map(item1 => {
+                const matchedItem = this.shownProcessedListingData.find(item2 => item1.Id === item2.Id);
+                if (matchedItem) {
+                    console.log(`Syncing listing item ID ${item1.Id} with isChecked: ${matchedItem.isChecked}`);
+                    return { ...item1, isChecked: matchedItem.isChecked };
+                }
+                return item1;
+            });
+
+            console.log('Updated listings:', JSON.stringify(this.listings));
+
+            // Call the parent update method if necessary
+            this.setValueInParent();
+        } catch (e) {
+            console.error('Error:', e);
+        }
     }
 
      /**
@@ -105,8 +145,5 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
         }
     }
 
-    get totalSelected() {
-        return this.processedListingData.filter(listing => listing.isChecked).length;
-    }
     
 }

@@ -67,7 +67,7 @@
             <div class="body slds-grid">
                 <div class="innerDiv1 slds-col slds-size_4-of-12">
                     <div class="filterDiv">
-                        <c-listing-manager-filter-cmp>
+                        <c-listing-manager-filter-cmp onvalueselected={handleFilteredListings}>
 
                         </c-listing-manager-filter-cmp>
                     </div>
@@ -96,25 +96,25 @@
                                 <th class="slds-cell_action-mode imageColume" scope="col">
                                     <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
                                 </th>
-                                <th key={listing.fieldName} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
+                                <th key={listing.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
                                   <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
                                     <span class="slds-assistive-text">Sort by: </span>
                                     <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
                                       <span class="slds-truncate" title="Title">Listing Name</span>
                                       <span class="slds-icon_container slds-icon-utility-arrowdown">
-                                        <svg data-id="Name" onclick={sortClick} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
+                                        <svg data-index="Name" xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
                                       </span>
                                     </div>
                                   </a>
                                 </th>
                                 <template for:each={fields} for:item="listing" for:index="index">
-                                  <th key={listing.fieldName} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
+                                  <th key={listing.fieldName} data-id={listing.fieldName} onclick={sortClick} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
                                     <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
                                       <span class="slds-assistive-text">Sort by: </span>
                                       <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
                                         <span class="slds-truncate" title="Title">{listing.fieldLabel}</span>
                                         <span class="slds-icon_container slds-icon-utility-arrowdown">
-                                          <svg data-id={listing.fieldName} onclick={sortClick} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
+                                          <svg data-index={listing.fieldName} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
                                         </span>
                                       </div>
                                     </a>
@@ -178,8 +178,7 @@
                   </template>
                   <templete if:true={showTile}>
                       <c-listing-manager-tile-view-cmp
-                        onlistingselect={handleListingSelect}
-                        onnavigateout={handleNavigateOut}
+                        onvalueselected={handleListingSelect}
                         listings={processedListingData}
                       ></c-listing-manager-tile-view-cmp>
                   </templete>

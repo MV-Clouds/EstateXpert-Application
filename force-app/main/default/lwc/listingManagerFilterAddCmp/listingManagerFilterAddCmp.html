@@ -81,7 +81,7 @@
                             <lightning-input type="checkbox" label="Not" data-index={index} checked={notCheckboxValue} onchange={handleNotCheckboxChange}></lightning-input>
                         </div>
                         <div>
-                            <lightning-combobox class="operator-combobox" data-index={index} value={operationValue} options={currentFieldOptions} onchange={operationSelect}></lightning-combobox>
+                            <lightning-combobox class="operator-combobox" data-index={index} value={field.operation} options={currentFieldOptions} onchange={operationSelect}></lightning-combobox>
                         </div>
                     </div>
                 </div>

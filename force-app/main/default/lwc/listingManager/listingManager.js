@@ -23,7 +23,8 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track showMap = false;
     @track listingData;
     @track fields;
-    @track processedListingData = [];
+    @track processedListingData = [];    
+    @track unchangedProcessListings = [];    
     @track blankImage = blankImage;
     @track sortField = '';
     @track sortOrder = 'asc';
@@ -75,7 +76,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     processListings() {
         // Process the listing data and create the required data structure
-        console.log("yo");
         this.processedListingData = this.listingData.map(listing => {
             // For each listing, map the fields to create an array of ordered fields
             let orderedFields = this.fields.map(field => {
@@ -94,6 +94,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 orderedFields
             };
         });
+        this.unchangedProcessListings = this.processedListingData;
         console.log('Hi1');
         console.log('hi'+JSON.stringify(this.processedListingData));
         this.totalPages = Math.ceil(this.processedListingData.length / this.pageSize);
@@ -123,6 +124,27 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             .finally(() => {
 
             });
+    }
+
+
+    //handle the filtered data from the filetr component
+    handleFilteredListings(event){
+        const filteredListing = event.detail;
+        this.processedListingData = this.unchangedProcessListings;
+        this.processedListingData = this.processedListingData.filter(processListing =>
+            filteredListing.some(filtered => filtered.Id === processListing.Id)
+        );
+        this.updateProcessedListingData();
+        this.updatePaginationButtons();
+    }
+
+
+    //handle data from the tile cmp
+    handleListingSelect(event){
+        console.log('Hi');
+        this.processedListingData = event.detail;
+        this.updateProcessedListingData();
+        this.updateSelectedProperties();
     }
 
 
@@ -290,7 +312,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             icon.classList.remove('rotate-asc', 'rotate-desc');
         });
 
-        const currentHeader = this.template.querySelector('[data-id="' + this.sortField + '"]');
+        const currentHeader = this.template.querySelector('[data-index="' + this.sortField + '"]');
         if (currentHeader) {
             currentHeader.classList.add(this.sortOrder === 'asc' ? 'rotate-asc' : 'rotate-desc');
         }

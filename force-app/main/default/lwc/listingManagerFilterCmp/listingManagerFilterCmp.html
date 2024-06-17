@@ -35,7 +35,7 @@
                                             </span>
                                         </div>
                                         <div class="delete-icon-cover" >
-                                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
+                                            <svg  data-id={index} onclick={s} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
                                                 fill="#fff">
                                                 <path
                                                     d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
@@ -70,7 +70,7 @@
                                                     <span class="slds-icon_container slds-pill__remove" title="Remove">
                                                         <button
                                                             class="slds-button slds-button_icon slds-button_icon slds-pill__remove pill-remove"
-                                                            title="Remove" data-index={index} onclick={removeOption1} data-id={option2.value}>
+                                                            title="Remove" data-index={index} onclick={removeOptionMethod} data-id={option2.value}>
                                                             <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
                                                                 viewBox="0 0 520 520" fill="#fff">
                                                                 <path
@@ -109,7 +109,7 @@
                                                 role="none">
                                                 <input type="text" class="slds-input slds-combobox__input"
                                                     placeholder={option.label}  data-id={index}
-                                                    oninput={handleSearchChangeString} />
+                                                    onchange={handleSearchChangeString} />
                                                 <span
                                                     class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
                                                     <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
@@ -119,7 +119,7 @@
                                                     </svg>
                                                 </span>
                                             </div>
-                                            <div class="plus" data-id={index} onclick={addTheCity}><svg xmlns="http://www.w3.org/2000/svg"
+                                            <div class="plus" data-id={index} onclick={addTheString}><svg xmlns="http://www.w3.org/2000/svg"
                                                     height="52" width="52" viewBox="0 0 520 520" fill="#fff">
                                                     <path
                                                         d="M300 290h165c8 0 15-7 15-15v-30c0-8-7-15-15-15H300c-6 0-10-4-10-10V55c0-8-7-15-15-15h-30c-8 0-15 7-15 15v165c0 6-4 10-10 10H55c-8 0-15 7-15 15v30c0 8 7 15 15 15h165c6 0 10 4 10 10v165c0 8 7 15 15 15h30c8 0 15-7 15-15V300c0-6 4-10 10-10z" />
@@ -146,7 +146,7 @@
                                                     <span class="slds-icon_container slds-pill__remove" title="Remove">
                                                         <button
                                                             class="slds-button slds-button_icon slds-button_icon slds-pill__remove pill-remove"
-                                                            title="Remove" data-index={index} onclick={removeOption1} data-id={option2.value}>
+                                                            title="Remove" data-index={index} onclick={removeOptionMethod} data-id={option2.value}>
                                                             <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
                                                                 viewBox="0 0 520 520" fill="#fff">
                                                                 <path
@@ -628,18 +628,6 @@
             </div>
         </div>
 
-        <!--radio group-->
-
-        <div class="radio-div">
-            <lightning-radio-group
-            class="radio-group"
-                label="Show me"
-                options={radioOptions}
-                value={selectedRadio}
-                onchange={handleChange}>
-            </lightning-radio-group>
-        </div>
-
         <!--refresh button and search button-->
 
         <div class="field-reset-btn plus">
@@ -666,13 +654,13 @@
                         <!-- Modal/Popup Body -->
                         <div class="slds-modal__content slds-p-around_medium modal-body">
                             <slot>
-                                <c-listing-manager-filter-add-cmp onvalueselected={handleValueSelected}></c-listing-manager-filter-add-cmp>
+                                <c-listing-manager-filter-add-cmp onfieldchange={handleFieldChange} onvalueselected={handleValueSelected}></c-listing-manager-filter-add-cmp>
                             </slot>
                         </div>
                         <!-- Modal/Popup Footer -->
                         <footer class="slds-modal__footer">
                             <button class="slds-button slds-button_neutral" onclick={handleClose}>Cancel</button>
-                            <button class="slds-button slds-button_brand" onclick={handleSave}>Add</button>
+                            <button class="slds-button slds-button_brand"  disabled={isAddButtonDisabled} onclick={handleSave}>Add</button>
                         </footer>
                     </div>
                 </section>
