@@ -1,13 +1,17 @@
 import { LightningElement, track, api} from 'lwc';
 import Backbutton from '@salesforce/resourceUrl/Backbutton';
 import ChecklistIcon from '@salesforce/resourceUrl/ChecklistIcon';
+import getObjects from'@salesforce/apex/ChecklistController.getAllObjectNames';
+import getAllFieldNames from'@salesforce/apex/ChecklistController.getAllFieldNames';
+
 
 export default class ChecklistTable extends LightningElement {
 
     @track myVariable;
     Backbutton = Backbutton;
     ChecklistIcon = ChecklistIcon;
-
+    @track objectoptions = [];
+    @track fieldoptions = [];
   
     @track checklistItems = [
         { id: 1, checklistName: 'Name', fieldName: 'City', operator: 'Equals', value: 'Vadodara' },
@@ -21,6 +25,46 @@ export default class ChecklistTable extends LightningElement {
         { label: 'Equals', value: 'Equals' },
         { label: 'Not Equals', value: 'Not Equals' },
     ];
+
+    connectedCallback(){
+        getObjects()
+            .then(result => {
+                console.log({result});	
+                if (result) {
+                    this.objectoptions = Object.keys(result)
+                        .map(key => ({
+                            label: result[key],
+                            value: key
+                        }))
+                        .sort((a, b) => a.label.localeCompare(b.label)); 
+                } else if (error) {
+                    // Handle error
+                    console.error('Error fetching object names:', error);
+                }                
+                console.log('this.objectoptions>>',this.objectoptions);
+            })
+            .catch(error => {
+                this.error = error;		
+            })
+	} 
+
+    handleChange(event){
+        console.log({event});
+    }
+    
+    handleObjectChange(event){
+        console.log({event});
+        let objName = event.target.value;
+        console.log('objName>>',objName);
+        getAllFieldNames({objectName : objName})
+            .then(result => {                
+                console.log({result});	
+                this.fieldoptions = result.map(field => ({ label: field, value: field }));		
+            })
+            .catch(error => {
+                this.error = error;		
+            })
+    }
 
     handleInputChange(event) {
         try {
@@ -48,10 +92,13 @@ export default class ChecklistTable extends LightningElement {
     }
 
     handleOrderChange(event) {
-        const id = parseInt(event.target.dataset.id);
+        const id = event.target.dataset.id;
+        console.log('id-->',id);
         const action = event.target.dataset.action;
+        console.log('action-->',action);
         const index = this.checklistItems.findIndex(item => item.id === id);
-        if (index >= 0) {
+        console.log('index-->',index);
+        if (index) {
             if (action === 'up' && index > 0) {
                 // [this.checklistItems[index], this.checklistItems[index - 1]] = [this.checklistItems[index - 1], this.checklistItems[index]];
                 this.swapItems(index, index - 1);

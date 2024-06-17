@@ -4,6 +4,7 @@
 .mainDiv{
     font-family: sans-serif;
     background-color: white;
+    height: 53rem;
 }
 .subdiv{
     display: flex;
@@ -70,4 +71,36 @@
 th{
     background-color: #e8f0fe !important;
     line-height: 24px !important;
+}
+.subtablediv tr td{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.subtablediv .slds-table_bordered{
+    border-top: none !important;
+    border-bottom: none !important;
+}
+.footerbtns{
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+.cancelbtn{    
+    height: 40px;
+    align-content: center;
+    width: 100px;       
+    color: #4285f4;    
+    border-radius: 5px;
+    cursor: pointer;    
+    border: 1px solid black;
+}
+.savebtn{
+    height: 40px;
+    align-content: center;
+    width: 100px;
+    background-color: #4285f4;    
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;    
+    border: 1px solid black;
 }

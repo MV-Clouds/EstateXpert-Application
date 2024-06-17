@@ -21,19 +21,20 @@
             <div class="add-button">+ Add New</div>
         </div>
         <div class="tablediv slds-m-top_medium slds-m-around_x-large">
+            <div class="subtablediv">
             <div class="dropdowndiv slds-grid slds-wrap slds-m-around_medium">
                 <div class="objdiv slds-m-around_small">
                     <lightning-combobox name="Select Object" label="Select Object" value={value} placeholder="Select Object"
-                                        options={options} onchange={handleChange} >
+                                        options={objectoptions} onchange={handleObjectChange} >
                     </lightning-combobox>
                 </div>
                 <div class="objdiv slds-m-around_small">
                     <lightning-combobox name="Select Field" label="Select Field" value={value} placeholder="Select Field"
-                                        options={options} onchange={handleChange} >
+                                        options={fieldoptions} >
                     </lightning-combobox>
                 </div>
             </div>
-            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-p-left_medium slds-p-right_medium slds-p-bottom_medium" style="border-radius: 8px;">
                 <thead class="tableheader">
                     <tr>
                         <th scope="col">
@@ -61,16 +62,16 @@
                         <tr key={item.id}>
                             
                             <td>
-                                <lightning-input type="text" value={item.checklistName} data-id={item.id} data-field="checklistName" onchange={handleInputChange}></lightning-input>
+                                <lightning-input type="text" value={item.checklistName} data-id={item.id} data-field="checklistName" onchange={handleInputChange} variant="label-hidden"></lightning-input>
                             </td>
                             <td>
-                                <lightning-input type="text" value={item.fieldName} data-id={item.id} data-field="fieldName" onchange={handleInputChange}></lightning-input>
+                                <lightning-input type="text" value={item.fieldName} data-id={item.id} data-field="fieldName" onchange={handleInputChange} variant="label-hidden"></lightning-input>
                             </td>
                             <td>
-                                <lightning-combobox value={item.operator} data-id={item.id} data-field="operator" options={operatorOptions} onchange={handleInputChange}></lightning-combobox>
+                                <lightning-combobox value={item.operator} data-id={item.id} data-field="operator" options={operatorOptions} onchange={handleInputChange} variant="label-hidden"></lightning-combobox>
                             </td>
                             <td>
-                                <lightning-input type="text" value={item.value} data-id={item.id} data-field="value" onchange={handleInputChange}></lightning-input>
+                                <lightning-input type="text" value={item.value} data-id={item.id} data-field="value" onchange={handleInputChange} variant="label-hidden"></lightning-input>
                             </td>
                             <td>
                                 <div class="slds-button-group" role="group">
@@ -89,11 +90,13 @@
                     </template>
                 </tbody>
             </table>
-        </div>        
-        <div>
-            <lightning-button variant="brand" label="Brand" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
-            <lightning-button label="Neutral" title="Non-primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
         </div>
+        <div class="footerbtns slds-p-bottom_medium">           
+            <div class="cancelbtn">Add</div>
+            <div class="savebtn slds-m-left_small">Save</div>
+        </div>
+        </div>        
+     
     </div>
 </template>
 <!-- <template>
