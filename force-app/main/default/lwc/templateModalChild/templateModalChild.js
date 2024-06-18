@@ -106,7 +106,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     renderedCallback() {
-        // if (this.isInitialRender) {
+        if (this.isInitialRender) {
             Promise.all([
                 loadScript(this, summerNote_Editor + '/jquery-3.7.1.min.js'),
             ])
@@ -127,7 +127,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     console.log('Error loading libraries', error);
                     this.isLoading = false;
                 });
-        // }
+        }
     }
 
     /**
