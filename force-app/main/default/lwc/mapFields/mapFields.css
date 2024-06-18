@@ -134,13 +134,12 @@
     margin-top: 1rem;
 }
 
-
 .disabled{
-    --slds-g-color-neutral-base-50 : #D2D2D2;
-    /* --slds-g-color-neutral-base-50 : purple; */
+    --slds-g-color-neutral-base-95 : #D2D2D2;
+    --slds-g-color-neutral-base-50 : white;
 }
 
-.slds-button[disabled], .slds-button:disabled{
-    --slds-g-color-neutral-base-80 : #D2D2D2;
-    background-color: #D2D2D2;
+.disabled-del{
+    background-color: #D2D2D2 !important;
+    --slds-g-color-neutral-base-80 : white !important;
 }

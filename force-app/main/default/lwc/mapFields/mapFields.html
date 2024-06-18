@@ -54,7 +54,7 @@
                                     </lightning-combobox>
                                 </lightning-layout-item>
                                 <div class="icon-button-del">
-                                    <lightning-button-icon class="slds-m-left_x-small del-button"
+                                    <lightning-button-icon class={delButtonClass}
                                         icon-name="utility:delete" alternative-text="Delete This Mapping" value={index}
                                         onclick={deletePair}
                                         disabled={isAutoSyncEnabled}>

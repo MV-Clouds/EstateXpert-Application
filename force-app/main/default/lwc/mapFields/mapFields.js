@@ -25,8 +25,10 @@ export default class MapFields extends LightningElement {
     @track showConfirmationModal = false;
 
     doubleSideArrowUrl = doubleSideArrow;
-    
-    
+
+    get delButtonClass() {
+        return this.isAutoSyncEnabled ? 'slds-m-left_x-small del-button disabled-del' : ' slds-m-left_x-small del-button';
+    }
 
     connectedCallback(){
         this.isLoading = true;
