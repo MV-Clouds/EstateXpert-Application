@@ -45,6 +45,10 @@ export default class MapFields extends LightningElement {
             this.filterAndUpdateListingOptions();
     }
 
+    get isAutoSyncEnabled() {
+        return this.checkboxValue;
+    }
+    
     callPropertyFields(){
         getObjectFields({ objectName: 'Property__c' })
         .then(data => {

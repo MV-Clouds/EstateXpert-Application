@@ -1,9 +1,7 @@
 .mainDiv{
     background-color: rgb(255, 255, 255);
-    /* display: flex; */
     margin: 5px;
     border-radius: 5px;
-    
 }
 .listingDiv{
     width: 50%;
@@ -20,7 +18,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /* margin-top: 1.3rem; */
 }
 
 .mapping-symbol {
@@ -35,17 +32,17 @@
 }
 
 .title {
-    margin-right: 20px; /* Add margin to separate the heading from the buttons */
+    margin-right: 20px; 
 }
 
 .checkbox-group {
-    flex: 1; /* Allow the checkbox group to grow and fill remaining space */
+    flex: 1; 
 }
 
 .buttons {
     display: flex;
     align-items: center;
-    margin-left: auto; /* Push buttons to the right */
+    margin-left: auto; 
 }
 
 .add-button {
@@ -67,15 +64,15 @@
 
 .title {
     font-size: 25px;
-    font-family: Arial, sans-serif; /* Use your preferred font-family */
-    font-weight: bold; /* Optionally, make the font bold */
-    color: #333; /* Optionally, specify the font color */
+    font-family: Arial, sans-serif; 
+    font-weight: bold; 
+    color: #333; 
 }
 
 .checkbox-group .slds-checkbox {
     width: 20px;
     height: 20px;
-    margin-right: 5px; /* Add some margin for spacing */
+    margin-right: 5px; 
 }
 
 .scrollable-container{
@@ -135,4 +132,15 @@
 
 .add-btn{
     margin-top: 1rem;
+}
+
+
+.disabled{
+    --slds-g-color-neutral-base-50 : #D2D2D2;
+    /* --slds-g-color-neutral-base-50 : purple; */
+}
+
+.slds-button[disabled], .slds-button:disabled{
+    --slds-g-color-neutral-base-80 : #D2D2D2;
+    background-color: #D2D2D2;
 }

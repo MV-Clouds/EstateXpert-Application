@@ -33,7 +33,9 @@
                                 <lightning-layout-item size="5">
                                     <lightning-combobox label="Listing Field" options={pair.listingOptions}
                                         data-index={index} value={pair.selectedListing}
-                                        onchange={handleSourceFieldChange}>
+                                        onchange={handleSourceFieldChange}
+                                        disabled={isAutoSyncEnabled}
+                                        class="disabled">
                                     </lightning-combobox>
                                 </lightning-layout-item>
                                 <lightning-layout-item size="1">
@@ -41,21 +43,21 @@
                                         <span class="mapping-symbol">    
                                             <img src={doubleSideArrowUrl} alt="Double Side Arrow" />
                                         </span>
-                                        <!-- <span class="mapping-symbol">&#8660;</span> -->
-                                        
                                     </div>
                                 </lightning-layout-item>
                                 <lightning-layout-item size="5">
                                     <lightning-combobox label="Property Field" options={pair.propertyOptions}
                                         data-index={index} value={pair.selectedProperty}
                                         onchange={handleDestinationFieldChange}
-                                        disabled={pair.isPropertyPicklistDisabled}>
+                                        disabled={isAutoSyncEnabled}
+                                        class="disabled">
                                     </lightning-combobox>
                                 </lightning-layout-item>
                                 <div class="icon-button-del">
                                     <lightning-button-icon class="slds-m-left_x-small del-button"
                                         icon-name="utility:delete" alternative-text="Delete This Mapping" value={index}
-                                        onclick={deletePair}>
+                                        onclick={deletePair}
+                                        disabled={isAutoSyncEnabled}>
                                     </lightning-button-icon>
                                 </div>
                             </lightning-layout>
@@ -63,7 +65,7 @@
                     </template>
                     <div class="add-btn">
                         <!-- Add new mapping button -->
-                        <button class="slds-button slds-button_brand add-button" onclick={addNewPair}>Add</button>
+                        <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={isAutoSyncEnabled} >Add</button>
                     </div>
                 </template>
             </div>
