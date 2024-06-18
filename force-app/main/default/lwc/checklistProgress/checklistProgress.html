@@ -1,0 +1,18 @@
+<template>
+    <div class="mainDiv">
+        <div>
+
+        </div>
+        <div class="progressbardiv">
+            <lightning-progress-indicator current-step='3'>
+                <template for:each={pages} for:item="page" for:index="index">
+                    <lightning-progress-step label={page.label} value={page.value} key={page.value}
+                        ></lightning-progress-step>
+                </template>
+            </lightning-progress-indicator>
+        </div>
+        <div class="">
+
+        </div>
+    </div>
+</template>
