@@ -66,6 +66,7 @@
   display: flex;
   justify-content: center;
   gap: 5%;
+  padding-bottom: 1rem;
 }
 
 .pagination {
@@ -171,4 +172,8 @@ th{
   text-align: center;
   font-size: 18px; 
   color: #ccc; 
+}
+
+.table-content{
+  min-height: 63vh;
 }

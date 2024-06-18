@@ -39,7 +39,9 @@
                         </template>
                         <template if:false={selectedRecord}>
                             <div class="no-record-selected">
-                                No record selected
+                                <lightning-formatted-rich-text
+                                    value={templateBody}
+                                ></lightning-formatted-rich-text>  
                             </div>
                         </template>
                     </div>

@@ -21,10 +21,11 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     @track selectedTemplate = '';
     @track selectedDescription = '';
     @track selectedType = '';
-    @track currentRecId = '';
+    @track currentRecId ;
     @track isLoading = false; 
     @track isPreviewModal = false;
     @track selectedTemplateBody = ''; 
+    
 
     /**
     * Method Name: setCurrentPageReference
@@ -148,9 +149,13 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     displayTemplates() {
+        // Ensure currentPage is within valid range
+        if (this.currentPage > this.totalPages) {
+            this.currentPage = this.totalPages;
+        }
         const startIndex = (this.currentPage - 1) * PAGE_SIZE;
         this.visibleTemplates = this.filteredTemplates.slice(startIndex, startIndex + PAGE_SIZE);
-        console.log('visibleTemplates ==> ' , this.visibleTemplates);
+        console.log('visibleTemplates ==> ', this.visibleTemplates);
     }
 
     /**
@@ -302,6 +307,12 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                     this.templates.splice(templateIndex, 1);
                     this.filteredTemplates = [...this.templates];
                     this.calculateTotalPages();
+                    
+                    const startIndex = (this.currentPage - 1) * PAGE_SIZE;
+                    if (startIndex >= this.filteredTemplates.length && this.currentPage > 1) {
+                        this.currentPage--;
+                    }
+                    
                     this.displayTemplates();
                     this.isLoading = false;
                     this.showToast('Success', `Template '${template.Label__c}' deleted successfully.`, 'success');
@@ -312,6 +323,9 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 });
         }
     }
+    
+    
+    
     
     /**
     * Method Name: handleAdd

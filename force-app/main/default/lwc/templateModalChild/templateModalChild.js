@@ -341,8 +341,14 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     appendFieldToEditor() {
-        const content = `<span>{!${this.selectedObject}.${this.selectedField}}</span>`;
-        $(this.editor).summernote('code', $(this.editor).summernote('code') + ' ' + content);
+
+        try {
+            const content = `<span>{!${this.selectedObject}.${this.selectedField}}</span>`;
+            $(this.editor).summernote('code', $(this.editor).summernote('code') + ' ' + content);
+    
+        } catch (error) {
+            console.log('error in appendFieldToEditor method' , error);
+        }
 
     }
 

@@ -9,6 +9,7 @@ export default class TemplatePreviewModal extends LightningElement {
     @track recordOptions = [];
     @track recordName = 'Message Body';
     @track updatedBody = '';
+    @track recordOptions = [{ label: 'None', value: 'none' }];
 
     /**
     * Method Name: connectedCallback
@@ -29,11 +30,14 @@ export default class TemplatePreviewModal extends LightningElement {
     fetchRecords() {
         getRecordsByObject({ objectName: this.objectName })
             .then((data) => {
-                this.recordOptions = data.map(record => ({
+                const records = data.map(record => ({
                     label: record.name,
                     value: record.id,
-                    data: record // Store the entire record for later use
+                    data: record 
                 }));
+
+                this.recordOptions = [...this.recordOptions, ...records];
+
             })
             .catch((error) => {
                 console.error('Error fetching records:', error);
@@ -79,15 +83,20 @@ export default class TemplatePreviewModal extends LightningElement {
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
+
     handleRecordChange(event) {
         this.selectedRecord = event.detail.value;
         console.log('selectedRecord ==> ' , this.selectedRecord);
-        const selectedOption = this.recordOptions.find(option => option.value === this.selectedRecord);
-        this.recordName = selectedOption ? selectedOption.label : 'Preview Section';
 
-        this.updateTemplateBody(selectedOption.data);
+        if (this.selectedRecord === 'none') {
+            this.recordName = '';
+            this.updatedBody = this.templateBody;
+        } else {
+            const selectedOption = this.recordOptions.find(option => option.value === this.selectedRecord);
+            this.recordName = selectedOption ? selectedOption.label : 'Preview Section';
+            this.updateTemplateBody(selectedOption.data);
+        }
     }
-
     /**
     * Method Name: updateTemplateBody
     * @description: Method to update merged field values
