@@ -3,7 +3,7 @@ import getObjectFields from '@salesforce/apex/MapFieldCmp.getObjectFields';
 import saveMappings from '@salesforce/apex/MapFieldCmp.saveMappings';
 import getMetadata from '@salesforce/apex/MapFieldCmp.getMetadata';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import doubleSideArrow from '@salesforce/resourceUrl/douleSideArrow';
+import doubleSideArrow from '@salesforce/resourceUrl/doubleSideArrow';
 
 export default class MapFields extends LightningElement {
     @api recordId;
