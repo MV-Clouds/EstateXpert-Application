@@ -120,7 +120,7 @@ public with sharing class TemplateBuilderController {
             if (objectType != null && !objectType.getDescribe().isDeprecatedAndHidden()) {
                 Schema.DescribeSObjectResult objResult = objectType.getDescribe();
                 
-                if (objResult.isAccessible() && objResult.isUpdateable()) {
+                if (objResult.isAccessible() && objResult.isUpdateable() && objResult.isCreateable() && objResult.isQueryable() &&  objResult.isSearchable() && !objResult.isCustomSetting()) {
                     objectNamesMap.put(objResult.getName(), objResult.getLabel());
                 }
             }
@@ -244,4 +244,3 @@ public with sharing class TemplateBuilderController {
         }
     }
 }
-

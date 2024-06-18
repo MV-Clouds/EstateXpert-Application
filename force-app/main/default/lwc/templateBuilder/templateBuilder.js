@@ -71,7 +71,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.isLoading = true;
         getTemplates()
             .then(data => {
-
+                console.log('data ==> ' , data);
             data.sort((a, b) => {
                 const labelA = a.Label__c.toLowerCase();
                 const labelB = b.Label__c.toLowerCase();
@@ -107,6 +107,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         }));
 
         this.filteredTemplates = this.templates;
+        console.log('filteredTemplates ==> ' , this.filteredTemplates);
         this.calculateTotalPages();
         this.displayTemplates();
     }
@@ -149,6 +150,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     displayTemplates() {
         const startIndex = (this.currentPage - 1) * PAGE_SIZE;
         this.visibleTemplates = this.filteredTemplates.slice(startIndex, startIndex + PAGE_SIZE);
+        console.log('visibleTemplates ==> ' , this.visibleTemplates);
     }
 
     /**
