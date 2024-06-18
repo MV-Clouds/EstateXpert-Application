@@ -88,6 +88,11 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     handleSave() {
+
+        if(this.name === 'New'){
+            this.currentRecordId = '';
+        }
+        
         if (this.templateName && this.objectSelect && this.typeSelect) {
 
             const navigationState = {

@@ -58,6 +58,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.isObjectChanged = parseObject.isObjectChanged
                     this.oldObject = parseObject.oldObject
                     this.templateTypeForCreation = parseObject.templateTypeForCreation
+
                     this.fetchFields();
                 } catch (error) {
                     console.error('Error parsing navigation state:', error);
@@ -302,7 +303,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     loadTemplateContent() {
-        getTemplateContent({ templateId: this.currentRecordId })
+
+        if(this.currentRecordId != null){
+            getTemplateContent({ templateId: this.currentRecordId })
             .then(result => {
                 console.log('result : ', result);
                 this.description = result.Description__c;
@@ -316,6 +319,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 console.error('Error fetching template content:', error);
                 this.isLoading = false;
             });
+        }
+
     }
 
     /**
@@ -350,8 +355,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     setEmailBody(){
         console.log('In setEmailbody method');
         console.log('bodyOfTemplate ==> ' , this.bodyOfTemplate);
-        if(this.bodyOfTemplate != '' || this.bodyOfTemplate != null){
-            $(this.editor).summernote('code', $(this.editor).summernote('code') + ' ' + this.bodyOfTemplate);
+        if(this.bodyOfTemplate != '' || this.bodyOfTemplate != null && this.templateTypeForCreation != 'New'){
+            $(this.editor).summernote('code', this.bodyOfTemplate);
         }
 
         const page = document.querySelector('.note-editable');
@@ -480,7 +485,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             this.selectedObject = this.oldObject;
         }
         this.cancelBtn = false;
-        $(this.editor).summernote('destroy');
+        // $(this.editor).summernote('destroy');
         console.log(this.selectedObject , 'SelectedObject');
     }
 
