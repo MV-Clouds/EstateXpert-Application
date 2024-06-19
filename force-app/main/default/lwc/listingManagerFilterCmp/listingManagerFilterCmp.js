@@ -137,6 +137,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
         
     }
 
+    /**
+    * Method Name: setPicklistValue
+    * @description: get the picklist values one by one for static fields.
+    * Date: 13/06/2024
+    * Created By: Vyom Soni
+    **/    
     setPicklistValue(){
         this.staticFields.forEach(field => {
             if (field.picklist) {
@@ -146,6 +152,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
         
     }
 
+    /**
+    * Method Name: loadPicklistValues
+    * @description: add the picklist values in the static fields.
+    * Date: 13/06/2024
+    * Created By: Vyom Soni
+    **/    
     loadPicklistValues(field) {
         getPicklistValues({apiName:field.apiName,objectName:field.objectApiName})
         .then(result => {

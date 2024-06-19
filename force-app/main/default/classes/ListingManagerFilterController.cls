@@ -191,7 +191,7 @@ public without sharing class ListingManagerFilterController {
                        recordTypeFields +', '+
                        createdbyFields + ', '+
                        lastmodifybyFields + ' '+
-                       'FROM Listing__c';
+                       'FROM Listing__c WITH SECURITY_ENFORCED';
 
         // Debug the constructed query
         System.debug('SOQL Query: ' + query);
@@ -261,12 +261,16 @@ public without sharing class ListingManagerFilterController {
         return String.join(fieldNames, ', ');
     }
 
-
+   /**
+    * Method Name : getTheOfferRecords
+    * @description : get all offer records.
+    * @return String of fields Name.
+    */
     @AuraEnabled
     public static List<Offer__c> getTheOfferRecords(){
-        String querylist = getAllFields('Offer__c');
+        String querylist = String.escapeSingleQuotes(getAllFields('Offer__c'));
         String query = 'SELECT ' + querylist+' '+
-                       'FROM Offer__c';
+                       'FROM Offer__c WITH SECURITY_ENFORCED';
         List<Offer__c> listings = Database.query(query);
         return listings;
     }
