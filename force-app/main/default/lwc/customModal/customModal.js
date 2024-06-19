@@ -67,6 +67,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             this.description = '';
             this.objectSelect = '';
             this.typeSelect = '';
+            this.bodyOfTemplate = '';
         }
     }
 
@@ -104,6 +105,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 bodyoftemplate : this.bodyOfTemplate,
                 isObjectChanged : this.isObjectChanged,
                 oldObject: this.oldObject,
+                isFirstTimeLoaded : false,
                 templateTypeForCreation: this.name
             };
     

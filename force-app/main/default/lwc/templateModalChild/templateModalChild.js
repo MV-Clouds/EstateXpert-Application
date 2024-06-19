@@ -27,6 +27,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track cancelBtn = false;
     @track templateTypeForCreation = 'New';
     @track editor;
+    @api isFirstTimeLoaded = false;
 
     get recordId(){
         return this.currentRecordId ? this.currentRecordId : 'tempId';
@@ -53,10 +54,11 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.currentRecordId = parseObject.myrecordId;
                     this.templateLabel = parseObject.label;
                     this.description = parseObject.description;
-                    this.selectedType = parseObject.type,
-                    this.bodyOfTemplate = parseObject.bodyoftemplate
-                    this.isObjectChanged = parseObject.isObjectChanged
-                    this.oldObject = parseObject.oldObject
+                    this.selectedType = parseObject.type;
+                    this.bodyOfTemplate = parseObject.bodyoftemplate;
+                    this.isObjectChanged = parseObject.isObjectChanged;
+                    this.oldObject = parseObject.oldObject;
+                    this.isFirstTimeLoaded = parseObject.isFirstTimeLoaded;
                     this.templateTypeForCreation = parseObject.templateTypeForCreation
 
                     this.fetchFields();
@@ -304,15 +306,14 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     loadTemplateContent() {
 
-        if(this.currentRecordId != null){
+        if(this.isFirstTimeLoaded){
             getTemplateContent({ templateId: this.currentRecordId })
             .then(result => {
                 console.log('result : ', result);
                 this.description = result.Description__c;
-                $(this.editor).summernote('code', result.Template_Body__c);
-                const page = editor.querySelector('.note-editable');
+                this.bodyOfTemplate = result.Template_Body__c;
+                $(this.editor).summernote('code', this.bodyOfTemplate);
 
-                console.log('page 2=>' ,page);
                 this.isLoading = false;
             })
             .catch(error => {
@@ -320,6 +321,10 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 this.isLoading = false;
             });
         }
+        else{
+            $(this.editor).summernote('code', this.bodyOfTemplate);
+        }
+
 
     }
 
@@ -340,17 +345,32 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
+
     appendFieldToEditor() {
-
         try {
-            const content = `<span>{!${this.selectedObject}.${this.selectedField}}</span>`;
-            $(this.editor).summernote('code', $(this.editor).summernote('code') + ' ' + content);
+            const content = `{!${this.selectedObject}.${this.selectedField}} `;
     
+            $(this.editor).summernote('saveRange');
+    
+            $(this.editor).summernote('restoreRange');
+    
+            const currentRange = $(this.editor).summernote('createRange');
+    
+            if (currentRange) {
+                const textNode = document.createTextNode(content);
+    
+                currentRange.insertNode(textNode);
+    
+                currentRange.collapse(false);
+    
+                $(this.editor).summernote('saveRange');
+            }
         } catch (error) {
-            console.log('error in appendFieldToEditor method' , error);
+            console.log('error in appendFieldToEditor method', error);
         }
-
     }
+    
+
 
     /**
     * Method Name: setEmailBody
@@ -364,13 +384,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         if(this.bodyOfTemplate != '' || this.bodyOfTemplate != null && this.templateTypeForCreation != 'New'){
             $(this.editor).summernote('code', this.bodyOfTemplate);
         }
-
-        const page = document.querySelector('.note-editable');
-        page.innerHTML = '';
-        console.log('page ==> ', page);
-        page.setAttribute('data-editor', note.selector);
-        page.setAttribute('contenteditable', 'true');
-
     }
 
     /**
@@ -509,6 +522,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         }
 
         else{
+            $(this.editor).summernote('code', this.bodyOfTemplate);
             this.navigationToTemplatePage();
         }
     }

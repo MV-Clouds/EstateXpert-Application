@@ -268,6 +268,8 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 description: template.Description__c ? template.Description__c  : '',
                 type : template.Template_Type__c ? template.Template_Type__c : '',
                 myrecordId : templateId,
+                bodyOfTemplate : '',
+                isFirstTimeLoaded : true,
                 templateTypeForCreation : 'Edit'
             };
     
