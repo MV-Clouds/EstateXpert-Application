@@ -1,0 +1,12 @@
+<template>
+        <div class="main">
+            <lightning-map class="mapmarker slds-size_5-of-6" map-markers={mapMarkers}></lightning-map>
+            <div class="marker-details slds-size_1-of-6">                        
+                <template for:each={mapMarkers1} for:item="marker">
+                    <div key={marker.id} class="link">
+                        <a data-id={marker.id} onclick={navigateToRecord}>more details</a>
+                    </div>
+                </template>
+            </div>
+        </div>
+</template>

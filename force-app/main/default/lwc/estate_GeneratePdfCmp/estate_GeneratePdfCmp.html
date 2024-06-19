@@ -1,0 +1,24 @@
+<template>
+    <!-- Combobox to select a record -->
+    <lightning-combobox
+        name="records"
+        label="Select Record"
+        value={value}
+        placeholder="Select record"
+        options={dropdownOptionsList}
+        onchange={handleChange}>
+    </lightning-combobox>
+
+    <!-- Button to trigger Pdf preview -->
+    <lightning-button
+        label="Preview PDF"
+        onclick={previewPDF}
+        class="slds-m-top_medium">
+    </lightning-button>
+
+    <!-- Spinner to show loading -->
+    <template if:true={isLoading}>
+        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+    </template>
+
+</template>

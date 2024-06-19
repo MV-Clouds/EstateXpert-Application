@@ -1,0 +1,327 @@
+.main-card {
+    min-height: 100%;
+}
+
+.filter-search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 15px;
+    background-color: #E1F1FE;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-button lightning-button {
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: #ffffff;
+}
+
+.mainFilter{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.child_Prop_Search {
+    display: flex;
+    justify-content: end;
+    padding-right: 1rem;
+}
+
+.search-bar lightning-input {
+    width: 300px;
+}
+
+.search-bar, .filter-button {
+    margin-right: 1rem;
+}
+
+.filter-section{
+    display: flex;
+    align-items: center;
+}
+
+/* .view-dropdown{
+    margin-right: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+} */
+
+.Scrollview {
+    width: 30%;
+    z-index: 100;
+}
+
+.property-container {
+       align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(24%, 1fr));
+    justify-items: center;
+
+}
+
+/* .property-item {
+    background-color: #ffffff;
+    position: relative;
+    width: 100%;
+    height: auto;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    margin: 0.5%;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    transition: box-shadow 0.3s ease;
+} */
+
+.property-item {
+    background-color: #ffffff;
+    position: relative;
+    width: 90%;
+    height: auto;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    margin: 0 0 10% 0;
+    transition: box-shadow 0.3s ease;
+}
+
+.property-item:hover {
+    box-shadow: 3px 1px 19px 2px #0176D3;
+}
+
+.property-container-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    align-items: center;
+}
+
+.property-item-list {
+    display: flex;
+    flex-direction: row;
+    background-color: #ffffff;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    overflow: hidden;
+    padding: 1rem;
+    width: 75%;
+}
+
+.property-item-list:hover {
+    box-shadow: 3px 1px 19px 2px #0176D3;
+}
+
+.property_type_list {
+    background-color: #dbfaff;
+    border-radius: 4px 0 0 0;
+    position: absolute;
+    color: black;
+    padding: 3px 9px;
+    z-index: 1;
+}
+
+.details_list {
+    height: 13rem;
+    border-bottom: 0.5px solid grey;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 65%;
+}
+
+.view-more {
+    margin-top: auto;
+}
+
+.card-body {
+    padding: 0.5rem;
+    display: flex;
+    /* align-items:center; */
+}
+
+.room_details{
+    display: flex;
+    flex-direction: row;
+}
+
+.property-image {
+    margin-right: 15px;
+    border-radius: 5px;
+    height: 13rem;
+    width: 100%;
+    object-fit: cover;
+}
+
+.property-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem;
+}
+
+.property_type {
+    background-color: #dbfaff;
+    border-radius: 5px 0 0 0;
+    position: absolute;
+    color: black;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    padding: 3px 15px;
+}
+
+.details {
+    height: 7rem;
+    border-bottom: 0.5px solid grey;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.room-details {
+    display: flex;
+    width: fit-content;
+    justify-content: flex-start;
+    gap: 20px;
+    color: #737D8C;
+}
+
+.card-title{
+    color:black;
+    font-size: 16px;
+}
+
+.bedroom, .bathroom {
+    display: flex;
+    margin: 0 20px 0 0;
+}
+
+.bathroom_icon {
+    height: 17px;
+    width: 20px;
+}
+
+.property-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 0.5rem;
+}
+
+.main {
+    background-color: white;
+    display: flex;
+    width: 100%;
+}
+
+.link {
+    display: block;
+    margin-top: 35px;
+}
+
+.slds-size_1-of-6 {
+    margin-left: 10px;
+    margin-top: 50px;
+}
+
+.slds-size_5-of-6 {
+    height: 33rem;
+    width: 80%;
+    overflow: hidden;
+}
+
+.property-info {
+    font-size: 16px;
+    color: #666666;
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    display: flex;
+    color: #737D8C;
+    font-size: 12px;
+}
+
+.card-text p {
+    width: -webkit-fill-available;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-1 p {
+    font-size: 16px;
+    color: #1252AE;
+}
+
+.item-2 button {
+    height: 2rem;
+    background-color: #1252AE;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.item-2 button:hover {
+    background-color: #45a049;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}
+
+.pagination-buttons lightning-button {
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.pagination-buttons lightning-button[disabled] {
+    background-color: #f5f5f5;
+    color: #999999;
+}
+
+.no_prop {
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    font-family: 'DM Sans';
+}
+
+.icon {
+    height: 18px;
+    width: 18px;
+}
+
+.room-detail-item {
+    display: flex;
+}
+
+.price-view-more {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.propertyImage{
+    min-width: 36%;
+    max-width: 36%;
+    margin: 0 2% 0 0;
+}

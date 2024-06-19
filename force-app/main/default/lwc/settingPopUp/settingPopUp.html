@@ -1,0 +1,108 @@
+<template>
+    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+        <div class="slds-modal__container">
+            <lightning-button-icon
+            class="slds-modal__close"
+            title="Close"
+            icon-name="utility:close"
+            icon-class="slds-button_icon-inverse"
+            onclick={handleDialogueClose}
+          ></lightning-button-icon>
+        <div class="slds-modal__header blue-header">
+        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">Edit Portal</h1>
+        </div>
+        <div class="slds-modal__content slds-p-around_medium slds-p-bottom_small" id="modal-content-id-1">
+        
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">Address Key<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">Organization Key<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">Postcode Type<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">PAF UDPRN<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">Telephone<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">Email<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">Website<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">Notification Email<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title">Test Portal<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_x-small slds-p-top_small" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+            <div class="input-container">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label slds-text-title"><abbr class="slds-required" title="required">*</abbr>Feed Selector Field<lightning-icon icon-name="utility:info" size="xx-small" class="slds-p-left_xx-small slds-p-bottom_x-large" alternative-text="Info"></lightning-icon></label>
+                <div class="slds-form-element__control">
+                    <input type="text" class="slds-input">
+                </div>
+            </div>
+            </div>
+       
+
+        </div>
+        <div class="slds-modal__footer">
+        <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={handleDialogueClose}>Cancel</button>
+        <button class="slds-button slds-button_brand" onclick={handleDialogueClose}>Save</button>
+        </div>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+
+
+</template>

@@ -1,0 +1,175 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 06-19-2024
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <div class="main-card">
+
+        <template if:true={isModalOpen}>
+            <div class="mainFilter">
+                <c-property-search
+                    filtervalue={filterData}
+                    onfilterclear={clearFilter}
+                    onfilterclose={closeFilter}
+                    onchangefilter={doapplyfilters}
+                    class="Child_Prop_Search Scrollview">
+                </c-property-search>
+            </div>
+        </template>
+
+        <lightning-card title="Properties List" icon-name="standard:account">
+            
+            <div class="filter-search-container">
+                <div class="filter-section">
+                    <div class="search-bar">
+                        <lightning-input
+                            variant="label-hidden"
+                            type="search"
+                            placeholder="Enter property name"
+                            value={searchTerm}
+                            onchange={handleSearch}
+                        ></lightning-input>
+                    </div>
+                    <div class="filter-button">
+                        <lightning-button label="Filter" variant="Brand" onclick={handleFilter}>
+                        </lightning-button>
+                    </div>
+                </div>
+                <div class="view-dropdown">
+                    <lightning-combobox
+                        name="viewOptions"
+                        variant="label-hidden"
+                        dropdown-alignment="right"
+                        value={selectedView}
+                        placeholder="Select View"
+                        options={viewOptions}
+                        onchange={handleViewChange}
+                    ></lightning-combobox>
+                </div>
+            </div>
+
+
+            <template if:true={isPropertyAvailable}>
+                <template if:true={isListView}>
+                    <div class="property-container-list">
+                        <template for:each={pagedProperties} for:item="property">
+                            <div class="property-item-list card slds-border_bottom" key={property.id}>
+                                    <div class="property_type_list">
+                                        <span>For {property.Listing_Type__c}</span>
+                                    </div>
+                                <div class="propertyImage">
+                                    <img class="property-image card-img-top" src={property.media_url} alt="Property image"></img>
+                                </div>
+                                <div class="card-body details_list">
+                                    <div class="room-details">
+                                        <h3 class="card-title"><b>{property.Name}</b></h3>
+                                        <div class="card-text">
+                                            <img src={location_icon} height="16px" width="16px"/>
+                                            <p class="slds-m-left_xx-small">{property.City__c}, {property.State__c}, {property.PostalCode__c}</p>
+                                        </div>
+                                    </div>
+                                    <div class="room-details">
+                                        <lightning-layout-item class="bedroom">
+                                            <img src={bedroom_icon} height="24px" width="20px" />
+                                            <h1 class="slds-m-left_xx-small">{property.Bedrooms__c} Bedrooms</h1>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item class="bathroom" alignment-bump="left">
+                                            <img src={bathroom_icon} class="bathroom_icon" />
+                                            <h1 class="slds-m-left_xx-small">{property.FullBathrooms__c} Bathrooms</h1>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item class="bedroom" alignment-bump="left">
+                                            <img src={area_icon} height="24px" width="20px" />
+                                            <h1 class="slds-m-left_xx-small">{property.Sq_Ft__c} sqft</h1>
+                                        </lightning-layout-item>
+                                    </div>
+                                    <div class="card-body">
+                                        <lightning-layout-item class="item-1">
+                                            <p class="card-link"><b>$ {property.Listing_Price__c}</b></p>
+                                        </lightning-layout-item >
+                                        <lightning-layout-item class="item-2" alignment-bump="left">
+                                            <!-- <a><button>View More</button></a> -->
+                                            <button data-id={property.Id} onclick={navigateToRecord}>View More</button>
+                                        </lightning-layout-item>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- Grid View Template -->
+                <template if:true={isGridView}>
+                    <div class="property-container">
+                        <template for:each={pagedProperties} for:item="property">
+                            <div class="property-item card slds-border_bottom" key={property.id}>
+                                <img  class="property-image card-img-top" src={property.media_url} alt="Property image"></img>
+                                <div class="property_type">
+                                    <p>For {property.Listing_Type__c}</p>
+                                </div>
+                                <div class="card-body details">
+                                    <h5 class="card-title"><b>{property.Name}</b></h5>
+                                    <div class="card-text">
+                                        <img src={location_icon} height="18px" width="18px"/>
+                                        <p class="slds-m-left_xx-small">{property.City__c}, {property.State__c}, {property.PostalCode__c}</p>
+                                    </div>
+                                    <div class="room_details">
+                                        <lightning-layout-item class="bedroom">
+                                            <img src={bedroom_icon} height="24px" width="20px" />
+                                            <h1 class="slds-m-left_xx-small">{property.Bedrooms__c} Bedrooms</h1>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item class="bathroom" alignment-bump="left">
+                                            <img src={bathroom_icon} class="bathroom_icon"/>
+                                            <h1 class="slds-m-left_xx-small">{property.FullBathrooms__c} Bathrooms</h1>
+                                        </lightning-layout-item>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <lightning-layout-item class="item-1">
+                                        <p class="card-link"><b>$ {property.Listing_Price__c}</b></p>
+                                    </lightning-layout-item >
+                                    <lightning-layout-item class="item-2" alignment-bump="left">
+                                        <button data-id={property.Id} onclick={navigateToRecord}>View More</button>
+                                    </lightning-layout-item>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <template if:true={isMapView}>
+                    <div class="main">
+                        <lightning-map class="mapmarker slds-size_5-of-6" map-markers={mapMarkers}></lightning-map>
+                        <div class="marker-details slds-size_1-of-6">                        
+                            <template for:each={mapMarkers} for:item="marker">
+                                <div key={marker.id} class="link">
+                                    <a data-id={marker.id} onclick={navigateToRecord}>more details</a>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+            </template>
+
+            <template if:false={isPropertyAvailable}>
+                <div class="no_prop">
+                    <p>No properties found. Please change your search filters and try again.</p>
+                </div>
+            </template>
+
+            <template if:true={isPropertyAvailable}>
+                <div class="pagination-container slds-m-top_medium">
+                    <lightning-button-group class="pagination-buttons">
+                        <lightning-button label="First" onclick={goToFirst} disabled={isFirstPage}></lightning-button>
+                        <lightning-button label="Previous" onclick={goToPrevious} disabled={isFirstPage}></lightning-button>
+                        <lightning-button label="Next" onclick={goToNext} disabled={isLastPage}></lightning-button>
+                        <lightning-button label="Last" onclick={goToLast} disabled={isLastPage}></lightning-button>
+                    </lightning-button-group>
+                </div>
+            </template>
+        </lightning-card>
+    </div>
+</template>

@@ -1,0 +1,43 @@
+.slds-form-element {
+    display: flex;
+    align-items: center;
+}
+.slds-form-element__label {
+    flex: 0 0 auto;
+    margin-right: 1rem; /* Adjust the gap between label and input */
+    width : 25%;
+}
+.slds-form-element__control {
+    flex: 1 1 auto;
+}
+
+.slds-modal__footer{
+    display: flex;
+    justify-content: center; /* Center the buttons */
+    gap: 10px; /* Optional: add some space between the buttons */
+}
+.input-container {
+    position: relative;
+    margin-bottom: 20px;
+    width: calc(100% - 40px); /* Adjust width to fit container */
+}
+
+.blue-header {
+    background-color: #0070d2; 
+    color: white; 
+}
+.slds-modal__container{
+
+    width:225px;
+    height:750px;
+}
+.tooltip {
+    display: none;
+    position: absolute;
+    top: -1px;
+    left: 180px;
+}
+
+.show-tooltip .tooltip {
+    display: block;
+}

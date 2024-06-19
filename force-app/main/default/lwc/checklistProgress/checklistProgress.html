@@ -1,0 +1,139 @@
+<template>
+    <div class="mainDiv">
+        <div>
+            <p class="checklistprog">Checklist Progress</p>
+        </div>
+        <div class="progressbardiv slds-p-top_medium">
+            <lightning-progress-indicator current-step='3'>
+                <template for:each={pages} for:item="page" for:index="index">
+                    <lightning-progress-step label={page.label} value={page.value} key={page.value}
+                        ></lightning-progress-step>
+                </template>
+            </lightning-progress-indicator>
+        </div>   
+        <div class="slds-p-top_medium">
+        <lightning-layout multiple-rows>
+            <lightning-layout-item class="slds-p-around_small" size="12">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-12">
+                        <span class="slds-badge slds-badge_inverse slds-theme_success">Completed</span>
+                    </div>
+                    <div class="slds-p-left_large">
+                        <!-- <lightning-icon icon-name="utility:success" alternative-text="Completed" size="small" class="slds-icon slds-icon-text-success"></lightning-icon> -->
+                         <div>
+                            <img src={checklist_checked} height="30px" width="30px"></img>
+                         </div>
+                    </div>
+                    <div class="slds-col slds-size_8-of-12">
+                        <div>
+                            <strong>Checklist Name</strong>
+                        </div>
+                        <div>
+                            Successfully Completed.
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-button-icon icon-name="utility:chevrondown" alternative-text="More Options" variant="bare"></lightning-button-icon>
+                    </div>
+                </div>
+            </lightning-layout-item>
+    
+            <lightning-layout-item class="slds-p-around_small" size="12">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-12">
+                        <span class="slds-badge slds-badge_inverse slds-theme_success">Completed</span>
+                    </div>
+                    <div class="slds-p-left_large">
+                        <div>
+                            <img src={checklist_checked} height="30px" width="30px"></img>
+                         </div>
+                    </div>
+                    <div class="slds-col slds-size_8-of-12">
+                        <div>
+                            <strong>Checklist Name</strong>
+                        </div>
+                        <div>
+                            Successfully Completed.
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-button-icon icon-name="utility:chevrondown" alternative-text="More Options" variant="bare"></lightning-button-icon>
+                    </div>
+                </div>
+            </lightning-layout-item>
+    
+            <lightning-layout-item class="slds-p-around_small" size="12">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-12">
+                        <span class="slds-badge slds-badge_inverse slds-theme_success">Completed</span>
+                    </div>
+                    <div class="slds-p-left_large">
+                        <div>
+                            <img src={checklist_checked} height="30px" width="30px"></img>
+                         </div>
+                    </div>
+                    <div class="slds-col slds-size_8-of-12">
+                        <div>
+                            <strong>Checklist Name</strong>
+                        </div>
+                        <div>
+                            Successfully Completed.
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-button-icon icon-name="utility:chevrondown" alternative-text="More Options" variant="bare"></lightning-button-icon>
+                    </div>
+                </div>
+            </lightning-layout-item>
+    
+            <lightning-layout-item class="slds-p-around_small" size="12">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-12">
+                        <span class="slds-badge slds-badge_inverse slds-theme_warning">Pending</span>
+                    </div>
+                    <div class="slds-p-left_large">
+                        <div>
+                            <img src={checklist_pending} height="30px" width="30px"></img>
+                         </div>
+                    </div>
+                    <div class="slds-col slds-size_8-of-12">
+                        <div>
+                            <strong>Checklist Name</strong>
+                        </div>
+                        <div>
+                            Successfully Completed.
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-button-icon icon-name="utility:chevrondown" alternative-text="More Options" variant="bare"></lightning-button-icon>
+                    </div>
+                </div>
+            </lightning-layout-item>
+    
+            <lightning-layout-item class="slds-p-around_small" size="12">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-12">
+                        <span class="slds-badge slds-badge_inverse slds-theme_warning">Pending</span>
+                    </div>
+                    <div class="slds-p-left_large">
+                        <div>
+                            <img src={checklist_pending} height="30px" width="30px"></img>
+                         </div>
+                    </div>
+                    <div class="slds-col slds-size_8-of-12">
+                        <div>
+                            <strong>Checklist Name</strong>
+                        </div>
+                        <div>
+                            Successfully Completed.
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <lightning-button-icon icon-name="utility:chevrondown" alternative-text="More Options" variant="bare"></lightning-button-icon>
+                    </div>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>        
+    </div>     
+    </div>
+</template>

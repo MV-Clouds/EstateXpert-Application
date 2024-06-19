@@ -36,6 +36,7 @@
   line-height: 1.318rem;
   letter-spacing: 0.05em;
   padding-right: 1rem;
+  font-family: verdana;
 }
 
 .badge {
@@ -44,6 +45,7 @@
   border-radius: 10px;
   padding: 5px 10px;
   display: inline-block;
+  font-family: verdana;
 }
 
 .field-mapping-container {
@@ -59,6 +61,7 @@
 .buttons {
   display: inline-flex;
   align-items: center;
+  font-family: verdana;
 }
 
 .buttons .settings {
@@ -140,6 +143,8 @@
 
 .slds-col {
   width: 90%;
+  word-break: break-word;
+  font-family: verdana;
 }
 
 .view_input {
@@ -172,6 +177,7 @@ button[disabled] {
   border-radius: 10px;
   padding: 5px 10px;
   display: inline-block;
+  font-family: verdana;
 }
 
 .empty-state {
@@ -204,4 +210,115 @@ button[disabled] {
 
 .font_styles {
   color: black;
+}
+
+.loader {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background: #0cc1ff;
+  transform: rotateX(65deg) rotate(45deg);
+  color: #fff;
+  animation: layers1 1s linear infinite alternate;
+}
+
+.loader:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  animation: layerTr 1s linear infinite alternate;
+}
+
+@keyframes layers1 {
+  0% {
+    box-shadow: 0px 0px 0 0px
+  }
+
+  90%,
+  100% {
+    box-shadow: 20px 20px 0 -4px
+  }
+}
+
+@keyframes layerTr {
+  0% {
+    transform: translate(0, 0) scale(1)
+  }
+
+  100% {
+    transform: translate(-25px, -25px) scale(1)
+  }
+}
+
+.spinner_class {
+  position: fixed;
+  z-index: 99999;
+  height: 100%;
+  width: 100%;
+  backdrop-filter: brightness(0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: -0.75rem;
+}
+
+.loadertext {
+  display: inline-block;
+  font-size: 40px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #FFF;
+  position: relative;
+}
+
+.loadertext::before {
+  content: '';
+  position: absolute;
+  left: 29px;
+  bottom: 14px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 5px solid #FFF;
+  border-bottom-color: #0cc1ff;
+  box-sizing: border-box;
+  animation: rotation 0.6s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loadertext::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background: currentColor;
+  position: absolute;
+  bottom: 10px;
+  right: -5px;
+  box-sizing: border-box;
+  animation: animloader 1s linear infinite;
+}
+
+@keyframes animloader {
+  0% {
+    box-shadow: 10px 0 rgba(255, 255, 255, 0), 20px 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 10px 0 white, 20px 0 rgba(255, 255, 255, 0);
+  }
+
+  100% {
+    box-shadow: 10px 0 white, 20px 0 white;
+  }
 }

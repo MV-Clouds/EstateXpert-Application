@@ -1,0 +1,145 @@
+.mainDiv{
+    background-color: rgb(255, 255, 255);
+    margin: 5px;
+    border-radius: 5px;
+}
+.listingDiv{
+    width: 50%;
+    margin: 5px;
+    margin-right: 10px;
+}
+.propertyDiv{
+    width: 50%;
+    margin: 5px;
+    margin-left: 10px;
+}
+
+.symbol-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mapping-symbol {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    margin-right: 20px; 
+}
+
+.checkbox-group {
+    flex: 1; 
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    margin-left: auto; 
+}
+
+.add-button {
+    width: 5rem;
+    --slds-c-button-border : 10px;
+}
+
+.checkbox{
+    height: 20px;
+    width: 20px;
+}
+
+.checkbox-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.title {
+    font-size: 25px;
+    font-family: Arial, sans-serif; 
+    font-weight: bold; 
+    color: #333; 
+}
+
+.checkbox-group .slds-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px; 
+}
+
+.scrollable-container{
+    height: 69vh;
+    overflow-y: auto;
+    padding-left: 3%;
+}
+
+.custom-width-33 {
+    width: 33%;
+}
+
+.label-text{
+    margin-left: 5px;
+    font-size:15px
+}
+
+.icon-button-del {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.del-button {
+    margin-top: 15%;
+    background-color: #FFD2D2;
+    border-radius: 5px; 
+    --slds-g-color-neutral-base-50 : black;
+}
+
+.del-button:hover {
+    background-color: #FFD2D2; 
+}
+
+.del-button lightning-button-icon {
+    padding: 0.5rem;
+}
+
+.picklist-div{
+    width: 100%;
+}
+
+.con-msg{
+    margin-top: 13px;
+}
+
+.save-btn{
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.mapping-symbol img{
+    max-width: 2.5rem;
+}
+
+.add-btn{
+    margin-top: 1rem;
+}
+
+.disabled{
+    --slds-g-color-neutral-base-95 : #D2D2D2;
+    --slds-g-color-neutral-base-50 : white;
+}
+
+.disabled-del{
+    background-color: #D2D2D2 !important;
+    --slds-g-color-neutral-base-80 : white !important;
+}

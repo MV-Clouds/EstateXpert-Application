@@ -1,0 +1,77 @@
+<template>
+    <div class="">
+
+    <div class="slds-theme_default filter-container">
+        <div class="filter-header">
+            <h1>Property Filter Options</h1>
+            <lightning-button-icon icon-name="utility:close" alternative-text="Close"
+                onclick={closeFilter}></lightning-button-icon>
+        </div>
+        <div class="filters filter-body">
+            <label for="property-type">Property Type:</label>
+            <select name="propertyType" class="slds-input slds-select" onchange={handlePropertyTypeChange}>
+                <option class="slds-input" value="">None</option>
+                <template for:each={propertyTypes} for:item="value">
+                    <option class="slds-input" value={value} key={value}>{value}</option>
+                </template>
+            </select>
+            <div class="price-range">
+                <br/>
+                <label for="min-price">Min Price:</label>
+                <div class="Value_increment_box">
+                    <input type="number" class="box1_min_price" min={minPriceRange} max={maxPriceRange} value={minPrice}
+                        onchange={handleMinPriceChange} placeholder="0"></input>
+                    <div class="box2_min_price slds-m-left_x-small">
+                        <p style="color: #0176D3;">$</p>
+                    </div>
+                </div>
+                <br />
+                <label for="max-price">Max Price:</label>
+                <div class="Value_increment_box">
+                    <input type="number" class="box1_min_price" min={minPriceRange} max={maxPriceRange} value={maxPrice}
+                        onchange={handleMaxPriceChange} placeholder="1000000"></input>
+                    <div class="box2_min_price slds-m-left_x-small">
+                        <p style="color: #0176D3;">$</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bed-bath">
+                <br />
+                <div class="Value_increment_box">
+                    <div class="box1">Bedrooms</div>
+                    <div class="box2 slds-m-left_x-small"><a onclick={decrease__value}><button
+                                class="btn input-number-decrement" style="background-color: #0176D3;">-</button></a>
+                    </div>
+                    <input class="input-number" value={bedrooms} min="0" max="100" onchange={handleBedroomsChange}></input>
+                    <div class="box4 slds-m-left_x-small"><a onclick={increase__value}><button
+                                class="btn input-number-increment" style="background-color: #0176D3;">+</button></a>
+                    </div>
+                </div>
+                <br />
+                <div class="Value_increment_box">
+                    <div class="box1">Bathrooms</div>
+                    <div class="box2 slds-m-left_x-small"><a onclick={decrease__number_of_bathrooms}><button
+                                class="btn input-number-decrement" style="background-color: #0176D3;">-</button></a>
+                    </div>
+                    <input class="input-number_bathrooms" value={bathrooms} min="0" max="100" onchange={handleBathroomsChange}></input>
+                    <div class="box4 slds-m-left_x-small"><a onclick={increase__number_of_bathrooms}><button
+                                class="btn input-number-increment" style="background-color: #0176D3;">+</button></a>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <label for="square-footage">City:</label>
+            <input class="Value_increment_box fields" type="text" onchange={handleCityChange} value={city}></input>
+            <br />
+            <label for="zipcode">Zipcode:</label>
+            <input class="Value_increment_box fields" type="text" onchange={handleZipCodeChange}
+                value={zipCode}></input>
+        </div>
+        <div class="filter-footer">
+            <lightning-button variant="brand" label="Apply" onclick={applyFilters}></lightning-button>
+            <lightning-button variant="brand" class="slds-m-left_x-small" label="Clear"
+                onclick={handleClearFilter}></lightning-button>
+        </div>
+    </div>
+    </div>
+</template>

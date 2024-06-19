@@ -1,10 +1,8 @@
 import { LightningElement, track } from 'lwc';
-import iconimg from '@salesforce/resourceUrl/iconimg';
 import { NavigationMixin } from 'lightning/navigation';
 import getPortalRecords from '@salesforce/apex/PortalMappingController.getPortalRecords';
 export default class PortalMapping extends NavigationMixin(LightningElement) {
 
-    @track iconImg = iconimg;
     @track isInitalRender = true;
     @track clickedPortalName = '';
     @track clickedPortalIconURL = '';
@@ -14,8 +12,10 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
     @track portals = [
         { id: 1, name: 'Property Finder', logo: '/resource/propertyfinder' },
         { id: 2, name: 'Bayut', logo: '/resource/bayut' },
-        { id: 3, name: 'Dubizzle', logo: '/resource/dubizzle' }
+        { id: 3, name: 'Dubizzle', logo: '/resource/dubizzle' },
+        { id: 4, name: 'Zoopla', logo: '/resource/zoopla' }
     ];
+    @track isSpinner = true;
 
     /**
     * Method Name: connectedCallback
@@ -47,6 +47,18 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
                     line-height: var(--lwc-lineHeightReset, 1);
                     z-index: 1;
                     top: -10px;
+                }
+
+                @media only screen and (max-width: 1300px) {
+                    .tooltip_css lightning-helptext .slds-form-element__icon {
+                        display: inline-block;
+                        position: relative;
+                        padding-top: unset;
+                        vertical-align: top;
+                        line-height: var(--lwc-lineHeightReset, 1);
+                        z-index: 1;
+                        top: -4px;
+                    }
                 }
             `;
 
@@ -90,21 +102,30 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
     * Created By: Karan Singh
     **/
     getPortalRecord() {
-        getPortalRecords()
-            .then(result => {
-                console.log('data--->', result);
-                if (result.length > 0) {
-                    this.portalRecordList = result.map((val, index) => ({
-                        number: index + 1,
-                        val: val
-                    }));;
-                } else {
-                    this.isPortalData = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Listing field data', error);
-            });
+        this.isSpinner = true;
+        try {
+            getPortalRecords()
+                .then(result => {
+                    this.isSpinner = false;
+                    console.log('data--->', result);
+                    if (result.length > 0) {
+                        this.portalRecordList = result.map((val, index) => ({
+                            number: index + 1,
+                            val: val
+                        }));;
+                        this.isPortalData = true;
+                    } else {
+                        this.isPortalData = false;
+                    }
+                })
+                .catch(error => {
+                    this.isSpinner = false;
+                    console.error('Error fetching Listing field data', error);
+                });
+        } catch (error) {
+            this.isSpinner = false;
+            console.log('error--> ',error);
+        }
     }
 
     /**
@@ -133,6 +154,9 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
     * @description: Used to open portalMappingLandingPage LWC component.
     * Date: 04/06/2024
     * Created By: Karan Singh
+    * Last Update Date : 06/06/2024
+    * Updated By : Karan Singh
+    * Change Description : Removed the if else condition and passing the values directly to another LWC component.
     **/
     handleClick(event) {
         try {
@@ -142,20 +166,13 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
             var portalIconURL = event.currentTarget.dataset.portaliconurl;
             var portalStatus = event.currentTarget.dataset.portalstatus;
             var portalGen = event.currentTarget.dataset.portalgen;
-            var valuetopass;
-            if (portalGen == 'Propertyfinder') {
-                valuetopass = 'Property_Finder__mdt';
-            } else if (portalGen == 'Bayut') {
-                valuetopass = 'Bayut__mdt';
-            } else if (portalGen == 'Dubizzle') {
-                valuetopass = 'Dubizzle__mdt';
-            }
+
             console.log(portalName, portalIconURL, portalStatus);
             let componentDef = {
                 componentDef: "c:portalMappingLandingPage",
                 attributes: {
                     portalId: portalId,
-                    portalGen: valuetopass,
+                    portalGen: portalGen,
                     portalName: portalName,
                     portalIconUrl: portalIconURL,
                     portalStatus: portalStatus
@@ -192,18 +209,22 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
     * Created By: Karan Singh
     **/
     backToControlCenter(event) {
-        event.preventDefault();
-        let componentDef = {
-            componentDef: "c:estateXpert_Control_Center",
-        };
+        try {
+            event.preventDefault();
+            let componentDef = {
+                componentDef: "c:estateXpertControlCenter",
+            };
 
-        let encodedComponentDef = btoa(JSON.stringify(componentDef));
-        this[NavigationMixin.Navigate]({
-            type: 'standard__webPage',
-            attributes: {
-                url: '/one/one.app#' + encodedComponentDef
-            }
-        });
+            let encodedComponentDef = btoa(JSON.stringify(componentDef));
+            this[NavigationMixin.Navigate]({
+                type: 'standard__webPage',
+                attributes: {
+                    url: '/one/one.app#' + encodedComponentDef
+                }
+            });
+        } catch (error) {
+            console.log('error--> ',error);
+        }
     }
 
 }
