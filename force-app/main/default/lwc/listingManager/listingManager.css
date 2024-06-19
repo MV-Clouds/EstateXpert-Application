@@ -33,11 +33,18 @@
 .main .body{
     width: 100%;
     height: 100%;
+    display: flex;
 }
 
 .main .body .innerDiv1{
     background-color: white;
     display: flex;
+    width: 30%;
+    flex: 1 1 auto;
+}
+
+.expanded1 {
+    width: fit-content; /* Width when expanded */
 }
 
 .main .body .innerDiv1 .removeInnerDiv1{
@@ -79,7 +86,14 @@
 .main .body .innerDiv2{
     background-color: white;
     overflow: scroll;
+    width: 70%;
+    flex: 1 1 auto;
     /* margin-bottom: -1rem; */
+}
+
+
+.expanded2 {
+    width: 100%; /* Width when innerDiv1 is expanded */
 }
 
 .main .body .innerDiv2::-webkit-scrollbar {

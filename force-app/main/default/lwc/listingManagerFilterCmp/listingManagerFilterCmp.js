@@ -1,19 +1,10 @@
-
-import { LightningElement,track,api,wire } from 'lwc';
+import { LightningElement,track} from 'lwc';
 import getPicklistValues from '@salesforce/apex/ListingManagerFilterController.getPicklistValues';
 import getListingsWithRelatedRecords from '@salesforce/apex/ListingManagerFilterController.getListingsWithRelatedRecords';
+import getTheOfferRecords from '@salesforce/apex/ListingManagerFilterController.getTheOfferRecords';
 
 export default class ListingManagerFilterCmp extends LightningElement {
 
-    @track searchCityTerm = '';
-    @track selectedOptionsCity = [];
-    @track minValue = '';
-    @track maxValue = '';
-    @track isChecked = false;
-    @track showAboutInfo = false;
-    @track selectedValues = [];
-    @track showAboutInfo = false;
-    @track selectedRadio = 'allListings';
     @track addModal = false;
     @track listings;
     // dyanamic fields selctor variables
@@ -23,18 +14,9 @@ export default class ListingManagerFilterCmp extends LightningElement {
     @track selectedField;
     @track valueFromChild;
     @track isAddButtonDisabled = true;
-    @track radioOptions = [
-        { label: 'All listings', value: 'allListings' },
-        { label: 'My lisitngs', value: 'myListings' }
-    ];
     @track filterFields =[];
-    @track ListingsWrapper = [{"Id":"a00Bi000009UatiIAC","imageUrl__c":"https://www.gstatic.com/webp/gallery3/1.sm.png","Name":"Vyom","Name__c":"Vyom","Listing_Price__c":2000,"Number_Of_Bathrooms__c":5,"Number_Of_Bedrooms__c":6,"Size__c":6,"Status__c":"Low Key","Year_Built__c":"2024-06-21","isChecked":false,"Contact__c":{"Id":"a00Bi000009UatiIAC","First_Name__c":"Soni","LastName":"Vyom","OtherCity":"Surat","Other_Streets__c":"t34t3","Email__c":"Vyom57ppsv2020@gmail.com"}},
-    {"Id":"a00Bi000009UcXJIA0","Name":"test","Name__c":"test","Listing_Price__c":5000,"Number_Of_Bathrooms__c":6,"Number_Of_Bedrooms__c":8,"Size__c":9555,"Status__c":"Moved In","Year_Built__c":"2024-06-29","isChecked":false,"imageUrl__c":"/resource/1717320680000/blankImage","Contact__c":{"Id":"a00Bi000009UatiIAC","First_Name__c":"Soni","Last_Name__c":"Ayushi","OtherCity":"Surat","Other_Streets__c":"wererew","Email__c":"Vyom57ppsv2020@gmail.com"}},
-    {"Id":"a00Bi000009UcYvIAK","imageUrl__c":"https://www.gstatic.com/webp/gallery3/1.sm.png","Name":"Shivalik","Name__c":"shivalik","Listing_Price__c":88965,"Number_Of_Bathrooms__c":9,"Number_Of_Bedrooms__c":5,"Size__c":98,"Status__c":"Exchanged","Year_Built__c":"2024-07-05","isChecked":false,"Contact__c":{"Id":"a00Bi000009UatiIAC","First_Name__c":"Soni","Last_Name__c":"Gujjar","OtherCity":"wrwerwe","Other_Streets__c":"Dindoli","Email__c":"Vyom57ppsv2020@gmail.com"}},
-    {"Id":"a00Bi000009UvDOIA0","Name":"TESTPROPERTY","Name__c":"TESTPROPERTY","Listing_Price__c":5000,"Number_Of_Bathrooms__c":6,"Number_Of_Bedrooms__c":5,"Size__c":5000,"Status__c":"Moved In","Year_Built__c":"2024-06-29","isChecked":false,"imageUrl__c":"/resource/1717320680000/blankImage","Contact__c":{"Id":"a00Bi000009UatiIAC","First_Name__c":"Soni","Last_Name__c":"erger","OtherCity":"werwr","Other_Streets__c":"Dindoli","Email__c":"Vyom57ppsv2020@gmail.com"}},
-    {"Id":"a00Bi000009UwcTIAS","Name":"TESTPROPERTY2","Name__c":"TESTPROPERTY2","Listing_Price__c":963852,"Number_Of_Bathrooms__c":9,"Number_Of_Bedrooms__c":5,"Size__c":963852,"Status__c":"Low Key","Year_Built__c":"2024-06-29","isChecked":false,"imageUrl__c":"/resource/1717320680000/blankImage","Contact__c":{"Id":"a00Bi000009UatiIAC","First_Name__c":"34t3t4rgef","LastName":"Gohil","OtherCity":"fergr","Other_Streets__c":"Dindoli","Email":"Vyom57ppsv2020@gmail.com","LeadSource":"Web"}},
-    {"Id":"a00Bi000009VaYLIA0","Name":"TESTPROPERTY5","Name__c":"TESTPROPERTY5","Listing_Price__c":900000,"Number_Of_Bathrooms__c":6,"Number_Of_Bedrooms__c":5,"Size__c":5000,"Status__c":"Low Key","Year_Built__c":"2024-06-11","City__c":"Surat","Country__c":"India","Postal_Code__c":394210,"State__c":"Gujrat","Street__c":"Dindoli","Sq_Ft__c":5000,"isChecked":false,"imageUrl__c":"/resource/1717320680000/blankImage","Contact__c":{"Id":"a00Bi000009UatiIAC","First_Name__c":"34r34t","Last_Name__c":"fwifwj","OtherCity":"3r4t34t","Other_Streets__c":"ewrwtwr","Email__c":"Vyom57ppsv2020@gmail.com"}},
-    {"Id":"a00Bi000009VbHUIA0","Name":"TESTPROPERTY6","Name__c":"TESTPROPERTY6","Listing_Price__c":200000,"Number_Of_Bathrooms__c":5,"Number_Of_Bedrooms__c":6,"Size__c":1100,"Status__c":"Moved In","Year_Built__c":"2024-06-14","City__c":"Ahemdabad","Country__c":"India","State__c":"Gujrat","Street__c":"ITC narmada","Sq_Ft__c":5000,"isChecked":false,"imageUrl__c":"/resource/1717320680000/blankImage","Contact__c":{"Id":"a00Bi000009UatiIAC","First_Name__c":"r3434","Last_Name__c":"r23","OtherCity":"gggr4","Other_Streets__c":"43r34r","Email__c":"Vyom57ppsv2020@gmail.com"}}]
+    offerRecords = [];
+    @track ListingsWrapper = [];
     @track filteredListings;
     @track staticFields=[{
         label : 'Listing Type',
@@ -112,7 +94,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
         maxValue:0,
         operatorName: 'range',
         isFocused:false,
-        
         isNot: false,
         double:true,
 
@@ -122,7 +103,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         type: 'DOUBLE',
         apiName: 'Number_Of_Bathrooms__c',
         objectApiName :'Listing__c',
-        searchTerm:'',isRange:true,
+        searchTerm:'',
         minValue:0,
         maxValue:0,
         operatorName: 'range',
@@ -152,6 +133,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.filterFields =this.filterFields.concat(this.staticFields);
         this.setPicklistValue();
         this.setListingWapper();
+        this.setOfferRecord();
         
     }
 
@@ -163,7 +145,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
         });
         
     }
-
 
     loadPicklistValues(field) {
         getPicklistValues({apiName:field.apiName,objectName:field.objectApiName})
@@ -184,6 +165,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
             console.error('Error loading picklist values', error);
         });
     }
+
      /**
     * Method Name: handleChange
     * @description: handle the radio button select.
@@ -193,9 +175,18 @@ export default class ListingManagerFilterCmp extends LightningElement {
     setListingWapper(){
         getListingsWithRelatedRecords().then(result => {
             this.listings = result.map(item => JSON.parse(item));
-            console.log('Listings:', JSON.stringify(this.listings[0].Listing__c));
+            // console.log('Listings:', JSON.stringify(this.listings[1].Account.Name));
             this.staticFields = [...this.filterFields];
             console.log('static fields'+JSON.stringify(this.staticFields[0]));
+        })
+        .catch(error => {
+            console.error('Error fetching listings', error);
+        });
+    }
+    setOfferRecord(){
+        getTheOfferRecords().then(result => {
+            this.offerRecords = result;
+            console.log('offer'+JSON.stringify(this.offerRecords));
         })
         .catch(error => {
             console.error('Error fetching listings', error);
@@ -279,16 +270,14 @@ export default class ListingManagerFilterCmp extends LightningElement {
                     console.log('Filtering related object:', field.objectApiName);
                     
                     this.filteredListings = this.filteredListings.filter(wrapper => {
-                        console.log('relatedRecord'+field.objectApiName.replace('__c', '__r'));
+                        
                         const relatedRecord = wrapper[field.objectApiName.replace('__c', '__r')];
-                        console.log('relatedRecord'+JSON.stringify(relatedRecord));
+                        
                         if (!relatedRecord) return false;
     
                         if (field.picklist || field.string || field.id || field.boolean) {
-                            
                                 const values = field.selectedOptions.map(option => option.value);
                                 return this.applyOperatorFilter(relatedRecord, field, values);
-                            
                         }
                         if (field.currency || field.double) {
                             return this.applyNumericFilter(relatedRecord, field);
@@ -379,12 +368,101 @@ export default class ListingManagerFilterCmp extends LightningElement {
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
-    applyDateFilter(record, field) {
-        const minDate = new Date(field.minDate).getTime() || -Infinity;
-        const maxDate = new Date(field.maxDate).getTime() || Infinity;
-        const dateValue = new Date(record[field.apiName]).getTime();
-        const inRange = dateValue >= minDate && dateValue <= maxDate;
-        return field.isNot ? !inRange : inRange;
+      applyFilters() {
+        // Initialize filteredListings with a deep copy of ListingsWrapper
+        this.filteredListings = [...this.listings];
+        console.log('Initial Listings:', JSON.stringify(this.filteredListings));
+    
+        this.filterFields.forEach(field => {
+            // Check if field has selectedOptions or has valid min/max values for filtering
+            const hasSelectedOptions = field.selectedOptions && field.selectedOptions.length > 0;
+            const hasMinValue = field.minValue > 0;
+            const hasMaxValue = field.maxValue > 0;
+            const hasMinDate = field.minDate != null;
+            const hasMaxDate = field.maxDate != null;
+            const hasFieldChecked = field.fieldChecked != null;
+    
+            if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
+                console.log(`Applying filter on field: ${field.apiName}`);
+    
+                if (field.objectApiName !== 'Listing__c' && field.objectApiName !== 'Offer__c') {
+                    // Filter for related record in another object (Contact, Property)
+                    console.log('Filtering related object:', field.objectApiName);
+                    
+                    this.filteredListings = this.filteredListings.filter(wrapper => {
+
+                        console.log('Wapper'+field.prevApiName.replace('__c', '__r'));
+                        const relatedRecord = wrapper[field.prevApiName.replace('__c', '__r')];
+                        console.log('relatedRecord'+relatedRecord);
+                        if (!relatedRecord) return false;
+    
+                        if (field.picklist || field.string || field.id || field.boolean) {
+                            const values = field.selectedOptions.map(option => option.value);
+                            return this.applyOperatorFilter(relatedRecord, field, values);
+                        }
+                        if (field.currency || field.double) {
+                            return this.applyNumericFilter(relatedRecord, field);
+                        }
+                        if (field.date || field.datetime) {
+                            console.log('Applying date/datetime filter');
+                            return this.applyDateFilter(relatedRecord, field);
+                        }
+                        return true;
+                    });
+                } else if (field.objectApiName === 'Offer__c') {
+                    // Filter for related offer records
+                    console.log('Filtering related offer records');
+                    
+                    this.filteredListings = this.filteredListings.filter(wrapper => {
+                        const relatedOffers = this.offerRecords.filter(offer => offer.Listing__c === wrapper.Id);
+    
+                        if (!relatedOffers.length) return false;
+    
+                        return relatedOffers.some(relatedOffer => {
+                            if (field.picklist || field.string || field.id || field.boolean) {
+                                const values = field.selectedOptions.map(option => option.value);
+                                return this.applyOperatorFilter(relatedOffer, field, values);
+                            }
+                            if (field.currency || field.double) {
+                                return this.applyNumericFilter(relatedOffer, field);
+                            }
+                            if (field.date || field.datetime) {
+                                console.log('Applying date/datetime filter');
+                                return this.applyDateFilter(relatedOffer, field);
+                            }
+                            return true;
+                        });
+                    });
+                } else {
+                    // Filter for fields in Listing__c object
+                    if (field.picklist || field.string || field.id || field.boolean) {
+                        console.log('Applying picklist/string/id/boolean filter');
+                        if (field.selectedOptions != null) {
+                            const values = field.selectedOptions.map(option => option.value);
+                            console.log('values' + values);
+                            this.filteredListings = this.filteredListings.filter(wrapper => this.applyOperatorFilter(wrapper.Listing__c, field, values));
+                        }
+                    }
+    
+                    if (field.currency || field.double) {
+                        console.log('Applying currency/double filter');
+                        this.filteredListings = this.filteredListings.filter(wrapper => this.applyNumericFilter(wrapper.Listing__c, field));
+                    }
+    
+                    if (field.date || field.datetime) {
+                        console.log('Applying date/datetime filter');
+                        this.filteredListings = this.filteredListings.filter(wrapper => this.applyDateFilter(wrapper.Listing__c, field));
+                    }
+                }
+    
+                console.log('Listings after applying filter:', JSON.stringify(this.filteredListings));
+                this.setFilteredListings();
+            } else {
+                this.setFilteredListings();
+            }
+        });
+    
+        console.log('Final Filtered Listings:', JSON.stringify(this.filteredListings));
     }
     
 
@@ -583,7 +661,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
     }
 
 
-    // Min Max fileds logic
+     /**
+    * Method Name: handleMinValueChange
+    * @description: handle the min value change in the number Input field.
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     handleMinValueChange(event) {
         const index = event.currentTarget.dataset.index;
         console.log('index'+index);
@@ -593,7 +676,13 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
-    // Handle change in the max input field
+    
+      /**
+    * Method Name: handleMaxValueChange
+    * @description: Handle change in the max input field.
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     handleMaxValueChange(event) {
         const index = event.currentTarget.dataset.index;
         console.log('index'+index);
@@ -603,7 +692,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
-    // Increment the min input value
+     /**
+    * Method Name: incrementMinValue
+    * @description:  Increment the min input value
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     incrementMinValue(event) {
         const index = event.currentTarget.dataset.index;
         console.log('index'+index);
@@ -617,7 +711,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
-    // Decrement the min input value
+      /**
+    * Method Name: decrementMinValue
+    * @description:  decrement the min input value
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     decrementMinValue(event) {
         const index = event.currentTarget.dataset.index;
         const currentValue = parseInt(this.filterFields[index].minValue, 10);
@@ -629,7 +728,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
-    // Increment the max input value
+         /**
+    * Method Name: incrementMaxValue
+    * @description:  incremaent the max input value
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     incrementMaxValue(event) {
         const index = event.currentTarget.dataset.index;
         const currentValue = parseInt(this.filterFields[index].maxValue, 10);
@@ -638,9 +742,15 @@ export default class ListingManagerFilterCmp extends LightningElement {
         } else {
             this.filterFields[index].maxValue = 0;
         }
+        this.applyFilters();
     }
 
-    // Decrement the max input value
+         /**
+    * Method Name: decrementMaxValue
+    * @description:  decrement the max input value
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     decrementMaxValue(event) {
         const index = event.currentTarget.dataset.index;
         const currentValue = parseInt(this.filterFields[index].maxValue, 10);
@@ -652,15 +762,24 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
-    //checkbox fields handle
-     //handel reset
+        /**
+    * Method Name: checkboxFieldChange
+    * @description:  handle th checkbox field change
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     checkboxFieldChange(event){
         const index = event.currentTarget.dataset.index;
         this.filterFields[index].fieldChecked = !this.filterFields[index].fieldChecked;
         this.applyFilters();
     }
 
-    //hadle the date fields
+       /**
+    * Method Name: handleMinDate
+    * @description:  handle min date field change
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     handleMinDate(event) {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;
@@ -669,6 +788,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
+        /**
+    * Method Name: handleMaxDate
+    * @description:  handle max date field change
+    * Date: 9/06/2024
+    * Created By: Vyom Soni
+    **/
     handleMaxDate(event) {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;

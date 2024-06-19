@@ -1,6 +1,5 @@
 import { LightningElement,track,api} from 'lwc';
 import blankImage from '@salesforce/resourceUrl/blankImage';
-import getListingData from '@salesforce/apex/ListingManagerController.getListingData';
 import { NavigationMixin } from 'lightning/navigation';
 
 export default class ListingManagerTileViewCmp extends NavigationMixin(LightningElement) {
@@ -15,31 +14,16 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     @track shownProcessedListingData = [];
 
     connectedCallback(){
-        // this.getListingData();
         this.totalPages = Math.ceil(this.listings.length / this.pageSize);
         this.updateProcessedListingData();
         this.updatePaginationButtons();
     }
 
-     /**
-    * Method Name : getListingData
-    * @description : retrieve the lisitngs from the salesforce
+      /**
+    * Method Name : setValueInParent
+    * @description : set the listing value from the listing manager component
     * Created By: Vyom Soni
     */
-    // getListingData(){
-    //     getListingData()
-    //         .then(result => {
-    //             this.listingData = result;
-    //             this.listingData.forEach((listing)=>{
-    //                 listing.isChecked = false;
-    //                 listing.imageUrl__c = listing.imageUrl__c ? listing.imageUrl__c : this.blankImage;
-    //             })
-    //         })
-    //         .catch(error => {
-    //             this.error = error;
-    //             this.data = undefined;
-    //         });
-    // }
     setValueInParent(){
           // Create a custom event with the value you want to pass to the parent
           const customEvent = new CustomEvent('valueselected', {
@@ -124,11 +108,23 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
         this.shownProcessedListingData = this.listings.slice(start, end);
     }
 
+    /**
+    * Method Name :updatePaginationButtons
+    * @description : update the padigation next prev button
+    * Created By: Vyom Soni
+    * date:4/06/2024
+    */
     updatePaginationButtons() {
         this.isPrevDisabled = this.pageNumber === 1;
         this.isNextDisabled = this.pageNumber === this.totalPages;
     }
 
+     /**
+    * Method Name :goToPrevFeaturedProperty
+    * @description : update the page number when the prev button is clicked
+    * Created By: Vyom Soni
+    * date:4/06/2024
+    */
     goToPrevFeaturedProperty() {
         if (this.pageNumber > 1) {
             this.pageNumber--;
@@ -137,6 +133,12 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
         }
     }
 
+  /**
+    * Method Name :goToNextFeaturedProperty
+    * @description : update the page number when the next button is clicked
+    * Created By: Vyom Soni
+    * date:4/06/2024
+    */
     goToNextFeaturedProperty() {
         if (this.pageNumber < this.totalPages) {
             this.pageNumber++;

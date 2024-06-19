@@ -27,33 +27,34 @@ export default class ListingManagerMapviewCmp extends LightningElement {
     * Created By:Vyom Soni
     */
     loadPropertyData(data) {
-        if (data) {
-            this.data = data;
-            this.mapMarkers = [];
-            this.mapMarkers1 = [];
-            this.mapMarkers2 = []; 
-            this.data.forEach(record => {
-                this.mapMarkers1.push({
-                    id: record.Id
+        try{
+            if (data) {
+                this.data = data;
+                this.mapMarkers = [];
+                this.mapMarkers1 = [];
+                this.mapMarkers2 = []; 
+                this.data.forEach(record => {
+                    this.mapMarkers1.push({
+                        id: record.Id
+                    });
+                    this.mapMarkers2.push({
+                        location: {
+                            id: record.Id,
+                            rooms: record.Number_of_Bedrooms__c,
+                            City: record.City__c,
+                            Country: record.Country__c,
+                            PostalCode: record.Postal_Code__c,
+                            State: record.State__c,
+                            Street: record.Street__c
+                        },
+                        title: record.Name,
+                        description: `<b>Address:-</b> ${record.Street__c}, ${record.City__c}, ${record.State__c}, ${record.Country__c} <br><b>Sq_Ft:-</b> ${record.Sq_Ft__c}`
+                    });
                 });
-                this.mapMarkers2.push({
-                    location: {
-                        id: record.Id,
-                        rooms: record.Number_of_Bedrooms__c,
-                        City: record.City__c,
-                        Country: record.Country__c,
-                        PostalCode: record.Postal_Code__c,
-                        State: record.State__c,
-                        Street: record.Street__c
-                    },
-                    title: record.Name,
-                    description: `<b>Address:-</b> ${record.Street__c}, ${record.City__c}, ${record.State__c}, ${record.Country__c} <br><b>Sq_Ft:-</b> ${record.Sq_Ft__c}`
-                });
-            });
-            this.mapMarkers = [...this.mapMarkers2]; 
-        
-        } else if (error) {
-            console.error('Error fetching data:', error);
+                this.mapMarkers = [...this.mapMarkers2]; 
+        }
+        } catch(error){
+            console.log("Error set markers:"+error);
         }
     }
 }

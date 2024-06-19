@@ -93,6 +93,11 @@ public without sharing class ListingManagerFilterController {
         public String value { get; set; }
     }
 
+    /**
+    * Method Name : getPicklistValues
+    * @description : get static fields picklist values.
+    * @return List of picklist values.
+    */
     @AuraEnabled
     public static List<Map<String, String>> getPicklistValues(String apiName ,String objectName) {
         String objectApiName =objectName ;
@@ -111,16 +116,27 @@ public without sharing class ListingManagerFilterController {
         return picklistValues;
     }
 
-
+    /**
+    * Class Name : ListingWrapper
+    * @description : this is a wrapper class to represent listing records with parent record.
+    */
     public class ListingWrapper {
         public Listing__c listing { get; set; }
         public Contact contact { get; set; }
         public Property__c property { get; set; }
+        public Account account { get; set; }
+        public RecordType recordtype { get; set; }
+        public User createdby { get; set; }
+        public User lastmodifyby { get; set; }
         
-        public ListingWrapper(Listing__c listing, Contact contact, Property__c property) {
+        public ListingWrapper(Listing__c listing, Contact contact, Property__c property , Account account,RecordType recordtype,User createdby,User lastmodifyby ) {
             this.listing = listing;
             this.contact = contact;
             this.property = property;
+            this.account = account;
+            this.recordtype = recordtype;
+            this.createdby = createdby;
+            this.lastmodifyby = lastmodifyby;
         }
 
         public String toJson() {
@@ -128,8 +144,12 @@ public without sharing class ListingManagerFilterController {
             result.put('Id', listing.Id);
             result.put('Name', listing.Name);
             result.put('Listing__c', getAllFieldsWithValues(listing));
-            result.put('Contact', getAllFieldsWithValues(contact));
+            result.put('Contact__r', getAllFieldsWithValues(contact));
             result.put('Property__r', getAllFieldsWithValues(property));
+            result.put('Account__r', getAllFieldsWithValues(account));
+            result.put('RecordTypeId', getAllFieldsWithValues(recordtype));
+            result.put('CreatedBy', getAllFieldsWithValues(createdby));
+            result.put('LastModifiedById', getAllFieldsWithValues(lastmodifyby));
             return JSON.serialize(result);
         }
 
@@ -145,19 +165,32 @@ public without sharing class ListingManagerFilterController {
         }
     }
 
+     /**
+    * Method Name : getListingsWithRelatedRecords
+    * @description : get listing with related records.
+    * @return List of picklist values.
+    */
     @AuraEnabled
     public static List<String> getListingsWithRelatedRecords() {
         List<String> listingJsons = new List<String>();
 
         // Dynamically build the SOQL query to include all fields
-        String listingFields = getAllFields('Listing__c');
-        String contactFields = getAllFieldsWithPrefix('Contact', 'Contact__r');
-        String propertyFields = getAllFieldsWithPrefix('Property__c', 'Property__r');
+        String listingFields = String.escapeSingleQuotes(getAllFields('Listing__c'));
+        String contactFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Contact', 'Contact__r'));
+        String propertyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Property__c', 'Property__r'));
+        String accountFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Account', 'Account__r'));
+        String recordTypeFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('RecordType', 'RecordType'));
+        String createdbyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('User', 'CreatedBy'));
+        String lastmodifybyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('User', 'LastModifiedBy'));
 
         // Constructing the SOQL query
         String query = 'SELECT ' + listingFields + ', ' +
-                       contactFields + ', ' +
-                       propertyFields + ' ' +
+                       contactFields + ', ' +'Contact__r.HasOptedOutOfEmail'+ ', ' + 'Contact__r.HasOptedOutOfFax' + ', ' + 'Contact__r.DoNotCall' + ', '+ 'Contact__r.Pronouns' + ', '+ 'Contact__r.GenderIdentity' + ', '+
+                       propertyFields + ', ' +
+                       accountFields + ', ' +'Account__r.Tier'+', '+
+                       recordTypeFields +', '+
+                       createdbyFields + ', '+
+                       lastmodifybyFields + ' '+
                        'FROM Listing__c';
 
         // Debug the constructed query
@@ -170,7 +203,11 @@ public without sharing class ListingManagerFilterController {
         for (Listing__c listing : listings) {
             Contact relatedContact = listing.Contact__r;
             Property__c relatedProperty = listing.Property__r;
-            ListingWrapper lw = new ListingWrapper(listing, relatedContact, relatedProperty);
+            Account relatedAccount= listing.Account__r;
+            RecordType relatedRecordType= listing.RecordType;
+            User relatedCreatedBy= listing.CreatedBy;
+            User relatedLastModifiedBy= listing.LastModifiedBy;
+            ListingWrapper lw = new ListingWrapper(listing, relatedContact, relatedProperty,relatedAccount,relatedRecordType,relatedCreatedBy,relatedLastModifiedBy);
             listingJsons.add(lw.toJson());
         }
 
@@ -180,29 +217,57 @@ public without sharing class ListingManagerFilterController {
         return listingJsons;
     }
 
+    
+     /**
+    * Method Name : getAllFields
+    * @description : get all fields of the obeject.
+    * @return String of fields Name.
+    */
     private static String getAllFields(String sObjectName) {
         // Get all fields of the given sObject
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
         List<String> fieldNames = new List<String>();
         
         for (String fieldName : fieldMap.keySet()) {
-            fieldNames.add(fieldName);
+            // Check if the field is accessible
+            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
+                fieldNames.add(fieldName);
+            }
         }
         
         // Join the field names into a single comma-separated string
         return String.join(fieldNames, ', ');
     }
+    
 
+       /**
+    * Method Name : getAllFieldsWithPrefix
+    * @description : get all fields with prefix.
+    * @return String of fields Name.
+    */
     private static String getAllFieldsWithPrefix(String sObjectName, String prefix) {
         // Get all fields of the given sObject and prefix them for a parent relationship query
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
         List<String> fieldNames = new List<String>();
         
         for (String fieldName : fieldMap.keySet()) {
-            fieldNames.add(prefix + '.' + fieldName);
+            // Check if the field is accessible
+            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
+                fieldNames.add(prefix + '.' + fieldName);
+            }
         }
         
         // Join the field names into a single comma-separated string
         return String.join(fieldNames, ', ');
+    }
+
+
+    @AuraEnabled
+    public static List<Offer__c> getTheOfferRecords(){
+        String querylist = getAllFields('Offer__c');
+        String query = 'SELECT ' + querylist+' '+
+                       'FROM Offer__c';
+        List<Offer__c> listings = Database.query(query);
+        return listings;
     }
 }

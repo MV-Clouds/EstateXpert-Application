@@ -1,4 +1,4 @@
-import { LightningElement, track, wire,api } from 'lwc';
+import { LightningElement, track,api } from 'lwc';
 import getListingFields from '@salesforce/apex/ListingManagerFilterController.getListingFields';
 
 export default class ListingManagerFilterAddCmp extends LightningElement {
@@ -8,8 +8,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track breadcrumbs = [];
     @track selectedValues = [];
     @track showCombobox = true;
-     // Updated to hold the current set of combobox options
-
+    @track unchangeFieldOptions = [];
     // Custom combobox properties
     @track searchTerm1 = '';
     @track selectedOptions1 = [];
@@ -24,6 +23,14 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     connectedCallback() {
         // Fetch fields of Listing__c object when component loads
         this.fetchObjectFields('Listing__c');
+        // setTimeout(()=>{
+        //     console.log('Hi');
+        //     const offerField = [{"value":"Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"Offer__c"}];
+        //     this.fieldOptions = this.fieldOptions.concat(offerField);
+        //     this.options1 = [...this.options1,...offerField];
+
+        // },2000);
+        
     }
 
      /**
@@ -35,8 +42,46 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     fetchObjectFields(objectApiName) {
         getListingFields({ objectApiName })
             .then(fields => {
-                // console.log('fields'+JSON.stringify(fields));
-                const filteredFields = fields;
+                console.log('fields'+JSON.stringify(fields));
+                var filteredFields = fields.filter(field => field.fieldAPIName !== 'OwnerId');
+                if(this.breadcrumbs.length >0){
+                    filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
+                }
+                if (fields) {
+                    this.fieldOptions = filteredFields.map(field => {
+                        return {
+                            label: field.fieldName, // Only show the label
+                            value: field.fieldAPIName,
+                            type: field.fieldType, // Add type to identify lookup fields
+                            referenceObjectName: field.referenceFields || [], 
+                            objectApiName : field.referenceObjectName || '',
+                            picklistValues: field.picklistValues || []
+                            // Include reference fields if any
+                        };
+                    });
+                    // this.options1 = this.fieldOptions;
+                    const offerField = [{"value":"Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"Offer__c"}];
+                    this.fieldOptions = this.fieldOptions.concat(offerField);
+                    this.options1 = this.fieldOptions;
+                    console.log('hey');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching object fields:', error);
+            });
+    }
+
+      /**
+    * Method Name: fetchObjectFieldsWithoutReference
+    * @description: fetch fields when reference field was clicked.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
+    fetchObjectFieldsWithoutReference(objectApiName) {
+        getListingFields({ objectApiName })
+            .then(fields => {
+                console.log('fields'+JSON.stringify(fields));
+                var filteredFields = fields;
                 if(this.breadcrumbs.length >0){
                     filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
                 }
@@ -53,6 +98,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                         };
                     });
                     this.options1 = this.fieldOptions;
+                    console.log('hey');
                 }
             })
             .catch(error => {
@@ -60,32 +106,10 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
             });
     }
 
-    fetchObjectFieldsWithoutReference(objectApiName) {
-        getListingFields({ objectApiName })
-            .then(fields => {
-                // console.log('fields'+JSON.stringify(fields));
-                const filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
-
-                if (fields) {
-                    this.fieldOptions = filteredFields.map(field => {
-                        return {
-                            label: field.fieldName, // Only show the label
-                            value: field.fieldAPIName,
-                            type: field.fieldType, // Add type to identify lookup fields
-                            referenceObjectName: field.referenceFields || [], 
-                            objectApiName : field.referenceObjectName || '',
-                            picklistValues: field.picklistValues || []
-                            // Include reference fields if any
-                        };
-                    });
-                    this.options1 = this.fieldOptions;
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching object fields:', error);
-            });
+    setOfferInFields(){
+        
+        JSON.stringify('set'+this.fieldOptions); 
     }
-
      /**
     * Method Name: currentFieldOptions
     * @description: getter for the set the current selectedfield operator options.
@@ -175,12 +199,11 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
             default:
                 options = [];
         }
-        this.selectedField[0].operation = options[0].value;
         return options;
     }
 
      /**
-    * Method Name: changeFields,isAuditField,isStandardField,handleFieldSelect
+    * Method Name: changeFields
     * @description: handle the fields select of non-reference field.
     * Date: 07/06/2024
     * Created By: Vyom Soni
@@ -196,14 +219,12 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         console.log('if'+JSON.stringify(this.selectedFields.length > 0 ? this.selectedFields[this.selectedFields.length - 1] : null));
     }
 
-    isAuditField(fieldName) {
-        return fieldName.toLowerCase().startsWith('created') || fieldName.toLowerCase().startsWith('lastmodified');
-    }
-
-    isStandardField(fieldName) {
-        return fieldName.toLowerCase() === 'id' || fieldName.toLowerCase() === 'systemmodstamp' || fieldName.toLowerCase() === 'ownerid';
-    }
-
+    /**
+    * Method Name: handleFieldSelect
+    * @description: add the selected field from checkbox into selcetdFields.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     handleFieldSelect(event) {
         const selectedValue = event.currentTarget.dataset.id;
         const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
@@ -233,9 +254,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         const selectedValue = event.currentTarget.dataset.id;
         // console.log('Id'+selectedValue);
         const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
-        //this.options1.forEach(elem => console.log('hi'+elem.value +'1'+ elem.referenceFields.length));
-        // console.log('selectedFiedls'+JSON.stringify(selectedField));
-        // console.log('1'+selectedField.objectApiName);
         if(selectedField != null){
             this.handleFieldSelect(event);
             this.fetchObjectFieldsWithoutReference(selectedField.objectApiName);
@@ -284,32 +302,34 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     }
         handleBreadcrumbClick(event) {
             const clickedIndex = parseInt(event.currentTarget.dataset.index, 10);
+            console.log('0'+clickedIndex);
             this.selectedFields = this.selectedFields.slice(0, clickedIndex);
             this.selectedValues = this.selectedValues.slice(0, clickedIndex);
            this.selectedField = [];
            this.handleAddButtonDisable();
 
             if (this.selectedValues.length > 0) {
-                const lastSelectedValue = this.selectedValues[this.selectedValues.length - 1];
-                const lastSelectedField = this.selectedFields[this.selectedFields.length - 1].objectApiName;
+                var lastSelectedValue = this.selectedValues[this.selectedValues.length - 1];
+                var lastSelectedField = this.selectedFields[this.selectedFields.length - 1].objectApiName;
                 console.log('lastSelectedValue'+lastSelectedValue);
                 console.log('lastSelectedValue2'+typeof lastSelectedField);
                 if(lastSelectedField == null){
                     lastSelectedField='Listing__c'
                 }
-                if(clickedIndex == 0){
-                    this.fieldOptions = this.options1;
-                }else if(clickedIndex == this.breadcrumbs.length-1){
+                 if(clickedIndex == this.breadcrumbs.length-1){
                     console.log('byr');
-                    
-                }else{
+                    console.log('2'+clickedIndex);
+                }else {
                     console.log('lastSelec'+lastSelectedField);
                     console.log('lastSelec2'+lastSelectedValue);
-                    this.fetchObjectFields(lastSelectedField);
+                    console.log('3'+clickedIndex);
+                    this.fetchObjectFieldsWithoutReference(lastSelectedField);
                 }
                 
             } else {
                 this.fetchObjectFields('Listing__c');
+                console.log('Hiii');
+                // this.option1 = this.unchangeFieldOptions;
             }
     
             this.showCombobox = true;
@@ -318,8 +338,8 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         }
 
      /**
-    * Method Name: handleSearchChange1,handleFocus1,handleBlur1,filteredOptions1,isLookupField
-    * @description: handle combobox option show and handle search function.
+    * Method Name: handleSearchChange1
+    * @description: handle search text change.
     * Date: 07/06/2024
     * Created By: Vyom Soni
     **/
@@ -327,10 +347,22 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.searchTerm1 = event.target.value;
     }
 
+      /**
+    * Method Name: handleFocus1
+    * @description: handle focus event in combobox.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     handleFocus1() {
         this.isFocused1 = true;
     }
 
+      /**
+    * Method Name: handleBlur1
+    * @description: handle blur event in the combobox.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     handleBlur1() {
         // Delay the blur action to allow click event to be registered
         setTimeout(() => {
@@ -338,11 +370,22 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         }, 700);
     }
 
-    
+      /**
+    * Method Name: showOptions1
+    * @description: Hide / Unhide options of the combobox.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     get showOptions1() {
         return this.isFocused1 || this.searchTerm1 !== '';
     }
 
+      /**
+    * Method Name: filteredOptions1
+    * @description: this getter made the field list to show in the UI.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     get filteredOptions1() {
         if (this.searchTerm1 === '' && !this.isFocused1) {
             return [];
@@ -356,26 +399,25 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         }));
     }
 
+      /**
+    * Method Name: isLookupField
+    * @description: check field is lookup or reference.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     isLookupField(fieldType) {
         return fieldType === 'REFERENCE' || fieldType === 'Lookup' ; // Adjust this condition based on your field types
     }
 
-    removeOption1(event) {
-        const optionToRemove = event.currentTarget.dataset.id;
-        this.selectedOptions1 = this.selectedOptions1.filter(option => option.value !== optionToRemove);
-    }
 
-
+  /**
+    * Method Name: computedDropdownClass
+    * @description: return dynamic class for the combobox.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     get computedDropdownClass() {
         return `slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ${this.isFocused1 ? 'slds-is-open' : ''}`;
-    }
-
-    handleNotCheckboxChange(event){
-        this.notCheckboxValue = event.target.checked;
-    }
-
-    handleComboboxChange(event){
-        this.comboBoxValue =  event.target.value;
     }
 
     // operation checkbox change login

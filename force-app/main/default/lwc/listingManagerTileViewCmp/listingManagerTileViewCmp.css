@@ -6,10 +6,11 @@
 .outerCover{
     border: 1px solid #c9c9c9;
     border-radius: 0.25rem;
+    aspect-ratio: 2 / 1.2;
 }
 
 .imageSection{
-    height: 10rem;
+    height: 100%;
     width: 100%;
     position: relative;
     /* background-color: aqua; */

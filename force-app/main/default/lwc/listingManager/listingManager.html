@@ -64,8 +64,8 @@
                     </div>
                 </div>
             </lightning-card>
-            <div class="body slds-grid">
-                <div class="innerDiv1 slds-col slds-size_4-of-12">
+            <div class="body">
+                <div class="innerDiv1">
                     <div class="filterDiv">
                         <c-listing-manager-filter-cmp onvalueselected={handleFilteredListings}>
 
@@ -76,7 +76,7 @@
                     </div>
                 </div>
                
-                <div class="innerDiv2 slds-col slds-size_8-of-12">
+                <div class="innerDiv2">
                   <template if:true={showList}> 
                     <div class="tableDiv">
                         <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid" aria-label="Example advanced table of Opportunities in actionable mode">

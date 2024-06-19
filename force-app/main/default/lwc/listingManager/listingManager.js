@@ -5,7 +5,6 @@ import designcss from '@salesforce/resourceUrl/listingManagerCss';
 import imagee from '@salesforce/resourceUrl/image';
 import getListingData from '@salesforce/apex/ListingManagerController.getListingData';
 import getForm from '@salesforce/apex/ListingManagerController.getForm';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
 import blankImage from '@salesforce/resourceUrl/blankImage';
 
@@ -95,8 +94,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             };
         });
         this.unchangedProcessListings = this.processedListingData;
-        console.log('Hi1');
-        console.log('hi'+JSON.stringify(this.processedListingData));
         this.totalPages = Math.ceil(this.processedListingData.length / this.pageSize);
         this.updateProcessedListingData();
         this.updatePaginationButtons();
@@ -126,20 +123,35 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             });
     }
 
-
-    //handle the filtered data from the filetr component
+    /**
+    * Method Name : handleFilteredListings
+    * @description : set the data comming from the filter cmp
+    * Date: 14/06/2024
+    * Created By:Vyom Soni
+    */
     handleFilteredListings(event){
         const filteredListing = event.detail;
         this.processedListingData = this.unchangedProcessListings;
         this.processedListingData = this.processedListingData.filter(processListing =>
             filteredListing.some(filtered => filtered.Id === processListing.Id)
         );
+        this.totalPages = Math.ceil(this.processedListingData.length / this.pageSize);
+        if(this.totalPages == 0){
+            this.totalPages = 1;
+        }
+        this.pageNumber = 1;
         this.updateProcessedListingData();
         this.updatePaginationButtons();
     }
 
 
     //handle data from the tile cmp
+    /**
+    * Method Name : handleListingSelect
+    * @description : handle data from the tile cmp
+    * Date: 14/06/2024
+    * Created By:Vyom Soni
+    */
     handleListingSelect(event){
         console.log('Hi');
         this.processedListingData = event.detail;
@@ -196,6 +208,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : checkBoxValueChange
     * @description : handle the checkbox change
+    * date: 11/06/2024
     * Created By:Vyom Soni
     */
     checkBoxValueChange(event){
@@ -223,17 +236,12 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.updateSelectedProperties();
     }
 
-    /**
-    * Method Name : updateSelectedProperties
-    * @description : update the properties as selected
+      /**
+    * Method Name : selectAllCheckbox
+    * @description : select the all checkbox
+    * date: 11/06/2024
     * Created By:Vyom Soni
     */
-    updateSelectedProperties() {
-        this.selectedProperties = this.processedListingData.filter(listing => listing.isChecked);
-        this.selctedListingData = this.listingData.filter(listing => listing.isChecked);
-        this.totalSelected = this.selectedProperties.length;
-    }
-
     selectAllCheckbox(event){
         const isChecked = event.target.checked;
         this.checkAll = !this.checkAll;
@@ -253,6 +261,17 @@ export default class ListingManager extends NavigationMixin(LightningElement){
        })
         
         this.updateSelectedProperties();
+    }
+
+    /**
+    * Method Name : updateSelectedProperties
+    * @description : update the properties as selected
+    * Created By:Vyom Soni
+    */
+    updateSelectedProperties() {
+        this.selectedProperties = this.processedListingData.filter(listing => listing.isChecked);
+        this.selctedListingData = this.listingData.filter(listing => listing.isChecked);
+        this.totalSelected = this.selectedProperties.length;
     }
 
     /**
@@ -306,6 +325,12 @@ export default class ListingManager extends NavigationMixin(LightningElement){
 
     }
 
+    /**
+    * Method Name : updateSortIcons
+    * @description : this method update the sort icons in the wrapbutton
+    * date : 11/06/2024
+    * Created By:Vyom Soni
+    */
      updateSortIcons() {
         const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown svg');
         allHeaders.forEach(icon => {
@@ -352,47 +377,40 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         }
     }
 
-    get totalSelected() {
-        return this.processedListingData.filter(listing => listing.isChecked).length;
-    }
 
     /**
     * Method Name : wrapFilter
     * @description : this method is used for the wrap the filter
     * Created By:Vyom Soni
     */
-    wrapFilter(){
-        if(this.wrapOn == true){
-            const div1 = this.template.querySelectorAll('.innerDiv1');
-            div1.forEach(icon => {
-                icon.classList.add('slds-size_4-of-12');
-            });
-            const div2 = this.template.querySelectorAll('.innerDiv2');
-            div2.forEach(icon => {
-                icon.classList.add('slds-size_8-of-12');
-            });
-            const svgElement = this.template.querySelectorAll('.innerDiv1 .filterWrap svg');
-            svgElement[0].classList.remove('svgRotate');
+    wrapFilter() {
+        if (this.wrapOn) {
+            const svgElement = this.template.querySelector('.innerDiv1 .filterWrap svg');
+            svgElement.classList.remove('svgRotate');
+
+            const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
+            filterDiv.classList.remove('removeInnerDiv1');
+
+            const div1 = this.template.querySelector('.innerDiv1');
+            div1.style.width = '30%';
+
+            const div2 = this.template.querySelector('.innerDiv2');
+            div2.style.width = '70%';
+
             this.wrapOn = false;
-            const filterDiv = this.template.querySelectorAll('.innerDiv1 .filterDiv');
-            filterDiv.forEach(icon => {
-                icon.classList.remove('removeInnerDiv1');
-            });
-        }else{
-            const div1 = this.template.querySelectorAll('.innerDiv1');
-            div1.forEach(icon => {
-                icon.classList.remove('slds-size_4-of-12');
-            });
-            const filterDiv = this.template.querySelectorAll('.innerDiv1 .filterDiv');
-            filterDiv.forEach(icon => {
-                icon.classList.add('removeInnerDiv1');
-            });
-            const div2 = this.template.querySelectorAll('.innerDiv2');
-            div2.forEach(icon => {
-                icon.classList.remove('slds-size_8-of-12');
-            });
-            const svgElement = this.template.querySelectorAll('.innerDiv1 .filterWrap svg');
-            svgElement[0].classList.add('svgRotate');
+        } else {
+            const svgElement = this.template.querySelector('.innerDiv1 .filterWrap svg');
+            svgElement.classList.add('svgRotate');
+
+            const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
+            filterDiv.classList.add('removeInnerDiv1');
+
+            const div1 = this.template.querySelector('.innerDiv1');
+            div1.style.width = 'fit-content';
+
+            const div2 = this.template.querySelector('.innerDiv2');
+            div2.style.width = '100%';
+
             this.wrapOn = true;
         }
     }
