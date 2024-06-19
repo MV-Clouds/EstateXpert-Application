@@ -1,0 +1,97 @@
+<!--
+* Component Name: customModal 
+* @description: Used to display custom modal based on the requirements
+* Date: 12/06/2024 
+* Created By: Rachit Shah 
+-->
+
+<template>
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container custom-modal-container">
+            <header class="slds-modal__header custom-modal-header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 class="slds-text-heading_medium">{name} Email Template</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium">
+                <div class="custom-input-container">
+                    <div class="label-container">
+                        <label><span class="red">*</span>Name</label>
+                    </div>
+                    <div class="input-container">
+                        <lightning-input 
+                            placeholder="Template Name" 
+                             
+                            name="templateName"
+                            value={templateName}
+                            onchange={handleInputChange}>
+                        </lightning-input>
+                    </div>
+                </div>
+                <div class="custom-input-container">
+                    <div class="label-container">
+                        <label>Description</label>
+                    </div>
+                    <div class="input-container">
+                        <lightning-textarea 
+                            name="description"
+                            value={description}
+                            onchange={handleInputChange}
+                            aria-rowspan="5">
+                        </lightning-textarea>
+                    </div>
+                </div>
+                <div class="custom-input-container">
+                    <div class="label-container">
+                        <label><span class="red">*</span>Object Select</label>
+                    </div>
+                    <div class="input-container">
+                        <lightning-combobox 
+                            placeholder="Please select the Object" 
+                             
+                            name="objectSelect"
+                            options={objectOptions}
+                            value={objectSelect}
+                            onchange={handleInputChange}>
+                        </lightning-combobox>
+                    </div>
+                </div>
+                <div class="custom-input-container">
+                    <div class="label-container">
+                        <label><span class="red">*</span>Type</label>
+                    </div>
+                    <div class="input-container">
+                        <lightning-combobox 
+                            placeholder="Please select the Type" 
+                            name="typeSelect"
+                            options={typeOptions}
+                            value={typeSelect}
+                            onchange={handleInputChange}>
+                        </lightning-combobox>
+                    </div>
+                </div>
+            </div>
+            <footer class="slds-modal__footer custom-footer">
+                <div class="cancel-btn">
+                    <lightning-button variant="neutral" label="Cancel" onclick={closeModal}></lightning-button>
+                </div>
+                <div class="save-btn">
+                    <lightning-button variant="brand" label="Save" onclick={handleSave}></lightning-button>
+                </div>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+
+    <!-- <template if:true={showWarningPopup}>
+        <div class="popup-container">
+            <c-error_-pop-up
+                oncancel={handleCancel}
+                oncontinue={handleContinue}
+            ></c-error_-pop-up>
+        </div>
+    </template> -->
+
+</template>

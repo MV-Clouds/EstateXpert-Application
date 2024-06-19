@@ -1,0 +1,118 @@
+* {
+    --slds-c-icon-color-foreground-default: white;
+}
+
+.custom-modal-container {
+    min-width: 80vw;
+}
+
+.custom-modal-header {
+    background-color: #0176D3 !important;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+}
+
+.custom-modal-title {
+    color: white;
+    margin: 0;
+}
+
+.custom-modal-content {
+    background-color: white;
+    border-radius: 0.25rem;
+}
+
+.custom-modal-body {
+    display: flex;
+    background-color: #F0F7FF;
+    height: 75vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.collapsible-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: white;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 0px 2px 0px, rgba(60, 64, 67, 0.15) 0px 0px 6px 2px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    width: 15rem;
+    position: relative;
+}
+
+.collapsible-section.collapsed {
+    width: 0;
+    overflow: hidden;
+}
+
+.record-select-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    width: 100%;
+}
+
+.content {
+    flex: 2;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 0px 2px 0px, rgba(60, 64, 67, 0.15) 0px 0px 6px 2px;
+    background-color: white;
+    margin: 2rem;
+    padding: 1rem;
+    font-size: 1rem;
+    transition: margin-left 0.3s ease;
+    overflow: scroll;
+}
+
+.content.collapsed {
+    margin-left: 8rem !important;
+}
+
+.content h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.content p {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.chevron-btn {
+    position: absolute;
+    background-color: #0176D3;
+    height: 1.875rem;
+    width: 1.875rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 5%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: left 0.3s ease;
+    z-index: 1;
+}
+
+.collapsible-section.collapsed + .chevron-btn {
+    left: 0.5rem;
+}
+
+.collapsible-section + .chevron-btn {
+    left: 12.5rem;
+}
+
+.slds-modal__header .slds-modal__close{
+    position: absolute;
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    bottom: 0.5rem ;
+    margin-left: 0
+}
+
+.no-record-selected {
+    height: 100%;
+    font-size: 1.25rem;
+}

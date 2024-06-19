@@ -1,0 +1,107 @@
+.full-screen-container {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    height: 100%;
+    width: 100%;
+    padding: 1.5rem;
+    font-family:Arial, Helvetica, sans-serif;
+    border-radius: 10px;
+}
+
+.full-screen-content {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.template-info {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+}
+
+.template-dataset{
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.template-content{
+    gap: 1rem; 
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    width: 100%;
+    flex-direction: row;
+}
+.template-data{
+    display: flex;
+    gap: 15%;
+    min-width: 20%;
+    align-items: center;
+}
+
+.dotted-border{
+    border: 1px dashed black;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    margin-top: 1rem;
+    gap: 5rem;
+}
+
+.slds-button {
+    margin-left: 1rem;
+}
+
+.custombtn{
+    --slds-c-button-spacing-block-start : 4px;
+    --slds-c-button-spacing-inline-end : 16px;
+    --slds-c-button-spacing-block-end : 4px;
+    --slds-c-button-spacing-inline-start : 16px;  
+    font-size: 0.9rem;
+    --sds-c-button-radius-border : 10px;
+
+}
+
+.field-select{
+    width: 20%;
+}
+
+.field-combobox{
+    --sds-c-input-radius-border: 10px;
+    --lwc-formLabelFontSize : 14px;
+    margin-right: 2rem;
+}
+
+.right-content{
+    width: -webkit-fill-available;
+    margin-bottom: 1rem;
+}
+
+.edit{
+    --slds-g-color-border-base-4 : #0176D3;
+}
+
+.max-width{
+    width: max-content;
+}
+
+.popup-container{
+    z-index: 9999;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    position: absolute;
+    top: 0;
+    /* backdrop-filter : blur(2px); */
+    background-color: rgba(255, 255, 255, 0.5);  
+}
