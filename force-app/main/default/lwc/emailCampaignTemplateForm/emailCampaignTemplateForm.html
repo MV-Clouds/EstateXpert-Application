@@ -1,9 +1,6 @@
 <template>
     <div class="wrapper">
         <div class="header">
-            <!-- <lightning-icon icon-name="standard:Account" size="small"></lightning-icon>
-            <h1>New Drip Campaign Template</h1> -->
-
             <article class="slds-card">
                 <div class="slds-card__header slds-grid">
                   <header class="slds-media slds-media_center slds-has-flexi-truncate">
@@ -19,16 +16,39 @@
                   </header>
                 </div>
               </article>
-
         </div>
 
         
         <div class="container">
-            <lightning-input class="input-field" label="Drip Campaign Template" value="Buyer - First Time" disabled></lightning-input>
-            <lightning-input class="input-field" label="Drip Campaign Name" placeholder="Enter Campaign Name"></lightning-input>
+
+            <div class="content-header">
+                New Email Campaign Template
+            </div>
+
+            <div class="content-body">
+
+                <div class="content">
+                    <div class="content-details">
+                        <p class="content-text">Email Campaign Template :</p> <span class="content-data">Buyer - First Time</span>
+                    </div>
+    
+                    <div class="content-details">
+                        <p class="content-text">Email Campaign Name :</p> <span class="content-data">Campaign Name</span>
+                    </div>
+
+                </div>
+
+                <div class="edit-btn">
+                    <button class="slds-button slds-button_icon slds-button_icon-border-filled edit" onclick={handleEdit}>
+                        <lightning-icon icon-name="utility:edit" alternative-text="Edit" size="small"></lightning-icon>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="dotted-border"></div>
     
             <div class="primary-recipients">
-                <label for="primaryRecipients" class="slds-form-element__label">Select the primary recipient(s)</label>
                 <lightning-combobox
                     name="primaryRecipients"
                     label="Select contact(s)"
@@ -49,7 +69,7 @@
             </div>
     
             <fieldset class="slds-form-element slds-m-top_medium">
-                <legend class="slds-form-element__legend slds-form-element__label">How should this drip campaign start?</legend>
+                <legend class="slds-form-element__legend slds-form-element__label">How should this Email campaign start?</legend>
                 <div class="slds-form-element__control">
                     <lightning-radio-group
                         name="startDateOption"
@@ -66,12 +86,12 @@
                 <lightning-button label="Add New Email" onclick={handleAddNewEmail}></lightning-button>
             </div>
     
-            <template if:true={dripEmails}>
+            <template if:true={emails}>
                 <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_medium">
                     <thead>
                         <tr class="slds-line-height_reset">
                             <th class="" scope="col">
-                                <div class="slds-truncate" title="Drip Email Name">Drip Email Name</div>
+                                <div class="slds-truncate" title="Email Name">Email Name</div>
                             </th>
                             <th class="" scope="col">
                                 <div class="slds-truncate" title="Subject">Subject</div>
@@ -88,9 +108,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template for:each={dripEmails} for:item="email">
+                        <template for:each={emails} for:item="email">
                             <tr key={email.id}>
-                                <td data-label="Drip Email Name">
+                                <td data-label="Email Name">
                                     <div class="slds-truncate" title={email.name}>{email.name}</div>
                                 </td>
                                 <td data-label="Subject">
@@ -110,11 +130,13 @@
                     </tbody>
                 </table>
             </template>
+
+            <div class="footer">
+                <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+                <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>
+            </div>
         </div>
-        <div class="footer">
-            <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
-            <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>
-        </div>
+
     </div>
 
 </template>
