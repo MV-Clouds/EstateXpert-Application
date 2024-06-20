@@ -2,6 +2,7 @@ import { LightningElement, track } from 'lwc';
 
 export default class EmailCampaignTemplateForm extends LightningElement {
     @track primaryRecipients = [];
+    @track selectedRecipients = []; // Track selected recipients
     @track contacts = [
         { label: 'Andrew Busby Mobile', value: 'Andrew Busby Mobile' },
         // Add more contact options here
@@ -33,6 +34,26 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     handleDeleteEmail(event) {
         const emailId = event.currentTarget.dataset.id;
         this.emails = this.emails.filter(email => email.id !== parseInt(emailId, 10));
+    }
+
+    lookupRecord(event) {
+        const selectedRecord = event.detail.selectedRecord;
+
+        if(selectedRecord){
+            if(event.target.name === 'recipients'){
+                console.log('selectedRecord => ' , JSON.stringify(selectedRecord));
+                this.selectedRecipients = [...this.selectedRecipients, selectedRecord];
+                console.log('recordlist ==> ' ,this.selectedRecipients);
+            } else {
+                console.log('name is different');
+            }
+        }
+
+    }
+
+    removeRecipient(event) {
+        const recipientId = event.currentTarget.dataset.id;
+        this.selectedRecipients = this.selectedRecipients.filter(recipient => recipient.value !== recipientId);
     }
 
     handleCancel() {

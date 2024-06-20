@@ -49,14 +49,30 @@
             <div class="dotted-border"></div>
     
             <div class="primary-recipients">
-                <lightning-combobox
-                    name="primaryRecipients"
-                    label="Select contact(s)"
-                    multiple
-                    options={contacts}
-                    value={primaryRecipients}
-                    onchange={handlePrimaryRecipientsChange}>
-                </lightning-combobox>
+                <c-custom-lookup-lwc icon-name="standard:account"
+                                     s-object-api-name="contact"
+                                     label="Select the primary recipient(s)"
+                                     name="recipients"
+                                     onlookupupdate={lookupRecord}
+                                     placeholder="Select contact(s)">
+                </c-custom-lookup-lwc>
+            
+                <!-- Pill container to display selected recipients -->
+                <div class="slds-pill_container" if:true={selectedRecipients.length}>
+                    <template for:each={selectedRecipients} for:item="recipient">
+                        <span key={recipient.value} class="slds-pill" title={recipient.Name}>
+                            <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                                <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                            </span>
+                            <span class="slds-pill__label">{recipient.Name}</span>
+                            <button class="slds-button slds-button_icon slds-button_icon slds-pill__remove"
+                                    title="Remove" data-id={recipient.value} onclick={removeRecipient}>
+                                <lightning-icon icon-name="utility:close" alternative-text="Remove"></lightning-icon>
+                                <span class="slds-assistive-text">Remove</span>
+                            </button>
+                        </span>
+                    </template>
+                </div>
             </div>
     
             <div class="slds-grid slds-gutters">
