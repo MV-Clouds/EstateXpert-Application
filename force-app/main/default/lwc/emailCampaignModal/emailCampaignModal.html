@@ -69,8 +69,8 @@
                     </div>
                 </div>
 
-                <footer class="slds-modal__footer">
-                    <lightning-button label="Save" onclick={handleSave}></lightning-button>
+                <footer class="slds-modal__footer footer-btns">
+                    <lightning-button label="Save" onclick={handleSave} disabled={isSaveDisabled}></lightning-button>
                     <lightning-button variant="brand" label="Next" onclick={handleNext}></lightning-button>
                 </footer>
             </div>

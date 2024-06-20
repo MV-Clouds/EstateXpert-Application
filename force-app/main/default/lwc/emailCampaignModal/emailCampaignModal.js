@@ -1,5 +1,6 @@
 import { LightningElement, track , api , wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { NavigationMixin } from 'lightning/navigation';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import getEmailCampaignTemplates from '@salesforce/apex/EmailCampaignController.getEmailCampaignTemplates';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
@@ -52,12 +53,20 @@ export default class EmailCampaignModal extends LightningElement {
         return selectedOption ? selectedOption.label : '';
     }
 
+    get isSaveDisabled() {
+        return !this.isFormValid();
+    }
+
     handleOpenModal() {
         this.isModalOpen = true;
     }
 
     handleCloseModal() {
+        this.resetFormData();
+        this.isModalOpen = false;
+    }
 
+    resetFormData(){
         this.formData = {
             selectedTemplate: '',
             campaignName: '',
@@ -65,7 +74,6 @@ export default class EmailCampaignModal extends LightningElement {
             fromAddress: '',
             fromName: ''
         };
-        this.isModalOpen = false;
     }
 
     handleChange(event) {
@@ -89,7 +97,31 @@ export default class EmailCampaignModal extends LightningElement {
     }
 
     handleNext() {
-        // Implement next logic here
+        if (this.isFormValid()) {
+            const formDataCopy = { ...this.formData };
+            const navigationState = formDataCopy;
+            
+            var cmpDef = {
+                componentDef: 'c:Email_Campaign_Template_Form',
+                attributes: {                    
+                    c__navigationState: navigationState,
+                }                
+            };
+
+            let encodedDef = btoa(JSON.stringify(cmpDef));
+                console.log('encodedDef : ', encodedDef);
+                this[NavigationMixin.Navigate]({
+                type: "standard__webPage",
+                attributes: {
+                    url:  "/one/one.app#" + encodedDef                                                         
+                }
+            });
+
+            this.handleCloseModal();
+    
+        } else {
+            this.showToast('Error', 'Please fill in all required fields', 'error');
+        }
     }
 
     isFormValid() {
@@ -105,5 +137,4 @@ export default class EmailCampaignModal extends LightningElement {
         });
         this.dispatchEvent(event);
     }
-
 }

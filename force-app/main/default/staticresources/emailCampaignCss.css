@@ -17,3 +17,14 @@
 .input-field-bold .slds-form-element__label{
   font-weight: bold;
 }
+
+button[disabled] {
+  cursor: default !important;
+  background-color: #D2D2D2 !important;
+  color: white !important;
+}
+
+.footer-btns button{
+  padding: 4px 20px 4px 20px;
+  border-radius: 9px !important;
+}

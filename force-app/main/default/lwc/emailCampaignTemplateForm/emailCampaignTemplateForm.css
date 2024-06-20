@@ -1,0 +1,54 @@
+.wrapper{
+    background-color: white;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+}
+
+.slds-card{
+    width: 100%;
+}
+
+.blur-text{
+    color: #000000B2;
+}
+
+.header-text{
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.header lightning-icon {
+    margin-right: 0.5rem;
+}
+
+.header h1 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.container {
+    padding: 1rem;
+}
+
+.input-field {
+    margin-bottom: 1rem;
+}
+
+.primary-recipients {
+    margin-top: 1rem;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #d8dde6;
+}
+
+.footer lightning-button {
+    margin-left: 0.5rem;
+}

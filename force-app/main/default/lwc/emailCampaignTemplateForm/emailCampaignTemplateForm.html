@@ -1,0 +1,120 @@
+<template>
+    <div class="wrapper">
+        <div class="header">
+            <!-- <lightning-icon icon-name="standard:Account" size="small"></lightning-icon>
+            <h1>New Drip Campaign Template</h1> -->
+
+            <article class="slds-card">
+                <div class="slds-card__header slds-grid">
+                  <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <div>
+                            <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                        </div>
+                    </div>
+                    <div class="slds-media__body">
+                        <p class="blur-text">Email Campaign Template</p>
+                        <div class="header-text">New Email Campaign Template</div>
+                    </div>
+                  </header>
+                </div>
+              </article>
+
+        </div>
+
+        
+        <div class="container">
+            <lightning-input class="input-field" label="Drip Campaign Template" value="Buyer - First Time" disabled></lightning-input>
+            <lightning-input class="input-field" label="Drip Campaign Name" placeholder="Enter Campaign Name"></lightning-input>
+    
+            <div class="primary-recipients">
+                <label for="primaryRecipients" class="slds-form-element__label">Select the primary recipient(s)</label>
+                <lightning-combobox
+                    name="primaryRecipients"
+                    label="Select contact(s)"
+                    multiple
+                    options={contacts}
+                    value={primaryRecipients}
+                    onchange={handlePrimaryRecipientsChange}>
+                </lightning-combobox>
+            </div>
+    
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col">
+                    <lightning-input class="input-field" label="Who should be CC'd?" placeholder="Select a CC address"></lightning-input>
+                </div>
+                <div class="slds-col">
+                    <lightning-input class="input-field" label="Who should be BCC'd?" placeholder="Select a BCC address"></lightning-input>
+                </div>
+            </div>
+    
+            <fieldset class="slds-form-element slds-m-top_medium">
+                <legend class="slds-form-element__legend slds-form-element__label">How should this drip campaign start?</legend>
+                <div class="slds-form-element__control">
+                    <lightning-radio-group
+                        name="startDateOption"
+                        options={startDateOptions}
+                        value={startDateOption}
+                        onchange={handleStartDateOptionChange}>
+                    </lightning-radio-group>
+                </div>
+            </fieldset>
+    
+            <lightning-input class="input-field slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date"></lightning-input>
+    
+            <div class="slds-m-top_medium">
+                <lightning-button label="Add New Email" onclick={handleAddNewEmail}></lightning-button>
+            </div>
+    
+            <template if:true={dripEmails}>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_medium">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col">
+                                <div class="slds-truncate" title="Drip Email Name">Drip Email Name</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-truncate" title="Subject">Subject</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-truncate" title="Days after start date">Days after start date</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-truncate" title="Time to send">Time to send</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-truncate" title="Action">Action</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={dripEmails} for:item="email">
+                            <tr key={email.id}>
+                                <td data-label="Drip Email Name">
+                                    <div class="slds-truncate" title={email.name}>{email.name}</div>
+                                </td>
+                                <td data-label="Subject">
+                                    <div class="slds-truncate" title={email.subject}>{email.subject}</div>
+                                </td>
+                                <td data-label="Days after start date">
+                                    <div class="slds-truncate" title={email.daysAfterStartDate}>{email.daysAfterStartDate}</div>
+                                </td>
+                                <td data-label="Time to send">
+                                    <div class="slds-truncate" title={email.timeToSend}>{email.timeToSend}</div>
+                                </td>
+                                <td data-label="Action">
+                                    <lightning-button-icon icon-name="utility:delete" alternative-text="Delete" onclick={handleDeleteEmail} data-id={email.id}></lightning-button-icon>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+        </div>
+        <div class="footer">
+            <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+            <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>
+        </div>
+    </div>
+
+</template>
