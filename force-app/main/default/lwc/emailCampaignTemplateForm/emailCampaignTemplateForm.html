@@ -3,70 +3,71 @@
         <div class="header">
             <article class="slds-card">
                 <div class="slds-card__header slds-grid">
-                  <header class="slds-media slds-media_center slds-has-flexi-truncate">
-                    <div class="slds-media__figure">
-                        <div>
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
                             <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
                         </div>
-                    </div>
-                    <div class="slds-media__body">
-                        <p class="blur-text">Email Campaign Template</p>
-                        <div class="header-text">New Email Campaign Template</div>
-                    </div>
-                  </header>
+                        <div class="slds-media__body">
+                            <p class="blur-text">Email Campaign Template</p>
+                            <div class="header-text">New Email Campaign Template</div>
+                        </div>
+                    </header>
                 </div>
-              </article>
+            </article>
         </div>
 
-        
         <div class="container">
-
             <div class="content-header">
                 New Email Campaign Template
             </div>
 
             <div class="content-body">
-
                 <div class="content">
                     <div class="content-details">
-                        <p class="content-text">Email Campaign Template :</p> <span class="content-data">Buyer - First Time</span>
+                        <p class="content-text">Email Campaign Template :</p>
+                        <span class="content-data">Buyer - First Time</span>
                     </div>
-    
                     <div class="content-details">
-                        <p class="content-text">Email Campaign Name :</p> <span class="content-data">Campaign Name</span>
+                        <p class="content-text">Email Campaign Name :</p>
+                        <span class="content-data">Campaign Name</span>
                     </div>
-
                 </div>
-
                 <div class="edit-btn">
                     <button class="slds-button slds-button_icon slds-button_icon-border-filled edit" onclick={handleEdit}>
                         <lightning-icon icon-name="utility:edit" alternative-text="Edit" size="small"></lightning-icon>
                     </button>
                 </div>
-
             </div>
 
             <div class="dotted-border"></div>
-    
+
             <div class="primary-recipients">
-                <!-- <c-custom-lookup-lwc icon-name="standard:account"
-                                     s-object-api-name="contact"
-                                     label="Select the primary recipient(s)"
-                                     name="recipients"
-                                     onlookupupdate={lookupRecord}
-                                     placeholder="Select contact(s)">
-                </c-custom-lookup-lwc> -->
-            
-                <!-- Pill container to display selected recipients -->
+                <lightning-input
+                    label="Select the primary recipient(s)"
+                    placeholder="Type to search contacts"
+                    onchange={handleSearchInputChange}
+                    onfocus={handleSearchInputFocus}
+                    onblur={handleSearchInputBlur}
+                ></lightning-input>
+
+                <template if:true={isDropdownVisible}>
+                    <div class="dropdown">
+                        <template for:each={filteredContacts} for:item="contact">
+                            <div key={contact.value} class="dropdown-item" onclick={handleSelectContact} data-id={contact.value}>
+                                {contact.label}
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
                 <div class="slds-pill_container" if:true={selectedRecipients.length}>
                     <template for:each={selectedRecipients} for:item="recipient">
-                        <span key={recipient.value} class="slds-pill" title={recipient.Name}>
+                        <span key={recipient.value} class="slds-pill" title={recipient.label}>
                             <span class="slds-icon_container slds-icon-standard-account" title="Account">
-                                <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                                <lightning-icon icon-name="standard:account" alternative-text="Account"></lightning-icon>
                             </span>
-                            <span class="slds-pill__label">{recipient.Name}</span>
-                            <button class="slds-button slds-button_icon slds-button_icon slds-pill__remove"
-                                    title="Remove" data-id={recipient.value} onclick={removeRecipient}>
+                            <span class="slds-pill__label">{recipient.label}</span>
+                            <button class="slds-button slds-button_icon slds-pill__remove" title="Remove" data-id={recipient.value} onclick={removeRecipient}>
                                 <lightning-icon icon-name="utility:close" alternative-text="Remove"></lightning-icon>
                                 <span class="slds-assistive-text">Remove</span>
                             </button>
@@ -74,7 +75,7 @@
                     </template>
                 </div>
             </div>
-    
+
             <div class="slds-grid slds-gutters">
                 <div class="slds-col">
                     <lightning-input class="input-field" label="Who should be CC'd?" placeholder="Select a CC address"></lightning-input>
@@ -83,7 +84,7 @@
                     <lightning-input class="input-field" label="Who should be BCC'd?" placeholder="Select a BCC address"></lightning-input>
                 </div>
             </div>
-    
+
             <fieldset class="slds-form-element slds-m-top_medium">
                 <legend class="slds-form-element__legend slds-form-element__label">How should this Email campaign start?</legend>
                 <div class="slds-form-element__control">
@@ -95,30 +96,30 @@
                     </lightning-radio-group>
                 </div>
             </fieldset>
-    
+
             <lightning-input class="input-field slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date"></lightning-input>
-    
+
             <div class="slds-m-top_medium">
                 <lightning-button label="Add New Email" onclick={handleAddNewEmail}></lightning-button>
             </div>
-    
+
             <template if:true={emails}>
                 <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_medium">
                     <thead>
                         <tr class="slds-line-height_reset">
-                            <th class="" scope="col">
+                            <th scope="col">
                                 <div class="slds-truncate" title="Email Name">Email Name</div>
                             </th>
-                            <th class="" scope="col">
+                            <th scope="col">
                                 <div class="slds-truncate" title="Subject">Subject</div>
                             </th>
-                            <th class="" scope="col">
+                            <th scope="col">
                                 <div class="slds-truncate" title="Days after start date">Days after start date</div>
                             </th>
-                            <th class="" scope="col">
+                            <th scope="col">
                                 <div class="slds-truncate" title="Time to send">Time to send</div>
                             </th>
-                            <th class="" scope="col">
+                            <th scope="col">
                                 <div class="slds-truncate" title="Action">Action</div>
                             </th>
                         </tr>
@@ -152,7 +153,5 @@
                 <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>
             </div>
         </div>
-
     </div>
-
 </template>

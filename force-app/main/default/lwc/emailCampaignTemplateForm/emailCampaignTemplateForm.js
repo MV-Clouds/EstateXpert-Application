@@ -1,12 +1,13 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
+import getContacts from '@salesforce/apex/EmailCampaignController.getContacts';
 
 export default class EmailCampaignTemplateForm extends LightningElement {
     @track primaryRecipients = [];
     @track selectedRecipients = []; // Track selected recipients
-    @track contacts = [
-        { label: 'Andrew Busby Mobile', value: 'Andrew Busby Mobile' },
-        // Add more contact options here
-    ];
+    @track contacts = [];
+    @track filteredContacts = [];
+    @track isDropdownVisible = false;
+
     @track startDateOptions = [
         { label: 'Using a specific date', value: 'specificDate' },
         { label: 'Using a contact related date field', value: 'contactDateField' },
@@ -18,8 +19,46 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         { id: 2, name: 'Buyer - First Time', subject: 'Finding the Right Financing', daysAfterStartDate: 5, timeToSend: '03:59 AM' },
     ];
 
-    handlePrimaryRecipientsChange(event) {
-        this.primaryRecipients = event.detail.value;
+    @wire(getContacts)
+    wiredContacts({ error, data }) {
+        if (data) {
+            this.contacts = data.map(contact => ({
+                label: contact.Name,
+                value: contact.Id
+            }));
+            this.filteredContacts = [...this.contacts];
+        } else if (error) {
+            console.error('Error fetching contacts:', error);
+        }
+    }
+
+    handleSearchInputChange(event) {
+        const searchTerm = event.target.value.toLowerCase();
+        if (searchTerm) {
+            this.filteredContacts = this.contacts.filter(contact =>
+                contact.label.toLowerCase().includes(searchTerm)
+            );
+        } else {
+            this.filteredContacts = [...this.contacts];
+        }
+    }
+
+    handleSearchInputFocus() {
+        this.isDropdownVisible = true;
+    }
+
+    handleSearchInputBlur() {
+        setTimeout(() => {
+            this.isDropdownVisible = false;
+        }, 300);
+    }
+
+    handleSelectContact(event) {
+        const contactId = event.currentTarget.dataset.id;
+        const selectedContact = this.contacts.find(contact => contact.value === contactId);
+        if (selectedContact && !this.selectedRecipients.some(recipient => recipient.value === contactId)) {
+            this.selectedRecipients = [...this.selectedRecipients, selectedContact];
+        }
     }
 
     handleStartDateOptionChange(event) {
@@ -36,21 +75,6 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         this.emails = this.emails.filter(email => email.id !== parseInt(emailId, 10));
     }
 
-    lookupRecord(event) {
-        const selectedRecord = event.detail.selectedRecord;
-
-        if(selectedRecord){
-            if(event.target.name === 'recipients'){
-                console.log('selectedRecord => ' , JSON.stringify(selectedRecord));
-                this.selectedRecipients = [...this.selectedRecipients, selectedRecord];
-                console.log('recordlist ==> ' ,this.selectedRecipients);
-            } else {
-                console.log('name is different');
-            }
-        }
-
-    }
-
     removeRecipient(event) {
         const recipientId = event.currentTarget.dataset.id;
         this.selectedRecipients = this.selectedRecipients.filter(recipient => recipient.value !== recipientId);
@@ -62,9 +86,5 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleSave() {
         // Handle save logic
-    }
-
-    handleEdit(){
-        console.log('Edit button is clicked');
     }
 }

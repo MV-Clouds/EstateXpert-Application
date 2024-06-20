@@ -8,4 +8,9 @@ public with sharing class EmailCampaignController {
         return templates;
     }
 
+    @AuraEnabled(cacheable=true)
+    public static List<Contact> getContacts() {
+        return [SELECT Id, Name FROM Contact];
+    }
+
 }
