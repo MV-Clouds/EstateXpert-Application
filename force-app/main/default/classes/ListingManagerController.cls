@@ -1,10 +1,17 @@
 /**
 * Class Name : ListingManagerController
 * Date : 03-06-2024
+* Created By : Vyom Soni
+* Last Modified Date : 19-06-2024
+* Last Modified By : Vyom Soni
 * @description : Used in the ListingManager lwc component
 */
 
 public with sharing class ListingManagerController {
+    /**
+    * Class Name : WrapperClass
+    * @description : this wrapper list set listing and medias together.
+    */
     public class WrapperClass{
         @AuraEnabled
         public List<Listing__c> listings;  
@@ -38,6 +45,16 @@ public with sharing class ListingManagerController {
                 propertyIds.add(propertyId);
             }
         }  
+
+        if (!Schema.sObjectType.Property_File__c.isAccessible()) {
+            throw new AuraHandledException('You do not have permission to access Property File records.');
+        }
+
+        // Check if the user has read access to the necessary fields of Property_File__c
+        if (!Schema.sObjectType.Property_File__c.fields.BaseUrl__c.isAccessible() ||
+            !Schema.sObjectType.Property_File__c.fields.Property__c.isAccessible()) {
+            throw new AuraHandledException('You do not have permission to access required fields of Property File records.');
+        }
 
         List<Property_File__c> medias = [SELECT Id, BaseUrl__c, Property__c FROM Property_File__c WHERE Property__c IN:propertyIds];
 
@@ -80,6 +97,11 @@ public with sharing class ListingManagerController {
     }
 
     // Method to get form data based on recordId, objectName, and fieldSetName
+     /**
+    * Method Name : getForm
+    * @description : get fields from the field-set and set into wrapper class.
+    * @return String of fields Name.
+    */
     @AuraEnabled
     public static FieldSetForm getForm(Id recordId, String objectName, String fieldSetName) {
         System.debug('Entering getForm method');
@@ -135,7 +157,10 @@ public with sharing class ListingManagerController {
         return fields;
     }
 
-    // Inner class representing a form field
+    /**
+    * Class Name : FieldSetForm
+    * @description : this is wrapper class for set fieldsetdata.
+    */
     public class FieldSetForm {
         @AuraEnabled
         public List<FormField> fieldsData { get; set; }
@@ -145,7 +170,10 @@ public with sharing class ListingManagerController {
         }
     }
 
-    // Inner class representing a field from the field set
+    /**
+    * Class Name : FieldSetForm
+    * @description : Inner class representing a field from the field set.
+    */
     public class FormField {
         @AuraEnabled
         public String fieldName { get; set; }

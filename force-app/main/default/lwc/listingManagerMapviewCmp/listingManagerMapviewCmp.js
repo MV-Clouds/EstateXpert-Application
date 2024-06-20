@@ -24,6 +24,7 @@ export default class ListingManagerMapviewCmp extends LightningElement {
      /**
     * Method Name : loadPropertyData
     * @description : load the marker from the selected properties.
+    * date:5/06/2024
     * Created By:Vyom Soni
     */
     loadPropertyData(data) {

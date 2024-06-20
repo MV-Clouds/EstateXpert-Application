@@ -50,6 +50,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
      /**
     * Method Name : getListingData
     * @description : retrieve the data listing data from the salesforce
+    * * Date: 3/06/2024
     * Created By:Vyom Soni
     */
     getListingData(){
@@ -79,6 +80,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : processListings
     * @description : set the listing data inorder of the fields data
+    * * Date: 3/06/2024
     * Created By:Vyom Soni
     */
     processListings() {
@@ -112,6 +114,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : loadFormData
     * @description : retrieve the fields data from the salesforce
+    * 3/06/2024
     * Created By:Vyom Soni
     */
     loadFormData() {
@@ -172,6 +175,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
      /**
     * Method Name : handleMenuTabClick
     * @description : handle the menu clicks in the header
+    *  Date: 3/06/2024
     * Created By:Vyom Soni
     */
      handleMenuTabClick(evt){
@@ -199,6 +203,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : redirectToRecord
     * @description : redirect to listing record recordPage
+    * Date: 3/06/2024
     * Created By:Vyom Soni
     */
     redirectToRecord(event){
@@ -217,7 +222,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : checkBoxValueChange
     * @description : handle the checkbox change
-    * date: 11/06/2024
+    * date: 3/06/2024
     * Created By:Vyom Soni
     */
     checkBoxValueChange(event){
@@ -248,7 +253,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
       /**
     * Method Name : selectAllCheckbox
     * @description : select the all checkbox
-    * date: 11/06/2024
+    * date: 3/06/2024
     * Created By:Vyom Soni
     */
     selectAllCheckbox(event){
@@ -269,7 +274,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
       /**
     * Method Name : goTONewListing
     * @description : Redirect the new listing page
-    * date: 11/06/2024
+    * date: 3/06/2024
     * Created By:Vyom Soni
     */
     goTONewListing(){
@@ -285,6 +290,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : updateSelectedProperties
     * @description : update the properties as selected
+    * date: 3/06/2024
     * Created By:Vyom Soni
     */
     updateSelectedProperties() {
@@ -296,6 +302,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : sortClick
     * @description : this methods apply the sorting on the all fields
+    * date: 3/06/2024
     * Created By:Vyom Soni
     */
     sortClick(event) {
@@ -313,6 +320,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
      /**
     * Method Name : sortData
     * @description : this methods apply the sorting on the all fields
+    * date: 3/06/2024
     * Created By:Vyom Soni
     */
     sortData() {
@@ -347,7 +355,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : updateSortIcons
     * @description : this method update the sort icons in the wrapbutton
-    * date : 11/06/2024
+    * date : 3/06/2024
     * Created By:Vyom Soni
     */
      updateSortIcons() {
@@ -365,8 +373,9 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     //pagination login
 
       /**
-    * Method Name : updateProcessedListingData,updatePaginationButtons,goToPrevFeaturedProperty,goToNextFeaturedProperty
-    * @description : this all method is used for the pagination in list view
+    * Method Name : updateProcessedListingData
+    * @description : this method update shown listing in pagination
+    * * Date: 3/06/2024
     * Created By:Vyom Soni
     */
     updateProcessedListingData() {
@@ -375,11 +384,23 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.shownProcessedListingData = this.processedListingData.slice(start, end);
     }
 
+      /**
+    * Method Name : updatePaginationButtons
+    * @description : update the pagination buttons
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
     updatePaginationButtons() {
         this.isPrevDisabled = this.pageNumber === 1;
         this.isNextDisabled = this.pageNumber === this.totalPages;
     }
 
+       /**
+    * Method Name : goToPrevFeaturedProperty
+    * @description : handle the back button click in the  pagination
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
     goToPrevFeaturedProperty() {
         if (this.pageNumber > 1) {
             this.pageNumber--;
@@ -388,6 +409,12 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         }
     }
 
+       /**
+    * Method Name : goToNextFeaturedProperty
+    * @description : handle the next button click in the  pagination
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
     goToNextFeaturedProperty() {
         if (this.pageNumber < this.totalPages) {
             this.pageNumber++;
@@ -400,6 +427,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     /**
     * Method Name : wrapFilter
     * @description : this method is used for the wrap the filter
+    * date: 3/06/2024
     * Created By:Vyom Soni
     */
     wrapFilter() {

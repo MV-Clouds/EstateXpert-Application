@@ -23,15 +23,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     connectedCallback() {
         // Fetch fields of Listing__c object when component loads
         this.handleAddButtonDisable();
-        this.fetchObjectFields('Listing__c');
-        // setTimeout(()=>{
-        //     console.log('Hi');
-        //     const offerField = [{"value":"Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"Offer__c"}];
-        //     this.fieldOptions = this.fieldOptions.concat(offerField);
-        //     this.options1 = [...this.options1,...offerField];
-
-        // },2000);
-        
+        this.fetchObjectFields('Listing__c');   
     }
 
      /**
@@ -107,10 +99,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
             });
     }
 
-    setOfferInFields(){
-        
-        JSON.stringify('set'+this.fieldOptions); 
-    }
      /**
     * Method Name: currentFieldOptions
     * @description: getter for the set the current selectedfield operator options.

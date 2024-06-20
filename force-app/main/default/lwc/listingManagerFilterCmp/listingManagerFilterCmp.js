@@ -195,6 +195,13 @@ export default class ListingManagerFilterCmp extends LightningElement {
             console.error('Error fetching listings', error);
         });
     }
+
+    /**
+    * Method Name: setOfferRecord
+    * @description: get the offer records.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     setOfferRecord(){
         getTheOfferRecords().then(result => {
             this.offerRecords = result;
@@ -592,32 +599,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
-    // Removes a selected city from the list
-     /**
-    * Method Name: removeOption
-    * @description: Removes a selected string from the list.
-    * Date: 14/06/2024
-    * Created By: Vyom Soni
-    **/
-    removeOption(event) {
-        const optionToRemove = event.currentTarget.dataset.id;
-        const index =  event.currentTarget.dataset.index;
-        console.log('index'+index);
-        if(index >1){
-            this.filterFields[index].selectedOptions = this.filterFields[index].selectedOptions.filter(option => option.value !== optionToRemove);
-            console.log('hi'+this.filterFields[index].selectedOptions);
-            console.log('hi'+this.filterFields[index].selectedOptions.length);
-            // this.applyFilters();
-        }else{
-            this.filterFields[index].selectedOptions= null;
-            console.log('hi'+this.filterFields[index].selectedOptions);
-            console.log('hi'+this.filterFields[index].selectedOptions.length);
-            // this.applyFilters();
-        }
-        
-    }
-
-
      /**
     * Method Name: handleMinValueChange
     * @description: handle the min value change in the number Input field.
@@ -830,6 +811,13 @@ export default class ListingManagerFilterCmp extends LightningElement {
         }
     }
 
+    
+        /**
+    * Method Name: handleFieldChange
+    * @description: fetch the custom event data and set pop-up add button disable.
+    * Date: 14/06/2024
+    * Created By: Vyom Soni
+    **/
     handleFieldChange(event) {
         const field = event.detail;
         this.isAddButtonDisabled = (field.length === 0 && field.operation == null);

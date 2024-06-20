@@ -139,6 +139,11 @@ public without sharing class ListingManagerFilterController {
             this.lastmodifyby = lastmodifyby;
         }
 
+          /**
+            * Method Name : toJson
+            * @description : Convert the JSON data into string.
+            * @return String of listing data.
+            */
         public String toJson() {
             Map<String, Object> result = new Map<String, Object>();
             result.put('Id', listing.Id);
@@ -153,6 +158,11 @@ public without sharing class ListingManagerFilterController {
             return JSON.serialize(result);
         }
 
+         /**
+            * Method Name : getAllFieldsWithValues
+            * @description : Get all fields with value.
+            * @return map of field-name within api-name.
+            */
         private Map<String, Object> getAllFieldsWithValues(SObject obj) {
             Map<String, Object> fieldMap = new Map<String, Object>();
             if (obj != null) {

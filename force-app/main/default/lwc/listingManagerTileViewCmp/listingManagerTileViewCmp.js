@@ -22,6 +22,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
       /**
     * Method Name : setValueInParent
     * @description : set the listing value from the listing manager component
+    * date:4/06/2024
     * Created By: Vyom Soni
     */
     setValueInParent(){
@@ -37,6 +38,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     /**
     * Method Name : checkBoxValueChange
     * @description : change the listing state when the checkboxs is updated
+    * date:4/06/2024
     * Created By: Vyom Soni
     */
     checkBoxValueChange(event) {
@@ -79,6 +81,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
      /**
     * Method Name : redirectToRecord
     * @description : use for the redirect the listing manager to record page of the property
+    * date:4/06/2024
     * Created By: Vyom Soni
     */
     redirectToRecord(event){
@@ -100,6 +103,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     /**
     * Method Name : updateProcessedListingData,updatePaginationButtons,goToPrevFeaturedProperty,goToNextFeaturedProperty
     * @description : use for the pagination
+    * date:4/06/2024
     * Created By: Vyom Soni
     */
     updateProcessedListingData() {
