@@ -568,15 +568,27 @@ export default class ListingManagerFilterCmp extends LightningElement {
     addTheString(event) {
         const index = event.currentTarget.dataset.id;
         const value = this.filterFields[index].searchTerm;
-        console.log('value'+value);
-        if (this.filterFields[index].searchTerm != '') {
+        
+        console.log('value: ' + value);
+        
+        if (value !== '') {
             const field = this.filterFields[index];
-            if(field.selectedOptions == null){
+        
+            if (field.selectedOptions == null) {
                 field.selectedOptions = [];
-            }             
-            field.selectedOptions = [...field.selectedOptions, {"label":value,"value":value}];
-            console.log('selectedOptions'+JSON.stringify(field.selectedOptions));
+            }
+        
+            // Check if the value already exists in selectedOptions
+            const isValueAlreadySelected = field.selectedOptions.some(option => option.value === value);
+        
+            if (!isValueAlreadySelected) {
+                field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
+                console.log('selectedOptions: ' + JSON.stringify(field.selectedOptions));
+            } else {
+                console.log('Value already exists in selectedOptions');
+            }
         }
+        
         this.applyFilters();
     }
 

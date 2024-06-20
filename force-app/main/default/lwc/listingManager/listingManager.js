@@ -198,7 +198,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
 
     /**
     * Method Name : redirectToRecord
-    * @description : redirect to recordPage
+    * @description : redirect to listing record recordPage
     * Created By:Vyom Soni
     */
     redirectToRecord(event){
@@ -258,18 +258,28 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.listingData = this.listingData.map(item => {
             return { ...item, isChecked: isChecked };
         });
-        this.shownProcessedListingData = this.shownProcessedListingData.map(item => {
+        this.processedListingData = this.processedListingData.map(item => {
             return { ...item, isChecked: isChecked };
         });
-       this.processedListingData.forEach(item1=>{
-        this.shownProcessedListingData.forEach(item2=>{
-            if(item1.Id == item2.Id){
-                item1.isChecked = item2.isChecked;
-            }
-        })
-       })
-        
+        this.updateProcessedListingData();
         this.updateSelectedProperties();
+    }
+
+    
+      /**
+    * Method Name : goTONewListing
+    * @description : Redirect the new listing page
+    * date: 11/06/2024
+    * Created By:Vyom Soni
+    */
+    goTONewListing(){
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: 'Listing__c',
+                actionName: 'new'
+            }
+        });
     }
 
     /**

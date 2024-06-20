@@ -5,24 +5,80 @@
 */
 
 public with sharing class ListingManagerController {
-
+    public class WrapperClass{
+        @AuraEnabled
+        public List<Listing__c> listings;  
+        @AuraEnabled
+        public Map<Id, String> medias;        
+    }
     /**
     * Method Name : getListingData
     * @description : for the retrieve the listing data.
     * @return List<Listing__c>.
     */
     @AuraEnabled
-    public static List<Listing__c> getListingData(){
+    public static WrapperClass getListingData(){
         if (!Schema.sObjectType.Listing__c.isAccessible()) {
         throw new AuraHandledException('You do not have permission to access Listing records.');
     }
         try {
-            List<Listing__c> listings = [SELECT Id,imageUrl__c,Name,Name__c,Listing_Price__c,Number_Of_Bathrooms__c,Number_Of_Bedrooms__c,Size__c,	Status__c,Year_Built__c,City__c,Country__c,Postal_Code__c,State__c,Street__c,Sq_Ft__c FROM Listing__c  WITH SECURITY_ENFORCED];
-            return listings;
+            String listingFields = String.escapeSingleQuotes(getAllFields('Listing__c'));
+            String query = 'SELECT ' + listingFields + ' ' +'FROM Listing__c';
+
+        // Debug the constructed query
+        System.debug('SOQL Query: ' + query);
+
+        // Fetch the listings with related records
+        List<Listing__c> listing = Database.query(query);
+        Set<Id> propertyIds = new Set<Id>();     
+
+        for(Listing__c listingrec :listing) {
+            Id propertyId = (Id)listingrec.get('Property__c');
+            if (propertyId != null) {
+                propertyIds.add(propertyId);
+            }
+        }  
+
+        List<Property_File__c> medias = [SELECT Id, BaseUrl__c, Property__c FROM Property_File__c WHERE Property__c IN:propertyIds];
+
+        Map<Id, String> propertyMediaUrlsMap = new Map<Id, String>();
+        for (Property_File__c media : medias) {
+                propertyMediaUrlsMap.put(media.Property__c,media.BaseUrl__c);
+        }
+
+
+        WrapperClass wc = new WrapperClass();
+        wc.listings = listing;
+        wc.medias = propertyMediaUrlsMap;          
+        return wc;
+            // List<Listing__c> listings = [SELECT Id,imageUrl__c,Name,Listing_Price__c,Bathrooms__c,Bedrooms__c,Size__c,	Status__c,Year_Built__c,City__c,Zip_Postal_Code__c,State__c,Street__c,Sq_Ft__c FROM Listing__c  WITH SECURITY_ENFORCED];
+            // return listings;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
+
+     /**
+    * Method Name : getAllFields
+    * @description : get all fields of the obeject.
+    * @return String of fields Name.
+    */
+    private static String getAllFields(String sObjectName) {
+        // Get all fields of the given sObject
+        Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
+        List<String> fieldNames = new List<String>();
+        
+        for (String fieldName : fieldMap.keySet()) {
+            // Check if the field is accessible
+            if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
+                fieldNames.add(fieldName);
+            }
+        }
+        
+        // Join the field names into a single comma-separated string
+        return String.join(fieldNames, ', ');
+    }
+
     // Method to get form data based on recordId, objectName, and fieldSetName
     @AuraEnabled
     public static FieldSetForm getForm(Id recordId, String objectName, String fieldSetName) {
