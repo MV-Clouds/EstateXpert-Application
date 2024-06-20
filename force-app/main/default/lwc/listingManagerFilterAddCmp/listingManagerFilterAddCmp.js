@@ -275,8 +275,8 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     }
 
      /**
-    * Method Name: updateBreadcrumbs,handleBreadcrumbClick
-    * @description: handle the combobox values when the bread crumbs is clicked.
+    * Method Name: updateBreadcrumbs
+    * @description: handle the combobox options when the bread crumbs is clicked.
     * Date: 07/06/2024
     * Created By: Vyom Soni
     **/
@@ -289,13 +289,20 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         console.log('this.breadcrumbs'+JSON.stringify(this.breadcrumbs));
         console.log('this.breadcrumbs'+JSON.stringify(this.selectedValues));
     }
+
+     /**
+    * Method Name: handleBreadcrumbClick
+    * @description: handle the combobox options when the bread crumbs is clicked
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
         handleBreadcrumbClick(event) {
             const clickedIndex = parseInt(event.currentTarget.dataset.index, 10);
             console.log('0'+clickedIndex);
             this.selectedFields = this.selectedFields.slice(0, clickedIndex);
             this.selectedValues = this.selectedValues.slice(0, clickedIndex);
-           this.selectedField = [];
-           this.handleAddButtonDisable();
+            this.selectedField = [];
+            this.handleAddButtonDisable();
 
             if (this.selectedValues.length > 0) {
                 var lastSelectedValue = this.selectedValues[this.selectedValues.length - 1];
@@ -435,6 +442,12 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.handleAddButtonDisable();
     }
 
+     /**
+    * Method Name: operationSelect
+    * @description: set the custom event when the filed value is selected.
+    * Date: 09/06/2024
+    * Created By: Vyom Soni
+    **/
     handleAddButtonDisable(){
         this.dispatchEvent(new CustomEvent('fieldchange', { detail: this.selectedField }));
     }
