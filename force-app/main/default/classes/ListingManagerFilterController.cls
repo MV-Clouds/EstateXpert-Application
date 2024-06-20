@@ -191,7 +191,7 @@ public without sharing class ListingManagerFilterController {
                        recordTypeFields +', '+
                        createdbyFields + ', '+
                        lastmodifybyFields + ' '+
-                       'FROM Listing__c WITH SECURITY_ENFORCED';
+                       'FROM Listing__c';
 
         // Debug the constructed query
         System.debug('SOQL Query: ' + query);
@@ -270,7 +270,7 @@ public without sharing class ListingManagerFilterController {
     public static List<Offer__c> getTheOfferRecords(){
         String querylist = String.escapeSingleQuotes(getAllFields('Offer__c'));
         String query = 'SELECT ' + querylist+' '+
-                       'FROM Offer__c WITH SECURITY_ENFORCED';
+                       'FROM Offer__c';
         List<Offer__c> listings = Database.query(query);
         return listings;
     }

@@ -22,6 +22,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
 
     connectedCallback() {
         // Fetch fields of Listing__c object when component loads
+        this.handleAddButtonDisable();
         this.fetchObjectFields('Listing__c');
         // setTimeout(()=>{
         //     console.log('Hi');

@@ -11,6 +11,7 @@ import blankImage from '@salesforce/resourceUrl/blankImage';
 
 export default class ListingManager extends NavigationMixin(LightningElement){
     @api objectName = 'Listing__c';
+    @track spinnerShow=true;
     @api recordId;
     @api fieldSet = 'ListingManagerFieldSet';
     @track listviewIcon = icons + 'listview.png';
@@ -34,10 +35,11 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
-    @track pageSize = 6;
+    @track pageSize = 30;
     @track totalPages;
     @track shownProcessedListingData = [];
     @track wrapOn = false;
+    @track propertyMediaUrls = [];
 
     connectedCallback(){
         loadStyle(this, designcss);
@@ -51,12 +53,18 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     * Created By:Vyom Soni
     */
     getListingData(){
+        this.spinnerShow = true;
         getListingData()
             .then(result => {
-                this.listingData = result;
+                console.log('result-->',result);
+                this.listingData = result.listings;
+                this.propertyMediaUrls = result.medias;
                 this.listingData.forEach((listing)=>{
+                    const prop_id = listing.Property__c;
+                    console.log('prop_id-->',prop_id);
+                    listing.media_url = this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : '/resource/blankImage';
                     listing.isChecked = false;
-                    listing.imageUrl__c = listing.imageUrl__c ? listing.imageUrl__c : this.blankImage;
+                    console.log('property Image'+this.propertyMediaUrls[prop_id]);
                 })
                 console.log(JSON.stringify(this.listingData));
                 this.processListings();
@@ -87,7 +95,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             return {
                 Id: listing.Id,
                 Name: listing.Name,
-                imageUrl__c: listing.imageUrl__c,
+                media_url: listing.media_url,
                 Listing_Price__c:listing.Listing_Price__c,
                 isChecked: listing.isChecked,
                 orderedFields
@@ -95,6 +103,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         });
         this.unchangedProcessListings = this.processedListingData;
         this.totalPages = Math.ceil(this.processedListingData.length / this.pageSize);
+        this.spinnerShow = false;
         this.updateProcessedListingData();
         this.updatePaginationButtons();
     }

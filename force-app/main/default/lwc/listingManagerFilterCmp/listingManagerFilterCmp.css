@@ -153,6 +153,7 @@
     width: 1rem;
     height: 1rem;
     margin: 0.4rem;
+    cursor: pointer;
 }
 .advanced-checkbox{
     display: flex;
@@ -256,4 +257,3 @@
 .time-div .delete-icon-cover svg:hover{
     fill: rgb(1,118,211);
 }
-

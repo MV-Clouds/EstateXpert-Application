@@ -119,6 +119,10 @@
 .main .body .innerDiv2 .imageColume{
     width:5.25rem
 }
+.main .body .innerDiv2 .property-image{
+    width: 4rem;
+    height: 3rem;
+}
 .main .body .innerDiv2 .colume1:hover .slds-icon_container{
    display:block;
    /* transform: rotate(180deg); */

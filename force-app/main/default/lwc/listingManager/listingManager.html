@@ -1,6 +1,9 @@
 <template>
     <div class="slds-grid slds-wrap slds-align_absolute-center full-page-container">
         <div class="main">
+            <templete if:true={spinnerShow}>
+                <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+            </templete>
             <lightning-card hide-header="true" variant="narrow" class="slds-size_full full-page-card">
                 <div class="slds-page-header slds-page-header_related-list">
                     <div class="slds-page-header__row">
@@ -136,7 +139,7 @@
                                     </td>
                                     <td class="slds-cell_action-mode" role="gridcell">
                                         <div class="slds-truncate">
-                                            <img src={listing.imageUrl__c} alt="Listing Image"/>
+                                            <img class="property-image" src={listing.media_url} alt="Listing Image"/>
                                         </div>
                                     </td>
                                     <th class="slds-cell_action-mode" scope="row">

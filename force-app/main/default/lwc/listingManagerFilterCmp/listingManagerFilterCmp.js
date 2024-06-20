@@ -19,11 +19,11 @@ export default class ListingManagerFilterCmp extends LightningElement {
     @track ListingsWrapper = [];
     @track filteredListings;
     @track staticFields=[{
-        label : 'Listing Type',
-        type: 'PICKLIST',
-        apiName: 'Listing_Type__c',
-        objectApiName :'Listing__c',
-        operatorName: 'includes',
+        label:'Listing Type',
+        type:'PICKLIST',
+        apiName:'Listing_Type__c',
+        objectApiName:'Listing__c',
+        operatorName:'equals',
         searchTerm:'',
         minValue:0,
         maxValue:0,
@@ -32,11 +32,11 @@ export default class ListingManagerFilterCmp extends LightningElement {
         picklist:true,
     },
     {
-        label : 'Status',
-        type: 'PICKLIST',
-        apiName: 'Status__c',
-        objectApiName :'Listing__c',
-        operatorName: 'includes',
+        label:'Status',
+        type:'PICKLIST',
+        apiName:'Status__c',
+        objectApiName:'Listing__c',
+        operatorName:'equals',
         searchTerm:'',
         minValue:0,
         maxValue:0,
@@ -45,14 +45,14 @@ export default class ListingManagerFilterCmp extends LightningElement {
         picklist:true,     
     },
     {
-        label : 'Property Type',
-        type: 'PICKLIST',
-        apiName: 'Property_Type__c',
-        objectApiName :'Listing__c',
+        label:'Property Type',
+        type:'PICKLIST',
+        apiName:'Property_Type__c',
+        objectApiName:'Listing__c',
+        operatorName:'equals',
         searchTerm:'',
         minValue:0,
         maxValue:0,
-        operatorName: 'includes',
         isFocused:false,
         isNot: false,
         picklist:true,
@@ -277,58 +277,76 @@ export default class ListingManagerFilterCmp extends LightningElement {
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
                 console.log(`Applying filter on field: ${field.apiName}`);
     
-                if (field.objectApiName !== 'Listing__c') {
+                if (field.objectApiName !== 'Listing__c' && field.objectApiName !== 'Offer__c') {
                     // Filter for related record in another object (Contact, Property)
                     console.log('Filtering related object:', field.objectApiName);
                     
-                    this.filteredListings = this.filteredListings.filter(wrapper => {
+                        this.filteredListings = this.filteredListings.filter(wrapper => {
+                            const relatedRecord = wrapper[field.prevApiName.replace('__c', '__r')];
+                            if (!relatedRecord) return false;
                         
-                        const relatedRecord = wrapper[field.objectApiName.replace('__c', '__r')];
-                        
-                        if (!relatedRecord) return false;
-    
-                        if (field.picklist || field.string || field.id || field.boolean) {
+                            if (hasSelectedOptions && (field.picklist || field.string || field.id || field.boolean)) {
                                 const values = field.selectedOptions.map(option => option.value);
                                 return this.applyOperatorFilter(relatedRecord, field, values);
-                        }
-                        if (field.currency || field.double) {
-                            return this.applyNumericFilter(relatedRecord, field);
-                        }
-                        if (field.date || field.datetime) {
-                            console.log('Applying date/datetime filter');
-                            return this.applyDateFilter(relatedRecord, field);
-                        }
-                        return true;
+                            }
+                            if (field.currency || field.double) {
+                                return this.applyNumericFilter(relatedRecord, field);
+                            }
+                            if (field.date || field.datetime) {
+                                return this.applyDateFilter(relatedRecord, field);
+                            }
+                            return true;
+                        });
+
+                } else if (field.objectApiName === 'Offer__c') {
+                    // Filter for related offer records
+                    console.log('Filtering related offer records');
+                    
+                    this.filteredListings = this.filteredListings.filter(wrapper => {
+                        const relatedOffers = this.offerRecords.filter(offer => offer.Listing__c === wrapper.Id);
+    
+                        if (!relatedOffers.length) return false;
+    
+                        return relatedOffers.some(relatedOffer => {
+                            if (field.picklist || field.string || field.id || field.boolean) {
+                                const values = field.selectedOptions.map(option => option.value);
+                                return this.applyOperatorFilter(relatedOffer, field, values);
+                            }
+                            if (field.currency || field.double) {
+                                return this.applyNumericFilter(relatedOffer, field);
+                            }
+                            if (field.date || field.datetime) {
+                                console.log('Applying date/datetime filter');
+                                return this.applyDateFilter(relatedOffer, field);
+                            }
+                            return true;
+                        });
                     });
                 } else {
                     // Filter for fields in Listing__c object
-                    if (field.picklist || field.string || field.id || field.boolean) {
-                        console.log('Applying picklist/string/id/boolean filter');
-                        if(field.selectedOptions != null){
-                            const values = field.selectedOptions.map(option => option.value);
-                            console.log('values'+values);
-                            this.filteredListings = this.filteredListings.filter(wrapper => this.applyOperatorFilter(wrapper.Listing__c, field, values));
-                        }
+                    if (hasSelectedOptions && (field.picklist || field.string || field.id || field.boolean)) {
+                        const values = field.selectedOptions.map(option => option.value);
+                        this.filteredListings = this.filteredListings.filter(wrapper => this.applyOperatorFilter(wrapper.Listing__c, field, values));
                     }
-    
+                    
                     if (field.currency || field.double) {
-                        console.log('Applying currency/double filter');
                         this.filteredListings = this.filteredListings.filter(wrapper => this.applyNumericFilter(wrapper.Listing__c, field));
                     }
-    
+                    
                     if (field.date || field.datetime) {
-                        console.log('Applying date/datetime filter');
                         this.filteredListings = this.filteredListings.filter(wrapper => this.applyDateFilter(wrapper.Listing__c, field));
                     }
+
+                  
                 }
     
                 console.log('Listings after applying filter:', JSON.stringify(this.filteredListings));
                 this.setFilteredListings();
-            }else{
+            } else {
                 this.setFilteredListings();
             }
         });
-        
+    
         console.log('Final Filtered Listings:', JSON.stringify(this.filteredListings));
     }
     
@@ -373,108 +391,23 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const inRange = value >= min && value <= max;
         return field.isNot ? !inRange : inRange;
     }
-    
-      /**
+
+     /**
     * Method Name: applyDateFilter
-    * @description: this method handke filtering about Date,DateTime.
+    * @description: this method handle the date fields.
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
-      applyFilters() {
-        // Initialize filteredListings with a deep copy of ListingsWrapper
-        this.filteredListings = [...this.listings];
-        console.log('Initial Listings:', JSON.stringify(this.filteredListings));
+    applyDateFilter(record, field) {
+        const recordDateValue = new Date(record[field.apiName]);
     
-        this.filterFields.forEach(field => {
-            // Check if field has selectedOptions or has valid min/max values for filtering
-            const hasSelectedOptions = field.selectedOptions && field.selectedOptions.length > 0;
-            const hasMinValue = field.minValue > 0;
-            const hasMaxValue = field.maxValue > 0;
-            const hasMinDate = field.minDate != null;
-            const hasMaxDate = field.maxDate != null;
-            const hasFieldChecked = field.fieldChecked != null;
+        if (isNaN(recordDateValue)) return false;
     
-            if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
-                console.log(`Applying filter on field: ${field.apiName}`);
+        const minDate = field.minDate ? new Date(field.minDate) : new Date(-8640000000000000); // Minimum possible date
+        const maxDate = field.maxDate ? new Date(field.maxDate) : new Date(8640000000000000); // Maximum possible date
     
-                if (field.objectApiName !== 'Listing__c' && field.objectApiName !== 'Offer__c') {
-                    // Filter for related record in another object (Contact, Property)
-                    console.log('Filtering related object:', field.objectApiName);
-                    
-                    this.filteredListings = this.filteredListings.filter(wrapper => {
-
-                        console.log('Wapper'+field.prevApiName.replace('__c', '__r'));
-                        const relatedRecord = wrapper[field.prevApiName.replace('__c', '__r')];
-                        console.log('relatedRecord'+relatedRecord);
-                        if (!relatedRecord) return false;
-    
-                        if (field.picklist || field.string || field.id || field.boolean) {
-                            const values = field.selectedOptions.map(option => option.value);
-                            return this.applyOperatorFilter(relatedRecord, field, values);
-                        }
-                        if (field.currency || field.double) {
-                            return this.applyNumericFilter(relatedRecord, field);
-                        }
-                        if (field.date || field.datetime) {
-                            console.log('Applying date/datetime filter');
-                            return this.applyDateFilter(relatedRecord, field);
-                        }
-                        return true;
-                    });
-                } else if (field.objectApiName === 'Offer__c') {
-                    // Filter for related offer records
-                    console.log('Filtering related offer records');
-                    
-                    this.filteredListings = this.filteredListings.filter(wrapper => {
-                        const relatedOffers = this.offerRecords.filter(offer => offer.Listing__c === wrapper.Id);
-    
-                        if (!relatedOffers.length) return false;
-    
-                        return relatedOffers.some(relatedOffer => {
-                            if (field.picklist || field.string || field.id || field.boolean) {
-                                const values = field.selectedOptions.map(option => option.value);
-                                return this.applyOperatorFilter(relatedOffer, field, values);
-                            }
-                            if (field.currency || field.double) {
-                                return this.applyNumericFilter(relatedOffer, field);
-                            }
-                            if (field.date || field.datetime) {
-                                console.log('Applying date/datetime filter');
-                                return this.applyDateFilter(relatedOffer, field);
-                            }
-                            return true;
-                        });
-                    });
-                } else {
-                    // Filter for fields in Listing__c object
-                    if (field.picklist || field.string || field.id || field.boolean) {
-                        console.log('Applying picklist/string/id/boolean filter');
-                        if (field.selectedOptions != null) {
-                            const values = field.selectedOptions.map(option => option.value);
-                            console.log('values' + values);
-                            this.filteredListings = this.filteredListings.filter(wrapper => this.applyOperatorFilter(wrapper.Listing__c, field, values));
-                        }
-                    }
-    
-                    if (field.currency || field.double) {
-                        console.log('Applying currency/double filter');
-                        this.filteredListings = this.filteredListings.filter(wrapper => this.applyNumericFilter(wrapper.Listing__c, field));
-                    }
-    
-                    if (field.date || field.datetime) {
-                        console.log('Applying date/datetime filter');
-                        this.filteredListings = this.filteredListings.filter(wrapper => this.applyDateFilter(wrapper.Listing__c, field));
-                    }
-                }
-    
-                console.log('Listings after applying filter:', JSON.stringify(this.filteredListings));
-                this.setFilteredListings();
-            } else {
-                this.setFilteredListings();
-            }
-        });
-    
-        console.log('Final Filtered Listings:', JSON.stringify(this.filteredListings));
+        const inRange = recordDateValue >= minDate && recordDateValue <= maxDate;
+        return field.isNot ? !inRange : inRange;
     }
     
 

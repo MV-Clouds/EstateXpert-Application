@@ -9,7 +9,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
-    @track pageSize = 6;
+    @track pageSize = 30;
     @track totalPages;
     @track shownProcessedListingData = [];
 
