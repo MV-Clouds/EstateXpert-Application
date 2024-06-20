@@ -270,7 +270,7 @@ public without sharing class ListingManagerFilterController {
     public static List<Offer__c> getTheOfferRecords(){
         String querylist = String.escapeSingleQuotes(getAllFields('Offer__c'));
         String query = 'SELECT ' + querylist+' '+
-                       'FROM Offer__c';
+                       'FROM Offer__c WHERE Listing__c != NULL';
         List<Offer__c> listings = Database.query(query);
         return listings;
     }
