@@ -101,7 +101,7 @@
     background: #fff;
     position: absolute;
     z-index: 1000;
-    width: 100%;
+    width: 30%;
     max-height: 200px;
     overflow-y: auto;
 }
@@ -116,6 +116,15 @@
 }
 
 .slds-icon_container lightning-icon {
-    height: 1.5rem !important;
-    width: 1.5rem;
+    height: 1rem !important;
+    width: 1rem;
+}
+
+.contact-input-fields{
+    display: flex;
+    gap: 1%;
+}
+
+.contact-input-fields .input-field{
+    width: 33%;
 }

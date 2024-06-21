@@ -30,12 +30,17 @@ button[disabled] {
 }
 
 .slds-icon_container .slds-icon_container .slds-icon{
-  height: 1.5rem !important;
-  width: 1.5rem;
+  height: 1rem !important;
+  width: 1rem;
 }
 
 .slds-pill_container .slds-pill__label{
   margin-left: 6px;
+}
+
+.slds-pill_container .slds-pill{
+  margin-top: 10px;
+  margin-left: 0px !important;
 }
 
 .slds-pill_container button{
@@ -46,7 +51,7 @@ button[disabled] {
   border: none;
   display: flex;
   gap: 0.5%;
-  overflow: scroll;
-  padding-bottom: 0.7rem;
-  padding-top: 0.3rem;
+  /* padding-bottom: 0.7rem;
+  padding-top: 0.3rem; */
+  flex-wrap: wrap;
 }
