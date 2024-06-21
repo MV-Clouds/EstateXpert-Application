@@ -1,0 +1,170 @@
+<template>
+    <div class="slds-grid slds-wrap slds-align_absolute-center full-page-container">
+        <div class="main">  
+            <lightning-card hide-header="true" variant="narrow" class="slds-size_full full-page-card">
+                <div class="slds-page-header slds-page-header_related-list ">
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title">
+                            <div class="slds-media">
+                                <div class="slds-media__body">
+                                    <div class="slds-page-header__name">
+                                        <div class="slds-page-header__name-title">
+                                            <h1>
+                                                <span class="slds-page-header__title slds-truncate">Contacts</span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-page-header__col-actions">
+                            <div class="slds-page-header__controls">
+                                <div class="slds-page-header__control action-button">
+                                    <lightning-button label="New Contact" onclick={goTOContact} class="slds-var-m-left_x-small"></lightning-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-page-header__row second-row">
+                        <div class="slds-page-header__col-meta">
+                            <p class="slds-page-header__meta-text">0 Items Selected</p>
+                        </div>
+                        <div class="slds-page-header__col-controls">
+                            <div class="slds-page-header__controls">
+                                <div class="slds-page-header__control">
+                                    <ul class="slds-button-group-list">
+                                        <li>
+                                            <button class="slds-button slds-button_icon slds-button_icon-border menuButton activeButton" data-tab-id="1" onclick={handleMenuTabClick}
+                                                title="List View">
+                                                <svg class="activeSvg menusvg" data-id="1" xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M80 105c0-8-7-15-15-15H35c-8 0-15 7-15 15v30c0 8 7 15 15 15h30c8 0 15-7 15-15zm420 0c0-8-7-15-15-15H135c-8 0-15 7-15 15v30c0 8 7 15 15 15h350c8 0 15-7 15-15zM80 245c0-8-7-15-15-15H35c-8 0-15 7-15 15v30c0 8 7 15 15 15h30c8 0 15-7 15-15zm380 0c0-8-7-15-15-15H135c-8 0-15 7-15 15v30c0 8 7 15 15 15h310c8 0 15-7 15-15zM80 385c0-8-7-15-15-15H35c-8 0-15 7-15 15v30c0 8 7 15 15 15h30c8 0 15-7 15-15zm420 0c0-8-7-15-15-15H135c-8 0-15 7-15 15v30c0 8 7 15 15 15h350c8 0 15-7 15-15z"/></svg>
+                                                <span class="slds-assistive-text">List View</span>
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="slds-button slds-button_icon slds-button_icon-border menuButton" data-tab-id="2"
+                                                title="Tile View" onclick={handleMenuTabClick}>
+                                                <svg class="menusvg" data-id="2" xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M145 40H55c-8 0-15 7-15 15v170c0 8 7 15 15 15h90c8 0 15-7 15-15V55c0-8-7-15-15-15zm160 0h-90c-8 0-15 7-15 15v170c0 8 7 15 15 15h90c8 0 15-7 15-15V55c0-8-7-15-15-15zm160 0h-90c-8 0-15 7-15 15v170c0 8 7 15 15 15h90c8 0 15-7 15-15V55c0-8-7-15-15-15zM145 280H55c-8 0-15 7-15 15v170c0 8 7 15 15 15h90c8 0 15-7 15-15V295c0-8-7-15-15-15zm160 0h-90c-8 0-15 7-15 15v170c0 8 7 15 15 15h90c8 0 15-7 15-15V295c0-8-7-15-15-15zm160 0h-90c-8 0-15 7-15 15v170c0 8 7 15 15 15h90c8 0 15-7 15-15V295c0-8-7-15-15-15z"/></svg>
+                                                <span class="slds-assistive-text">Tile View</span>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </lightning-card>
+            <div class="body">
+                <div class="innerDiv1">
+                    
+                </div>
+               
+                <div class="innerDiv2">
+                  <template if:true={showList}> 
+                    <div class="tableDiv">
+                        <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid" aria-label="Example advanced table of Opportunities in actionable mode">
+                            <thead>
+                              <tr class="slds-line-height_reset">
+                                <th class="slds-text-align_right slds-cell_action-mode colume1" scope="col">
+                                  <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
+                                  <div class="slds-th__action slds-th__action_form">
+                                    <lightning-input
+                                          type="checkbox"
+                                          onchange={selectAllCheckbox}
+                                          checked={checkAll}
+                                          >
+                                          </lightning-input>
+                                  </div>
+                                </th>
+                                <th class="slds-cell_action-mode imageColume" scope="col">
+                                    <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                </th>
+                                <th key={listing.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
+                                  <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                    <span class="slds-assistive-text">Sort by: </span>
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                      <span class="slds-truncate" title="Title">Listing Name</span>
+                                      <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                        <svg data-index="Name" xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
+                                      </span>
+                                    </div>
+                                  </a>
+                                </th>
+                                <template for:each={fields} for:item="listing" for:index="index">
+                                  <th key={listing.fieldName} data-id={listing.fieldName} onclick={sortClick} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
+                                    <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                      <span class="slds-assistive-text">Sort by: </span>
+                                      <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                        <span class="slds-truncate" title="Title">{listing.fieldLabel}</span>
+                                        <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                          <svg data-index={listing.fieldName} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
+                                        </span>
+                                      </div>
+                                    </a>
+                                  </th>
+                                </template>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <template for:each={shownProcessedListingData} for:item="listing" for:index="index">
+                                <tr key={listing.Id} aria-selected="false" class="slds-hint-parent">
+                                    <td class="slds-text-align_right slds-cell_action-mode" role="gridcell">
+                                        <lightning-input
+                                            data-id={index}
+                                            type="checkbox"
+                                            checked={listing.isChecked}
+                                            value={listing.isChecked}
+                                            onchange={checkBoxValueChange}>
+                                        </lightning-input>
+                                    </td>
+                                    <td class="slds-cell_action-mode" role="gridcell">
+                                        <div class="slds-truncate">
+                                            <img class="property-image" src={listing.media_url} alt="Listing Image"/>
+                                        </div>
+                                    </td>
+                                    <th class="slds-cell_action-mode" scope="row">
+                                        <div class="slds-truncate">
+                                            <a href="#" data-id={listing.Id} onclick={redirectToRecord} tabindex="0">{listing.Name}</a>
+                                        </div>
+                                    </th>
+                                    <template for:each={listing.orderedFields} for:item="field" for:index="index2">
+                                        <td key={field.fieldName} class="slds-cell_action-mode" role="gridcell">
+                                            <div class="slds-truncate">
+                                                {field.value}
+                                            </div>
+                                        </td>
+                                    </template>
+                                </tr>
+                            </template>
+                            </tbody>
+                          </table>
+                    </div>
+                    <div class="paginationDiv slds-var-p-around_medium">
+                        <div class="btnCover">
+                            <div class="leftButton slds-var-m-right_small">
+                                <lightning-button-icon icon-name="utility:chevronleft" size="large"
+                                variant="Bordered" onclick={goToPrevFeaturedProperty}
+                                 label="New Record"
+                                class="arrow1 left-arrow"
+                                disabled={isPrevDisabled}></lightning-button-icon> 
+                            </div>
+                            <div class="slds-var-m-right_small pageNumberDiv">
+                                <p>{pageNumber}/{totalPages}</p>
+                            </div>
+                            <div class="rightButton">
+                                <lightning-button-icon icon-name="utility:chevronright" size="large"
+                                                        variant="Bordered" onclick={goToNextFeaturedProperty}
+                                                        class="arrow1 right-arrow"
+                                                        disabled={isNextDisabled}></lightning-button-icon>
+                            </div>
+                        </div>
+                    </div>
+                  </template>
+                  <templete if:true={showTile}>
+                      
+                  </templete>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

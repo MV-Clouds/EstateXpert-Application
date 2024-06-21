@@ -1,0 +1,181 @@
+.full-page-container{
+    height: 100%;
+    padding: 1rem;
+    background-color: white;
+}
+
+.main{
+    width: 100%;
+    height: 100%;
+}
+
+.main .slds-icon_small, .slds-icon--small{
+    height: 1rem;
+}
+
+.main .second-row{
+    margin-top:0.5rem;
+}
+
+.main .slds-page-header__row .slds-page-header__col-controls .activeButton{
+    background-color: rgb(1, 118, 211);
+}
+
+.main .slds-page-header {
+    background-color: white;
+    padding: 0.7rem;
+}
+
+.main .action-button .slds-button {
+    border: 2px solid #E3E3E3;
+}
+
+.main .slds-page-header__row .slds-page-header__col-controls .slds-button svg{
+    height:  .875rem;
+    width:  .875rem;
+    fill: rgb(116, 116, 116);
+}
+
+.main .slds-page-header__row .slds-page-header__col-controls .slds-button .activeSvg{
+    fill: rgb(255, 254, 254);
+}
+
+.main .body{
+    width: 100%;
+    height: 76%;
+    display: flex;
+    margin-top: 1rem;
+}
+
+.main .body .innerDiv1{
+    background-color: white;
+    display: flex;
+    width: 30%;
+    flex: 1 1 auto;
+}
+
+.expanded1 {
+    width: fit-content; /* Width when expanded */
+}
+
+.main .body .innerDiv1 .removeInnerDiv1{
+    display: none;
+}
+
+.main .body .innerDiv1 .filterDiv{
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding-bottom: 3rem;
+}
+
+.main .body .innerDiv1 .filterWrap{
+    background-color: rgb(243, 243, 243);
+    width: 1rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #c9c9c9;
+    border-left: 1px solid #c9c9c9;
+}
+
+.main .body .innerDiv1 .filterWrap svg{
+    height: 1rem;
+    width: 0.8rem;
+    fill: black;
+    cursor: pointer;
+    transition: 0.6s;
+}
+
+.main .body .innerDiv1 .filterWrap .svgRotate{
+    transform: rotate(180deg);
+    transition: 0.6s;
+}
+
+.main .body .innerDiv2{
+    background-color: white;
+    overflow: scroll;
+    width: 70%;
+    height: 100%;
+    flex: 1 1 auto;
+    padding: 0rem;
+    border: 2px solid rgb(232, 232, 232);
+    border-radius: 0.5rem;
+    position: relative;
+    /* margin-bottom: -1rem; */
+}
+
+
+.expanded2 {
+    width: 100%; /* Width when innerDiv1 is expanded */
+}
+
+.main .body .innerDiv2::-webkit-scrollbar {
+    width: 0.3rem;   
+}
+
+.main .slds-table td{
+    height: 4rem;
+}
+
+.tableDiv{
+    overflow: auto;
+    height: 86%;
+    
+}
+.tableDiv .slds-table_resizable-cols thead th, .slds-table--resizable-cols thead th {
+    background-color: rgb(220, 235, 249);
+}
+
+.main .body .innerDiv2 .slds-cell_action-mode .slds-icon_container{
+    display:none
+}
+.main .body .innerDiv2 .colume1{
+    width:3.25rem
+}
+.main .body .innerDiv2 .imageColume{
+    width:5.25rem
+}
+.main .body .innerDiv2 .property-image{
+    width: 4rem;
+    height: 3rem;
+}
+.main .body .innerDiv2 .colume1:hover .slds-icon_container{
+   display:block;
+   /* transform: rotate(180deg); */
+}
+.main .body .innerDiv2 .colume2:hover .slds-icon_container{
+   display:block;
+}
+.main .body .innerDiv2 .slds-icon-utility-arrowdown svg{
+    height: 0.8rem;
+    fill: #0176d3;
+}
+.rotate-asc {
+    transform: rotate(0deg);
+    transition: transform 0.3s;
+}
+
+.rotate-desc {
+    transform: rotate(180deg);
+    transition: transform 0.3s;
+}
+
+.paginationDiv{
+    height: 19%;
+    /* background-color: rgb(243,243,243); */
+    border-top: 2px solid rgb(232,232,232);
+}
+
+.paginationDiv .btnCover{
+    display: flex;
+    justify-content: center;
+}
+
+.paginationDiv .pageNumberDiv{
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
