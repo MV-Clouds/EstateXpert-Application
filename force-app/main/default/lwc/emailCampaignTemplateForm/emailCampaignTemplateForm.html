@@ -41,33 +41,34 @@
 
             <div class="dotted-border"></div>
 
+            <!-- Primary Recipients -->
             <div class="primary-recipients input-field">
                 <lightning-input
                     label="Select the primary recipient(s)"
                     placeholder="Type to search contacts"
-                    onchange={handleSearchInputChange}
-                    onfocus={handleSearchInputFocus}
-                    onblur={handleSearchInputBlur}
+                    onchange={handlePrimarySearchInputChange}
+                    onfocus={handlePrimarySearchInputFocus}
+                    onblur={handlePrimarySearchInputBlur}
                 ></lightning-input>
 
-                <template if:true={isDropdownVisible}>
+                <template if:true={isPrimaryDropdownVisible}>
                     <div class="dropdown">
-                        <template for:each={filteredContacts} for:item="contact">
-                            <div key={contact.value} class="dropdown-item" onclick={handleSelectContact} data-id={contact.value}>
+                        <template for:each={filteredPrimaryContacts} for:item="contact">
+                            <div key={contact.value} class="dropdown-item" onclick={handleSelectPrimaryContact} data-id={contact.value}>
                                 {contact.label}
                             </div>
                         </template>
                     </div>
                 </template>
 
-                <div class="slds-pill_container" if:true={selectedRecipients.length}>
-                    <template for:each={selectedRecipients} for:item="recipient">
+                <div class="slds-pill_container" if:true={selectedPrimaryRecipients.length}>
+                    <template for:each={selectedPrimaryRecipients} for:item="recipient">
                         <span key={recipient.value} class="slds-pill" title={recipient.label}>
                             <span class="slds-icon_container slds-icon-standard-account" title="Account">
                                 <lightning-icon icon-name="standard:account" alternative-text="Account"></lightning-icon>
                             </span>
                             <span class="slds-pill__label">{recipient.label}</span>
-                            <button class="slds-button slds-button_icon slds-pill__remove" title="Remove" data-id={recipient.value} onclick={removeRecipient}>
+                            <button class="slds-button slds-button_icon slds-pill__remove" title="Remove" data-id={recipient.value} onclick={removePrimaryRecipient}>
                                 <lightning-icon icon-name="utility:close" alternative-text="Remove"></lightning-icon>
                                 <span class="slds-assistive-text">Remove</span>
                             </button>
@@ -76,12 +77,75 @@
                 </div>
             </div>
 
-            <div class="slds-grid slds-gutters">
-                <div class="slds-col">
-                    <lightning-input class="input-field" label="Who should be CC'd?" placeholder="Select a CC address"></lightning-input>
+            <!-- CC Recipients -->
+            <div class="input-field">
+                <lightning-input
+                    label="Who should be CC'd?"
+                    placeholder="Type to search contacts"
+                    onchange={handleCCSearchInputChange}
+                    onfocus={handleCCSearchInputFocus}
+                    onblur={handleCCSearchInputBlur}
+                ></lightning-input>
+
+                <template if:true={isCCDropdownVisible}>
+                    <div class="dropdown">
+                        <template for:each={filteredCCContacts} for:item="contact">
+                            <div key={contact.value} class="dropdown-item" onclick={handleSelectCCContact} data-id={contact.value}>
+                                {contact.label}
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <div class="slds-pill_container" if:true={selectedCCRecipients.length}>
+                    <template for:each={selectedCCRecipients} for:item="recipient">
+                        <span key={recipient.value} class="slds-pill" title={recipient.label}>
+                            <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                                <lightning-icon icon-name="standard:account" alternative-text="Account"></lightning-icon>
+                            </span>
+                            <span class="slds-pill__label">{recipient.label}</span>
+                            <button class="slds-button slds-button_icon slds-pill__remove" title="Remove" data-id={recipient.value} onclick={removeCCRecipient}>
+                                <lightning-icon icon-name="utility:close" alternative-text="Remove"></lightning-icon>
+                                <span class="slds-assistive-text">Remove</span>
+                            </button>
+                        </span>
+                    </template>
                 </div>
-                <div class="slds-col">
-                    <lightning-input class="input-field" label="Who should be BCC'd?" placeholder="Select a BCC address"></lightning-input>
+            </div>
+
+            <!-- BCC Recipients -->
+            <div class="input-field">
+                <lightning-input
+                    label="Who should be BCC'd?"
+                    placeholder="Type to search contacts"
+                    onchange={handleBCCSearchInputChange}
+                    onfocus={handleBCCSearchInputFocus}
+                    onblur={handleBCCSearchInputBlur}
+                ></lightning-input>
+
+                <template if:true={isBCCDropdownVisible}>
+                    <div class="dropdown">
+                        <template for:each={filteredBCCContacts} for:item="contact">
+                            <div key={contact.value} class="dropdown-item" onclick={handleSelectBCCContact} data-id={contact.value}>
+                                {contact.label}
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <div class="slds-pill_container" if:true={selectedBCCRecipients.length}>
+                    <template for:each={selectedBCCRecipients} for:item="recipient">
+                        <span key={recipient.value} class="slds-pill" title={recipient.label}>
+                            <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                                <lightning-icon icon-name="standard:account" alternative-text="Account"></lightning-icon>
+                            </span>
+                            <span class="slds-pill__label">{recipient.label}</span>
+                            <button class="slds-button slds-button_icon slds-pill__remove" title="Remove" data-id={recipient.value} onclick={removeBCCRecipient}>
+                                <lightning-icon icon-name="utility:close" alternative-text="Remove"></lightning-icon>
+                                <span class="slds-assistive-text">Remove</span>
+                            </button>
+                        </span>
+                    </template>
                 </div>
             </div>
 
@@ -155,3 +219,4 @@
         </div>
     </div>
 </template>
+

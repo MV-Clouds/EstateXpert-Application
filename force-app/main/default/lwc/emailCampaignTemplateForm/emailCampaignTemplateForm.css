@@ -1,4 +1,4 @@
-.wrapper{
+.wrapper {
     background-color: white;
     padding: 0.5rem;
     font-family: Arial, Helvetica, sans-serif;
@@ -10,7 +10,7 @@
     padding: 0.6rem 1rem;
 }
 
-.content-header{
+.content-header {
     background-color: #0176D3;
     color: white;
     display: flex;
@@ -22,15 +22,15 @@
     margin-bottom: 1rem;
 }
 
-.slds-card{
+.slds-card {
     width: 100%;
 }
 
-.blur-text{
+.blur-text {
     color: #000000B2;
 }
 
-.header-text{
+.header-text {
     font-size: 1rem;
     font-weight: bold;
 }
@@ -51,32 +51,32 @@
     border-radius: 1rem;
 }
 
-.content-body{
+.content-body {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.edit{
-    --slds-g-color-border-base-4 : #0176D3;
+.edit {
+    --slds-g-color-border-base-4: #0176D3;
 }
 
-.content-details{
+.content-details {
     display: flex;
     margin-bottom: 10px;
 }
 
-.content-text{
+.content-text {
     font-size: 14px;
     font-weight: bold;
     margin-right: 1rem;
 }
 
-.content-data{
+.content-data {
     font-size: 14px;
 }
 
-.dotted-border{
+.dotted-border {
     border: 1px dashed black;
     width: 100%;
     margin: 1rem 0;
@@ -84,10 +84,6 @@
 
 .input-field {
     margin-bottom: 1rem;
-}
-
-.primary-recipients {
-    /* margin-top: 1rem; */
 }
 
 .footer {
@@ -119,7 +115,7 @@
     background: #f4f4f4;
 }
 
-.slds-icon_container lightning-icon{
+.slds-icon_container lightning-icon {
     height: 1.5rem !important;
     width: 1.5rem;
 }
