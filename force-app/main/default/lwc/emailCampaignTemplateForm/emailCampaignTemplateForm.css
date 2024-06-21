@@ -101,7 +101,7 @@
     background: #fff;
     position: absolute;
     z-index: 1000;
-    width: 30%;
+    width: 31%;
     max-height: 200px;
     overflow-y: auto;
 }
@@ -122,9 +122,49 @@
 
 .contact-input-fields{
     display: flex;
-    gap: 1%;
+    gap: 10px;
 }
 
 .contact-input-fields .input-field{
     width: 33%;
+}
+
+.container-pill-label{
+    margin-left: 6px;
+}
+
+.input-date{
+    width: 30%;
+}
+
+.input-date-combobox{
+    width: 30%;
+}
+
+.contact-date-container{
+    display: flex;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 2%;
+}
+
+.plus-image-icon{
+    margin-top: 1.8rem;
+}
+
+.dropdown-imgae{
+    border: 1px solid #ccc;
+    background: #fff;
+    position: relative;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    top: 2.5rem;
+    left: 6px;
+}
+
+.plus-image{
+    display: flex;
+    align-items: inherit;
 }

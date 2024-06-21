@@ -1,7 +1,9 @@
 import { LightningElement, track, wire } from 'lwc';
 import getContacts from '@salesforce/apex/EmailCampaignController.getContacts';
+import getDateFieldsForPicklist from '@salesforce/apex/EmailCampaignController.getDateFieldsForPicklist';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
+import plusIcon from '@salesforce/resourceUrl/plusIcon';
 
 export default class EmailCampaignTemplateForm extends LightningElement {
     @track contacts = [];
@@ -16,6 +18,13 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track isPrimaryDropdownVisible = false;
     @track isCCDropdownVisible = false;
     @track isBCCDropdownVisible = false;
+    @track inputValueBcc = '';
+    @track inputValueCC = '';
+    @track inputValuePrimary = '';
+    @track contactDateFieldOptions;
+    @track isDateFieldDropdownVisible = false;
+    
+    @track plusIconUrl = plusIcon; 
 
     @track startDateOptions = [
         { label: 'Using a specific date', value: 'specificDate' },
@@ -28,6 +37,16 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         { id: 1, name: 'Buyer - First Time', subject: 'Finding the Right Home', daysAfterStartDate: 6, timeToSend: '10:59 AM' },
         { id: 2, name: 'Buyer - First Time', subject: 'Finding the Right Financing', daysAfterStartDate: 5, timeToSend: '03:59 AM' },
     ];
+    @track selectedContactDateField = '';
+
+
+    get isSpecificDateOption() {
+        return this.startDateOption === 'specificDate' || this.startDateOption === 'specificDates';
+    }
+
+    get isContactDateFieldOption() {
+        return this.startDateOption === 'contactDateField';
+    }
 
     @wire(getContacts)
     wiredContacts({ error, data }) {
@@ -36,9 +55,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                 label: contact.Name,
                 value: contact.Id
             }));
-            this.filteredPrimaryContacts = [...this.contacts];
-            this.filteredCCContacts = [...this.contacts];
-            this.filteredBCCContacts = [...this.contacts];
+            this.updateFilteredLists();
         } else if (error) {
             console.error('Error fetching contacts:', error);
         }
@@ -50,13 +67,31 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         ])
         .then(() => {
             console.log('External CSS Loaded');
+            this.fetchDateFields();
+            console.log(this.plusIconUrl);
         })
         .catch(error => {
             console.error('Error loading external CSS', error);
         });
     }
 
+
+    fetchDateFields() {
+        getDateFieldsForPicklist()
+            .then(result => {
+                console.log(result);
+                this.contactDateFieldOptions = result.map(option => ({
+                    label: option.label,
+                    value: option.value
+                }));
+            })
+            .catch(error => {
+                console.error('Error fetching date fields', error);
+            });
+    }
+
     handlePrimarySearchInputChange(event) {
+        this.inputValuePrimary = event.target.value;
         this.filterContacts(event, 'Primary');
     }
 
@@ -79,6 +114,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleCCSearchInputChange(event) {
+        this.inputValueCC = event.target.value;
         this.filterContacts(event, 'CC');
     }
 
@@ -101,6 +137,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleBCCSearchInputChange(event) {
+        this.inputValueBcc = event.target.value;
         this.filterContacts(event, 'BCC');
     }
 
@@ -155,6 +192,9 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             this.selectedBCCRecipients = [...this.selectedBCCRecipients, selectedContact];
         }
 
+        this.inputValueBcc = '';
+        this.inputValueCC = '';
+        this.inputValuePrimary = '';
         this.updateFilteredLists();
     }
 
@@ -173,33 +213,48 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     updateFilteredLists() {
-        const selectedPrimaryIds = new Set(this.selectedPrimaryRecipients.map(recipient => recipient.value));
-        const selectedCCIds = new Set(this.selectedCCRecipients.map(recipient => recipient.value));
-        const selectedBCCIds = new Set(this.selectedBCCRecipients.map(recipient => recipient.value));
+        const selectedIds = new Set([
+            ...this.selectedPrimaryRecipients.map(recipient => recipient.value),
+            ...this.selectedCCRecipients.map(recipient => recipient.value),
+            ...this.selectedBCCRecipients.map(recipient => recipient.value)
+        ]);
 
         this.filteredPrimaryContacts = this.contacts.filter(contact =>
-            !selectedPrimaryIds.has(contact.value) &&
-            !selectedCCIds.has(contact.value) &&
-            !selectedBCCIds.has(contact.value)
+            !selectedIds.has(contact.value)
         );
         
         this.filteredCCContacts = this.contacts.filter(contact =>
-            !selectedPrimaryIds.has(contact.value) &&
-            !selectedCCIds.has(contact.value) &&
-            !selectedBCCIds.has(contact.value)
+            !selectedIds.has(contact.value)
         );
 
         this.filteredBCCContacts = this.contacts.filter(contact =>
-            !selectedPrimaryIds.has(contact.value) &&
-            !selectedCCIds.has(contact.value) &&
-            !selectedBCCIds.has(contact.value)
+            !selectedIds.has(contact.value)
         );
+    }
+
+    toggleDateFieldDropdown() {
+        this.isDateFieldDropdownVisible = !this.isDateFieldDropdownVisible;
+    }
+
+    handleDateFieldSelect(event) {
+        const selectedValue = event.currentTarget.dataset.id;
+        const selectedOption = this.contactDateFieldOptions.find(option => option.value === selectedValue);
+        this.selectedContactDateField = selectedOption.label;
+        this.isDateFieldDropdownVisible = false;
+    }
+
+    handleDataFieldBlur(event){
+        this.isDateFieldDropdownVisible = false;
     }
 
     handleStartDateOptionChange(event) {
         this.startDateOption = event.detail.value;
     }
 
+    handleContactDateFieldChange(event) {
+        this.selectedContactDateField = event.detail.value;
+    }
+    
     handleAddNewEmail() {
         const newId = this.emails.length + 1;
         this.emails = [...this.emails, { id: newId, name: 'New Email', subject: '', daysAfterStartDate: 0, timeToSend: '' }];

@@ -51,6 +51,7 @@
                     onchange={handlePrimarySearchInputChange}
                     onfocus={handlePrimarySearchInputFocus}
                     onblur={handlePrimarySearchInputBlur}
+                    value={inputValuePrimary}
                 ></lightning-input>
 
                 <template if:true={isPrimaryDropdownVisible}>
@@ -60,7 +61,7 @@
                                 <span class="slds-icon_container slds-icon-standard-account" title="Account">
                                     <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
                                 </span>
-                                {contact.label}
+                                <span class="container-pill-label">{contact.label}</span>
                             </div>
                         </template>
                     </div>
@@ -90,13 +91,17 @@
                     onchange={handleCCSearchInputChange}
                     onfocus={handleCCSearchInputFocus}
                     onblur={handleCCSearchInputBlur}
+                    value={inputValueCC}
                 ></lightning-input>
 
                 <template if:true={isCCDropdownVisible}>
                     <div class="dropdown">
                         <template for:each={filteredCCContacts} for:item="contact">
                             <div key={contact.value} class="dropdown-item" onclick={handleSelectCCContact} data-id={contact.value}>
-                                {contact.label}
+                                <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                                    <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                                </span>
+                                <span class="container-pill-label">{contact.label}</span>
                             </div>
                         </template>
                     </div>
@@ -126,13 +131,17 @@
                     onchange={handleBCCSearchInputChange}
                     onfocus={handleBCCSearchInputFocus}
                     onblur={handleBCCSearchInputBlur}
+                    value={inputValueBcc}
                 ></lightning-input>
 
                 <template if:true={isBCCDropdownVisible}>
                     <div class="dropdown">
                         <template for:each={filteredBCCContacts} for:item="contact">
                             <div key={contact.value} class="dropdown-item" onclick={handleSelectBCCContact} data-id={contact.value}>
-                                {contact.label}
+                                <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                                    <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                                </span>
+                                <span class="container-pill-label">{contact.label}</span>
                             </div>
                         </template>
                     </div>
@@ -167,8 +176,39 @@
                     </lightning-radio-group>
                 </div>
             </fieldset>
+    
+            <template if:true={isSpecificDateOption}>
+                <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date"></lightning-input>
+            </template>
 
-            <lightning-input class="input-field slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date"></lightning-input>
+            <template if:true={isContactDateFieldOption}>
+                <div class="contact-date-container">
+                    <lightning-input 
+                        class="input-date-combobox slds-m-top_small"
+                        placeholder="Choose a date field"
+                        value={selectedContactDateField}
+                        readonly="true">
+                    </lightning-input>
+
+                    <div class="plus-image" >
+                        <div class="plus-image-icon">
+                            <img src={plusIconUrl} alt="plusimage" onclick={toggleDateFieldDropdown} onblur={handleDataFieldBlur}/>
+                        </div>
+
+                        <template if:true={isDateFieldDropdownVisible}>
+                            <div class="dropdown-imgae">
+                                <template for:each={contactDateFieldOptions} for:item="field">
+                                    <div key={field.value} class="dropdown-item" data-id={field.value} onclick={handleDateFieldSelect}>
+                                        {field.label}
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
+
+                </div>
+            </template>
 
             <div class="slds-m-top_medium">
                 <lightning-button label="Add New Email" onclick={handleAddNewEmail}></lightning-button>

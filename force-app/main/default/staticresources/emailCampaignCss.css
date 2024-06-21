@@ -39,7 +39,6 @@ button[disabled] {
 }
 
 .slds-pill_container .slds-pill{
-  margin-top: 10px;
   margin-left: 0px !important;
 }
 
@@ -54,4 +53,22 @@ button[disabled] {
   /* padding-bottom: 0.7rem;
   padding-top: 0.3rem; */
   flex-wrap: wrap;
+}
+
+.input-date input{
+  border: 2px solid #35a5ff;
+}
+
+.input-date-combobox button{
+  border: 2px solid #35a5ff;
+}
+
+.input-date-combobox .pill-content button{
+  border: none;
+}
+
+.contact-date-container input{
+  border: 2px solid #35a5ff;
+  cursor: not-allowed;
+  padding-left: 10px;
 }
