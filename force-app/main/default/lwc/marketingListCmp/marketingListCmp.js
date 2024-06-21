@@ -14,23 +14,23 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @api fieldSet = 'MarketingListFieldSet';
     @track showList = true
     @track showTile =false;
-    @track listingData;
+    @track contactData;
     @track fields;
-    @track processedListingData = [];    
-    @track unchangedProcessListings = [];    
+    @track processedContactData = [];    
+    @track unchangedProcessContact = [];    
     @track blankImage = blankImage;
     @track sortField = '';
     @track sortOrder = 'asc';
     @track totalSelected=0;
     @track selectedProperties;
-    @track selctedListingData;
+    @track selctedContactData;
     @track checkAll = false;
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
     @track pageSize = 30;
     @track totalPages;
-    @track shownProcessedListingData = [];
+    @track shownProcessedContactData = [];
     // @track propertyMediaUrls = [];
 
     connectedCallback(){
@@ -49,16 +49,16 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
         getContactData()
             .then(result => {
                 console.log('result-->',result);
-                this.listingData = result.contacts;
+                this.contactData = result.contacts;
                 // this.propertyMediaUrls = result.medias;
-                this.listingData.forEach((listing)=>{
+                this.contactData.forEach((listing)=>{
                     const prop_id = listing.Property__c;
                     console.log('prop_id-->',prop_id);
                     listing.media_url = '/resource/blankImage';
                     listing.isChecked = false;
                     // console.log('property Image'+this.propertyMediaUrls[prop_id]);
                 })
-                console.log(JSON.stringify(this.listingData));
+                console.log(JSON.stringify(this.contactData));
                 this.processListings();
             })
             .catch(error => {
@@ -74,7 +74,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     */
     processListings() {
         // Process the listing data and create the required data structure
-        this.processedListingData = this.listingData.map(listing => {
+        this.processedContactData = this.contactData.map(listing => {
             // For each listing, map the fields to create an array of ordered fields
             let orderedFields = this.fields.map(field => {
                 return {
@@ -91,8 +91,8 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
                 orderedFields
             };
         });
-        this.unchangedProcessListings = this.processedListingData;
-        this.totalPages = Math.ceil(this.processedListingData.length / this.pageSize);
+        this.unchangedProcessContact = this.processedContactData;
+        this.totalPages = Math.ceil(this.processedContactData.length / this.pageSize);
         this.spinnerShow = false;
         this.updateProcessedListingData();
         this.updatePaginationButtons();
@@ -173,16 +173,16 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
         try{
             const checkboxId = Number(event.target.dataset.id);
             // this.listingData[checkboxId].isChecked = event.target.checked;
-            this.shownProcessedListingData[checkboxId].isChecked = event.target.checked;
-            this.processedListingData.forEach(item1=>{
-                this.shownProcessedListingData.forEach(item2=>{
+            this.shownProcessedContactData[checkboxId].isChecked = event.target.checked;
+            this.processedContactData.forEach(item1=>{
+                this.shownProcessedContactData.forEach(item2=>{
                     if(item1.Id == item2.Id){
                         item1.isChecked = item2.isChecked;
                     }
                 })
                })
             this.listingData.forEach(item1=>{
-                this.shownProcessedListingData.forEach(item2=>{
+                this.shownProcessedContactData.forEach(item2=>{
                     if(item1.Id == item2.Id){
                         item1.isChecked = item2.isChecked;
                     }
@@ -204,10 +204,10 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
         const isChecked = event.target.checked;
         this.checkAll = !this.checkAll;
         console.log('hi'+isChecked);
-        this.listingData = this.listingData.map(item => {
+        this.contactData = this.contactData.map(item => {
             return { ...item, isChecked: isChecked };
         });
-        this.processedListingData = this.processedListingData.map(item => {
+        this.processedContactData = this.processedContactData.map(item => {
             return { ...item, isChecked: isChecked };
         });
         this.updateProcessedListingData();
@@ -237,8 +237,8 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     * Created By:Vyom Soni
     */
     updateSelectedProperties() {
-        this.selectedProperties = this.processedListingData.filter(listing => listing.isChecked);
-        this.selctedListingData = this.listingData.filter(listing => listing.isChecked);
+        this.selectedProperties = this.processedContactData.filter(listing => listing.isChecked);
+        this.selctedContactData = this.contactData.filter(listing => listing.isChecked);
         this.totalSelected = this.selectedProperties.length;
     }
 
@@ -265,7 +265,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     * Created By:Vyom Soni
     */
     sortData() {
-        this.shownProcessedListingData = [...this.shownProcessedListingData].sort((a, b) => {
+        this.shownProcessedContactData = [...this.shownProcessedContactData].sort((a, b) => {
             let aValue, bValue;
 
             if (this.sortField === 'Name') {
@@ -321,7 +321,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     updateProcessedListingData() {
         const start = (this.pageNumber - 1) * this.pageSize;
         const end = start + this.pageSize;
-        this.shownProcessedListingData = this.processedListingData.slice(start, end);
+        this.shownProcessedContactData = this.processedContactData.slice(start, end);
     }
 
     updatePaginationButtons() {
