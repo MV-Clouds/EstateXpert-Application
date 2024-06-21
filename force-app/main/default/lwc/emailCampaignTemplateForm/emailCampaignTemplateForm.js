@@ -1,5 +1,7 @@
 import { LightningElement, track, wire } from 'lwc';
 import getContacts from '@salesforce/apex/EmailCampaignController.getContacts';
+import { loadStyle } from 'lightning/platformResourceLoader';
+import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 
 export default class EmailCampaignTemplateForm extends LightningElement {
     @track primaryRecipients = [];
@@ -32,6 +34,18 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         }
     }
 
+    connectedCallback() {
+        Promise.all([
+            loadStyle(this, externalCss)
+        ])
+        .then(res => {
+            console.log('External Css Loaded');
+        })
+        .catch(error => {
+            console.log('Error occuring during loading external css', error);
+        });
+    }
+
     handleSearchInputChange(event) {
         const searchTerm = event.target.value.toLowerCase();
         if (searchTerm) {
@@ -50,7 +64,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     handleSearchInputBlur() {
         setTimeout(() => {
             this.isDropdownVisible = false;
-        }, 300);
+        }, 100);
     }
 
     handleSelectContact(event) {

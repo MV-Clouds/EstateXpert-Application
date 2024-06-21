@@ -28,3 +28,25 @@ button[disabled] {
   padding: 4px 20px 4px 20px;
   border-radius: 9px !important;
 }
+
+.slds-icon_container .slds-icon_container .slds-icon{
+  height: 1.5rem !important;
+  width: 1.5rem;
+}
+
+.slds-pill_container .slds-pill__label{
+  margin-left: 6px;
+}
+
+.slds-pill_container button{
+  border: none;
+}
+
+.input-field .slds-pill_container{
+  border: none;
+  display: flex;
+  gap: 0.5%;
+  overflow: scroll;
+  padding-bottom: 0.7rem;
+  padding-top: 0.3rem;
+}

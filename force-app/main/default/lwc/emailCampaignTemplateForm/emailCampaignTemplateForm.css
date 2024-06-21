@@ -118,3 +118,8 @@
 .dropdown-item:hover {
     background: #f4f4f4;
 }
+
+.slds-icon_container lightning-icon{
+    height: 1.5rem !important;
+    width: 1.5rem;
+}
