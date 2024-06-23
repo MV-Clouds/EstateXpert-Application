@@ -182,86 +182,98 @@
             </template>
 
             <template if:true={isContactDateFieldOption}>
-                <div class="contact-date-container">
-                    <lightning-input 
-                        class="input-date-combobox slds-m-top_small"
-                        placeholder="Choose a date field"
-                        value={selectedContactDateField}
-                        readonly="true">
-                    </lightning-input>
+                <div class="input-date-combobox">
+                    <lightning-input
+                    label="Select the fields"
+                    placeholder="Select the field"
+                    onchange={handleContactDateFieldSearchChange}
+                    onfocus={handleContactDateFieldSearchFocus}
+                    onblur={handleContactDateFieldSearchBlur}
+                    value={selectedContactDateField}
+                    class="input-field"
+                ></lightning-input>
+                </div>
 
-                    <div class="plus-image" >
-                        <div class="plus-image-icon">
-                            <img src={plusIconUrl} alt="plusimage" onclick={toggleDateFieldDropdown} onblur={handleDataFieldBlur}/>
-                        </div>
-
-                        <template if:true={isDateFieldDropdownVisible}>
-                            <div class="dropdown-imgae">
-                                <template for:each={contactDateFieldOptions} for:item="field">
-                                    <div key={field.value} class="dropdown-item" data-id={field.value} onclick={handleDateFieldSelect}>
-                                        {field.label}
-                                    </div>
-                                </template>
+                <template if:true={isDateFieldDropdownVisible}>
+                    <div class="dropdown">
+                        <template for:each={filteredContactDateFields} for:item="field">
+                            <div key={field.value} class="dropdown-item" onclick={handleDateFieldSelect} data-id={field.value}>
+                                <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                                    <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                                </span>
+                                <span class="container-pill-label">{field.label}</span>
                             </div>
                         </template>
                     </div>
-
-
-                </div>
+                </template>
+            
             </template>
-
-            <div class="slds-m-top_medium">
-                <lightning-button label="Add New Email" onclick={handleAddNewEmail}></lightning-button>
-            </div>
 
             <template if:true={emails}>
-                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_medium">
-                    <thead>
-                        <tr class="slds-line-height_reset">
-                            <th scope="col">
-                                <div class="slds-truncate" title="Email Name">Email Name</div>
-                            </th>
-                            <th scope="col">
-                                <div class="slds-truncate" title="Subject">Subject</div>
-                            </th>
-                            <th scope="col">
-                                <div class="slds-truncate" title="Days after start date">Days after start date</div>
-                            </th>
-                            <th scope="col">
-                                <div class="slds-truncate" title="Time to send">Time to send</div>
-                            </th>
-                            <th scope="col">
-                                <div class="slds-truncate" title="Action">Action</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template for:each={emails} for:item="email">
-                            <tr key={email.id}>
-                                <td data-label="Email Name">
-                                    <div class="slds-truncate" title={email.name}>{email.name}</div>
-                                </td>
-                                <td data-label="Subject">
-                                    <div class="slds-truncate" title={email.subject}>{email.subject}</div>
-                                </td>
-                                <td data-label="Days after start date">
-                                    <div class="slds-truncate" title={email.daysAfterStartDate}>{email.daysAfterStartDate}</div>
-                                </td>
-                                <td data-label="Time to send">
-                                    <div class="slds-truncate" title={email.timeToSend}>{email.timeToSend}</div>
-                                </td>
-                                <td data-label="Action">
-                                    <lightning-button-icon icon-name="utility:delete" alternative-text="Delete" onclick={handleDeleteEmail} data-id={email.id}></lightning-button-icon>
-                                </td>
+                <div class="table-container">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_medium">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Email Name">Email Name</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Subject">Subject</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Days after start date">Days after start date</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Time to send">Time to send</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Action">Action</div>
+                                </th>
                             </tr>
-                        </template>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <template for:each={emails} for:item="email">
+                                <tr key={email.id}>
+                                    <td data-label="Email Name">
+                                        <div class="slds-truncate" title={email.name}>{email.name}</div>
+                                    </td>
+                                    <td data-label="Subject">
+                                        <div class="slds-truncate" title={email.subject}>{email.subject}</div>
+                                    </td>
+                                    <td data-label="Days after start date">
+                                        <div class="slds-truncate" title={email.daysAfterStartDate}>{email.daysAfterStartDate}</div>
+                                    </td>
+                                    <td data-label="Time to send">
+                                        <div class="slds-truncate" title={email.timeToSend}>{email.timeToSend}</div>
+                                    </td>
+                                    <td data-label="Action">
+                                        <div class="action-btns">
+                                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" data-id={email.id} onclick={handlepreviewBtn}>
+                                                <img src={previewBtnUrl} alt="previewBtn">
+                                            </button>
+                                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" data-id={email.id} onclick={handleDeleteEmail}>
+                                                <img src={deleteBtnUrl} alt="previewBtn">
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
             </template>
 
-            <div class="footer">
-                <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
-                <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>
+
+            <div class="slds-m-top_medium add-btn">
+                <lightning-button label="+ Add New Email" onclick={handleAddNewEmail}></lightning-button>
+            </div>
+
+            <div class="footer-btns">
+                <div class="footer">
+                    <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+                    <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>    
+                </div>
             </div>
         </div>
     </div>

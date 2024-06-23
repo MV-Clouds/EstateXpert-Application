@@ -4,12 +4,16 @@ import getDateFieldsForPicklist from '@salesforce/apex/EmailCampaignController.g
 import { loadStyle } from 'lightning/platformResourceLoader';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 import plusIcon from '@salesforce/resourceUrl/plusIcon';
+import previewBtn from '@salesforce/resourceUrl/previewBtn';
+import deleteBtn from '@salesforce/resourceUrl/deleteBtn';
+
 
 export default class EmailCampaignTemplateForm extends LightningElement {
     @track contacts = [];
     @track filteredPrimaryContacts = [];
     @track filteredCCContacts = [];
     @track filteredBCCContacts = [];
+    @track filteredContactDateFields = [];
 
     @track selectedPrimaryRecipients = [];
     @track selectedCCRecipients = [];
@@ -23,8 +27,11 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track inputValuePrimary = '';
     @track contactDateFieldOptions;
     @track isDateFieldDropdownVisible = false;
+    @track selectedContactDateFieldLabel = '';
     
     @track plusIconUrl = plusIcon; 
+    @track previewBtnUrl = previewBtn;
+    @track deleteBtnUrl = deleteBtn;
 
     @track startDateOptions = [
         { label: 'Using a specific date', value: 'specificDate' },
@@ -62,6 +69,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     connectedCallback() {
+        
         Promise.all([
             loadStyle(this, externalCss)
         ])
@@ -73,6 +81,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         .catch(error => {
             console.error('Error loading external CSS', error);
         });
+        
     }
 
 
@@ -84,10 +93,28 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                     label: option.label,
                     value: option.value
                 }));
+                this.filteredContactDateFields = this.contactDateFieldOptions;
             })
             .catch(error => {
                 console.error('Error fetching date fields', error);
             });
+    }
+
+    handleContactDateFieldSearchChange(event) {
+        const searchTerm = event.target.value.toLowerCase();
+        this.filteredContactDateFields = this.contactDateFieldOptions.filter(option =>
+            option.label.toLowerCase().includes(searchTerm)
+        );
+    }
+
+    handleContactDateFieldSearchFocus() {
+        this.isDateFieldDropdownVisible = true;
+    }
+
+    handleContactDateFieldSearchBlur() {
+        setTimeout(() => {
+            this.isDateFieldDropdownVisible = false;
+        }, 200);
     }
 
     handlePrimarySearchInputChange(event) {
@@ -265,6 +292,10 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         this.emails = this.emails.filter(email => email.id !== parseInt(emailId, 10));
     }
 
+    handlepreviewBtn(event){
+        console.log('handle preview btn');
+    }
+
     handleCancel() {
         // Handle cancel logic
     }
@@ -272,4 +303,5 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     handleSave() {
         // Handle save logic
     }
+
 }
