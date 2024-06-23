@@ -76,7 +76,7 @@
 }
 
 .scrollable-container{
-    height: 400px;
+    height: 60vh;
     overflow-y: auto;
     padding-left: 3%;
 }

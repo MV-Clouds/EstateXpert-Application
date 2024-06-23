@@ -10,24 +10,28 @@ export default class MapFields extends LightningElement {
     @track selectedValues = [];
     @track comboboxes = [];
     @track dropDownPairs = [];
-    ListingOptions = [];
-    MainListingOptions = [];
-    updateListing = [];
-    updateProperty = [];
-    PropertyOptions = [];
-    MainPropertyOptions = [];
-    checkboxValue = false;
-    isLoading=false;
-    isDropdownOpen = false;
-    savebutton=true;
-    options = [{ label: 'Sync', value: 'option1' }];
-    selectedListingFieldApiName;
+    @track ListingOptions = [];
+    @track MainListingOptions = [];
+    @track updateListing = [];
+    @track updateProperty = [];
+    @track PropertyOptions = [];
+    @track MainPropertyOptions = [];
+    @track checkboxValue = false;
+    @track isLoading = false;
+    @track isDropdownOpen = false;
+    @track savebutton = true;
     @track showConfirmationModal = false;
-
-    doubleSideArrowUrl = doubleSideArrow;
+    @track selectedListingFieldApiName;
+    @track doubleSideArrowUrl = doubleSideArrow;
+    
+    @track options = [{ label: 'Sync', value: 'option1' }];
 
     get delButtonClass() {
         return this.isAutoSyncEnabled ? 'slds-m-left_x-small del-button disabled-del' : ' slds-m-left_x-small del-button';
+    }
+
+    get isAutoSyncEnabled() {
+        return this.checkboxValue;
     }
 
     connectedCallback(){
@@ -47,10 +51,6 @@ export default class MapFields extends LightningElement {
             this.filterAndUpdateListingOptions();
     }
 
-    get isAutoSyncEnabled() {
-        return this.checkboxValue;
-    }
-    
     callPropertyFields(){
         getObjectFields({ objectName: 'Property__c' })
         .then(data => {
@@ -144,7 +144,6 @@ export default class MapFields extends LightningElement {
         }
     }
 
-
     //Filter the property base on the selected listing
     filterPropertyOptions(selectedListing) {
         if (!selectedListing) return; // No listing field selected yet
@@ -194,7 +193,6 @@ export default class MapFields extends LightningElement {
         }
     }
     
-
     handleDestinationFieldChange(event) {
         // Implement if needed
         const index = event.target.dataset.index;
@@ -207,7 +205,6 @@ export default class MapFields extends LightningElement {
         }
         
     }
-
 
     //Exculde the selected picklists values from both lisitng and property
     filterAndUpdateListingOptions() {
@@ -250,8 +247,6 @@ export default class MapFields extends LightningElement {
 
         // console.log('Update Proprty'+this.ListingOptions.length);
     }
-
-
 
     //Add and delete pair of picklists
     addNewPair() {
