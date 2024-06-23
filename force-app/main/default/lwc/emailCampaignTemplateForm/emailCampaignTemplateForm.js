@@ -27,6 +27,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track inputValuePrimary = '';
     @track contactDateFieldOptions;
     @track isDateFieldDropdownVisible = false;
+    @track isFieldSelected = false;
     @track selectedContactDateFieldLabel = '';
     
     @track plusIconUrl = plusIcon; 
@@ -53,6 +54,14 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     get isContactDateFieldOption() {
         return this.startDateOption === 'contactDateField';
+    }
+
+    get searchBoxClass() {
+        return this.isFieldSelected ? 'slds-hide' : 'slds-show';
+    }
+
+    get pillDivClass() {
+        return this.isFieldSelected ? 'slds-show display-pill-input-container' : 'slds-hide';
     }
 
     @wire(getContacts)
@@ -268,6 +277,11 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         const selectedOption = this.contactDateFieldOptions.find(option => option.value === selectedValue);
         this.selectedContactDateField = selectedOption.label;
         this.isDateFieldDropdownVisible = false;
+        this.isFieldSelected = true; // Set to true when a field is selected
+    }
+
+    handleRemove() {
+        this.isFieldSelected = false; // Reset to false when field is removed
     }
 
     handleDataFieldBlur(event){

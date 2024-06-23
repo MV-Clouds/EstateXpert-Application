@@ -84,6 +84,14 @@ button[disabled] {
   border-radius: 6px;
 }
 
+
+.add-btn button:hover , .add-btn button:focus  {
+  background-color: #0176D3;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
 .slds-form-element__control .slds-radio, .slds-form-element__control .slds-checkbox{
   margin-bottom: 6px;
 }

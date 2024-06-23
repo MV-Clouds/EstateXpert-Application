@@ -181,33 +181,58 @@
                 <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date"></lightning-input>
             </template>
 
-            <template if:true={isContactDateFieldOption}>
-                <div class="input-date-combobox">
-                    <lightning-input
-                    label="Select the fields"
-                    placeholder="Select the field"
-                    onchange={handleContactDateFieldSearchChange}
-                    onfocus={handleContactDateFieldSearchFocus}
-                    onblur={handleContactDateFieldSearchBlur}
-                    value={selectedContactDateField}
-                    class="input-field"
-                ></lightning-input>
-                </div>
+                <template if:true={isContactDateFieldOption}>
+                    <div class="input-date-combobox">
+                        <!-- Search Input Field -->
+                        <div class={searchBoxClass}>
+                            <lightning-input
+                                type="search"
+                                label="Select the field"
+                                placeholder="Select the field"
+                                onchange={handleContactDateFieldSearchChange}
+                                onfocus={handleContactDateFieldSearchFocus}
+                                onblur={handleContactDateFieldSearchBlur}
+                                class="input-field"
+                            ></lightning-input>
+                        </div>
+            
+                        <!-- Selected Record Pill Container -->
+                        <div class={pillDivClass}>
+                            <div class="input-pil-label ">
+                                <label>Select the field</label>
+                            </div>
+                            <div class="display-pill-input">
+                                <div class="input-pill-icon">
+                                    <lightning-icon icon-name="standard:account" size="x-small" alternative-text="icon"></lightning-icon>
+                                </div>
+                                <input type="text"
+                                    id="combobox-id-1"
+                                    value={selectedContactDateField}
+                                    class="slds-input slds-combobox__input slds-combobox__input-value"
+                                    readonly
+                                />
+                                <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Remove selected option" onclick={handleRemove}>
+                                    <lightning-icon icon-name="utility:close" size="x-small" alternative-text="close icon"></lightning-icon>
+                                </button>
+                            </div>
 
-                <template if:true={isDateFieldDropdownVisible}>
-                    <div class="dropdown">
-                        <template for:each={filteredContactDateFields} for:item="field">
-                            <div key={field.value} class="dropdown-item" onclick={handleDateFieldSelect} data-id={field.value}>
-                                <span class="slds-icon_container slds-icon-standard-account" title="Account">
-                                    <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
-                                </span>
-                                <span class="container-pill-label">{field.label}</span>
+                        </div>
+            
+                        <!-- Dropdown for selecting fields -->
+                        <template if:true={isDateFieldDropdownVisible}>
+                            <div class="dropdown">
+                                <template for:each={filteredContactDateFields} for:item="field">
+                                    <div key={field.value} class="dropdown-item" onclick={handleDateFieldSelect} data-id={field.value}>
+                                        <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                                            <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                                        </span>
+                                        <span class="container-pill-label">{field.label}</span>
+                                    </div>
+                                </template>
                             </div>
                         </template>
                     </div>
                 </template>
-            
-            </template>
 
             <template if:true={emails}>
                 <div class="table-container">

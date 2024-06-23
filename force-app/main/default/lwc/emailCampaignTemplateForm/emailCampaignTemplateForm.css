@@ -183,7 +183,7 @@
 
 .slds-table td{
     border: none;
-    padding: 1rem;
+    padding: 0.7rem;
 }
 
 .action-btns{
@@ -195,3 +195,38 @@ fieldset .slds-form-element__legend{
     font-size: 14px;
     font-weight: bold;
 }
+
+.display-pill-input-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+}
+
+.display-pill-input{
+    display: flex;
+    border: 2px solid #35a5ff;
+    border-radius: 6px;
+}
+
+.input-pil-label{
+    font-size: 14px;  
+    font-weight: bold;
+}
+
+.input-pill-icon{
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+.display-pill-input button{
+    border: none;
+    margin-right: 5px;
+
+}
+
+.display-pill-input input{
+    pointer-events: none;
+}
+
