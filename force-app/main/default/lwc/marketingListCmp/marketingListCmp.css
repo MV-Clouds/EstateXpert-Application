@@ -48,10 +48,19 @@
 }
 
 .main .body .innerDiv1{
-    background-color: white;
     display: flex;
     width: 30%;
     flex: 1 1 auto;
+    margin-right: 1rem;
+    border-radius: 0.5rem;
+    border: 2px solid rgb(42, 32, 32);
+    background: linear-gradient(179deg, #E9EEFF, #F4FFF6);
+    padding: 0.7rem;
+    overflow: auto;
+}
+
+.main .body .innerDiv1 .marketing-list-cmp{
+    width: 100%;
 }
 
 .expanded1 {
@@ -96,14 +105,14 @@
 
 .main .body .innerDiv2{
     background-color: white;
-    overflow: scroll;
     width: 70%;
     height: 100%;
     flex: 1 1 auto;
     padding: 0rem;
-    border: 2px solid rgb(232, 232, 232);
+    border: 2px solid rgb(42, 32, 32);
     border-radius: 0.5rem;
     position: relative;
+    overflow: hidden;
     /* margin-bottom: -1rem; */
 }
 

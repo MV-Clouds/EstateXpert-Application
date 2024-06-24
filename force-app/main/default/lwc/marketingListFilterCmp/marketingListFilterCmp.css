@@ -1,0 +1,307 @@
+/* .filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+.filter-section .input-cover{
+    display: flex;
+    position: relative;
+}
+
+.filter-section .input-cover .delete-icon-cover{
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+}
+
+.filter-section .input-cover .delete-icon-cover svg{
+    fill: black;
+    height: 1rem;
+    width: 1rem;
+}
+
+.add-city-button,
+.add-more-fields-button {
+    align-self: start;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.price-slider {
+    margin: 0.5rem 0;
+} */
+
+.combobox{
+    margin: 0.5rem;
+}
+.combobox .combobox-cover .combox-div span svg{
+    fill: rgb(116, 116, 116);
+    width: 1rem;
+    height: 1rem;
+}
+.combobox .operator-div{
+    color: rgb(116, 116, 116);
+}
+.combobox .pill-section .pill-body svg{
+    fill: rgb(116, 116, 116);
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+.combobox .pill-section {
+    position: relative;
+    padding: 0;
+    padding-right: 3.75rem;
+    height: fit-content;
+    overflow: hidden;
+}
+.combobox .pill-section ul{
+    height: fit-content;
+}
+.combobox .pill-section .pill-body svg{
+    cursor: pointer;
+}
+.combobox .options-box {
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+    border: 1px solid var(--slds-g-color-border-base-4, rgb(229, 229, 229));
+    border-radius: 0.2rem;
+}
+.combobox .options-box ul li {
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 1rem;
+    cursor: pointer;
+}
+.combobox .options-box ul li svg{
+    fill: black;
+    width: 1rem;
+    height: 1rem;
+}
+.combobox .input-delete-cover{
+    display: flex;
+}
+.combobox .input-delete-cover .delete-icon-cover{
+    margin-left: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.combobox .input-delete-cover .delete-icon-cover svg{
+    height: 1rem;
+    width: 1rem;
+    fill: rgb(134,134,134);
+    cursor: pointer;
+}
+.combobox .input-delete-cover .delete-icon-cover svg:hover{
+    fill: rgb(1,118,211);
+}
+.combobox .input-delete-cover .plus{
+    width: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3rem;
+    border: 0.2px solid rgb(136 129 129);
+    border-radius: 0.2rem;
+    cursor: pointer;
+}
+.combobox .input-delete-cover .plus svg{
+  width: 1rem;
+  height: 1rem;
+  fill: black;
+}
+.combobox .input-delete-cover .min-max-input-cover{
+    width: 100%;
+}
+.combobox .min-max-input-div{
+    margin-bottom:0.5rem ;
+}
+.min-max-input-div:hover .up-btn-max-min{
+    display: block;
+}
+.min-max-input-div:hover .down-btn-max-min{
+    display: block;
+}
+ .up-btn-max-min{
+    fill: rgb(134,134,134);
+    width: 0.8rem;
+    position: absolute;
+    right: 0.5rem;
+    top: 0rem;
+    /* display: none; */
+    cursor: pointer;
+    height: fit-content;
+    user-select: none;
+}
+ .up-btn-max-min:hover{
+    fill: rgb(1,118,211);
+   
+}
+ .down-btn-max-min{
+    fill: rgb(134,134,134);
+    width: 0.8rem;
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.4rem;
+    /* display: none; */
+    cursor: pointer;
+    height: fit-content;
+    user-select: none;
+}
+ .down-btn-max-min:hover{
+    fill: rgb(1,118,211);
+}
+
+.filter-footer{
+    display: flex;
+    justify-content: space-between;
+}
+
+.field-add-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.field-reset-btn {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.field-add-btn .add-btn-cover{
+    border: 1px solid #747474;
+    border-radius: 0.3rem;
+    margin: 1rem;
+    cursor: pointer;
+    height: 2rem;
+    background: white;
+    padding: 0rem 0.3rem 0rem 0.3rem;
+    display: flex;
+    align-items: center;
+}
+.field-add-btn .add-btn-cover svg{
+    fill: #747474;
+    width: 1rem;
+    height: 1rem;
+    margin: 0.4rem;
+}
+.field-reset-btn .add-btn-cover{
+    border: 1px solid #747474;
+    border-radius: 0.3rem;
+    margin: 1rem;
+}
+.field-reset-btn .add-btn-cover svg{
+    fill: #747474;
+    width: 1rem;
+    height: 1rem;
+    margin: 0.4rem;
+    cursor: pointer;
+}
+.advanced-checkbox{
+    display: flex;
+}
+.radio-div{
+    margin-top: 1rem;
+}
+.slds-modal__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slds-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.modal-body{
+    height: 17rem;
+
+}
+
+.slds-m-around_medium {
+    margin: 1rem;
+}
+.slds-m-top_medium {
+    margin-top: 1rem;
+}
+.slds-text-color_error {
+    color: red;
+}
+
+
+/* date-time-field */
+
+
+.date-time-div{
+    padding: 0rem 1.7rem 0rem 0.5rem;
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+.date-time-div .delete-icon-cover{
+    margin-left: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.date-time-div .delete-icon-cover svg{
+    height: 1rem;
+    width: 1rem;
+    fill: rgb(134,134,134);
+    cursor: pointer;
+    position: absolute;
+    top: 5.3rem;
+    left: 0.2rem;
+
+}
+.date-time-div .single svg{
+    top: 3.6rem;
+}
+.date-time-div .delete-icon-cover svg:hover{
+    fill: rgb(1,118,211);
+}
+.time-div{
+    padding: 0rem 0.5rem 0rem 0.5rem;
+    display: flex;
+    margin-bottom: 1rem;
+}
+.time-div .input-cover{
+    width: 100%;
+    padding: 0rem 1rem 0rem 0rem;
+}
+.time-div .input-cover .input-tag{
+    margin-top: -1rem;
+}
+
+.time-div .delete-icon-cover{
+    margin-left: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.time-div .delete-icon-cover svg{
+    height: 1rem;
+    width: 1rem;
+    fill: rgb(134,134,134);
+    cursor: pointer;
+    position: absolute;
+    top: 3.5rem;
+    left: -1.1rem;
+}
+.time-div .single svg{
+    top: 2.2rem;
+}
+.time-div .delete-icon-cover svg:hover{
+    fill: rgb(1,118,211);
+}
