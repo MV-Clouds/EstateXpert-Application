@@ -69,13 +69,12 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     }
     
     /**
-    * Method Name: connectedCallback
+    * Method Name: fetchTemplates
     * @description: Method to call apex and get all the templates
     * Date: 12/06/2024
     * Created By: Rachit Shah
     */
     fetchTemplates() {
-        console.log('Pagenumber ' , this.newPageNumber);
         this.isLoading = true;
         getTemplates()
             .then(data => {
