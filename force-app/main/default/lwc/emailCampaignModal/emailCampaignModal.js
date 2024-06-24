@@ -5,11 +5,11 @@ import { loadStyle } from 'lightning/platformResourceLoader';
 import getEmailCampaignTemplates from '@salesforce/apex/EmailCampaignController.getEmailCampaignTemplates';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 
-export default class EmailCampaignModal extends LightningElement {
-    @track isModalOpen = false;
+export default class EmailCampaignModal extends  NavigationMixin(LightningElement) {
+    @api isModalOpen = false;
     @track templateOptions = [];
 
-    @track formData = {
+    @api formData = {
         selectedTemplate: '',
         campaignName: '',
         senderMode: 'myself',
@@ -21,7 +21,7 @@ export default class EmailCampaignModal extends LightningElement {
     wiredTemplates({ error, data }) {
         if (data) {
             this.templateOptions = data.map(template => {
-                return { label: template.Label__c, value: template.Id };
+                return { label: template.Label__c, value: template.Label__c };
             });
         } else if (error) {
             this.showToast('Error', 'Failed to fetch template options', 'error');
@@ -102,7 +102,7 @@ export default class EmailCampaignModal extends LightningElement {
             const navigationState = formDataCopy;
             
             var cmpDef = {
-                componentDef: 'c:Email_Campaign_Template_Form',
+                componentDef: 'c:emailCampaignTemplateForm',
                 attributes: {                    
                     c__navigationState: navigationState,
                 }                
@@ -114,7 +114,8 @@ export default class EmailCampaignModal extends LightningElement {
                 type: "standard__webPage",
                 attributes: {
                     url:  "/one/one.app#" + encodedDef                                                         
-                }
+                },
+                apiName : 'Email_Campaign_Template_Form'
             });
 
             this.handleCloseModal();

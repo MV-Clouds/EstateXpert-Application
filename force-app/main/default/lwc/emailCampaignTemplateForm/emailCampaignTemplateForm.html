@@ -25,11 +25,11 @@
                 <div class="content">
                     <div class="content-details">
                         <p class="content-text">Email Campaign Template :</p>
-                        <span class="content-data">Buyer - First Time</span>
+                        <span class="content-data">{emailCampaignTemplate}</span>
                     </div>
                     <div class="content-details">
                         <p class="content-text">Email Campaign Name :</p>
-                        <span class="content-data">Campaign Name</span>
+                        <span class="content-data">{emailCampaignName}</span>
                     </div>
                 </div>
                 <div class="edit-btn">
@@ -301,6 +301,9 @@
                 </div>
             </div>
         </div>
-    </div>
-</template>
 
+        <c-email-campaign-modal is-modal-open={isModalOpen} form-data={navigationStateString}> </c-email-campaign-modal>
+
+    </div>
+    
+</template>

@@ -2,6 +2,7 @@ import { LightningElement, track, wire } from 'lwc';
 import getContacts from '@salesforce/apex/EmailCampaignController.getContacts';
 import getDateFieldsForPicklist from '@salesforce/apex/EmailCampaignController.getDateFieldsForPicklist';
 import { loadStyle } from 'lightning/platformResourceLoader';
+import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 import plusIcon from '@salesforce/resourceUrl/plusIcon';
 import previewBtn from '@salesforce/resourceUrl/previewBtn';
@@ -19,6 +20,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track selectedCCRecipients = [];
     @track selectedBCCRecipients = [];
 
+    @track isModalOpen = false;
     @track isPrimaryDropdownVisible = false;
     @track isCCDropdownVisible = false;
     @track isBCCDropdownVisible = false;
@@ -29,6 +31,10 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track isDateFieldDropdownVisible = false;
     @track isFieldSelected = false;
     @track selectedContactDateFieldLabel = '';
+    @track emailCampaignTemplate = '';
+    @track emailCampaignName = '';
+    @track navigationStateString;
+
     
     @track plusIconUrl = plusIcon; 
     @track previewBtnUrl = previewBtn;
@@ -62,6 +68,26 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     get pillDivClass() {
         return this.isFieldSelected ? 'slds-show display-pill-input-container' : 'slds-hide';
+    }
+
+    /**
+    * Method Name: setCurrentPageReference
+    * @description: Method to load the data when click on the tab or again come on the tab with redirection
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
+    @wire(CurrentPageReference)
+    setCurrentPageReference(currentPageReference) {
+        if (currentPageReference && currentPageReference.attributes.attributes.c__navigationState ) {
+             const navigationStateString = currentPageReference.attributes.attributes.c__navigationState;
+
+            if(navigationStateString){
+                this.navigationStateString = navigationStateString;
+                this.emailCampaignTemplate = this.navigationStateString.selectedTemplate;
+                this.emailCampaignName = this.navigationStateString.campaignName;
+            }
+
+        }
     }
 
     @wire(getContacts)
@@ -281,7 +307,13 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleRemove() {
-        this.isFieldSelected = false; // Reset to false when field is removed
+        this.isFieldSelected = false; 
+    }
+
+    handleEdit(event){
+        console.log('Edit button is clicked');
+        this.isModalOpen = true;
+
     }
 
     handleDataFieldBlur(event){
