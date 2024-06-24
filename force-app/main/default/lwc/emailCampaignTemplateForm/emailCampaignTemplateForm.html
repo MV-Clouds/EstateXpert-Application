@@ -302,7 +302,7 @@
             </div>
         </div>
 
-        <c-email-campaign-modal is-modal-open={isModalOpen} form-data={navigationStateString}> </c-email-campaign-modal>
+        <c-email-campaign-modal if:true={isModalOpen} form-data={navigationStateString} onclose={handleModalClose}> </c-email-campaign-modal>
 
     </div>
     

@@ -6,7 +6,6 @@ import getEmailCampaignTemplates from '@salesforce/apex/EmailCampaignController.
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 
 export default class EmailCampaignModal extends  NavigationMixin(LightningElement) {
-    @api isModalOpen = false;
     @track templateOptions = [];
 
     @api formData = {
@@ -57,13 +56,10 @@ export default class EmailCampaignModal extends  NavigationMixin(LightningElemen
         return !this.isFormValid();
     }
 
-    handleOpenModal() {
-        this.isModalOpen = true;
-    }
-
     handleCloseModal() {
         this.resetFormData();
-        this.isModalOpen = false;
+        const closeEvent = new CustomEvent('close');
+        this.dispatchEvent(closeEvent);
     }
 
     resetFormData(){
