@@ -361,6 +361,11 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             deleteTemplate({ templateId: template.Id })
                 .then(() => {
                     this.templates.splice(templateIndex, 1);
+
+                    this.templates.forEach((tmpl, index) => {
+                        tmpl.rowIndex = index + 1;
+                    });
+                    
                     this.filteredTemplates = [...this.templates];
                     this.calculateTotalPages();
                     
