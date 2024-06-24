@@ -7,19 +7,18 @@
 
 <template>
     <div class="wrapper">
-        <lightning-spinner if:true={isLoading} alternative-text="Loading" size="medium" variant="brand"></lightning-spinner>
+        <lightning-spinner if:true={isLoading} alternative-text="Loading" size="medium"
+            variant="brand"></lightning-spinner>
         <div class="slds-m-around_medium navbar">
             <div class="input-text">
-                <lightning-input 
-                    type="search" 
-                    onchange={handleSearch} 
-                    placeholder="Search Template"
+                <lightning-input type="search" onchange={handleSearch} placeholder="Search Template"
                     class="input-template">
                 </lightning-input>
             </div>
 
             <div class="add-btn">
-                <lightning-button variant="brand" label="+ Add New" title="Primary action" class="slds-m-left_x-small addbtn" id="myButton" onclick={handleAdd}></lightning-button>
+                <lightning-button variant="brand" label="+ Add New" title="Primary action"
+                    class="slds-m-left_x-small addbtn" id="myButton" onclick={handleAdd}></lightning-button>
             </div>
         </div>
 
@@ -29,25 +28,25 @@
                     <thead>
                         <tr class="slds-text-title_caps">
                             <th scope="col" class="sno">
-                                <div  title="S.No.">No.</div>
+                                <div title="S.No.">No.</div>
                             </th>
                             <th scope="col" class="template-name">
-                                <div  title="Template Name">Template Name</div>
+                                <div title="Template Name">Template Name</div>
                             </th>
                             <th scope="col" class="status">
-                                <div  title="Status">Status</div>
+                                <div title="Status">Status</div>
                             </th>
                             <th scope="col" class="object-name">
-                                <div  title="Description">Object Name</div>
+                                <div title="Description">Object Name</div>
                             </th>
                             <th scope="col" class="description">
-                                <div  title="description">Description</div>
+                                <div title="description">Description</div>
                             </th>
                             <th scope="col" class="created-date">
-                                <div  title="Created Date">Created Date</div>
+                                <div title="Created Date">Created Date</div>
                             </th>
                             <th scope="col" class="actions">
-                                <div  title="Actions">Actions</div>
+                                <div title="Actions">Actions</div>
                             </th>
                         </tr>
                     </thead>
@@ -56,49 +55,34 @@
                             <template for:each={visibleTemplates} for:item="template" for:index="index">
                                 <tr key={template.Id} class={template.cssClass}>
                                     <td data-label="S.No.">
-                                        <div >{template.rowIndex}</div>
+                                        <div>{template.rowIndex}</div>
                                     </td>
                                     <td data-label="Template Name">
-                                        <div  title={template.Label__c}>{template.Label__c}</div>
+                                        <div title={template.Label__c}>{template.Label__c}</div>
                                     </td>
                                     <td data-label="Status">
-                                        <lightning-input 
-                                            type="toggle" 
-                                            checked={template.isActive} 
-                                            onchange={handleStatusChange} 
-                                            data-id={template.Id}>
+                                        <lightning-input type="toggle" checked={template.isActive}
+                                            onchange={handleStatusChange} data-id={template.Id}>
                                         </lightning-input>
                                     </td>
                                     <td data-label="Object Name">
-                                        <div  title={template.Object_Name__c}>{template.Object_Name__c}</div>
+                                        <div title={template.Object_Name__c}>{template.Object_Name__c}</div>
                                     </td>
                                     <td>
                                         <div title={template.Description__c}>{template.Description__c}</div>
                                     </td>
                                     <td data-label="Created Date">
-                                        <div  title={template.CreatedDate}>{template.CreatedDateformatted}</div>
+                                        <div title={template.CreatedDate}>{template.CreatedDateformatted}</div>
                                     </td>
                                     <td data-label="Actions">
-                                        <lightning-button-icon 
-                                            icon-name="utility:preview" 
-                                            alternative-text="Preview" 
-                                            title="Preview" 
-                                            onclick={handlePreview} 
-                                            data-id={template.Id}>
+                                        <lightning-button-icon icon-name="utility:preview" alternative-text="Preview"
+                                            title="Preview" onclick={handlePreview} data-id={template.Id}>
                                         </lightning-button-icon>
-                                        <lightning-button-icon 
-                                            icon-name="utility:edit" 
-                                            alternative-text="Edit" 
-                                            title="Edit" 
-                                            onclick={handleEdit} 
-                                            data-id={template.Id}>
+                                        <lightning-button-icon icon-name="utility:edit" alternative-text="Edit"
+                                            title="Edit" onclick={handleEdit} data-id={template.Id}>
                                         </lightning-button-icon>
-                                        <lightning-button-icon 
-                                            icon-name="utility:delete" 
-                                            alternative-text="Delete" 
-                                            title="Delete" 
-                                            onclick={handleDelete} 
-                                            data-id={template.Id}>
+                                        <lightning-button-icon icon-name="utility:delete" alternative-text="Delete"
+                                            title="Delete" onclick={handleDelete} data-id={template.Id}>
                                         </lightning-button-icon>
                                     </td>
                                 </tr>
@@ -106,7 +90,7 @@
                         </template>
                     </tbody>
                 </table>
-    
+
             </div>
 
             <template if:false={visibleTemplates.length}>
@@ -118,25 +102,22 @@
 
             </template>
 
-            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate} object-select={selectedobject} type-select={selectedType} description={selectedDescription} name={nameForTemplate} current-record-id={currentRecId} is-edit="false" body-of-template={selectedTemplateBody} ></c-custom-modal>
+            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate}
+                object-select={selectedobject} type-select={selectedType} description={selectedDescription}
+                name={nameForTemplate} current-record-id={currentRecId} is-edit="false"
+                body-of-template={selectedTemplateBody} page-number={currentPage}
+                total-recodslength={totalRecodslength}></c-custom-modal>
 
             <footer>
                 <template if:true={visibleTemplates.length}>
                     <div class="pagination-container">
-                        <lightning-button 
-                            class="previous" 
-                            label="Previous" 
-                            onclick={previousPage} 
+                        <lightning-button class="previous" label="Previous" onclick={previousPage}
                             disabled={isPreviousDisabled}>
                         </lightning-button>
-    
+
                         <div class="page-info"> Page {currentPage} Of {totalPages}</div>
-    
-                        <lightning-button 
-                            class="next" 
-                            label="Next" 
-                            onclick={nextPage} 
-                            disabled={isNextDisabled}>
+
+                        <lightning-button class="next" label="Next" onclick={nextPage} disabled={isNextDisabled}>
                         </lightning-button>
                     </div>
                 </template>
@@ -146,6 +127,7 @@
     </div>
 
     <template if:true={isPreviewModal}>
-        <c-template-preview-modal object-name={selectedobject} template-body={selectedTemplateBody} onclosemodal={handleCloseModal}></c-template-preview-modal>
+        <c-template-preview-modal object-name={selectedobject} template-body={selectedTemplateBody}
+            onclosemodal={handleCloseModal}></c-template-preview-modal>
     </template>
 </template>

@@ -9,13 +9,15 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api description = '';
     @api objectSelect = '';
     @api typeSelect = '';
-    @track objectOptions;
-    @track typeOptions;
-    @track IsChildModal = false;
     @api currentRecordId;
     @api name = ''
     @api bodyOfTemplate = '';
     @api isEdit = false;
+    @api pageNumber = 1;
+    @api totalRecodslength;
+    @track objectOptions;
+    @track typeOptions;
+    @track IsChildModal = false;
     @track isObjectChanged = false;
 
     /**
@@ -106,18 +108,29 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 isObjectChanged : this.isObjectChanged,
                 oldObject: this.oldObject,
                 isFirstTimeLoaded : false,
-                templateTypeForCreation: this.name
+                templateTypeForCreation: this.name,
+                pageNumber : this.pageNumber,
+                totalRecodslength : this.totalRecodslength
             };
     
             const serializedState = JSON.stringify(navigationState);
             console.log('serializedState:', serializedState);
-    
-            this[NavigationMixin.Navigate]({
-                type: 'standard__navItemPage',
-                attributes: {
-                    apiName: 'Template_Editor',
+
+            var cmpDef;                
+            cmpDef = {
+                componentDef: 'c:templateModalChild',
+                attributes: {                    
                     c__navigationState: serializedState,
                     c__recordId : this.currentRecordId
+                }                
+                };
+
+            let encodedDef = btoa(JSON.stringify(cmpDef));
+                console.log('encodedDef : ', encodedDef);
+                this[NavigationMixin.Navigate]({
+                type: "standard__webPage",
+                attributes: {
+                    url:  "/one/one.app#" + encodedDef                                                         
                 }
             });
 

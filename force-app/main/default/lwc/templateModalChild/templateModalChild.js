@@ -8,12 +8,14 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CurrentPageReference } from 'lightning/navigation';
 import { NavigationMixin } from 'lightning/navigation';
 
+
 export default class TemplateModalChild extends NavigationMixin(LightningElement) {
     @api selectedObject;
     @api currentRecordId = null;
+    @api templateLabel = '';
+    @api isFirstTimeLoaded = false;
     @track selectedField = '';
     @track fieldOptions = [];
-    @api templateLabel = '';
     @track description = '';
     @track isLoading = true;
     @track isInitialRender = true;
@@ -27,13 +29,14 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track cancelBtn = false;
     @track templateTypeForCreation = 'New';
     @track editor;
-    @api isFirstTimeLoaded = false;
+    @track currentPage;
+    @track totalRecodslength;
+    @track newPageNumber;
 
     get recordId(){
         return this.currentRecordId ? this.currentRecordId : 'tempId';
     }
     
-
     /**
     * Method Name: getStateParameters
     * @description: Method to get values from attribute from the currentpagereference
@@ -42,8 +45,14 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
-        if (currentPageReference && currentPageReference.attributes) {
-            const navigationStateString = currentPageReference.attributes.c__navigationState;
+        console.log('OUTPUT : ',currentPageReference);                               
+        let decodedJson = currentPageReference;
+        console.log('OUTPUT 11: ',decodedJson);
+        if (decodedJson ) {
+            console.log('OUTPUT 2 : ',decodedJson);
+            console.log('OUTPUT 3 : ',decodedJson.attributes);
+            console.log('OUTPUT 4 : ',decodedJson.attributes.attributes);
+            const navigationStateString = decodedJson.attributes.attributes.c__navigationState;
             console.log('navigationStateString ==>' , navigationStateString);
             if (navigationStateString) {
                 try {
@@ -59,7 +68,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.isObjectChanged = parseObject.isObjectChanged;
                     this.oldObject = parseObject.oldObject;
                     this.isFirstTimeLoaded = parseObject.isFirstTimeLoaded;
-                    this.templateTypeForCreation = parseObject.templateTypeForCreation
+                    this.templateTypeForCreation = parseObject.templateTypeForCreation;
+                    this.currentPage = parseObject.pageNumber;
+                    this.totalRecodslength = parseObject.totalRecodslength;
 
                     this.fetchFields();
                 } catch (error) {
@@ -71,35 +82,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         } else {
             console.error('currentPageReference or currentPageReference.state is not defined');
         }
-    }
-
-    /**
-    * Method Name: fetchFields
-    * @description: Method to fetch the fields for the selected object
-    * Date: 13/06/2024
-    * Created By: Rachit Shah
-    */
-    fetchFields() {
-        if (!this.selectedObject) {
-            console.error('No selected object found.');
-            return;
-        }
-
-        getFieldsForObject({ objectName: this.selectedObject })
-            .then(data => {
-                this.fieldOptions = data.map(field => ({ label: field, value: field }));
-
-                if(this.isObjectChanged){
-                    const errorPopup = this.template.querySelector('c-error_-pop-up');
-                    console.log('errorPopup ==> ' , errorPopup);
-                    if(errorPopup){
-                        errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching fields:', error);
-            });
     }
 
     /**
@@ -131,6 +113,36 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.isLoading = false;
                 });
         }
+    }
+
+
+    /**
+    * Method Name: fetchFields
+    * @description: Method to fetch the fields for the selected object
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    fetchFields() {
+        if (!this.selectedObject) {
+            console.error('No selected object found.');
+            return;
+        }
+
+        getFieldsForObject({ objectName: this.selectedObject })
+            .then(data => {
+                this.fieldOptions = data.map(field => ({ label: field, value: field }));
+
+                if(this.isObjectChanged){
+                    const errorPopup = this.template.querySelector('c-error_-pop-up');
+                    console.log('errorPopup ==> ' , errorPopup);
+                    if(errorPopup){
+                        errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching fields:', error);
+            });
     }
 
     /**
@@ -363,15 +375,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     
                 currentRange.collapse(false);
     
-                $(this.editor).summernote('saveRange');
             }
         } catch (error) {
             console.log('error in appendFieldToEditor method', error);
         }
     }
     
-
-
     /**
     * Method Name: setEmailBody
     * @description: get the body of the template and set in the currentpagereference method
@@ -409,7 +418,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             .then((res) => {
                 this.showToast('Success', 'Template saved successfully', 'success');
                 this.isLoading = false;
-                this.navigationToTemplatePage();
+                this.navigationToTemplatePageWithPage();
             })
             .catch(error => {
                 console.error('Error saving template:', error);
@@ -449,38 +458,85 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     async handleCancel() {
         console.log('In handlecancel');
+        var regex = /(<([^>]+)>)/ig;
 
-        this.isObjectChanged =  true;
-        this.cancelBtn = true;
+        const editorContent = $(this.editor).summernote('code');
+        const editorContentWithoutHtml = editorContent.replace(regex, "");
+        console.log('editorContentWithoutHtml ==> ' , editorContentWithoutHtml);
 
-        setTimeout(async () => {
-            const errorPopup = this.template.querySelector('c-error_-pop-up');
-            console.log('errorPopup ==> ', errorPopup);
+        if(editorContentWithoutHtml != ''){
 
-            if (errorPopup) {
-                errorPopup.showToast('warning', 'You will lose all changed data here', 'Warning');
-            } else {
-                console.error('Error popup component not found');
+            const normalizedEditorContent = editorContent.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+            const normalizedBodyOfTemplate = this.bodyOfTemplate.replace(/\s+/g, ' ').trim();    
+    
+            if (normalizedEditorContent !== normalizedBodyOfTemplate) {
+                console.log('editorContent ==> ' , normalizedEditorContent);
+                console.log('bodyOfTemplate ==> ' , normalizedBodyOfTemplate);
+                this.isObjectChanged =  true;
+                this.cancelBtn = true;
+        
+                setTimeout(async () => {
+                    const errorPopup = this.template.querySelector('c-error_-pop-up');
+                    console.log('errorPopup ==> ', errorPopup);
+        
+                    if (errorPopup) {
+                        errorPopup.showToast('warning', 'You will lose all changed data here', 'Warning');
+                    } else {
+                        console.error('Error popup component not found');
+                    }
+                }, 100);
             }
 
-            // Navigate to a different page if necessary
-            // this[NavigationMixin.Navigate]({
-            //     type: 'standard__navItemPage',
-            //     attributes: {
-            //         apiName: 'template_builder',
-            //     },
-            // });
-        }, 100); // delay of 100ms
+            else{
+                this.navigationToTemplatePage();
+            }
+        }
+
+        else{
+            this.navigationToTemplatePage();
+        }
+
+    
     }
 
+    /**
+    * Method Name: navigationToTemplatePage
+    * @description: Method to nevigate template page
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     navigationToTemplatePage(){
             this[NavigationMixin.Navigate]({
                 type: 'standard__navItemPage',
                 attributes: {
                     apiName: 'template_builder',
+                    pageNumber: this.newPageNumber
                 },
             });
     }
+
+    /**
+    * Method Name: navigationToTemplatePageWithPage
+    * @description: Method to nevigate template page with current page
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    navigationToTemplatePageWithPage() {
+        const pageSize = 10;
+        this.newPageNumber = 1;
+        if(this.totalRecodslength){
+            this.newPageNumber = Math.ceil((this.totalRecodslength + 1) / pageSize);
+        }
+    
+        this[NavigationMixin.Navigate]({
+            type: 'standard__navItemPage',
+            attributes: {
+                apiName: 'template_builder',
+                pageNumber: this.newPageNumber
+            },
+        });
+    }
+
     /**
     * Method Name: showToast
     * @description: Method to display toast message
@@ -496,6 +552,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         this.dispatchEvent(event);
     }
 
+    /**
+    * Method Name: handlePopUpCancel
+    * @description: Method to cancel error popup
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     handlePopUpCancel(){
         this.isObjectChanged  = false;
         console.log('oldobject ==> ' , this.oldObject);
@@ -508,6 +570,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         console.log(this.selectedObject , 'SelectedObject');
     }
 
+    /**
+    * Method Name: handleContinue
+    * @description: Method to continue error popup component
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     handleContinue() {
         if (this.isObjectChanged && !this.cancelBtn) {
             const editorContent = $(this.editor).summernote('code');

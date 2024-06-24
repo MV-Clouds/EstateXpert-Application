@@ -10,21 +10,25 @@ import updateTemplateStatus from '@salesforce/apex/TemplateBuilderController.upd
 const PAGE_SIZE = 10;
 
 export default class TemplateBuilder extends NavigationMixin(LightningElement) {
+    @api nameForTemplate = 'New';
+    @track totalPages = 0;
+    @track currentPage = 1;
     @track templates = [];
     @track filteredTemplates = [];
     @track visibleTemplates = [];
-    @track currentPage = 1;
-    @track totalPages = 0;
-    @track isModalOpen = false;
-    @api nameForTemplate = 'New';
+    @track currentRecId;
+    @track totalRecodslength;
+    @track newPageNumber;
     @track selectedobject = '';
     @track selectedTemplate = '';
     @track selectedDescription = '';
     @track selectedType = '';
-    @track currentRecId ;
+    @track selectedTemplateBody = ''; 
+    @track isModalOpen = false;
     @track isLoading = false; 
     @track isPreviewModal = false;
-    @track selectedTemplateBody = ''; 
+    @track isPreviousDisabled = true;
+    @track isNextDisabled = false;    
     
 
     /**
@@ -38,6 +42,8 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.currentPageReference = currentPageReference;
         if (currentPageReference.state) {
             if (currentPageReference.attributes.apiName == 'template_builder') {
+                this.newPageNumber = currentPageReference.attributes.pageNumber;
+                console.log(this.newPageNumber);
                 this.fetchTemplates();
             }
         }
@@ -63,7 +69,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     }
     
     /**
-    * Method Name: connectedCallback
+    * Method Name: fetchTemplates
     * @description: Method to call apex and get all the templates
     * Date: 12/06/2024
     * Created By: Rachit Shah
@@ -72,7 +78,9 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.isLoading = true;
         getTemplates()
             .then(data => {
-                console.log('data ==> ' , data);
+                // console.log('data ==> ' , data);
+                this.totalRecodslength = data.length;
+                console.log('length ==> ' , this.totalRecodslength);
             data.sort((a, b) => {
                 const labelA = a.Label__c.toLowerCase();
                 const labelB = b.Label__c.toLowerCase();
@@ -98,20 +106,28 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     processTemplates(data) {
-        console.log('processtemplate:- ',JSON.stringify(data));
-        this.templates = data
-        this.templates = this.templates.map((template, index) => ({
+        // console.log('processtemplate:- ',JSON.stringify(data));
+        // this.templates = data
+        this.templates = data.map((template, index) => ({
             ...template,
             rowIndex: index + 1,
             isActive: template.Status__c,
             CreatedDateformatted: this.formatDate(template.CreatedDate)
         }));
-
+        
         this.filteredTemplates = this.templates;
-        console.log('filteredTemplates ==> ' , this.filteredTemplates);
+        // console.log('filteredTemplates ==> ' , this.filteredTemplates);
         this.calculateTotalPages();
+
+        console.log(this.newPageNumber);
+        if(this.newPageNumber != undefined){
+            this.currentPage = this.newPageNumber;
+            console.log(this.currentPage);
+        }
+
         this.displayTemplates();
     }
+
 
     /**
     * Method Name: formatDate
@@ -140,6 +156,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     calculateTotalPages() {
         this.totalPages = Math.ceil(this.filteredTemplates.length / PAGE_SIZE);
+        this.updatePaginationButtons();
     }
 
      /**
@@ -150,12 +167,14 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     displayTemplates() {
         // Ensure currentPage is within valid range
+        console.log(this.currentPage);
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
         }
         const startIndex = (this.currentPage - 1) * PAGE_SIZE;
         this.visibleTemplates = this.filteredTemplates.slice(startIndex, startIndex + PAGE_SIZE);
-        console.log('visibleTemplates ==> ', this.visibleTemplates);
+        // console.log('visibleTemplates ==> ', this.visibleTemplates);
+        this.updatePaginationButtons();
     }
 
     /**
@@ -168,7 +187,14 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         if (this.currentPage > 1) {
             this.currentPage--;
             this.displayTemplates();
+
+        if(this.newPageNumber != undefined){
+            this.newPageNumber = undefined;
+            this.updatePaginationButtons();
         }
+
+        }
+
     }
 
     /**
@@ -192,9 +218,16 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     handleSearch(event) {
         const searchTerm = event.target.value.toLowerCase();
+        
         this.filteredTemplates = this.templates.filter(template =>
             template.Label__c.toLowerCase().includes(searchTerm)
-        );
+            );
+            this.filteredTemplates = this.filteredTemplates.map((template, index) => ({
+                ...template,
+                rowIndex: index + 1,
+                isActive: template.Status__c,
+                CreatedDateformatted: this.formatDate(template.CreatedDate)
+            }));
         this.calculateTotalPages();
         this.currentPage = 1;
         this.displayTemplates();
@@ -217,6 +250,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                     template.isActive = isActive;
                     template.Status__c = isActive ? 'Active' : 'Inactive';
                     this.filteredTemplates = [...this.templates];
+                    console.log('filteredTemplates ==> ' , this.filteredTemplates);
                     this.displayTemplates();
                     this.showToast('Status Change', `Template status changed to: ${template.Status__c}`, 'success');
                 }
@@ -274,14 +308,23 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             };
     
             const serializedState = JSON.stringify(navigationState);
-            console.log('serializedState:', serializedState);
-    
-            this[NavigationMixin.Navigate]({
-                type: 'standard__navItemPage',
-                attributes: {
-                    apiName: 'Template_Editor',
+            // console.log('serializedState:', serializedState);
+            
+            var cmpDef;                
+            cmpDef = {
+                componentDef: 'c:templateModalChild',
+                attributes: {                    
                     c__navigationState: serializedState,
                     c__recordId : templateId
+                }                
+                };
+
+            let encodedDef = btoa(JSON.stringify(cmpDef));
+                console.log('encodedDef : ', encodedDef);
+                this[NavigationMixin.Navigate]({
+                type: "standard__webPage",
+                attributes: {
+                    url:  "/one/one.app#" + encodedDef                                                         
                 }
             });
 
@@ -307,6 +350,11 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             deleteTemplate({ templateId: template.Id })
                 .then(() => {
                     this.templates.splice(templateIndex, 1);
+
+                    this.templates.forEach((tmpl, index) => {
+                        tmpl.rowIndex = index + 1;
+                    });
+
                     this.filteredTemplates = [...this.templates];
                     this.calculateTotalPages();
                     
@@ -326,8 +374,29 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         }
     }
     
-    
-    
+    /**
+    * Method Name: updatePaginationButtons
+    * @description: method to update paginations button
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
+    updatePaginationButtons() {
+        this.isPreviousDisabled = (this.currentPage == 1);
+        console.log('here1==>' , this.currentPage) ;
+        console.log(this.isPreviousDisabled);
+
+        if(this.newPageNumber != undefined){
+            if(this.newPageNumber != 1 && (this.newPageNumber == this.totalPages)){
+                this.isPreviousDisabled = false;
+                console.log('here2 ==>',this.newPageNumber);
+                console.log(this.isPreviousDisabled);
+            }
+            this.isNextDisabled = true;
+        }
+        else{
+            this.isNextDisabled = this.currentPage === this.totalPages;
+        }
+    }
     
     /**
     * Method Name: handleAdd
@@ -336,17 +405,9 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     handleAdd() {
-        console.log('Clicked');
+        // console.log('Clicked');
         this.nameForTemplate = 'New';
         this.isModalOpen = true;
-    }
-
-    get isPreviousDisabled() {
-        return this.currentPage === 1;
-    }
-
-    get isNextDisabled() {
-        return this.currentPage === this.totalPages;
     }
 
     /**
@@ -364,6 +425,12 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.dispatchEvent(event);
     }
 
+    /**
+    * Method Name: handleCloseModal
+    * @description: method to close modal
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
     handleCloseModal(){
         this.isPreviewModal = false;
     }
