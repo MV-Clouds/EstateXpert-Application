@@ -8,6 +8,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CurrentPageReference } from 'lightning/navigation';
 import { NavigationMixin } from 'lightning/navigation';
 
+
 export default class TemplateModalChild extends NavigationMixin(LightningElement) {
     @api selectedObject;
     @api currentRecordId = null;
@@ -28,6 +29,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track templateTypeForCreation = 'New';
     @track editor;
     @api isFirstTimeLoaded = false;
+    @track currentPage;
+    @track totalRecodslength;
+    @track newPageNumber;
 
     get recordId(){
         return this.currentRecordId ? this.currentRecordId : 'tempId';
@@ -42,8 +46,14 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
-        if (currentPageReference && currentPageReference.attributes) {
-            const navigationStateString = currentPageReference.attributes.c__navigationState;
+        console.log('OUTPUT : ',currentPageReference);                               
+        let decodedJson = currentPageReference;
+        console.log('OUTPUT 11: ',decodedJson);
+        if (decodedJson ) {
+            console.log('OUTPUT 2 : ',decodedJson);
+            console.log('OUTPUT 3 : ',decodedJson.attributes);
+            console.log('OUTPUT 4 : ',decodedJson.attributes.attributes);
+            const navigationStateString = decodedJson.attributes.attributes.c__navigationState;
             console.log('navigationStateString ==>' , navigationStateString);
             if (navigationStateString) {
                 try {
@@ -59,7 +69,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.isObjectChanged = parseObject.isObjectChanged;
                     this.oldObject = parseObject.oldObject;
                     this.isFirstTimeLoaded = parseObject.isFirstTimeLoaded;
-                    this.templateTypeForCreation = parseObject.templateTypeForCreation
+                    this.templateTypeForCreation = parseObject.templateTypeForCreation;
+                    this.currentPage = parseObject.pageNumber;
+                    this.totalRecodslength = parseObject.totalRecodslength;
 
                     this.fetchFields();
                 } catch (error) {
@@ -71,35 +83,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         } else {
             console.error('currentPageReference or currentPageReference.state is not defined');
         }
-    }
-
-    /**
-    * Method Name: fetchFields
-    * @description: Method to fetch the fields for the selected object
-    * Date: 13/06/2024
-    * Created By: Rachit Shah
-    */
-    fetchFields() {
-        if (!this.selectedObject) {
-            console.error('No selected object found.');
-            return;
-        }
-
-        getFieldsForObject({ objectName: this.selectedObject })
-            .then(data => {
-                this.fieldOptions = data.map(field => ({ label: field, value: field }));
-
-                if(this.isObjectChanged){
-                    const errorPopup = this.template.querySelector('c-error_-pop-up');
-                    console.log('errorPopup ==> ' , errorPopup);
-                    if(errorPopup){
-                        errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching fields:', error);
-            });
     }
 
     /**
@@ -131,6 +114,36 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.isLoading = false;
                 });
         }
+    }
+
+
+    /**
+    * Method Name: fetchFields
+    * @description: Method to fetch the fields for the selected object
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    fetchFields() {
+        if (!this.selectedObject) {
+            console.error('No selected object found.');
+            return;
+        }
+
+        getFieldsForObject({ objectName: this.selectedObject })
+            .then(data => {
+                this.fieldOptions = data.map(field => ({ label: field, value: field }));
+
+                if(this.isObjectChanged){
+                    const errorPopup = this.template.querySelector('c-error_-pop-up');
+                    console.log('errorPopup ==> ' , errorPopup);
+                    if(errorPopup){
+                        errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching fields:', error);
+            });
     }
 
     /**
@@ -363,12 +376,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     
                 currentRange.collapse(false);
     
-                $(this.editor).summernote('saveRange');
             }
         } catch (error) {
             console.log('error in appendFieldToEditor method', error);
         }
     }
+    
     
 
 
@@ -409,7 +422,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             .then((res) => {
                 this.showToast('Success', 'Template saved successfully', 'success');
                 this.isLoading = false;
-                this.navigationToTemplatePage();
+                this.navigationToTemplatePageWithPage();
             })
             .catch(error => {
                 console.error('Error saving template:', error);
@@ -478,8 +491,25 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 type: 'standard__navItemPage',
                 attributes: {
                     apiName: 'template_builder',
+                    pageNumber: this.newPageNumber
                 },
             });
+    }
+
+    navigationToTemplatePageWithPage() {
+        const pageSize = 10;
+        this.newPageNumber = 1;
+        if(this.totalRecodslength){
+            this.newPageNumber = Math.ceil((this.totalRecodslength + 1) / pageSize);
+        }
+    
+        this[NavigationMixin.Navigate]({
+            type: 'standard__navItemPage',
+            attributes: {
+                apiName: 'template_builder',
+                pageNumber: this.newPageNumber
+            },
+        });
     }
     /**
     * Method Name: showToast

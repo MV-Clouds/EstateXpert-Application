@@ -17,6 +17,8 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api bodyOfTemplate = '';
     @api isEdit = false;
     @track isObjectChanged = false;
+    @api pageNumber = 1;
+    @api totalRecodslength;
 
     /**
     * Method Name: wiredSObjectNames
@@ -106,18 +108,38 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 isObjectChanged : this.isObjectChanged,
                 oldObject: this.oldObject,
                 isFirstTimeLoaded : false,
-                templateTypeForCreation: this.name
+                templateTypeForCreation: this.name,
+                pageNumber : this.pageNumber,
+                totalRecodslength : this.totalRecodslength
             };
     
             const serializedState = JSON.stringify(navigationState);
             console.log('serializedState:', serializedState);
     
-            this[NavigationMixin.Navigate]({
-                type: 'standard__navItemPage',
-                attributes: {
-                    apiName: 'Template_Editor',
+            // this[NavigationMixin.Navigate]({
+            //     type: 'standard__navItemPage',
+            //     attributes: {
+            //         apiName: 'Template_Editor',
+            //         c__navigationState: serializedState,
+            //         c__recordId : this.currentRecordId
+            //     }
+            // });
+
+            var cmpDef;                
+            cmpDef = {
+                componentDef: 'c:templateModalChild',
+                attributes: {                    
                     c__navigationState: serializedState,
                     c__recordId : this.currentRecordId
+                }                
+                };
+
+            let encodedDef = btoa(JSON.stringify(cmpDef));
+                console.log('encodedDef : ', encodedDef);
+                this[NavigationMixin.Navigate]({
+                type: "standard__webPage",
+                attributes: {
+                    url:  "/one/one.app#" + encodedDef                                                         
                 }
             });
 

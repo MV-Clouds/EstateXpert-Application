@@ -118,7 +118,7 @@
 
             </template>
 
-            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate} object-select={selectedobject} type-select={selectedType} description={selectedDescription} name={nameForTemplate} current-record-id={currentRecId} is-edit="false" body-of-template={selectedTemplateBody} ></c-custom-modal>
+            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate} object-select={selectedobject} type-select={selectedType} description={selectedDescription} name={nameForTemplate} current-record-id={currentRecId} is-edit="false" body-of-template={selectedTemplateBody} page-number={currentPage} total-recodslength={totalRecodslength} ></c-custom-modal>
 
             <footer>
                 <template if:true={visibleTemplates.length}>
