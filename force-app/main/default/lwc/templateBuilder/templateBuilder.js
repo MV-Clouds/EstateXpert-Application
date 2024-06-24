@@ -10,23 +10,23 @@ import updateTemplateStatus from '@salesforce/apex/TemplateBuilderController.upd
 const PAGE_SIZE = 10;
 
 export default class TemplateBuilder extends NavigationMixin(LightningElement) {
+    @api nameForTemplate = 'New';
+    @track totalPages = 0;
+    @track currentPage = 1;
     @track templates = [];
     @track filteredTemplates = [];
     @track visibleTemplates = [];
-    @track currentPage = 1;
-    @track totalPages = 0;
-    @track isModalOpen = false;
-    @api nameForTemplate = 'New';
+    @track currentRecId;
+    @track totalRecodslength;
+    @track newPageNumber;
     @track selectedobject = '';
     @track selectedTemplate = '';
     @track selectedDescription = '';
     @track selectedType = '';
-    @track currentRecId ;
+    @track selectedTemplateBody = ''; 
+    @track isModalOpen = false;
     @track isLoading = false; 
     @track isPreviewModal = false;
-    @track selectedTemplateBody = ''; 
-    @track totalRecodslength;
-    @track newPageNumber;
     @track isPreviousDisabled = true;
     @track isNextDisabled = false;    
     
@@ -329,16 +329,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 }
             });
 
-            // this[NavigationMixin.Navigate]({
-            //     type: 'standard__component',
-            //     attributes: {
-            //         apiName: 'Template_Editor',
-            //         c__navigationState: serializedState,
-            //         c__recordId : templateId,
-            //         componentName : 'c__templateModalChild'
-            //     }
-            // });
-
             this.closeModal();
     
         } else {
@@ -365,7 +355,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                     this.templates.forEach((tmpl, index) => {
                         tmpl.rowIndex = index + 1;
                     });
-                    
+
                     this.filteredTemplates = [...this.templates];
                     this.calculateTotalPages();
                     
@@ -385,7 +375,12 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         }
     }
     
-    
+    /**
+    * Method Name: updatePaginationButtons
+    * @description: method to update paginations button
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
     updatePaginationButtons() {
         this.isPreviousDisabled = (this.currentPage == 1);
         console.log('here1==>' , this.currentPage) ;
@@ -431,6 +426,12 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.dispatchEvent(event);
     }
 
+    /**
+    * Method Name: handleCloseModal
+    * @description: method to close modal
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
     handleCloseModal(){
         this.isPreviewModal = false;
     }

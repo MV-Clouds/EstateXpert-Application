@@ -2,14 +2,26 @@ import { LightningElement, track, api } from 'lwc';
 import getRecordsByObject from '@salesforce/apex/TemplateBuilderController.getRecordsByObject';
 
 export default class TemplatePreviewModal extends LightningElement {
-    @track isRecordSelectOpen = false;
-    @track selectedRecord = '';
     @api objectName;
     @api templateBody;
+    @track isRecordSelectOpen = false;
+    @track selectedRecord = '';
     @track recordOptions = [];
     @track recordName = 'Message Body';
     @track updatedBody = '';
     @track recordOptions = [{ label: 'None', value: 'none' }];
+
+    get toggleIconName() {
+        return this.isRecordSelectOpen ? 'utility:chevronleft' : 'utility:chevronright';
+    }
+
+    get collapsibleSectionClass() {
+        return `collapsible-section ${this.isRecordSelectOpen ? '' : 'collapsed'}`;
+    }
+
+    get contentClass() {
+        return `content ${this.isRecordSelectOpen ? '' : 'collapsed'}`;
+    }
 
     /**
     * Method Name: connectedCallback
@@ -44,19 +56,6 @@ export default class TemplatePreviewModal extends LightningElement {
             });
     }
 
-    get toggleIconName() {
-        return this.isRecordSelectOpen ? 'utility:chevronleft' : 'utility:chevronright';
-    }
-
-    get collapsibleSectionClass() {
-        return `collapsible-section ${this.isRecordSelectOpen ? '' : 'collapsed'}`;
-    }
-
-    get contentClass() {
-        return `content ${this.isRecordSelectOpen ? '' : 'collapsed'}`;
-    }
-
-
     /**
     * Method Name: closeModal
     * @description: Method to close the modal
@@ -83,7 +82,6 @@ export default class TemplatePreviewModal extends LightningElement {
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
-
     handleRecordChange(event) {
         this.selectedRecord = event.detail.value;
         console.log('selectedRecord ==> ' , this.selectedRecord);
@@ -97,6 +95,7 @@ export default class TemplatePreviewModal extends LightningElement {
             this.updateTemplateBody(selectedOption.data);
         }
     }
+    
     /**
     * Method Name: updateTemplateBody
     * @description: Method to update merged field values

@@ -12,9 +12,10 @@ import { NavigationMixin } from 'lightning/navigation';
 export default class TemplateModalChild extends NavigationMixin(LightningElement) {
     @api selectedObject;
     @api currentRecordId = null;
+    @api templateLabel = '';
+    @api isFirstTimeLoaded = false;
     @track selectedField = '';
     @track fieldOptions = [];
-    @api templateLabel = '';
     @track description = '';
     @track isLoading = true;
     @track isInitialRender = true;
@@ -28,7 +29,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track cancelBtn = false;
     @track templateTypeForCreation = 'New';
     @track editor;
-    @api isFirstTimeLoaded = false;
     @track currentPage;
     @track totalRecodslength;
     @track newPageNumber;
@@ -37,7 +37,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         return this.currentRecordId ? this.currentRecordId : 'tempId';
     }
     
-
     /**
     * Method Name: getStateParameters
     * @description: Method to get values from attribute from the currentpagereference
@@ -382,9 +381,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         }
     }
     
-    
-
-
     /**
     * Method Name: setEmailBody
     * @description: get the body of the template and set in the currentpagereference method
@@ -503,6 +499,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     
     }
 
+    /**
+    * Method Name: navigationToTemplatePage
+    * @description: Method to nevigate template page
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     navigationToTemplatePage(){
             this[NavigationMixin.Navigate]({
                 type: 'standard__navItemPage',
@@ -513,6 +515,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             });
     }
 
+    /**
+    * Method Name: navigationToTemplatePageWithPage
+    * @description: Method to nevigate template page with current page
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     navigationToTemplatePageWithPage() {
         const pageSize = 10;
         this.newPageNumber = 1;
@@ -528,6 +536,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             },
         });
     }
+
     /**
     * Method Name: showToast
     * @description: Method to display toast message
@@ -543,6 +552,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         this.dispatchEvent(event);
     }
 
+    /**
+    * Method Name: handlePopUpCancel
+    * @description: Method to cancel error popup
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     handlePopUpCancel(){
         this.isObjectChanged  = false;
         console.log('oldobject ==> ' , this.oldObject);
@@ -555,6 +570,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         console.log(this.selectedObject , 'SelectedObject');
     }
 
+    /**
+    * Method Name: handleContinue
+    * @description: Method to continue error popup component
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     handleContinue() {
         if (this.isObjectChanged && !this.cancelBtn) {
             const editorContent = $(this.editor).summernote('code');

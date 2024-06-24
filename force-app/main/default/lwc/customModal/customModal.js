@@ -9,16 +9,16 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api description = '';
     @api objectSelect = '';
     @api typeSelect = '';
-    @track objectOptions;
-    @track typeOptions;
-    @track IsChildModal = false;
     @api currentRecordId;
     @api name = ''
     @api bodyOfTemplate = '';
     @api isEdit = false;
-    @track isObjectChanged = false;
     @api pageNumber = 1;
     @api totalRecodslength;
+    @track objectOptions;
+    @track typeOptions;
+    @track IsChildModal = false;
+    @track isObjectChanged = false;
 
     /**
     * Method Name: wiredSObjectNames
@@ -115,15 +115,6 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     
             const serializedState = JSON.stringify(navigationState);
             console.log('serializedState:', serializedState);
-    
-            // this[NavigationMixin.Navigate]({
-            //     type: 'standard__navItemPage',
-            //     attributes: {
-            //         apiName: 'Template_Editor',
-            //         c__navigationState: serializedState,
-            //         c__recordId : this.currentRecordId
-            //     }
-            // });
 
             var cmpDef;                
             cmpDef = {
