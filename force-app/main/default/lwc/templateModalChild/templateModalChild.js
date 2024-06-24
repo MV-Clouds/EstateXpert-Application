@@ -462,28 +462,45 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     async handleCancel() {
         console.log('In handlecancel');
+        var regex = /(<([^>]+)>)/ig;
 
-        this.isObjectChanged =  true;
-        this.cancelBtn = true;
+        const editorContent = $(this.editor).summernote('code');
+        const editorContentWithoutHtml = editorContent.replace(regex, "");
+        console.log('editorContentWithoutHtml ==> ' , editorContentWithoutHtml);
 
-        setTimeout(async () => {
-            const errorPopup = this.template.querySelector('c-error_-pop-up');
-            console.log('errorPopup ==> ', errorPopup);
+        if(editorContentWithoutHtml != ''){
 
-            if (errorPopup) {
-                errorPopup.showToast('warning', 'You will lose all changed data here', 'Warning');
-            } else {
-                console.error('Error popup component not found');
+            const normalizedEditorContent = editorContent.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+            const normalizedBodyOfTemplate = this.bodyOfTemplate.replace(/\s+/g, ' ').trim();    
+    
+            if (normalizedEditorContent !== normalizedBodyOfTemplate) {
+                console.log('editorContent ==> ' , normalizedEditorContent);
+                console.log('bodyOfTemplate ==> ' , normalizedBodyOfTemplate);
+                this.isObjectChanged =  true;
+                this.cancelBtn = true;
+        
+                setTimeout(async () => {
+                    const errorPopup = this.template.querySelector('c-error_-pop-up');
+                    console.log('errorPopup ==> ', errorPopup);
+        
+                    if (errorPopup) {
+                        errorPopup.showToast('warning', 'You will lose all changed data here', 'Warning');
+                    } else {
+                        console.error('Error popup component not found');
+                    }
+                }, 100);
             }
 
-            // Navigate to a different page if necessary
-            // this[NavigationMixin.Navigate]({
-            //     type: 'standard__navItemPage',
-            //     attributes: {
-            //         apiName: 'template_builder',
-            //     },
-            // });
-        }, 100); // delay of 100ms
+            else{
+                this.navigationToTemplatePage();
+            }
+        }
+
+        else{
+            this.navigationToTemplatePage();
+        }
+
+    
     }
 
     navigationToTemplatePage(){
