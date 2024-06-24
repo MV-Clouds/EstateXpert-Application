@@ -119,6 +119,9 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         
     }
 
+    handleModalClose(event){
+        this.isModalOpen = false;
+    }
 
     fetchDateFields() {
         getDateFieldsForPicklist()
