@@ -9,7 +9,8 @@
     <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
         <div class="slds-modal__container custom-modal-container">
             <header class="slds-modal__header custom-modal-header">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                    onclick={closeModal}>
                     <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
                     <span class="slds-assistive-text">Close</span>
                 </button>
@@ -21,11 +22,7 @@
                         <label><span class="red">*</span>Name</label>
                     </div>
                     <div class="input-container">
-                        <lightning-input 
-                            placeholder="Template Name" 
-                             
-                            name="templateName"
-                            value={templateName}
+                        <lightning-input placeholder="Template Name" name="templateName" value={templateName}
                             onchange={handleInputChange}>
                         </lightning-input>
                     </div>
@@ -35,10 +32,7 @@
                         <label>Description</label>
                     </div>
                     <div class="input-container">
-                        <lightning-textarea 
-                            name="description"
-                            value={description}
-                            onchange={handleInputChange}
+                        <lightning-textarea name="description" value={description} onchange={handleInputChange}
                             aria-rowspan="5">
                         </lightning-textarea>
                     </div>
@@ -48,13 +42,8 @@
                         <label><span class="red">*</span>Object Select</label>
                     </div>
                     <div class="input-container">
-                        <lightning-combobox 
-                            placeholder="Please select the Object" 
-                             
-                            name="objectSelect"
-                            options={objectOptions}
-                            value={objectSelect}
-                            onchange={handleInputChange}>
+                        <lightning-combobox placeholder="Please select the Object" name="objectSelect"
+                            options={objectOptions} value={objectSelect} onchange={handleInputChange}>
                         </lightning-combobox>
                     </div>
                 </div>
@@ -63,12 +52,8 @@
                         <label><span class="red">*</span>Type</label>
                     </div>
                     <div class="input-container">
-                        <lightning-combobox 
-                            placeholder="Please select the Type" 
-                            name="typeSelect"
-                            options={typeOptions}
-                            value={typeSelect}
-                            onchange={handleInputChange}>
+                        <lightning-combobox placeholder="Please select the Type" name="typeSelect" options={typeOptions}
+                            value={typeSelect} onchange={handleInputChange}>
                         </lightning-combobox>
                     </div>
                 </div>
@@ -84,14 +69,5 @@
         </div>
     </section>
     <div class="slds-backdrop slds-backdrop_open"></div>
-
-    <!-- <template if:true={showWarningPopup}>
-        <div class="popup-container">
-            <c-error_-pop-up
-                oncancel={handleCancel}
-                oncontinue={handleContinue}
-            ></c-error_-pop-up>
-        </div>
-    </template> -->
 
 </template>
