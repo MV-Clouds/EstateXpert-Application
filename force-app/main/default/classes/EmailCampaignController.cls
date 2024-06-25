@@ -9,7 +9,7 @@ public with sharing class EmailCampaignController {
 
     @AuraEnabled(cacheable=true)
     public static List<Contact> getContacts() {
-        return [SELECT Id, Name FROM Contact WITH SECURITY_ENFORCED ];
+        return [SELECT Id, Name,Email FROM Contact WITH SECURITY_ENFORCED ];
     }
 
     @AuraEnabled(cacheable=true)

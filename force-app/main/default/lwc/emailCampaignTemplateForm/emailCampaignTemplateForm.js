@@ -37,6 +37,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track quickTemplateOptions = null;
     @track quickTemplates = null;
     @track emailsFromTemplate = null;
+    @track specificDate = '';
     
     @track plusIconUrl = plusIcon; 
     @track previewBtnUrl = previewBtn;
@@ -114,7 +115,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         if (data) {
             this.contacts = data.map(contact => ({
                 label: contact.Name,
-                value: contact.Id
+                value: contact.Id,
+                email: contact.Email
             }));
             this.updateFilteredLists();
         } else if (error) {
@@ -140,6 +142,10 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleModalClose(event){
         this.isModalOpen = false;
+    }
+
+    handleSpecificDateChange(event){
+        this.specificDate = event.target.value;
     }
 
     fetchDateFields() {
@@ -443,8 +449,43 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleSave() {
-        console.log('emails ==> ' , JSON.stringify(this.emails));
+        const transformedPrimaryRecipients = this.selectedPrimaryRecipients.map(recipient => ({
+            id: {
+                name: recipient.label,
+                email: recipient.email
+            }
+        }));
+    
+        const transformedCCRecipients = this.selectedCCRecipients.map(recipient => ({
+            id: {
+                name: recipient.label,
+                email: recipient.email
+            }
+        }));
+    
+        const transformedBCCRecipients = this.selectedBCCRecipients.map(recipient => ({
+            id: {
+                name: recipient.label,
+                email: recipient.email
+            }
+        }));
+    
+        const campaignObj = {
+            name: this.emailCampaignName,
+            senderMode: this.navigationStateString.senderMode,
+            fromAddress: this.navigationStateString.fromAddress,
+            fromName: this.navigationStateString.fromName,
+            saveForFuture: this.navigationStateString.saveForFuture,
+            specificDate : this.specificDate,
+            selectedPrimaryRecipients: transformedPrimaryRecipients,
+            selectedCCRecipients: transformedCCRecipients,
+            selectedBCCRecipients: transformedBCCRecipients,
+            emails: this.emails 
+        };
+    
+        console.log('campaignObj ==> ', JSON.stringify(campaignObj));
         console.log('save btn is clicked');
     }
+    
 
 }

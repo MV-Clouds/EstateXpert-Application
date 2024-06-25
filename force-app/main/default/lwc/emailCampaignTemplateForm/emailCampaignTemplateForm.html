@@ -178,7 +178,7 @@
             </fieldset>
     
             <template if:true={isSpecificDateOption}>
-                <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date"></lightning-input>
+                <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date" value={specificDate} onchange={handleSpecificDateChange}></lightning-input>
             </template>
 
                 <template if:true={isContactDateFieldOption}>
