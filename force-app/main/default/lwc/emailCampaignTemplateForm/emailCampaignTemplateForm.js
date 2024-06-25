@@ -30,7 +30,6 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track contactDateFieldOptions;
     @track isDateFieldDropdownVisible = false;
     @track isFieldSelected = false;
-    @track selectedContactDateFieldLabel = '';
     @track emailCampaignTemplate = '';
     @track emailCampaignName = '';
     @track navigationStateString;
@@ -78,7 +77,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     */
     @wire(CurrentPageReference)
     setCurrentPageReference(currentPageReference) {
-        if (currentPageReference && currentPageReference.attributes.attributes.c__navigationState ) {
+        if (currentPageReference && currentPageReference.attributes.attributes ) {
              const navigationStateString = currentPageReference.attributes.attributes.c__navigationState;
 
             if(navigationStateString){
@@ -325,6 +324,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleStartDateOptionChange(event) {
         this.startDateOption = event.detail.value;
+        console.log('startDateOption ==> ' , this.startDateOption);
     }
 
     handleContactDateFieldChange(event) {
@@ -346,11 +346,11 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleCancel() {
-        // Handle cancel logic
+        console.log('cancel btn is clicked');
     }
 
     handleSave() {
-        // Handle save logic
+        console.log('save btn is clicked');
     }
 
 }

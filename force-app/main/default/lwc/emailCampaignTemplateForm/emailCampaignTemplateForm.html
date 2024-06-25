@@ -260,7 +260,12 @@
                             <template for:each={emails} for:item="email">
                                 <tr key={email.id}>
                                     <td data-label="Email Name">
-                                        <div class="slds-truncate" title={email.name}>{email.name}</div>
+                                        <!-- <div class="slds-truncate" title={email.name}>{email.name}</div> -->
+                                        <div>
+                                            <lightning-input 
+                                              type="text"
+                                            ></lightning-input>
+                                        </div>
                                     </td>
                                     <td data-label="Subject">
                                         <div class="slds-truncate" title={email.subject}>{email.subject}</div>

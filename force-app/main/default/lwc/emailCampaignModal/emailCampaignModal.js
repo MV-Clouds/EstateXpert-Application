@@ -3,6 +3,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import getEmailCampaignTemplates from '@salesforce/apex/EmailCampaignController.getEmailCampaignTemplates';
+import createEmailCampaignRecord from '@salesforce/apex/EmailCampaignController.createEmailCampaignRecord';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 
 export default class EmailCampaignModal extends  NavigationMixin(LightningElement) {
@@ -92,29 +93,47 @@ export default class EmailCampaignModal extends  NavigationMixin(LightningElemen
         }
     }
 
+    handleSave() {
+        if (this.isFormValid()) {
+            const formDataCopy = { ...this.formData };
+            // Call Apex method to save the data
+
+        } else {
+            this.showToast('Error', 'All required fields must be filled out', 'error');
+        }
+    }
+
     handleNext() {
         if (this.isFormValid()) {
             const formDataCopy = { ...this.formData };
             const navigationState = formDataCopy;
-            
-            var cmpDef = {
-                componentDef: 'c:emailCampaignTemplateForm',
-                attributes: {                    
-                    c__navigationState: navigationState,
-                }                
-            };
 
-            let encodedDef = btoa(JSON.stringify(cmpDef));
-                console.log('encodedDef : ', encodedDef);
-                this[NavigationMixin.Navigate]({
-                type: "standard__webPage",
-                attributes: {
-                    url:  "/one/one.app#" + encodedDef                                                         
-                },
-                apiName : 'Email_Campaign_Template_Form'
+            createEmailCampaignRecord({ campaignData: JSON.stringify(formDataCopy) })
+            .then(result => {
+                console.log('result ==> ' , result);
+                var cmpDef = {
+                    componentDef: 'c:emailCampaignTemplateForm',
+                    attributes: {                    
+                        c__navigationState: navigationState,
+                    }                
+                };
+    
+                let encodedDef = btoa(JSON.stringify(cmpDef));
+                    console.log('encodedDef : ', encodedDef);
+                    this[NavigationMixin.Navigate]({
+                    type: "standard__webPage",
+                    attributes: {
+                        url:  "/one/one.app#" + encodedDef                                                         
+                    },
+                    apiName : 'Email_Campaign_Template_Form'
+                });
+                    
+                this.handleCloseModal();
+            })
+            .catch(error => {
+                this.showToast('Error', 'Failed to create Email Campaign', 'error');
+                console.error(error);
             });
-
-            this.handleCloseModal();
     
         } else {
             this.showToast('Error', 'Please fill in all required fields', 'error');
