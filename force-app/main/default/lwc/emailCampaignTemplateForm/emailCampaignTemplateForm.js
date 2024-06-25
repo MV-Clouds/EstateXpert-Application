@@ -42,6 +42,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track previewBtnUrl = previewBtn;
     @track deleteBtnUrl = deleteBtn;
 
+
     @track startDateOptions = [
         { label: 'Using a specific date', value: 'specificDate' },
         { label: 'Using a contact related date field', value: 'contactDateField' },
@@ -165,11 +166,27 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleTemplateDataChange(event){
         const eventData = event.detail;
+        this.navigationStateString = eventData;
 
-        // this.emailCampaignTemplate = eventData.selectedTemplate;
+        if(this.templateId != eventData.selectedTemplateId) {
+            this.templateId = eventData.selectedTemplateId;
+            this.emailCampaignTemplate = eventData.selectedTemplate;
+            this.emailsFromTemplate = eventData.marketingEmails;
+
+
+            if (this.emailsFromTemplate) {
+                this.emails = this.emailsFromTemplate.map(email => ({
+                    id: email.Id, 
+                    name: email.Quick_Template__c,
+                    subject: email.Subject__c, 
+                    daysAfterStartDate: 0, 
+                    timeToSend: ''
+                }));
+                this.emailsWithName = [...this.emails];
+            }
+        }
+        
         this.emailCampaignName = eventData.campaignName;
-        this.templateId = eventData.selectedTemplateId;
-        this.emailsFromTemplate = eventData.marketingEmails;
         this.quickTemplateOptions = eventData.quickTemplateOptions;
         this.quickTemplates = eventData.quickTemplates;
 
