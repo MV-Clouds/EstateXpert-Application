@@ -12,6 +12,12 @@ export default class GeneratePdf extends NavigationMixin(LightningElement) {
     @track isLoading = false;
     @track pdfUrl;
 
+    /**
+    * Method Name: ConnectedCallback
+    * @description: Standard connectCallback method
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     connectedCallback() {
         console.log('Record ID:', this.recordId);
         // Check if recordId is available
@@ -20,6 +26,12 @@ export default class GeneratePdf extends NavigationMixin(LightningElement) {
         }
     }
 
+    /**
+    * Method Name: wiredRecords
+    * @description: this wire method is used to get all the dropdown records
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     @wire(getRecords)
     wiredRecords({ error, data }) {
         console.log(data);
@@ -35,39 +47,23 @@ export default class GeneratePdf extends NavigationMixin(LightningElement) {
         }
     }
 
+    /**
+    * Method Name: handleChange
+    * @description: this method updates the selectedId when ever the user change the selected id using the dropdown
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     handleChange(event) {
         this.selectedId = event.detail.value;
         console.log('Selected ID:', this.selectedId);
     }
 
-    // previewPDF() {
-    //     // Check if selectedId is available
-    //     if (!this.selectedId) {
-    //         this.showToast('Error', 'Please select a record.', 'error');
-    //         return;
-    //     }
-
-    //     this.isLoading = true;
-
-    //     initialize({ selectedId: this.selectedId, recordId: this.recordId })
-    //         .then(result => {
-    //             console.log('Success:', result);
-    //             this.isLoading = false;
-    //             this[NavigationMixin.GenerateUrl]({
-    //                 type: 'standard__webPage',
-    //                 attributes: {
-    //                     url: `/apex/PDFV2?selectedId=${this.selectedId}&recordId=${this.recordId}`
-    //                 }
-    //             }).then(generatedUrl => {
-    //                 window.open(generatedUrl);
-    //             });
-    //         })
-    //         .catch(error => {
-    //             console.error('Error initializing PDF generation:', error);
-    //             this.isLoading = false;
-    //             this.showToast('Error', 'Failed to initialize PDF generation. Please try again later.', 'error');
-    //         });
-    // }
+    /**
+    * Method Name: previewPDF
+    * @description: this method is used to initialize the preview and navigate to preview page
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     previewPDF() {
         // Check if selectedId is available
         if (!this.selectedId) {
@@ -97,6 +93,12 @@ export default class GeneratePdf extends NavigationMixin(LightningElement) {
             });
     }
     
+    /**
+    * Method Name: showToast
+    * @description: this method is used to show standard toast messages
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     showToast(title, message, variant) {
         const toastEvent = new ShowToastEvent({
             title: title,

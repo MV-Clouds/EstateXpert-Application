@@ -17,20 +17,11 @@ export default class mapsComponent extends NavigationMixin(LightningElement) {
     @track totalRecords = 0;
     @track bDisableFirst = true;
     @track bDisableLast = false;
-    searchKey = '';
+    @track searchKey = '';
     @track showDiv = false;
-    buttonLabel = 'Filter';
+    @track buttonLabel = 'Filter';
 
-    connectedCallback() {
-        loadStyle(this, mapCss_V1)
-            .then(() => {
-                console.log('CSS loaded');
-            })
-            .catch(error => {
-                console.error('Error loading CSS:', error);
-            });
-    }
-
+    
     @wire(getRooms, { no_of_rooms: '$searchKey' }) // Wire the new method
     wiredRoomData({ error, data }) {
         if (data) {
@@ -40,7 +31,7 @@ export default class mapsComponent extends NavigationMixin(LightningElement) {
             console.error('Error fetching room data:', error);
         }
     }
-
+    
     @wire(getListingRecords, { searchKey: '$searchKey', pageNumber: '$pageNumber', pageSize: PAGE_SIZE })
     wiredRecords({ error, data }) {
         if (data) {
@@ -73,6 +64,16 @@ export default class mapsComponent extends NavigationMixin(LightningElement) {
         } else if (error) {
             console.error('Error fetching data:', error);
         }
+    }
+    
+    connectedCallback() {
+        loadStyle(this, mapCss_V1)
+            .then(() => {
+                console.log('CSS loaded');
+            })
+            .catch(error => {
+                console.error('Error loading CSS:', error);
+            });
     }
 
     handleSearchChange(event) {
@@ -110,7 +111,6 @@ export default class mapsComponent extends NavigationMixin(LightningElement) {
             console.log('After Filtering:', JSON.stringify(this.mapMarkers));
         }
     }
-    
     
 
     sortByRooms() {

@@ -12,13 +12,11 @@ const PAGE_SIZE = 8;
 export default class DisplayProperties extends NavigationMixin(LightningElement) {
     @api recordId;
     @api objectApiName;
-
     @track mapMarkers = [];
     @track pageNumber = 1;
     @track pageSize = 5;
     @track searchKey = '';
     @track totalRecords = 0;
-
     @track properties = [];
     @track currentPage = 1;
     @track searchTerm = '';
@@ -32,8 +30,6 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         city: '',
         zipcode: ''
     };
-    //@track bathroom_icon = bathroom_icon;
-    //@track bedroom_icon = bedroom_icon;
     @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
     @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
     @track area_icon = propertyIcons + '/PropertyIcons/Area.png';
@@ -84,6 +80,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         return this.pagedFilteredListingData.slice(startIndex, endIndex);
     }
 
+    /**
+    * Method Name: ConnectedCallback
+    * @description: Standard ConnectedCallback method which executes when the component is loaded and it is calling apex to fetch all the properties and loading map library
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     connectedCallback() {
         this.fetchProperties();
         loadStyle(this, mapCss_V1)
@@ -95,6 +97,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             });
     }
 
+    /**
+    * Method Name: fetchProperties
+    * @description: this method is used to get all properties data from the apex and update the property list to display them
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     fetchProperties() {
         GetProperties({ RecordId: this.recordId, object_name: this.objectApiName })
             .then(result => {
@@ -125,6 +133,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             });
     }
 
+    /**
+    * Method Name: updateMapMarkers
+    * @description: this method is used to update and set the markers on the map for the properties with the pagination
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     updateMapMarkers() {
         const startIndex = (this.currentPage - 1) * PAGE_SIZE;
         const endIndex = startIndex + PAGE_SIZE;
@@ -147,12 +161,24 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         });
     }
 
-    doapplyfilters(event) {
+    /**
+    * Method Name: doApplyFilters
+    * @description: this is an event method which is called from an custom event and it sets the filter data and calls filter method
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
+    doApplyFilters(event) {
         this.filterData = event.detail;
         this.filterProperties();
         this.isModalOpen = false;
     }
 
+    /**
+    * Method Name: filterProperties
+    * @description: this method is used to filter the original list of properties and store the filtered properties in the pagedFilteredListingData
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     filterProperties() {
         const { propertyType, minPrice, maxPrice, bedrooms, bathrooms, city, zipCode } = this.filterData;
 
@@ -170,20 +196,28 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             return searchProperty && matchesPropertyType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipCode;
         });
 
-
-
         this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
-
-
         this.currentPage = 1;
         this.totalRecords = this.pagedFilteredListingData.length;
         this.updateMapMarkers();
     }
 
+    /**
+    * Method Name: handleFilter
+    * @description: this method is used to open and close the filter pop up dialog on click of the filter button
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     handleFilter() {
         this.isModalOpen = !this.isModalOpen;
     }
 
+    /**
+    * Method Name: clearFilter
+    * @description: this method is used to clear out all the filters and show the original list of properties
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     clearFilter(event) {
         this.filterData = event.detail;
         this.pagedFilteredListingData = this.ListingData
@@ -192,17 +226,25 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         this.isModalOpen = false;
     }
 
+    /**
+    * Method Name: fetchProperties
+    * @description: this method is used to close the filter pop up dialog when cross icon of pop up modal is clicked
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     closeFilter(event){
         this.isModalOpen = false;
     }
 
+    /**
+    * Method Name: fetchProperties
+    * @description: this method is used to filter the properties based on the search key without overriding other filters
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     handleSearch(event) {
         console.log('OUTPUT : search:- ',event.target.value);
         this.searchTerm = event.target.value.toLowerCase();
-        // this.pagedFilteredListingData
-        // this.pagedFilteredListingData = this.ListingData.filter(property =>
-        //     property.Name.toLowerCase().includes(this.searchTerm)
-        // );
         this.filterProperties();
         this.currentPage = 1; // Reset to first page on search
         this.totalRecords = this.pagedFilteredListingData.length;
@@ -210,6 +252,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         this.updateMapMarkers();
     }
 
+    /**
+    * Method Name: fetchProperties
+    * @description: this method is used to change the view type for the properties with an option for list, grid and map view
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     handleViewChange(event) {
         this.selectedView = event.detail.value;
         if (this.selectedView === 'map') {
@@ -217,6 +265,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         }
     }
 
+        /**
+    * Method Name: fetchProperties
+    * @description: this method is used to navigate to listing record page on click of view more
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     navigateToRecord(event) {
         const recordId = event.currentTarget.dataset.id;
         console.log(recordId);
@@ -229,11 +283,23 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         });
     }
 
+    /**
+    * Method Name: fetchProperties
+    * @description: this method is used to go to first page of pagination
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     goToFirst() {
         this.currentPage = 1;
         this.updateMapMarkers();
     }
 
+    /**
+    * Method Name: fetchProperties
+    * @description: this method is used to go to previous page of pagination
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     goToPrevious() {
         if (this.currentPage > 1) {
             this.currentPage -= 1;
@@ -241,6 +307,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         }
     }
 
+    /**
+    * Method Name: fetchProperties
+    * @description: this method is used to go to next page of pagination
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     goToNext() {
         if (this.currentPage < this.totalPages) {
             this.currentPage += 1;
@@ -248,6 +320,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         }
     }
 
+    /**
+    * Method Name: fetchProperties
+    * @description: this method is used to go to last page of pagination
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
     goToLast() {
         this.currentPage = this.totalPages;
         this.updateMapMarkers();

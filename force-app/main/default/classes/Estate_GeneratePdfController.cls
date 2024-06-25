@@ -26,7 +26,7 @@ public with sharing class Estate_GeneratePdfController {
     @AuraEnabled(cacheable=true)
     public static List<Property_template__c> getRecords() {
         try {
-            return [SELECT Id, Name, HTML__c FROM Property_template__c];
+            return [SELECT Id, Name, HTML__c FROM Property_template__c WITH SECURITY_ENFORCED];
         } catch (Exception e) {
             throw new AuraHandledException('Error fetching records from Property_template__c: ' + e.getMessage());
         }
@@ -65,7 +65,7 @@ public with sharing class Estate_GeneratePdfController {
             System.debug(fields);
 
             // Step 3: Execute the dynamic query
-            String query = 'SELECT ' + fields + ' FROM Listing__c WHERE Id = :recordId LIMIT 1';
+            String query = 'SELECT ' + fields + ' FROM Listing__c WHERE Id = :recordId LIMIT 1 WITH SECURITY_ENFORCED';
             System.debug(query);
             List<Listing__c> listing = Database.query(query);
             System.debug(listing);
@@ -87,7 +87,7 @@ public with sharing class Estate_GeneratePdfController {
             }
 
             // Step 6: Query Property_template__c
-            List<Property_template__c> propList = [SELECT HTML__c FROM Property_template__c WHERE Id = :selectedId LIMIT 1];
+            List<Property_template__c> propList = [SELECT HTML__c FROM Property_template__c WHERE Id = :selectedId LIMIT 1 WITH SECURITY_ENFORCED];
             if (!propList.isEmpty()) {
                 htmlContent = propList[0].HTML__c;
                 if (htmlContent != null) {
@@ -228,7 +228,7 @@ public with sharing class Estate_GeneratePdfController {
     public static String insertPdfAsContentVersion(String recordId, Blob pdfBlob) {
         try {
             // Query the Listing__c record
-            Listing__c listing = [SELECT Name FROM Listing__c WHERE Id = :recordId LIMIT 1];
+            Listing__c listing = [SELECT Name FROM Listing__c WHERE Id = :recordId LIMIT 1 WITH SECURITY_ENFORCED];
             if (listing == null) {
                 throw new AuraHandledException('Listing not found for recordId: ' + recordId);
             }
@@ -243,7 +243,7 @@ public with sharing class Estate_GeneratePdfController {
     
             // Create a new ContentDocumentLink
             ContentDocumentLink cdl = new ContentDocumentLink();
-            cdl.ContentDocumentId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id].ContentDocumentId;
+            cdl.ContentDocumentId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED].ContentDocumentId;
             cdl.LinkedEntityId = recordId;
             cdl.ShareType = 'V';
             cdl.Visibility = 'AllUsers';
@@ -283,10 +283,10 @@ public with sharing class Estate_GeneratePdfController {
             insert contentVersion;
 
             // Get the ContentDocumentId
-            Id contentDocumentId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :contentVersion.Id].ContentDocumentId;
+            Id contentDocumentId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :contentVersion.Id WITH SECURITY_ENFORCED].ContentDocumentId;
 
             // Check if the link already exists
-            List<ContentDocumentLink> existingLinks = [SELECT Id FROM ContentDocumentLink WHERE ContentDocumentId = :contentDocumentId AND LinkedEntityId = :recordId];
+            List<ContentDocumentLink> existingLinks = [SELECT Id FROM ContentDocumentLink WHERE ContentDocumentId = :contentDocumentId AND LinkedEntityId = :recordId WITH SECURITY_ENFORCED];
             if (existingLinks.isEmpty()) {
                 // Create a new ContentDocumentLink
                 ContentDocumentLink contentDocumentLink = new ContentDocumentLink();
