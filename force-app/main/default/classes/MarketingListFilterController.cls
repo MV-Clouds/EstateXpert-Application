@@ -111,20 +111,20 @@ public with sharing class MarketingListFilterController {
     * @description : this is a wrapper class to represent listing records with parent record.
     */
     public class ListingWrapper {
-        public Listing__c listing { get; set; }
         public Contact contact { get; set; }
-        public Property__c property { get; set; }
+        public Contact masterRecord { get; set; }
+        public Contact reportTo { get; set; }
         public Account account { get; set; }
-        public RecordType recordtype { get; set; }
+        public Individual individual { get; set; }
         public User createdby { get; set; }
         public User lastmodifyby { get; set; }
         
-        public ListingWrapper(Listing__c listing, Contact contact, Property__c property , Account account,RecordType recordtype,User createdby,User lastmodifyby ) {
-            this.listing = listing;
+        public ListingWrapper(Contact contact, Contact masterRecord , Contact reportTo,Account account,Individual individual,User createdby,User lastmodifyby ) {
             this.contact = contact;
-            this.property = property;
+            this.masterRecord = masterRecord;
+            this.reportTo = reportTo;
             this.account = account;
-            this.recordtype = recordtype;
+            this.individual = individual;
             this.createdby = createdby;
             this.lastmodifyby = lastmodifyby;
         }
@@ -136,14 +136,14 @@ public with sharing class MarketingListFilterController {
             */
         public String toJson() {
             Map<String, Object> result = new Map<String, Object>();
-            result.put('Id', listing.Id);
-            result.put('Name', listing.Name);
-            result.put('Listing__c', getAllFieldsWithValues(listing));
-            result.put('Contact__r', getAllFieldsWithValues(contact));
-            result.put('Property__r', getAllFieldsWithValues(property));
+            result.put('Id', contact.Id);
+            result.put('Name', contact.Name);
+            result.put('Contact', getAllFieldsWithValues(contact));
+            result.put('MasterRecordId', getAllFieldsWithValues(masterRecord));
+            result.put('ReportsToId', getAllFieldsWithValues(reportTo));
             result.put('Account__r', getAllFieldsWithValues(account));
-            result.put('RecordTypeId', getAllFieldsWithValues(recordtype));
-            result.put('CreatedBy', getAllFieldsWithValues(createdby));
+            result.put('IndividualId', getAllFieldsWithValues(individual));
+            result.put('CreatedById', getAllFieldsWithValues(createdby));
             result.put('LastModifiedById', getAllFieldsWithValues(lastmodifyby));
             return JSON.serialize(result);
         }
@@ -175,39 +175,40 @@ public with sharing class MarketingListFilterController {
         List<String> listingJsons = new List<String>();
 
         // Dynamically build the SOQL query to include all fields
-        String listingFields = String.escapeSingleQuotes(getAllFields('Listing__c'));
-        String contactFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Contact', 'Contact__r'));
-        String propertyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Property__c', 'Property__r'));
-        String accountFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Account', 'Account__r'));
-        String recordTypeFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('RecordType', 'RecordType'));
+        String contactFields = String.escapeSingleQuotes(getAllFields('Contact'));
+        String masterRecordFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Contact', 'MasterRecord'));
+        String reportToFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Contact', 'ReportsTo'));
+        String accountFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Account', 'Account'));
+        String individualFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Individual', 'Individual'));
         String createdbyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('User', 'CreatedBy'));
         String lastmodifybyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('User', 'LastModifiedBy'));
 
         // Constructing the SOQL query
-        String query = 'SELECT ' + listingFields + ', ' +
-                       contactFields + ', ' +'Contact__r.HasOptedOutOfEmail'+ ', ' + 'Contact__r.HasOptedOutOfFax' + ', ' + 'Contact__r.DoNotCall' + ', '+ 'Contact__r.Pronouns' + ', '+ 'Contact__r.GenderIdentity' + ', '+
-                       propertyFields + ', ' +
-                       accountFields + ', ' +'Account__r.Tier'+', '+
-                       recordTypeFields +', '+
+        String query = 'SELECT ' + 
+                       contactFields + ', ' + 'Contact.HasOptedOutOfEmail'+ ', ' + 'Contact.HasOptedOutOfFax' + ', ' + 'Contact.DoNotCall' + ', '+ 'Contact.Pronouns' + ', '+ 'Contact.GenderIdentity' + ', '+
+                       masterRecordFields + ', ' +
+                       accountFields + ', ' + 'Account.Tier'+', '+
+                       reportToFields +', '+
+                       individualFields +', '+
                        createdbyFields + ', '+
                        lastmodifybyFields + ' '+
-                       'FROM Listing__c';
+                       'FROM Contact';
 
         // Debug the constructed query
         System.debug('SOQL Query: ' + query);
 
         // Fetch the listings with related records
-        List<Listing__c> listings = Database.query(query);
+        List<Contact> contacts = Database.query(query);
 
         // Iterate through the listings and create wrapper instances
-        for (Listing__c listing : listings) {
-            Contact relatedContact = listing.Contact__r;
-            Property__c relatedProperty = listing.Property__r;
-            Account relatedAccount= listing.Account__r;
-            RecordType relatedRecordType= listing.RecordType;
-            User relatedCreatedBy= listing.CreatedBy;
-            User relatedLastModifiedBy= listing.LastModifiedBy;
-            ListingWrapper lw = new ListingWrapper(listing, relatedContact, relatedProperty,relatedAccount,relatedRecordType,relatedCreatedBy,relatedLastModifiedBy);
+        for (Contact contact : contacts) {
+            Contact relatedMasterRecord = contact.MasterRecord;
+            Contact relatedReportsToId= contact.ReportsTo;
+            Account relatedAccount= contact.Account;
+            Individual relatedIndividual= contact.Individual;
+            User relatedCreatedBy= contact.CreatedBy;
+            User relatedLastModifiedBy= contact.LastModifiedBy;
+            ListingWrapper lw = new ListingWrapper(contact,relatedMasterRecord,relatedReportsToId,relatedAccount,relatedIndividual,relatedCreatedBy,relatedLastModifiedBy);
             listingJsons.add(lw.toJson());
         }
 
@@ -275,3 +276,5 @@ public with sharing class MarketingListFilterController {
         return listings;
     }
 }
+// Account__r.Tier'+', '+
+// Contact__r.HasOptedOutOfEmail'+ ', ' + 'Contact__r.HasOptedOutOfFax' + ', ' + 'Contact__r.DoNotCall' + ', '+ 'Contact__r.Pronouns' + ', '+ 'Contact__r.GenderIdentity' + ', '+

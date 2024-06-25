@@ -1,6 +1,7 @@
 .mainDiv{
     overflow: auto;
     height: 85%;
+    padding-top: 1rem;
 }
 
 .outerCover{
@@ -9,6 +10,8 @@
     height: fit-content;
     display: flex;
     padding: 1rem;
+    box-shadow: 1px 3px 5px 0px;
+    overflow: hidden;
 }
 
 .content-div{

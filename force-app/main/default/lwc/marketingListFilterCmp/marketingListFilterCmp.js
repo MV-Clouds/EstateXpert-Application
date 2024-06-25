@@ -21,7 +21,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         label:'Listing Type',
         type:'PICKLIST',
         apiName:'Listing_Type__c',
-        objectApiName:'Listing__c',
+        objectApiName:'Inquiry__c',
         operatorName:'equals',
         searchTerm:'',
         minValue:0,
@@ -34,7 +34,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         label:'Status',
         type:'PICKLIST',
         apiName:'Status__c',
-        objectApiName:'Listing__c',
+        objectApiName:'Inquiry__c',
         operatorName:'equals',
         searchTerm:'',
         minValue:0,
@@ -47,7 +47,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         label:'Property Type',
         type:'PICKLIST',
         apiName:'Property_Type__c',
-        objectApiName:'Listing__c',
+        objectApiName:'Inquiry__c',
         operatorName:'equals',
         searchTerm:'',
         minValue:0,
@@ -60,7 +60,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         label : 'City',
         type: 'STRING',
         apiName: 'City__c',
-        objectApiName :'Listing__c',
+        objectApiName :'Inquiry__c',
         searchTerm:'',
         minValue:0,
         maxValue:0,
@@ -84,10 +84,10 @@ export default class MarketingListFilterCmp extends LightningElement {
         currency:true,
     },
     {
-        label : 'Bedrooms',
+        label : 'Bedrooms - min',
         type: 'DOUBLE',
-        apiName: 'Number_Of_Bedrooms__c',
-        objectApiName :'Listing__c',
+        apiName: 'Bedrooms_min__c',
+        objectApiName :'Inquiry__c',
         searchTerm:'',
         minValue:0,
         maxValue:0,
@@ -98,10 +98,10 @@ export default class MarketingListFilterCmp extends LightningElement {
 
     },
     {
-        label : 'Bathrooms',
+        label : 'Bathrooms - min',
         type: 'DOUBLE',
-        apiName: 'Number_Of_Bathrooms__c',
-        objectApiName :'Listing__c',
+        apiName: 'Bathrooms_min__c',
+        objectApiName :'Inquiry__c',
         searchTerm:'',
         minValue:0,
         maxValue:0,
@@ -112,12 +112,12 @@ export default class MarketingListFilterCmp extends LightningElement {
         double:true,
     },
     {
-        label : 'Size',
+        label : 'Size - min',
         type: 'DOUBLE',
-        apiName: 'Number_Of_Bathrooms__c',
-        objectApiName :'Lising__c',
+        apiName: '	Size_min__c',
+        objectApiName :'Inquiry__c',
         searchTerm:'',
-         minValue:0,
+        minValue:0,
         maxValue:0,
         operatorName: 'range',
         isRange:true,
@@ -186,9 +186,9 @@ export default class MarketingListFilterCmp extends LightningElement {
     setListingWapper(){
         getListingsWithRelatedRecords().then(result => {
             this.listings = result.map(item => JSON.parse(item));
-            // console.log('Listings:', JSON.stringify(this.listings[1].Account.Name));
+          //  console.log('Listings:', JSON.stringify(this.listings[1].Account.Name));
             this.staticFields = [...this.filterFields];
-            console.log('static fields'+JSON.stringify(this.staticFields[0]));
+            console.log('static fields'+JSON.stringify(this.listings));
         })
         .catch(error => {
             console.error('Error fetching listings', error);
