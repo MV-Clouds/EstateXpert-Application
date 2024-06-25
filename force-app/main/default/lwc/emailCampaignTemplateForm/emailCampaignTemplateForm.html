@@ -260,7 +260,6 @@
                             <template for:each={emails} for:item="email">
                                 <tr key={email.id}>
                                     <td data-label="Email Name">
-                                        <!-- <div class="slds-truncate" title={email.name}>{email.name}</div> -->
                                         <div>
                                             <lightning-combobox 
                                                 name="emailName"
@@ -272,13 +271,35 @@
                                         </div>
                                     </td>
                                     <td data-label="Subject">
-                                        <div class="slds-truncate" title={email.subject}>{email.subject}</div>
+                                        <div>
+                                            <lightning-input
+                                                type="text"
+                                                value={email.subject}
+                                                disabled
+                                                class="slds-truncate"
+                                                title={email.subject}
+                                            ></lightning-input>
+                                        </div>
                                     </td>
                                     <td data-label="Days after start date">
-                                        <div class="slds-truncate" title={email.daysAfterStartDate}>{email.daysAfterStartDate}</div>
+                                        <div>
+                                            <lightning-input
+                                                type="number"
+                                                value={email.daysAfterStartDate}
+                                                onchange={handleDaysAfterStartDateChange}
+                                                data-id={email.id}
+                                            ></lightning-input>
+                                        </div>
                                     </td>
                                     <td data-label="Time to send">
-                                        <div class="slds-truncate" title={email.timeToSend}>{email.timeToSend}</div>
+                                        <div>
+                                            <lightning-input
+                                                type="time"
+                                                value={email.timeToSend}
+                                                onchange={handleTimeToSendChange}
+                                                data-id={email.id}
+                                            ></lightning-input>
+                                        </div>
                                     </td>
                                     <td data-label="Action">
                                         <div class="action-btns">
@@ -286,7 +307,7 @@
                                                 <img src={previewBtnUrl} alt="previewBtn">
                                             </button>
                                             <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" data-id={email.id} onclick={handleDeleteEmail}>
-                                                <img src={deleteBtnUrl} alt="previewBtn">
+                                                <img src={deleteBtnUrl} alt="deleteBtn">
                                             </button>
                                         </div>
                                     </td>

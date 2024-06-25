@@ -374,6 +374,31 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         });
     }
 
+    handleDaysAfterStartDateChange(event) {
+        const emailId = event.target.dataset.id;
+        const newDaysAfterStartDate = event.target.value;
+    
+        this.emails = this.emails.map(email => {
+            if (email.id === parseInt(emailId, 10)) {
+                email.daysAfterStartDate = newDaysAfterStartDate;
+            }
+            return email;
+        });
+    }
+
+    handleTimeToSendChange(event) {
+        const emailId = event.target.dataset.id;
+        const newTimeToSend = event.target.value;
+    
+        this.emails = this.emails.map(email => {
+            if (email.id === parseInt(emailId, 10)) {
+                email.timeToSend = newTimeToSend;
+            }
+            return email;
+        });
+    }    
+    
+
     handlepreviewBtn(event){
         console.log('handle preview btn');
     }
