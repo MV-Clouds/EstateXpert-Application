@@ -3,11 +3,16 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import getEmailCampaignTemplates from '@salesforce/apex/EmailCampaignController.getEmailCampaignTemplates';
-import createEmailCampaignRecord from '@salesforce/apex/EmailCampaignController.createEmailCampaignRecord';
+import getMarketingEmails from '@salesforce/apex/EmailCampaignController.getMarketingEmails';
+import getQuickTemplates from '@salesforce/apex/EmailCampaignController.getQuickTemplates';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 
 export default class EmailCampaignModal extends  NavigationMixin(LightningElement) {
     @track templateOptions = [];
+    @track marketingEmails = [];
+    @track quickTemplates = null;
+    @track quickTemplateOptions = [];
+    @api selectedTemplateId = '';
 
     @api formData = {
         selectedTemplate: '',
@@ -21,7 +26,7 @@ export default class EmailCampaignModal extends  NavigationMixin(LightningElemen
     wiredTemplates({ error, data }) {
         if (data) {
             this.templateOptions = data.map(template => {
-                return { label: template.Label__c, value: template.Label__c };
+                return { label: template.Label__c, value: template.Id };
             });
         } else if (error) {
             this.showToast('Error', 'Failed to fetch template options', 'error');
@@ -35,10 +40,25 @@ export default class EmailCampaignModal extends  NavigationMixin(LightningElemen
         ])
         .then(res => {
             console.log('External Css Loaded');
+            this.fetchQuickTemplates();
         })
         .catch(error => {
             console.log('Error occuring during loading external css', error);
         });
+    }
+
+    fetchQuickTemplates() {
+        getQuickTemplates()
+            .then(result => {
+                this.quickTemplates = result;
+                this.quickTemplateOptions = result.map(template => ({
+                    label: template.Name,
+                    value: template.Id
+                }));
+            })
+            .catch(error => {
+                console.error('Error fetching templates:', error);
+            });
     }
 
     get senderModeOptions() {
@@ -46,11 +66,6 @@ export default class EmailCampaignModal extends  NavigationMixin(LightningElemen
             { label: 'Myself', value: 'myself' },
             { label: 'Send On Behalf', value: 'sendOnBehalf' }
         ];
-    }
-
-    get selectedTemplateLabel() {
-        const selectedOption = this.templateOptions.find(option => option.value === this.formData.selectedTemplate);
-        return selectedOption ? selectedOption.label : '';
     }
 
     get isSaveDisabled() {
@@ -75,65 +90,85 @@ export default class EmailCampaignModal extends  NavigationMixin(LightningElemen
 
     handleChange(event) {
         const { name, value } = event.target;
-        this.formData = { ...this.formData, [name]: value };
-    }
+        if (name === 'selectedTemplate') {
+            this.selectedTemplateId = event.target.value;
+            const selectedOption = this.templateOptions.find(option => option.value === value);
+            console.log('selectedOption ==> ' , selectedOption.value);
+            if (selectedOption) {
+                this.formData = {
+                    ...this.formData,
+                    selectedTemplate: selectedOption.label,
+                };
 
-    handleTemplateRemove() {
-        this.formData = { ...this.formData, selectedTemplate: '' };
+                getMarketingEmails({ templateId: selectedOption.value })
+                    .then(result => {
+                        this.marketingEmails = result;
+                        console.log('marketingEmails ==> ' , JSON.stringify(this.marketingEmails));
+                    })
+                    .catch(error => {
+                        console.error('Error fetching marketing emails', error);
+                    });
+            }
+        } else {
+            this.formData = { ...this.formData, [name]: value };
+        }
     }
 
     handleSave() {
         const formDataCopy = { ...this.formData };
         
         if (this.isFormValid()) {
-            // Implement save logic here
-            console.log('formData ==> ', JSON.stringify(formDataCopy));
+
+            const navigationState = {
+                ...this.formData,
+                marketingEmails: this.marketingEmails,
+                quickTemplates: this.quickTemplates,
+                quickTemplateOptions: this.quickTemplateOptions,
+                selectedTemplateId : this.selectedTemplateId
+            };
+
+
+            const event = new CustomEvent('handledatachange', {
+                bubbles: true,
+                detail: navigationState
+            });
+
+            this.dispatchEvent(event);
         } else {
             this.showToast('Error', 'All required fields must be filled out', 'error');
         }
     }
 
-    handleSave() {
-        if (this.isFormValid()) {
-            const formDataCopy = { ...this.formData };
-            // Call Apex method to save the data
-
-        } else {
-            this.showToast('Error', 'All required fields must be filled out', 'error');
-        }
-    }
 
     handleNext() {
         if (this.isFormValid()) {
-            const formDataCopy = { ...this.formData };
-            const navigationState = formDataCopy;
+            console.log('marketingEmails ==> ' , JSON.stringify(this.marketingEmails));
+            const navigationState = {
+                ...this.formData,
+                marketingEmails: this.marketingEmails,
+                quickTemplates: this.quickTemplates,
+                quickTemplateOptions: this.quickTemplateOptions,
+                selectedTemplateId : this.selectedTemplateId
+            };
 
-            createEmailCampaignRecord({ campaignData: JSON.stringify(formDataCopy) })
-            .then(result => {
-                console.log('result ==> ' , result);
-                var cmpDef = {
-                    componentDef: 'c:emailCampaignTemplateForm',
-                    attributes: {                    
-                        c__navigationState: navigationState,
-                    }                
-                };
-    
-                let encodedDef = btoa(JSON.stringify(cmpDef));
-                    console.log('encodedDef : ', encodedDef);
-                    this[NavigationMixin.Navigate]({
-                    type: "standard__webPage",
-                    attributes: {
-                        url:  "/one/one.app#" + encodedDef                                                         
-                    },
-                    apiName : 'Email_Campaign_Template_Form'
-                });
-                    
-                this.handleCloseModal();
-            })
-            .catch(error => {
-                this.showToast('Error', 'Failed to create Email Campaign', 'error');
-                console.error(error);
+            var cmpDef = {
+                componentDef: 'c:emailCampaignTemplateForm',
+                attributes: {                    
+                    c__navigationState: navigationState,
+                }                
+            };
+
+            let encodedDef = btoa(JSON.stringify(cmpDef));
+                console.log('encodedDef : ', encodedDef);
+                this[NavigationMixin.Navigate]({
+                type: "standard__webPage",
+                attributes: {
+                    url:  "/one/one.app#" + encodedDef                                                         
+                },
+                apiName : 'Email_Campaign_Template_Form'
             });
+                
+            this.handleCloseModal();
     
         } else {
             this.showToast('Error', 'Please fill in all required fields', 'error');

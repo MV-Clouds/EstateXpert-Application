@@ -14,29 +14,9 @@
 
                 <div class="slds-modal__content slds-p-around_medium">
                     <div class="input-field input-field-bold">
-                        <lightning-combobox name="selectedTemplate" label="Email Campaign Template" value={formData.selectedTemplate}
+                        <lightning-combobox name="selectedTemplate" label="Email Campaign Template" value={selectedTemplateId}
                             placeholder="Select a template" options={templateOptions} onchange={handleChange}>
                         </lightning-combobox>
-                        <div class="pill-content">
-                            <template if:true={selectedTemplateLabel}>
-                                <span class="slds-pill slds-pill_link">
-                                    <span class="slds-pill__icon_container">
-                                        <span class="slds-icon_container slds-icon-standard-account" title="Account">
-                                            <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
-                                        </span>
-                                    </span>
-                                    <a href="javascript:void(0);" class="slds-pill__action"
-                                        title="Full pill label verbiage mirrored here">
-                                        <span class="slds-pill__label">{selectedTemplateLabel}</span>
-                                    </a>
-                                    <button class="slds-button slds-button_icon slds-button_icon slds-pill__remove"
-                                        title="Remove" onclick={handleTemplateRemove}>
-                                            <lightning-icon icon-name="utility:close" alternative-text="close"
-                                            size="small"></lightning-icon>
-                                    </button>
-                                </span>
-                            </template>
-                        </div>
                     </div>
 
                     <div class="input-field input-field-bold">

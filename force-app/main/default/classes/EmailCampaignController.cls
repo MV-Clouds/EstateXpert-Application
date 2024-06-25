@@ -1,9 +1,8 @@
 public with sharing class EmailCampaignController {
     @AuraEnabled(cacheable=true)
-    public static List<Marketing_Campaign_Template__c> getEmailCampaignTemplates() {
+    public static List<Marketing_Campaign__c> getEmailCampaignTemplates() {
 
-        List<Marketing_Campaign_Template__c> templates = [SELECT Id, Label__c, Last_Usage_Date__c, Email_Campaign__c, Status__c 
-                                                      FROM Marketing_Campaign_Template__c WITH SECURITY_ENFORCED ];
+        List<Marketing_Campaign__c> templates = [SELECT Id, Label__c, From_Name__c, From_Address__c, Sender_Mode__c,Is_Marketing_Campaign_Template__c FROM Marketing_Campaign__c WHERE Is_Marketing_Campaign_Template__c = true WITH SECURITY_ENFORCED ];
 
         return templates;
     }
@@ -72,6 +71,15 @@ public with sharing class EmailCampaignController {
     @AuraEnabled
     public static List<Quick_Template__c> getQuickTemplates() {
         return [SELECT Id, Name, Subject__c FROM Quick_Template__c];
+    }
+    
+
+
+    @AuraEnabled(cacheable=true)
+    public static List<Marketing_Email_Campaign__c> getMarketingEmails(String templateId) {
+        return [SELECT Id, Name, Marketing_Campaign__c ,Subject__c,Quick_Template__c
+                FROM Marketing_Email_Campaign__c 
+                WHERE Marketing_Campaign__c = :templateId];
     }
     
     

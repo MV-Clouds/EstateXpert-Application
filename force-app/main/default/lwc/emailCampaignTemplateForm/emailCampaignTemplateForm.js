@@ -1,7 +1,6 @@
 import { LightningElement, track, wire } from 'lwc';
 import getContacts from '@salesforce/apex/EmailCampaignController.getContacts';
 import getDateFieldsForPicklist from '@salesforce/apex/EmailCampaignController.getDateFieldsForPicklist';
-import getQuickTemplates from '@salesforce/apex/EmailCampaignController.getQuickTemplates';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
@@ -20,6 +19,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track selectedPrimaryRecipients = [];
     @track selectedCCRecipients = [];
     @track selectedBCCRecipients = [];
+    @track templateId = '';
 
     @track isModalOpen = false;
     @track isPrimaryDropdownVisible = false;
@@ -36,7 +36,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track navigationStateString = null;
     @track quickTemplateOptions = null;
     @track quickTemplates = null;
-
+    @track emailsFromTemplate = null;
     
     @track plusIconUrl = plusIcon; 
     @track previewBtnUrl = previewBtn;
@@ -78,15 +78,33 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     */
     @wire(CurrentPageReference)
     setCurrentPageReference(currentPageReference) {
-        if (currentPageReference && currentPageReference.attributes.attributes ) {
-             const navigationStateString = currentPageReference.attributes.attributes.c__navigationState;
-
-            if(navigationStateString){
+        if (currentPageReference && currentPageReference.attributes.attributes) {
+            const navigationStateString = currentPageReference.attributes.attributes.c__navigationState;
+            console.log('navigationStateString ==> ' , JSON.stringify(navigationStateString));
+            if (navigationStateString) {
                 this.navigationStateString = navigationStateString;
+                console.log('navigationStateString ==> ', this.navigationStateString);
+
                 this.emailCampaignTemplate = this.navigationStateString.selectedTemplate;
                 this.emailCampaignName = this.navigationStateString.campaignName;
-            }
+                this.templateId = this.navigationStateString.selectedTemplateId;
+                this.emailsFromTemplate = this.navigationStateString.marketingEmails;
+                this.quickTemplateOptions = this.navigationStateString.quickTemplateOptions;
+                this.quickTemplates = this.navigationStateString.quickTemplates;
+                console.log('emailsFromTemplate ==> ' , JSON.stringify(this.emailsFromTemplate));
+                console.log('quickTemplates ==> ' , JSON.stringify(this.quickTemplates));
 
+                if (this.emailsFromTemplate) {
+                    this.emails = this.emailsFromTemplate.map(email => ({
+                        id: email.Id, 
+                        name: email.Quick_Template__c,
+                        subject: email.Subject__c, 
+                        daysAfterStartDate: 0, 
+                        timeToSend: ''
+                    }));
+                    this.emailsWithName = [...this.emails];
+                }
+            }
         }
     }
 
@@ -116,22 +134,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         .catch(error => {
             console.error('Error loading external CSS', error);
         });
-        this.fetchQuickTemplates();
         
-    }
-
-    fetchQuickTemplates() {
-        getQuickTemplates()
-            .then(result => {
-                this.quickTemplates = result;
-                this.quickTemplateOptions = result.map(template => ({
-                    label: template.Name,
-                    value: template.Id
-                }));
-            })
-            .catch(error => {
-                console.error('Error fetching templates:', error);
-            });
     }
 
     handleModalClose(event){
@@ -158,6 +161,20 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         this.filteredContactDateFields = this.contactDateFieldOptions.filter(option =>
             option.label.toLowerCase().includes(searchTerm)
         );
+    }
+
+    handleTemplateDataChange(event){
+        const eventData = event.detail;
+
+        // this.emailCampaignTemplate = eventData.selectedTemplate;
+        this.emailCampaignName = eventData.campaignName;
+        this.templateId = eventData.selectedTemplateId;
+        this.emailsFromTemplate = eventData.marketingEmails;
+        this.quickTemplateOptions = eventData.quickTemplateOptions;
+        this.quickTemplates = eventData.quickTemplates;
+
+        this.isModalOpen = false;
+
     }
 
     handleContactDateFieldSearchFocus() {
@@ -385,6 +402,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             return email;
         });
     }
+
 
     handleTimeToSendChange(event) {
         const emailId = event.target.dataset.id;
