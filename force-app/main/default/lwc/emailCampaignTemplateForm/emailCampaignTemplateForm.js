@@ -1,6 +1,7 @@
 import { LightningElement, track, wire } from 'lwc';
 import getContacts from '@salesforce/apex/EmailCampaignController.getContacts';
 import getDateFieldsForPicklist from '@salesforce/apex/EmailCampaignController.getDateFieldsForPicklist';
+import getQuickTemplates from '@salesforce/apex/EmailCampaignController.getQuickTemplates';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
@@ -27,12 +28,13 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track inputValueBcc = '';
     @track inputValueCC = '';
     @track inputValuePrimary = '';
-    @track contactDateFieldOptions;
+    @track contactDateFieldOptions = null;
     @track isDateFieldDropdownVisible = false;
     @track isFieldSelected = false;
     @track emailCampaignTemplate = '';
     @track emailCampaignName = '';
-    @track navigationStateString;
+    @track navigationStateString = null;
+    @track quickTemplateOptions = null;
 
     
     @track plusIconUrl = plusIcon; 
@@ -115,7 +117,21 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         .catch(error => {
             console.error('Error loading external CSS', error);
         });
+        this.fetchQuickTemplates();
         
+    }
+
+    fetchQuickTemplates() {
+        getQuickTemplates()
+            .then(result => {
+                this.quickTemplateOptions = result.map(template => ({
+                    label: template.Name,
+                    value: template.Id
+                }));
+            })
+            .catch(error => {
+                console.error('Error fetching templates:', error);
+            });
     }
 
     handleModalClose(event){

@@ -262,9 +262,13 @@
                                     <td data-label="Email Name">
                                         <!-- <div class="slds-truncate" title={email.name}>{email.name}</div> -->
                                         <div>
-                                            <lightning-input 
-                                              type="text"
-                                            ></lightning-input>
+                                            <lightning-combobox 
+                                                name="emailName"
+                                                value={email.name}
+                                                options={quickTemplateOptions}
+                                                onchange={handleNameChange}
+                                                data-id={email.id}
+                                            ></lightning-combobox>
                                         </div>
                                     </td>
                                     <td data-label="Subject">

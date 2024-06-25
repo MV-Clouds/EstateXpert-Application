@@ -69,15 +69,9 @@ public with sharing class EmailCampaignController {
         }
     }
 
-    @AuraEnabled(cacheable=true)
-    public static List<Quick_Template__c> getQuickTemplates(Id marketingCampaignTemplateId) {
-        try {
-            return [SELECT Id, Name, Subject__c
-                    FROM Quick_Template__c
-                    WHERE Marketing_Campaign_Template__c = :marketingCampaignTemplateId];
-        } catch (Exception e) {
-            throw new AuraHandledException('Error fetching Quick Templates: ' + e.getMessage());
-        }
+    @AuraEnabled
+    public static List<Quick_Template__c> getQuickTemplates() {
+        return [SELECT Id, Name, Subject__c FROM Quick_Template__c];
     }
     
     
