@@ -35,6 +35,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track emailCampaignName = '';
     @track navigationStateString = null;
     @track quickTemplateOptions = null;
+    @track quickTemplates = null;
 
     
     @track plusIconUrl = plusIcon; 
@@ -48,10 +49,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     ];
     @track startDateOption = 'specificDate';
 
-    @track emails = [
-        { id: 1, name: 'Buyer - First Time', subject: 'Finding the Right Home', daysAfterStartDate: 6, timeToSend: '10:59 AM' },
-        { id: 2, name: 'Buyer - First Time', subject: 'Finding the Right Financing', daysAfterStartDate: 5, timeToSend: '03:59 AM' },
-    ];
+    @track emails = [];
+
     @track selectedContactDateField = '';
 
 
@@ -124,6 +123,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     fetchQuickTemplates() {
         getQuickTemplates()
             .then(result => {
+                this.quickTemplates = result;
                 this.quickTemplateOptions = result.map(template => ({
                     label: template.Name,
                     value: template.Id
@@ -349,12 +349,29 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     
     handleAddNewEmail() {
         const newId = this.emails.length + 1;
-        this.emails = [...this.emails, { id: newId, name: 'New Email', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
+        this.emails = [...this.emails, { id: newId, name: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
     }
 
     handleDeleteEmail(event) {
         const emailId = event.currentTarget.dataset.id;
         this.emails = this.emails.filter(email => email.id !== parseInt(emailId, 10));
+    }
+
+    handleNameChange(event) {
+        const emailId = event.target.dataset.id;
+        const selectedTemplateId = event.detail.value;
+
+        const selectedTemplate = this.quickTemplates.find(template => template.Id === selectedTemplateId);
+
+        console.log('');
+
+        this.emails = this.emails.map(email => {
+            if (email.id === parseInt(emailId, 10)) {
+                console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
+                email.subject = selectedTemplate.Subject__c;
+            }
+            return email;
+        });
     }
 
     handlepreviewBtn(event){
@@ -366,6 +383,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleSave() {
+        console.log('emails ==> ' , JSON.stringify(this.emails));
         console.log('save btn is clicked');
     }
 
