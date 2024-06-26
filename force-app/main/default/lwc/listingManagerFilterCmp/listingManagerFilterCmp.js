@@ -539,16 +539,16 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const optionToRemove = event.currentTarget.dataset.id;
         const index =  event.currentTarget.dataset.index;
         console.log('index'+index);
-        if(index >0){
+        if(index > -1){
             this.filterFields[index].selectedOptions = this.filterFields[index].selectedOptions.filter(option => option.value !== optionToRemove);
             console.log('hi'+this.filterFields[index].selectedOptions);
             console.log('hi'+this.filterFields[index].selectedOptions.length);
         }
-        if(index == 0){
-            this.filterFields[index].selectedOptions= null;
-            console.log('hi'+this.filterFields[index].selectedOptions);
-            console.log('hi'+this.filterFields[index].selectedOptions.length);
-        }
+        // if(index == 0){
+        //     this.filterFields[index].selectedOptions= null;
+        //     console.log('hi'+this.filterFields[index].selectedOptions);
+        //     console.log('hi'+this.filterFields[index].selectedOptions.length);
+        // }
         this.applyFilters();
     }
 
