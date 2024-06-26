@@ -73,9 +73,22 @@
                                         <div title={template.Label__c}>{template.Label__c}</div>
                                     </td>
                                     <td data-label="Status">
-                                        <lightning-input type="toggle" checked={template.isActive}
+                                        <!-- <lightning-input type="toggle" checked={template.isActive}
                                             onchange={handleStatusChange} data-id={template.Id}>
-                                        </lightning-input>
+                                        </lightning-input> -->
+                                        <div class="tableStatusCol">
+                                            <div class="slds-truncate">
+                                                <div class="container">
+                                                    <div class="content">
+                                                        <label class="switch">
+                                                            <input type="checkbox" checked={template.isActive}
+                                                            onchange={handleStatusChange} data-id={template.Id}/>
+                                                            <small></small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td data-label="Object Name">
                                         <div title={template.Object_Name__c}>{template.Object_Name__c}</div>

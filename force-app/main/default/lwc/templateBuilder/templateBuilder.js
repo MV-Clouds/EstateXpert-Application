@@ -216,8 +216,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             this.filteredTemplates = this.filteredTemplates.map((template, index) => ({
                 ...template,
                 rowIndex: index + 1,
-                isActive: template.Status__c,
-                CreatedDateformatted: this.formatDate(template.CreatedDate)
             }));
         this.calculateTotalPages();
         this.currentPage = 1;

@@ -2,7 +2,7 @@
   background-color: white;
   min-height: 100%;
   width: 100%;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: 'Roboto', sans-serif !important;
 }
 
 .slds-card {
@@ -93,6 +93,7 @@
   border: 1px solid #d9dbdd;
   padding: 0.3rem;
   max-width: 45vw !important;
+  text-align: center;
 }
 
 .slds-table th {
@@ -176,4 +177,78 @@ th{
 
 .table-content{
   min-height: 63vh;
+}
+
+.tableStatusCol {
+  text-align: center;
+}
+
+.container {
+  position: relative;
+  top: 4px;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.switch input {
+  display: none;
+}
+
+.switch small {
+  align-items: center;
+  display: inline-block;
+  width: 65px;
+  height: 20px;
+  background: #455a64;
+  border-radius: 30px;
+  position: relative;
+  cursor: pointer;
+}
+
+.switch small:after {
+  content: "Inactive";
+  position: absolute;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  width: 100%;
+  left: 0px;
+  text-align: right;
+  padding: 1px 5px;
+  box-sizing: border-box;
+  line-height: 18px;
+}
+
+.switch small:before {
+  align-items: center;
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  top: 5px;
+  left: 5px;
+  transition: .3s;
+  box-shadow: -3px 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.switch input:checked~small {
+  background: #0176D3;
+  transition: .3s;
+}
+
+.switch input:checked~small:before {
+  transform: translate(46px, 0px);
+  transition: .3s;
+}
+
+.switch input:checked~small:after {
+  content: "Active";
+  text-align: left;
+  padding-left: 10px;
 }
