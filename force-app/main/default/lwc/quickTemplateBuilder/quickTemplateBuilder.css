@@ -1,0 +1,179 @@
+.wrapper{
+    background-color: white;
+    min-height: 100%;
+    width: 100%;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+  
+  .slds-card {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .input-text{
+    width: 30%;
+  }
+  
+  .navbar{
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+  }
+  
+  .add-btn{
+    display: flex;
+    justify-content: center;
+    align-items: end;
+  }
+  
+  .input-text .slds-input{
+    border: none !important;
+  }
+  
+  .search-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.25rem;
+    margin-bottom: 20px;
+  }
+  
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+  
+  .search-input {
+    flex-grow: 1;
+    padding-right: 2.5rem;
+  }
+  
+  .search-button {
+    position: absolute;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+  }
+  
+  .pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 5%;
+    padding-bottom: 1rem;
+  }
+  
+  .pagination {
+    display: flex;
+    align-items: center;
+  }
+  
+  .pagination .page-info {
+    margin: 0 10px;
+  }
+  
+  .page-info{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .slds-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .slds-table th, .slds-table td {
+    border: 1px solid #d9dbdd;
+    padding: 0.3rem;
+    max-width: 45vw !important;
+  }
+  
+  .slds-table th {
+    background-color: #0176D3;
+    text-align: left;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .slds-table tr:nth-child(odd) {
+    background-color: aliceblue;
+  }
+  
+  .slds-table .slds-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .col4{
+    width: 20vw !important;
+  }
+  
+  lightning-button-icon{
+    margin-right: 10% ;
+  }
+  
+  th{
+    text-transform: capitalize;
+    padding: 10px !important;
+  }
+  
+  .addbtn{
+    --slds-c-button-radius-border : 10px !important;
+    --slds-c-button-spacing-block-start : 4px;
+    --slds-c-button-spacing-inline-end : 16px;
+    --slds-c-button-spacing-block-end : 4px;
+    --slds-c-button-spacing-inline-start : 16px;
+  }
+  
+  .input-template{
+  --slds-c-input-radius-border : 10px !important;
+  }
+  
+  .sno{
+    width: 3% !important;
+  }
+  
+  .template-name{
+    width: 15% !important;
+  }
+  
+  .status{
+    width: 10% !important;
+  }
+  
+  .object-name{
+    width: 10% !important;
+  }
+  
+  .created-date{
+    width: 10% !important;
+  }
+  
+  .actions{
+    width: 12% !important;
+  }
+  
+  .no-data-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+  }
+  
+  .no-data-message {
+    text-align: center;
+    font-size: 18px; 
+    color: #ccc; 
+  }
+  
+  .table-content{
+    min-height: 63vh;
+  }
