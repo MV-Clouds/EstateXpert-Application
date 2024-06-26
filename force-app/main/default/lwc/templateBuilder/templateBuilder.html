@@ -39,6 +39,18 @@
                             <th scope="col" class="object-name">
                                 <div title="Description">Object Name</div>
                             </th>
+                            <th scope="col">
+                                <div title="Template Type">Template Type</div>
+                            </th>
+
+                            <th scope="col">
+                                <div title="Type">Type</div>
+                            </th>
+                            
+                            <th scope="col">
+                                <div title="Subject">Subject</div>
+                            </th>
+
                             <th scope="col" class="description">
                                 <div title="description">Description</div>
                             </th>
@@ -68,7 +80,20 @@
                                     <td data-label="Object Name">
                                         <div title={template.Object_Name__c}>{template.Object_Name__c}</div>
                                     </td>
-                                    <td>
+
+                                    <td data-label="Template Type">
+                                        <div title={template.Template_pattern__c}>{template.Template_pattern__c}</div>
+                                    </td>
+
+                                    <td data-label="Type">
+                                        <div title={template.Template_Type__c}>{template.Template_Type__c}</div>
+                                    </td>
+
+                                    <td data-label="Subject">
+                                        <div title={template.Subject__c}>{template.Subject__c}</div>
+                                    </td>
+
+                                    <td data-label="Description">
                                         <div title={template.Description__c}>{template.Description__c}</div>
                                     </td>
                                     <td data-label="Created Date">

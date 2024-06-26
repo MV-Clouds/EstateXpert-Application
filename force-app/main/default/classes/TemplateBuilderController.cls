@@ -182,7 +182,7 @@ public with sharing class TemplateBuilderController {
     
     @AuraEnabled
     public static List<Template__c> getTemplates() {
-        List<Template__c> templates = [SELECT Id, Name, Label__c , Object_Name__c , Status__c, Template_Body__c	, Template_Type__c	, Description__c,CreatedDate  FROM Template__c WITH SECURITY_ENFORCED];
+        List<Template__c> templates = [SELECT Id, Name, Label__c , Object_Name__c , Status__c, Template_Body__c	, Template_Type__c	, Description__c,CreatedDate,Template_pattern__c,Subject__c  FROM Template__c WITH SECURITY_ENFORCED];
         return templates;
     }
 
