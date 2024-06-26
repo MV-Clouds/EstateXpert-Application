@@ -2,6 +2,7 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getAllObjectNames from '@salesforce/apex/TemplateBuilderController.getAllObjectNames';
 import getTemplateTypePicklistValues from '@salesforce/apex/TemplateBuilderController.getTemplateTypePicklistValues';
+import insertTemplate from '@salesforce/apex/TemplateBuilderController.insertTemplate';
 import { NavigationMixin } from 'lightning/navigation';
 
 export default class CustomModal extends NavigationMixin(LightningElement) {
@@ -103,10 +104,29 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Date: 12/06/2024
     * Created By: Rachit Shah
     */
-    handleSave() {
+    async handleSave() {
 
         if(this.name === 'New'){
-            this.currentRecordId = '';
+
+            const template = {
+                Object_Name__c: this.objectSelect,
+                Label__c: this.templateName,
+                Template_Body__c: this.bodyOfTemplate,
+                Description__c : this.description,
+                Template_Type__c : this.typeSelect,
+                Template_pattern__c : this.templateTypeSelect,
+                Subject__c	: this.subject
+            };
+
+            await insertTemplate({ template : template})
+            .then((res) => {
+                this.showToast('Success', 'Template saved successfully', 'success');
+                this.currentRecordId = res;
+            })
+            .catch(error => {
+                console.error('Error saving template:', error);
+            });
+
         }
         
         if (this.templateName && this.objectSelect && this.typeSelect && this.templateTypeSelect) {

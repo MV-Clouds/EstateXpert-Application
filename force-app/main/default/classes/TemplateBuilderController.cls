@@ -53,6 +53,28 @@ public with sharing class TemplateBuilderController {
         return template;
     }
 
+
+    @AuraEnabled
+    public static String insertTemplate(Template__c template) {
+        try {
+            if (Schema.sObjectType.Template__c.fields.Object_Name__c.isCreateable() &&
+                Schema.sObjectType.Template__c.fields.Label__c.isCreateable() &&
+                Schema.sObjectType.Template__c.fields.Template_Body__c.isCreateable() &&
+                Schema.sObjectType.Template__c.fields.Description__c.isCreateable() &&
+                Schema.sObjectType.Template__c.fields.Template_Type__c.isCreateable()) {
+                
+                insert template;
+
+                return template.Id;
+            } else {
+                throw new AuraHandledException('No access to create fields on Template__c.');
+            }
+            
+        } catch (Exception e) {
+            throw new AuraHandledException('Error saving template: ' + e.getMessage());
+        }
+    }
+
     /** 
     * Method Name: saveTemplate
     * @description: Saves or updates a Template__c record based on the provided Id.
