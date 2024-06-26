@@ -87,21 +87,21 @@ export default class ListingManagerFilterCmp extends LightningElement {
     {
         label : 'Bedrooms',
         type: 'DOUBLE',
-        apiName: 'Number_Of_Bedrooms__c',
+        apiName: 'Bedrooms__c',
         objectApiName :'Listing__c',
         searchTerm:'',
         minValue:0,
         maxValue:0,
         operatorName: 'range',
+        isRange:true,
         isFocused:false,
         isNot: false,
         double:true,
-
     },
     {
         label : 'Bathrooms',
         type: 'DOUBLE',
-        apiName: 'Number_Of_Bathrooms__c',
+        apiName: 'Bathrooms__c',
         objectApiName :'Listing__c',
         searchTerm:'',
         minValue:0,
@@ -115,10 +115,10 @@ export default class ListingManagerFilterCmp extends LightningElement {
     {
         label : 'Size',
         type: 'DOUBLE',
-        apiName: 'Number_Of_Bathrooms__c',
-        objectApiName :'Lising__c',
+        apiName: 'Size__c',
+        objectApiName :'Listing__c',
         searchTerm:'',
-         minValue:0,
+        minValue:0,
         maxValue:0,
         operatorName: 'range',
         isRange:true,
@@ -230,11 +230,13 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 prevFieldApiName : field.prevFieldApiName,
                 objectApiName: field.objectApiName,
                 operatorName: field.operation,
-                picklistValue:field.picklistValues||[], // Set operatorName based on type
-                unchangePicklistValue:field.picklistValues||[], // Set operatorName based on type
+                picklistValue: field.picklistValues||[], // Set operatorName based on type
+                unchangePicklistValue: field.picklistValues||[], // Set operatorName based on type
                 prevApiName : field.prevApiName,
                 minValue:0,
                 maxValue:0,
+                minDate:null,
+                maxDate:null,
                 isNot: field.isNot,
                 searchTerm:'',
                 isFocused:false,
@@ -602,107 +604,112 @@ export default class ListingManagerFilterCmp extends LightningElement {
         
         this.applyFilters();
     }
-
-     /**
-    * Method Name: handleMinValueChange
-    * @description: handle the min value change in the number Input field.
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
-    handleMinValueChange(event) {
-        const index = event.currentTarget.dataset.index;
-        console.log('index'+index);
-        const value = event.target.value;
+/**
+ * Method Name: handleMinValueChange
+ * @description: Handle the min value change in the number Input field.
+ * Date: 9/06/2024
+ * Created By: Vyom Soni
+ **/
+handleMinValueChange(event) {
+    const index = event.currentTarget.dataset.index;
+    const value = parseInt(event.target.value, 10);
+    if (!isNaN(value) && (this.filterFields[index].maxValue === undefined || value <= this.filterFields[index].maxValue)) {
         this.filterFields[index].minValue = value;
-        console.log('filterFields'+this.filterFields[index].minValue);
-        this.applyFilters();
+    } else {
+        alert('Min value cannot be more than max value.');
     }
+    this.applyFilters();
+}
 
-    
-      /**
-    * Method Name: handleMaxValueChange
-    * @description: Handle change in the max input field.
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
-    handleMaxValueChange(event) {
-        const index = event.currentTarget.dataset.index;
-        console.log('index'+index);
-        const value = event.target.value;
+/**
+ * Method Name: handleMaxValueChange
+ * @description: Handle change in the max input field.
+ * Date: 9/06/2024
+ * Created By: Vyom Soni
+ **/
+handleMaxValueChange(event) {
+    const index = event.currentTarget.dataset.index;
+    const value = parseInt(event.target.value, 10);
+    if (!isNaN(value) && value >= this.filterFields[index].minValue) {
         this.filterFields[index].maxValue = value;
-        console.log('filterFields'+this.filterFields[index].maxValue);
-        this.applyFilters();
+    } else {
+        alert('Max value cannot be less than min value.');
     }
+    this.applyFilters();
+}
 
-     /**
-    * Method Name: incrementMinValue
-    * @description:  Increment the min input value
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
-    incrementMinValue(event) {
-        const index = event.currentTarget.dataset.index;
-        console.log('index'+index);
-        const currentValue = parseInt(this.filterFields[index].minValue, 10);
-        if (!isNaN(currentValue)) {
-            this.filterFields[index].minValue = currentValue + 1;
-            console.log('filterFields'+this.filterFields[index].minValue);
-        } else {
-            this.filterFields[index].minValue = 0;
-        }
-        this.applyFilters();
+/**
+ * Method Name: incrementMinValue
+ * @description: Increment the min input value
+ * Date: 9/06/2024
+ * Created By: Vyom Soni
+ **/
+incrementMinValue(event) {
+    const index = event.currentTarget.dataset.index;
+    let currentValue = parseInt(this.filterFields[index].minValue, 10);
+    if (isNaN(currentValue)) {
+        currentValue = 0;
     }
+    if (currentValue + 1 <= this.filterFields[index].maxValue || this.filterFields[index].maxValue === undefined) {
+        this.filterFields[index].minValue = currentValue + 1;
+    } else {
+        alert('Min value cannot be more than max value.');
+    }
+    this.applyFilters();
+}
 
-      /**
-    * Method Name: decrementMinValue
-    * @description:  decrement the min input value
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
-    decrementMinValue(event) {
-        const index = event.currentTarget.dataset.index;
-        const currentValue = parseInt(this.filterFields[index].minValue, 10);
-        if (!isNaN(currentValue) && currentValue > 0) {
-            this.filterFields[index].minValue = currentValue - 1;
-        } else {
-            this.filterFields[index].minValue = 0;
-        }
-        this.applyFilters();
+/**
+ * Method Name: decrementMinValue
+ * @description: Decrement the min input value
+ * Date: 9/06/2024
+ * Created By: Vyom Soni
+ **/
+decrementMinValue(event) {
+    const index = event.currentTarget.dataset.index;
+    let currentValue = parseInt(this.filterFields[index].minValue, 10);
+    if (isNaN(currentValue) || currentValue <= 0) {
+        currentValue = 0;
+    } else {
+        currentValue--;
     }
+    this.filterFields[index].minValue = currentValue;
+    this.applyFilters();
+}
 
-         /**
-    * Method Name: incrementMaxValue
-    * @description:  incremaent the max input value
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
-    incrementMaxValue(event) {
-        const index = event.currentTarget.dataset.index;
-        const currentValue = parseInt(this.filterFields[index].maxValue, 10);
-        if (!isNaN(currentValue)) {
-            this.filterFields[index].maxValue = currentValue + 1;
-        } else {
-            this.filterFields[index].maxValue = 0;
-        }
-        this.applyFilters();
+/**
+ * Method Name: incrementMaxValue
+ * @description: Increment the max input value
+ * Date: 9/06/2024
+ * Created By: Vyom Soni
+ **/
+incrementMaxValue(event) {
+    const index = event.currentTarget.dataset.index;
+    let currentValue = parseInt(this.filterFields[index].maxValue, 10);
+    if (isNaN(currentValue)) {
+        currentValue = 0;
     }
+    this.filterFields[index].maxValue = currentValue + 1;
+    this.applyFilters();
+}
 
-         /**
-    * Method Name: decrementMaxValue
-    * @description:  decrement the max input value
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
-    decrementMaxValue(event) {
-        const index = event.currentTarget.dataset.index;
-        const currentValue = parseInt(this.filterFields[index].maxValue, 10);
-        if (!isNaN(currentValue) && currentValue > 0) {
-            this.filterFields[index].maxValue = currentValue - 1;
-        } else {
-            this.filterFields[index].maxValue = 0;
-        }
-        this.applyFilters();
+/**
+ * Method Name: decrementMaxValue
+ * @description: Decrement the max input value
+ * Date: 9/06/2024
+ * Created By: Vyom Soni
+ **/
+decrementMaxValue(event) {
+    const index = event.currentTarget.dataset.index;
+    let currentValue = parseInt(this.filterFields[index].maxValue, 10);
+    if (isNaN(currentValue) || currentValue <= this.filterFields[index].minValue) {
+        alert('Max value cannot be less than min value.');
+    } else {
+        currentValue--;
     }
+    this.filterFields[index].maxValue = currentValue;
+    this.applyFilters();
+}
+
 
         /**
     * Method Name: checkboxFieldChange
