@@ -20,10 +20,6 @@ export default class PropertySearch extends LightningElement {
     * Created By: Mitrajsinh Gohil
     */
     connectedCallback(){
-        GetListingTypes().then(result => {
-            this.propertyTypes = result;
-        });
-
         if(this.filtervalue){
             this.propertyType = this.filtervalue.propertyType || '';
             this.minPrice = this.filtervalue.minPrice || '';
@@ -33,6 +29,19 @@ export default class PropertySearch extends LightningElement {
             this.city = this.filtervalue.city || '';
             this.zip = this.filtervalue.zip || '';
         }
+        GetListingTypes().then(result => {
+            let propertyTypesList = [];
+            result.forEach(element => {
+                let property = {
+                    label: element,
+                    isSelected: element == this.propertyType ? true : false
+                }
+                propertyTypesList.push(property);
+            });
+
+            this.propertyTypes = propertyTypesList;
+        });
+
     }
 
     /**
@@ -109,7 +118,6 @@ export default class PropertySearch extends LightningElement {
     */
     handleZipCodeChange(event) {
         this.zip = event.target.value.toString();
-        console.log('zipcode:- ',this.zip);
     }
 
     /**

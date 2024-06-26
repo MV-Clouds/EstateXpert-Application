@@ -89,7 +89,6 @@
                                             <p class="card-link"><b>$ {property.Listing_Price__c}</b></p>
                                         </lightning-layout-item >
                                         <lightning-layout-item class="item-2" alignment-bump="left">
-                                            <!-- <a><button>View More</button></a> -->
                                             <button data-id={property.Id} onclick={navigateToRecord}>View More</button>
                                         </lightning-layout-item>
                                     </div>
@@ -161,12 +160,10 @@
 
             <template if:true={isPropertyAvailable}>
                 <div class="pagination-container slds-m-top_medium">
-                    <lightning-button-group class="pagination-buttons">
-                        <lightning-button label="First" onclick={goToFirst} disabled={isFirstPage}></lightning-button>
-                        <lightning-button label="Previous" onclick={goToPrevious} disabled={isFirstPage}></lightning-button>
-                        <lightning-button label="Next" onclick={goToNext} disabled={isLastPage}></lightning-button>
-                        <lightning-button label="Last" onclick={goToLast} disabled={isLastPage}></lightning-button>
-                    </lightning-button-group>
+                        <button class="slds-button slds-button_neutral" onclick={goToFirst} disabled={isFirstPage}>First</button>
+                        <button class="slds-button slds-button_neutral" onclick={goToPrevious} disabled={isFirstPage}>Previous</button>
+                        <button class="slds-button slds-button_neutral" onclick={goToNext} disabled={isLastPage}>Next</button>
+                        <button class="slds-button slds-button_neutral" onclick={goToLast} disabled={isLastPage}>Last</button>
                 </div>
             </template>
         </lightning-card>

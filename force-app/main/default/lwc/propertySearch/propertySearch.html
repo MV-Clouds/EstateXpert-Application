@@ -13,10 +13,10 @@
         </div>
         <div class="filters filter-body">
             <label for="property-type">Property Type:</label>
-            <select name="propertyType" class="slds-input slds-select" onchange={handlePropertyTypeChange}>
+            <select name="propertyType" id="propertyType" class="slds-input slds-select" onchange={handlePropertyTypeChange}>
                 <option class="slds-input" value="">None</option>
                 <template for:each={propertyTypes} for:item="value">
-                    <option class="slds-input" value={value} key={value}>{value}</option>
+                    <option class="slds-input" value={value.label} key={value.label} selected={value.isSelected}>{value.label}</option>
                 </template>
             </select>
             <div class="price-range">

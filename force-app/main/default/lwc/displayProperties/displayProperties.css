@@ -13,12 +13,12 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.filter-button lightning-button {
+/* .filter-button lightning-button {
     border-radius: 5px;
     font-size: 14px;
     background-color: #4CAF50;
     color: #ffffff;
-}
+} */
 
 .mainFilter{
     display: flex;
@@ -290,10 +290,10 @@
     font-size: 14px;
 }
 
-.pagination-buttons lightning-button[disabled] {
+/* .pagination-buttons lightning-button[disabled] {
     background-color: #f5f5f5;
     color: #999999;
-}
+} */
 
 .no_prop {
     font-size: 20px;
