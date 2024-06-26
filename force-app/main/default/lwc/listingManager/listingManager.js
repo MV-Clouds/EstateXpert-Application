@@ -30,7 +30,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track sortOrder = 'asc';
     @track totalSelected=0;
     @track selectedProperties;
-    @track selctedListingData;
+    @track selectedListingData;
     @track checkAll = false;
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
@@ -295,7 +295,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     updateSelectedProperties() {
         this.selectedProperties = this.processedListingData.filter(listing => listing.isChecked);
-        this.selctedListingData = this.listingData.filter(listing => listing.isChecked);
+        this.selectedListingData = this.listingData.filter(listing => listing.isChecked);
         this.totalSelected = this.selectedProperties.length;
     }
 
