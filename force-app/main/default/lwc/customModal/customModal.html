@@ -69,6 +69,20 @@
                         </lightning-combobox>
                     </div>
                 </div>
+                
+                <!-- Conditionally rendered Subject field -->
+                <template if:true={isEmailTemplate}>
+                    <div class="custom-input-container">
+                        <div class="label-container">
+                            <label><span class="red">*</span>Subject</label>
+                        </div>
+                        <div class="input-container">
+                            <lightning-input placeholder="Email Subject" name="subject" value={subject}
+                                onchange={handleInputChange}>
+                            </lightning-input>
+                        </div>
+                    </div>
+                </template>
             </div>
             <footer class="slds-modal__footer custom-footer">
                 <div class="cancel-btn">
@@ -81,5 +95,4 @@
         </div>
     </section>
     <div class="slds-backdrop slds-backdrop_open"></div>
-
 </template>

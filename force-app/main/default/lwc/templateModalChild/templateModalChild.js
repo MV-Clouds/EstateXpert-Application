@@ -32,6 +32,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track currentPage;
     @track totalRecodslength;
     @track newPageNumber;
+    @track subject = '';
+    @track isEmailTemplate = false;
 
     @track isQuickTemplate = false;
     @track templateTypeSelect = '';
@@ -49,19 +51,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
-        console.log('OUTPUT : ',currentPageReference);                               
         let decodedJson = currentPageReference;
-        console.log('OUTPUT 11: ',decodedJson);
         if (decodedJson ) {
-            console.log('OUTPUT 2 : ',decodedJson);
-            console.log('OUTPUT 3 : ',decodedJson.attributes);
-            console.log('OUTPUT 4 : ',decodedJson.attributes.attributes);
             const navigationStateString = decodedJson.attributes.attributes.c__navigationState;
-            console.log('navigationStateString ==>' , navigationStateString);
             if (navigationStateString) {
                 try {
                     const parseObject = JSON.parse(navigationStateString);
-                    console.log('navigationState2 ==>', parseObject);
 
                     this.selectedObject = parseObject.selectedObject;
                     this.currentRecordId = parseObject.myrecordId;
@@ -76,8 +71,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.currentPage = parseObject.pageNumber;
                     this.totalRecodslength = parseObject.totalRecodslength;
                     this.templateTypeSelect = parseObject.templateTypeSelect;
-                    console.log('templateTypeSelect ==> ' , this.templateTypeSelect);
                     this.isQuickTemplate = parseObject.isQuickTemplate;
+                    this.subject  = parseObject.subject;
+                    this.isEmailTemplate = parseObject.isEmailTemplate;
                     this.fetchFields();
                 } catch (error) {
                     console.error('Error parsing navigation state:', error);

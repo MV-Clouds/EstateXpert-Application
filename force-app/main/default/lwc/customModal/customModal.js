@@ -18,6 +18,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api templateTypeSelect = '';
     @api isQuickTemplate = false;
     @track objectOptions;
+    @track subject = '';
     @track typeOptions;
     @track IsChildModal = false;
     @track isObjectChanged = false;
@@ -26,6 +27,11 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         { label: 'Quick Template', value: 'quickTemplate' },
         { label: 'Email Template', value: 'emailTemplate' }
     ];
+
+
+    get isEmailTemplate() {
+        return this.typeSelect === 'Email';
+    }
 
     /**
     * Method Name: wiredSObjectNames
@@ -77,6 +83,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             this.objectSelect = '';
             this.typeSelect = '';
             this.bodyOfTemplate = '';
+            this.subject = '';
         }
     }
 
@@ -103,8 +110,12 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             this.currentRecordId = '';
         }
         
-        if (this.templateName && this.objectSelect && this.typeSelect) {
+        if (this.templateName && this.objectSelect && this.typeSelect && this.templateTypeSelect) {
 
+            if(this.typeSelect === 'Email' && this.subject == ''){
+                this.showToast('Error', 'Please fill in all required fields', 'error');
+                return;
+            }
             const navigationState = {
                 selectedObject: this.objectSelect,
                 myrecordId: this.currentRecordId,
@@ -119,7 +130,9 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 pageNumber : this.pageNumber,
                 totalRecodslength : this.totalRecodslength,
                 templateTypeSelect : this.templateTypeSelect,
-                isQuickTemplate : this.isQuickTemplate
+                isQuickTemplate : this.isQuickTemplate,
+                subject: this.subject,
+                isEmailTemplate : this.isEmailTemplate
             };
     
             const serializedState = JSON.stringify(navigationState);
@@ -196,6 +209,9 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 this.oldObject = 'Contact';
                 this.objectSelect = '';
             }
+        }
+        else if (field === 'subject') {
+            this.subject = value;
         }
     }
 
