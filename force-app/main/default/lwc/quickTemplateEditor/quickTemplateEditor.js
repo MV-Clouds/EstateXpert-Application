@@ -52,32 +52,39 @@ export default class QuickTemplateEditor extends NavigationMixin(LightningElemen
             console.log('OUTPUT 2 : ',decodedJson);
             console.log('OUTPUT 3 : ',decodedJson.attributes);
             console.log('OUTPUT 4 : ',decodedJson.attributes.attributes);
-            const navigationStateString = decodedJson.attributes.attributes.c__navigationState;
-            console.log('navigationStateString ==>' , navigationStateString);
-            if (navigationStateString) {
-                try {
-                    const parseObject = JSON.parse(navigationStateString);
-                    console.log('navigationState2 ==>', parseObject);
 
-                    this.selectedObject = parseObject.selectedObject;
-                    this.currentRecordId = parseObject.myrecordId;
-                    this.templateLabel = parseObject.label;
-                    this.description = parseObject.description;
-                    this.selectedType = parseObject.type;
-                    this.bodyOfTemplate = parseObject.bodyoftemplate;
-                    this.isObjectChanged = parseObject.isObjectChanged;
-                    this.oldObject = parseObject.oldObject;
-                    this.isFirstTimeLoaded = parseObject.isFirstTimeLoaded;
-                    this.templateTypeForCreation = parseObject.templateTypeForCreation;
-                    this.currentPage = parseObject.pageNumber;
-                    this.totalRecodslength = parseObject.totalRecodslength;
-
-                    this.fetchFields();
-                } catch (error) {
-                    console.error('Error parsing navigation state:', error);
+            if(decodedJson.attributes.attributes.c__navigationState && decodedJson.attributes.attributes.c__templateType != 'New'){
+                const navigationStateString = decodedJson.attributes.attributes.c__navigationState;
+                console.log('navigationStateString ==>' , navigationStateString);
+                if (navigationStateString) {
+                    try {
+                        const parseObject = JSON.parse(navigationStateString);
+                        console.log('navigationState2 ==>', parseObject);
+    
+                        this.selectedObject = parseObject.selectedObject;
+                        this.currentRecordId = parseObject.myrecordId;
+                        this.templateLabel = parseObject.label;
+                        this.description = parseObject.description;
+                        this.selectedType = parseObject.type;
+                        this.bodyOfTemplate = parseObject.bodyoftemplate;
+                        this.isObjectChanged = parseObject.isObjectChanged;
+                        this.oldObject = parseObject.oldObject;
+                        this.isFirstTimeLoaded = parseObject.isFirstTimeLoaded;
+                        this.templateTypeForCreation = parseObject.templateTypeForCreation;
+                        this.currentPage = parseObject.pageNumber;
+                        this.totalRecodslength = parseObject.totalRecodslength;
+    
+                        this.fetchFields();
+                    } catch (error) {
+                        console.error('Error parsing navigation state:', error);
+                    }
+                } else {
+                    console.error('navigationState not found in currentPageReference.state');
                 }
-            } else {
-                console.error('navigationState not found in currentPageReference.state');
+            }
+            else{
+                this.selectedObject = 'Contact';
+                this.fetchFields();
             }
         } else {
             console.error('currentPageReference or currentPageReference.state is not defined');

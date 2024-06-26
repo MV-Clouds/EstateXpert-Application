@@ -24,7 +24,6 @@ export default class QuickTemplateBuilder extends NavigationMixin(LightningEleme
     @track selectedDescription = '';
     @track selectedType = '';
     @track selectedTemplateBody = ''; 
-    @track isModalOpen = false;
     @track isLoading = false; 
     @track isPreviewModal = false;
     @track isPreviousDisabled = true;
@@ -261,16 +260,6 @@ export default class QuickTemplateBuilder extends NavigationMixin(LightningEleme
     }
 
     /**
-    * Method Name: handleModalClose
-    * @description: method to close the modal
-    * Date: 12/06/2024
-    * Created By: Rachit Shah
-    */
-    handleModalClose() {
-        this.isModalOpen = false;
-    }
-
-    /**
     * Method Name: handlePreview
     * @description: method to preview component(ui is pending)
     * Date: 12/06/2024
@@ -312,7 +301,7 @@ export default class QuickTemplateBuilder extends NavigationMixin(LightningEleme
             
             var cmpDef;                
             cmpDef = {
-                componentDef: 'c:templateModalChild',
+                componentDef: 'c:QuickTemplateEditor',
                 attributes: {                    
                     c__navigationState: serializedState,
                     c__recordId : templateId
@@ -405,9 +394,25 @@ export default class QuickTemplateBuilder extends NavigationMixin(LightningEleme
     * Created By: Rachit Shah
     */
     handleAdd() {
-        // console.log('Clicked');
-        this.nameForTemplate = 'New';
-        this.isModalOpen = true;
+        // this.nameForTemplate = 'New';
+        var cmpDef;                
+        cmpDef = {
+            componentDef: 'c:QuickTemplateEditor',
+            attributes: {                    
+                c__navigationState: '',
+                c__templateType: 'New'
+            }                
+            };
+
+        let encodedDef = btoa(JSON.stringify(cmpDef));
+            console.log('encodedDef : ', encodedDef);
+            this[NavigationMixin.Navigate]({
+            type: "standard__webPage",
+            attributes: {
+                url:  "/one/one.app#" + encodedDef                                                         
+            }
+        });
+
     }
 
     /**
