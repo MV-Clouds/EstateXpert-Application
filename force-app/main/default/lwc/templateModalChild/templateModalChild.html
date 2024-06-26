@@ -58,7 +58,8 @@
 
         <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={templateLabel}
             object-select={selectedObject} type-select={selectedType} description={description} name="Edit"
-            body-of-template={bodyOfTemplate} is-edit={editValue} current-record-id={currentRecordId}>
+            body-of-template={bodyOfTemplate} is-edit={editValue} current-record-id={currentRecordId}
+            template-type-select={templateTypeSelect} is-quick-template={isQuickTemplate}>
         </c-custom-modal>
 
 

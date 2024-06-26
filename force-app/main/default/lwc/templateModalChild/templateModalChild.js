@@ -33,6 +33,10 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track totalRecodslength;
     @track newPageNumber;
 
+    @track isQuickTemplate = false;
+    @track templateTypeSelect = '';
+
+
     get recordId(){
         return this.currentRecordId ? this.currentRecordId : 'tempId';
     }
@@ -71,7 +75,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.templateTypeForCreation = parseObject.templateTypeForCreation;
                     this.currentPage = parseObject.pageNumber;
                     this.totalRecodslength = parseObject.totalRecodslength;
-
+                    this.templateTypeSelect = parseObject.templateTypeSelect;
+                    console.log('templateTypeSelect ==> ' , this.templateTypeSelect);
+                    this.isQuickTemplate = parseObject.isQuickTemplate;
                     this.fetchFields();
                 } catch (error) {
                     console.error('Error parsing navigation state:', error);

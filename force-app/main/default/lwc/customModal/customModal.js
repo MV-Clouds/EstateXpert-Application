@@ -15,10 +15,17 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api isEdit = false;
     @api pageNumber = 1;
     @api totalRecodslength;
+    @api templateTypeSelect = '';
+    @api isQuickTemplate = false;
     @track objectOptions;
     @track typeOptions;
     @track IsChildModal = false;
     @track isObjectChanged = false;
+    @track oldObject = '';
+    @track templateTypeOptions = [
+        { label: 'Quick Template', value: 'quickTemplate' },
+        { label: 'Email Template', value: 'emailTemplate' }
+    ];
 
     /**
     * Method Name: wiredSObjectNames
@@ -110,7 +117,9 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 isFirstTimeLoaded : false,
                 templateTypeForCreation: this.name,
                 pageNumber : this.pageNumber,
-                totalRecodslength : this.totalRecodslength
+                totalRecodslength : this.totalRecodslength,
+                templateTypeSelect : this.templateTypeSelect,
+                isQuickTemplate : this.isQuickTemplate
             };
     
             const serializedState = JSON.stringify(navigationState);
@@ -150,6 +159,7 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     handleInputChange(event) {
         const field = event.target.name;
         const value = event.target.value;
+
         if (field === 'templateName') {
             this.templateName = value;
         } else if (field === 'description') {
@@ -162,6 +172,30 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             this.objectSelect = value;
         } else if (field === 'typeSelect') {
             this.typeSelect = value;
+        }else if (field === 'templateType') {
+            this.templateTypeSelect = value;
+            if (value === 'quickTemplate' && this.name != 'Edit') {
+                this.objectSelect = 'Contact'; 
+                this.oldObject = this.objectSelect; 
+                this.isQuickTemplate = true;
+                this.isObjectChanged = false;
+            }
+            else if(value === 'quickTemplate' && this.name == 'Edit'){
+                this.objectSelect = 'Contact'; 
+                this.oldObject = this.objectSelect; 
+                this.isQuickTemplate = true;
+                this.isObjectChanged = false;
+            }
+            else if( value === 'emailTemplate'){
+                this.oldObject = 'Contact';
+                this.objectSelect = '';
+                this.isQuickTemplate = false;
+            }
+            else{
+                this.isQuickTemplate = false;
+                this.oldObject = 'Contact';
+                this.objectSelect = '';
+            }
         }
     }
 
