@@ -1,6 +1,7 @@
 import { LightningElement, track, wire } from 'lwc';
 import getContacts from '@salesforce/apex/EmailCampaignController.getContacts';
 import getDateFieldsForPicklist from '@salesforce/apex/EmailCampaignController.getDateFieldsForPicklist';
+import createCampaignAndEmails from '@salesforce/apex/EmailCampaignController.createCampaignAndEmails';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
@@ -449,43 +450,38 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleSave() {
-        const transformedPrimaryRecipients = this.selectedPrimaryRecipients.map(recipient => ({
-            id: {
-                name: recipient.label,
-                email: recipient.email
-            }
-        }));
-    
-        const transformedCCRecipients = this.selectedCCRecipients.map(recipient => ({
-            id: {
-                name: recipient.label,
-                email: recipient.email
-            }
-        }));
-    
-        const transformedBCCRecipients = this.selectedBCCRecipients.map(recipient => ({
-            id: {
-                name: recipient.label,
-                email: recipient.email
-            }
-        }));
-    
-        const campaignObj = {
-            name: this.emailCampaignName,
+        const campaignEmailData = {
+            campaignName: this.emailCampaignName,
             senderMode: this.navigationStateString.senderMode,
             fromAddress: this.navigationStateString.fromAddress,
             fromName: this.navigationStateString.fromName,
             saveForFuture: this.navigationStateString.saveForFuture,
-            specificDate : this.specificDate,
-            selectedPrimaryRecipients: transformedPrimaryRecipients,
-            selectedCCRecipients: transformedCCRecipients,
-            selectedBCCRecipients: transformedBCCRecipients,
-            emails: this.emails 
+            selectedPrimaryRecipients: this.transformRecipients(this.selectedPrimaryRecipients),
+            selectedCCRecipients: this.transformRecipients(this.selectedCCRecipients),
+            selectedBCCRecipients: this.transformRecipients(this.selectedBCCRecipients),
+            emails: this.emails
         };
-    
-        console.log('campaignObj ==> ', JSON.stringify(campaignObj));
-        console.log('save btn is clicked');
+
+        
+        const jsonCampaignEmailData = JSON.stringify(campaignEmailData);
+        
+        console.log('jsonCampaignEmailData ==> ' , jsonCampaignEmailData);
+        createCampaignAndEmails({ jsonCampaignEmailData })
+        .then(result => {
+            console.log('Campaign and emails created successfully:', result);
+        })
+        .catch(error => {
+            console.error('Error creating campaign and emails:', error);
+        });
     }
-    
+
+    transformRecipients(recipients) {
+        return recipients.map(recipient => ({
+            id: {
+                name: recipient.label,
+                email: recipient.email
+            }
+        }));
+    }
 
 }

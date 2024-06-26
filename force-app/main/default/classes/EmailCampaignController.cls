@@ -35,38 +35,6 @@ public with sharing class EmailCampaignController {
         return options;
     }
     
-    
-
-    @AuraEnabled
-    public static String createEmailCampaignRecord(String campaignData) {
-        if (!Schema.sObjectType.Marketing_Campaign__c.isCreateable()) {
-            throw new AuraHandledException('You do not have permission to create a Marketing Campaign record.');
-        }
-    
-        try {
-            Map<String, Object> campaignDataMap = (Map<String, Object>) JSON.deserializeUntyped(campaignData);
-    
-            Marketing_Campaign__c newCampaign = new Marketing_Campaign__c(
-                Label__c = (String) campaignDataMap.get('campaignName'),
-                Sender_Mode__c = (String) campaignDataMap.get('senderMode'),
-                From_Address__c = (String) campaignDataMap.get('fromAddress'),
-                From_Name__c = (String) campaignDataMap.get('fromName')
-            );
-    
-            if (!Schema.sObjectType.Marketing_Campaign__c.fields.Label__c.isCreateable() ||
-                !Schema.sObjectType.Marketing_Campaign__c.fields.Sender_Mode__c.isCreateable() ||
-                !Schema.sObjectType.Marketing_Campaign__c.fields.From_Address__c.isCreateable() ||
-                !Schema.sObjectType.Marketing_Campaign__c.fields.From_Name__c.isCreateable()) {
-                throw new AuraHandledException('You do not have permission to create one or more fields on Marketing Campaign.');
-            }
-    
-            insert newCampaign;
-    
-            return newCampaign.Id;
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        }
-    }
 
     @AuraEnabled
     public static List<Quick_Template__c> getQuickTemplates() {
@@ -81,7 +49,78 @@ public with sharing class EmailCampaignController {
                 FROM Marketing_Email_Campaign__c 
                 WHERE Marketing_Campaign__c = :templateId];
     }
-    
-    
 
+    
+    @AuraEnabled
+    public static String createCampaignAndEmails(String jsonCampaignEmailData) {
+
+        System.debug('campaignEmailDataMap ==> ' + jsonCampaignEmailData);
+
+        try {
+            Map<String, Object> campaignEmailDataMap = (Map<String, Object>) JSON.deserializeUntyped(jsonCampaignEmailData);
+
+            System.debug('campaignEmailDataMap ==> ' + campaignEmailDataMap);
+    
+            String campaignName = (String) campaignEmailDataMap.get('campaignName');
+            String senderMode = (String) campaignEmailDataMap.get('senderMode');
+            String fromAddress = (String) campaignEmailDataMap.get('fromAddress');
+            String fromName = (String) campaignEmailDataMap.get('fromName');
+            Boolean saveForFuture = (Boolean) campaignEmailDataMap.get('saveForFuture');
+    
+            // List<Map<String, Object>> selectedPrimaryRecipients = (List<Map<String, Object>>) campaignEmailDataMap.get('selectedPrimaryRecipients');
+            // System.debug('selectedPrimaryRecipients ==> ' + selectedPrimaryRecipients);
+            // List<Map<String, Object>> selectedCCRecipients = (List<Map<String, Object>>) campaignEmailDataMap.get('selectedCCRecipients');
+            // List<Map<String, Object>> selectedBCCRecipients = (List<Map<String, Object>>) campaignEmailDataMap.get('selectedBCCRecipients');
+    
+            // Create campaign record
+            Marketing_Campaign__c campaign = new Marketing_Campaign__c();
+            campaign.Label__c = campaignName;
+            campaign.Sender_Mode__c = senderMode;
+            campaign.From_Address__c = fromAddress;
+            campaign.From_Name__c = fromName;
+            campaign.Is_Marketing_Campaign_Template__c = saveForFuture;
+            // campaign.Primary_Recipient__c = formatRecipients(selectedPrimaryRecipients);
+            // campaign.CC_Contacts__c = formatRecipients(selectedCCRecipients);
+            // campaign.BCC_Contacts__c = formatRecipients(selectedBCCRecipients);
+    
+            insert campaign;
+    
+            // List<Map<String, Object>> emails = (List<Map<String, Object>>) campaignEmailDataMap.get('emails');
+            // List<Marketing_Email_Campaign__c> emailRecords = new List<Marketing_Email_Campaign__c>();
+            // for (Map<String, Object> emailData : emails) {
+            //     Marketing_Email_Campaign__c emailCampaign = new Marketing_Email_Campaign__c();
+            //     emailCampaign.Marketing_Campaign__c = campaign.Id;
+            //     emailCampaign.Subject__c = (String) emailData.get('subject');
+            //     emailCampaign.Quick_Template__c = (String) emailData.get('name');
+            //     // emailCampaign.Days_After_Start_Date__c = (Integer) emailData.get('daysAfterStartDate'); // Make sure this field exists
+            //     // emailCampaign.Time_To_Send__c = (String) emailData.get('timeToSend'); // Make sure this field exists
+            //     emailRecords.add(emailCampaign);
+            // }
+    
+            // if (!emailRecords.isEmpty()) {
+            //     upsert emailRecords;
+            // }
+    
+            return campaign.Id;
+        } catch (Exception e) {
+            System.debug('Error creating campaign and emails: ' + e.getMessage());
+            throw new AuraHandledException('Error creating campaign and emails: ' + e.getMessage());
+        }
+    }
+    
+    private static String formatRecipients(List<Map<String, Object>> recipients) {
+        if (recipients == null || recipients.isEmpty()) {
+            return '';
+        }
+    
+        String formattedRecipients = '';
+        for (Map<String, Object> recipient : recipients) {
+            String name = (String) recipient.get('name');
+            String email = (String) recipient.get('email');
+            formattedRecipients += '<p>' + name + ' (' + email + ')' + '</p>';
+        }
+        return formattedRecipients;
+    }
+    
+    
 }
