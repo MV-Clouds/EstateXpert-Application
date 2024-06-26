@@ -1,7 +1,7 @@
 import { LightningElement,track} from 'lwc';
 import getPicklistValues from '@salesforce/apex/MarketingListFilterController.getPicklistValues';
 import getListingsWithRelatedRecords from '@salesforce/apex/MarketingListFilterController.getListingsWithRelatedRecords';
-import getTheOfferRecords from '@salesforce/apex/MarketingListFilterController.getTheOfferRecords';
+import getTheInquiryRecords from '@salesforce/apex/MarketingListFilterController.getTheInquiryRecords';
 
 export default class MarketingListFilterCmp extends LightningElement {
     @track addModal = false;
@@ -14,7 +14,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     @track valueFromChild;
     @track isAddButtonDisabled = true;
     @track filterFields =[];
-    offerRecords = [];
+    InquiryRecords = [];
     @track ListingsWrapper = [];
     @track filteredListings;
     @track staticFields=[{
@@ -132,7 +132,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         this.filterFields =this.filterFields.concat(this.staticFields);
         this.setPicklistValue();
         this.setListingWapper();
-        this.setOfferRecord();
+        this.setInquiryRecord();
         
     }
 
@@ -196,15 +196,15 @@ export default class MarketingListFilterCmp extends LightningElement {
     }
 
     /**
-    * Method Name: setOfferRecord
-    * @description: get the offer records.
+    * Method Name: setInquiryRecord
+    * @description: get the Inquiry records.
     * Date: 07/06/2024
     * Created By: Vyom Soni
     **/
-    setOfferRecord(){
-        getTheOfferRecords().then(result => {
-            this.offerRecords = result;
-            console.log('offer'+JSON.stringify(this.offerRecords));
+    setInquiryRecord(){
+        getTheInquiryRecords().then(result => {
+            this.InquiryRecords = result;
+            console.log('Inquiry'+JSON.stringify(this.InquiryRecords));
         })
         .catch(error => {
             console.error('Error fetching listings', error);
@@ -283,7 +283,7 @@ export default class MarketingListFilterCmp extends LightningElement {
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
                 console.log(`Applying filter on field: ${field.apiName}`);
     
-                if (field.objectApiName !== 'Listing__c' && field.objectApiName !== 'Offer__c') {
+                if (field.objectApiName !== 'Contact' && field.objectApiName !== 'Inquiry__c') {
                     // Filter for related record in another object (Contact, Property)
                     console.log('Filtering related object:', field.objectApiName);
                     
@@ -304,26 +304,26 @@ export default class MarketingListFilterCmp extends LightningElement {
                             return true;
                         });
 
-                } else if (field.objectApiName === 'Offer__c') {
-                    // Filter for related offer records
-                    console.log('Filtering related offer records');
+                } else if (field.objectApiName === 'Inquiry__c') {
+                    // Filter for related Inquiry records
+                    console.log('Filtering related Inquiry records');
                     
                     this.filteredListings = this.filteredListings.filter(wrapper => {
-                        const relatedOffers = this.offerRecords.filter(offer => offer.Listing__c === wrapper.Id);
+                        const relatedInquirys = this.InquiryRecords.filter(Inquiry => Inquiry.Listing__c === wrapper.Id);
     
-                        if (!relatedOffers.length) return false;
+                        if (!relatedInquirys.length) return false;
     
-                        return relatedOffers.some(relatedOffer => {
+                        return relatedInquirys.some(relatedInquiry => {
                             if (field.picklist || field.string || field.id || field.boolean) {
                                 const values = field.selectedOptions.map(option => option.value);
-                                return this.applyOperatorFilter(relatedOffer, field, values);
+                                return this.applyOperatorFilter(relatedInquiry, field, values);
                             }
                             if (field.currency || field.double) {
-                                return this.applyNumericFilter(relatedOffer, field);
+                                return this.applyNumericFilter(relatedInquiry, field);
                             }
                             if (field.date || field.datetime) {
                                 console.log('Applying date/datetime filter');
-                                return this.applyDateFilter(relatedOffer, field);
+                                return this.applyDateFilter(relatedInquiry, field);
                             }
                             return true;
                         });

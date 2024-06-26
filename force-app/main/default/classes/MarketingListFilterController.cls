@@ -268,11 +268,11 @@ public with sharing class MarketingListFilterController {
     * @return String of fields Name.
     */
     @AuraEnabled
-    public static List<Offer__c> getTheOfferRecords(){
-        String querylist = String.escapeSingleQuotes(getAllFields('Offer__c'));
+    public static List<Inquiry__c> getTheInquiryRecords(){
+        String querylist = String.escapeSingleQuotes(getAllFields('Inquiry__c'));
         String query = 'SELECT ' + querylist+' '+
-                       'FROM Offer__c WHERE Listing__c != NULL';
-        List<Offer__c> listings = Database.query(query);
+                       'FROM Inquiry__c WHERE Contact__c != NULL';
+        List<Inquiry__c> listings = Database.query(query);
         return listings;
     }
 }
