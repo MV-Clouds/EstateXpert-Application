@@ -65,11 +65,11 @@
             </div>
             <br />
             <label for="square-footage">City:</label>
-            <input class="Value_increment_box fields" type="text" onchange={handleCityChange} value={city}></input>
+            <input class="Value_increment_box fields" type="text" onkeyup={handleCityChange} value={city}></input>
             <br />
             <label for="zipcode">Zipcode:</label>
-            <input class="Value_increment_box fields" type="text" onchange={handleZipCodeChange}
-                value={zipCode}></input>
+            <input class="Value_increment_box fields" type="text" onkeyup={handleZipCodeChange}
+                value={zip}></input>
         </div>
         <div class="filter-footer">
             <lightning-button variant="brand" label="Apply" onclick={applyFilters}></lightning-button>

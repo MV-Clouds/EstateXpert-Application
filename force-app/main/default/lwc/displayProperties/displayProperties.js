@@ -28,7 +28,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         bedrooms: 0,
         bathrooms: 0,
         city: '',
-        zipcode: ''
+        zip: ''
     };
     @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
     @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
@@ -180,18 +180,29 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Created By: Mitrajsinh Gohil
     */
     filterProperties() {
-        const { propertyType, minPrice, maxPrice, bedrooms, bathrooms, city, zipCode } = this.filterData;
+        console.log('filterproperties');
 
+        const { propertyType, minPrice, maxPrice, bedrooms, bathrooms, city, zip } = this.filterData;
 
+        console.log('zip:-> ',zip);
         this.pagedFilteredListingData = this.ListingData.filter(property => {
+            console.log('property.zipcode:-> ',property.Zip_Postal_Code__c);
             const searchProperty = property.Name.toLowerCase().includes(this.searchTerm)
             const matchesPropertyType = !propertyType || property.Listing_Type__c == propertyType;
             const matchesPrice = (minPrice != 0 ? property.Listing_Price__c >= minPrice ? true : false : true) &&
                                  (maxPrice != 0 ? property.Listing_Price__c <= maxPrice ? true : false : true)
             const matchesBedrooms = bedrooms != 0  ? property.Bedrooms__c == bedrooms ? true : false : true;
             const matchesBathrooms = bathrooms!= 0 ? property.FullBathrooms__c == bathrooms ? true : false : true;
-            const matchesCity = !city || property.City__c.toLowerCase() == city.toLowerCase();
-            const matchesZipCode = !zipCode || property.Zipcode__c == zipCode;
+
+            const matchesCity = city!='' ? (property.City__c != undefined && property.City__c != '') ? property.City__c.toLowerCase() == city.toLowerCase() ? true : false : false : true;
+
+            // const matchesCity = ((city!='' && property.City__c != undefined && property.City__c != '') ? property.City__c.toLowerCase() == city.toLowerCase() ? true : false : true);
+            // const matchesZipCode = zip!='' && property.Zip_Postal_Code__c !='' ? property.Zip_Postal_Code__c == zip ? true : false : true;
+
+
+            const matchesZipCode = zip!='' ? property.Zip_Postal_Code__c !='' ? property.Zip_Postal_Code__c == zip ? true : false : false : true;
+
+            console.log(searchProperty,matchesPropertyType,matchesPrice, matchesBedrooms,matchesBathrooms,matchesCity,matchesZipCode);
 
             return searchProperty && matchesPropertyType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipCode;
         });
@@ -199,7 +210,10 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
         this.currentPage = 1;
         this.totalRecords = this.pagedFilteredListingData.length;
-        this.updateMapMarkers();
+        if(this.isMapView){
+            this.updateMapMarkers();
+            
+       }
     }
 
     /**
@@ -222,7 +236,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         this.filterData = event.detail;
         this.pagedFilteredListingData = this.ListingData
         this.searchTerm = ''
-        this.filterProperties();
+        // this.filterProperties();
         this.isModalOpen = false;
     }
 

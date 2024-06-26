@@ -1,7 +1,7 @@
 import { LightningElement, api, track } from 'lwc';
 import GetListingTypes from '@salesforce/apex/PropertySearchController.GetListingTypes';
 export default class PropertySearch extends LightningElement {
-    @api filterValue;
+    @api filtervalue;
     @track propertyType = '';
     @track propertyTypes = []; 
     @track minPrice = '';
@@ -11,7 +11,7 @@ export default class PropertySearch extends LightningElement {
     @track bedrooms = 0;
     @track bathrooms = 0;
     @track city = '';
-    @track zipCode = '';
+    @track zip = '';
 
     /**
     * Method Name: ConnectedCallback
@@ -24,14 +24,14 @@ export default class PropertySearch extends LightningElement {
             this.propertyTypes = result;
         });
 
-        if(this.filterValue){
-            this.propertyType = this.filterValue.propertyType || '';
-            this.minPrice = this.filterValue.minPrice || '';
-            this.maxPrice = this.filterValue.maxPrice || '';
-            this.bedrooms = this.filterValue.bedrooms || 0;
-            this.bathrooms = this.filterValue.bathrooms || 0;
-            this.city = this.filterValue.city || '';
-            this.zipCode = this.filterValue.zipcode || '';
+        if(this.filtervalue){
+            this.propertyType = this.filtervalue.propertyType || '';
+            this.minPrice = this.filtervalue.minPrice || '';
+            this.maxPrice = this.filtervalue.maxPrice || '';
+            this.bedrooms = this.filtervalue.bedrooms || 0;
+            this.bathrooms = this.filtervalue.bathrooms || 0;
+            this.city = this.filtervalue.city || '';
+            this.zip = this.filtervalue.zip || '';
         }
     }
 
@@ -108,7 +108,8 @@ export default class PropertySearch extends LightningElement {
     * Created By: Mitrajsinh Gohil
     */
     handleZipCodeChange(event) {
-        this.zipCode = event.target.value;
+        this.zip = event.target.value.toString();
+        console.log('zipcode:- ',this.zip);
     }
 
     /**
@@ -139,7 +140,7 @@ export default class PropertySearch extends LightningElement {
                 bedrooms: this.bedrooms,
                 bathrooms: this.bathrooms,
                 city: this.city,
-                zipcode: this.zipCode
+                zip: this.zip
             };
 
             console.log('Applying Filters:', filterValues.propertyType);
@@ -210,7 +211,7 @@ export default class PropertySearch extends LightningElement {
         this.bedrooms = 0;
         this.bathrooms = 0;
         this.city = '';
-        this.zipCode = '';
+        this.zip = '';
         const filterValues = {
                 propertyType: this.propertyType,
                 minPrice: this.minPrice,
@@ -218,7 +219,7 @@ export default class PropertySearch extends LightningElement {
                 bedrooms: this.bedrooms,
                 bathrooms: this.bathrooms,
                 city: this.city,
-                zipcode: this.zipCode
+                zip: this.zip
             };
         this.dispatchEvent(new CustomEvent('filterclear', { detail: filterValues }));
     }
