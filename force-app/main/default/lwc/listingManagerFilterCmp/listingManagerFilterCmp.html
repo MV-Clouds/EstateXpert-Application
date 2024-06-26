@@ -24,7 +24,7 @@
                                             role="none">
                                             <input type="text" class="slds-input slds-combobox__input"
                                                 placeholder={option.label} data-id={index}
-                                                onchange={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1} />
+                                                onkeyup={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1} />
                                             <span
                                                 class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
                                                 <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
@@ -108,8 +108,8 @@
                                             <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
                                                 role="none">
                                                 <input type="text" class="slds-input slds-combobox__input"
-                                                    placeholder={option.label}  data-id={index}
-                                                    onchange={handleSearchChangeString} />
+                                                    placeholder={option.label}  data-id={index} value={option.searchTerm}
+                                                    onkeypress={handleSearchChangeString}/>
                                                 <span
                                                     class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
                                                     <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"

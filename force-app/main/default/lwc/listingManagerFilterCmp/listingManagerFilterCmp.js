@@ -562,6 +562,9 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.id;
         console.log('index'+index);
         this.filterFields[index].searchTerm = event.target.value;
+        if (event.key === 'Enter') { // Check if Enter key was pressed
+            this.addTheString(event);
+        }
         console.log('filere'+this.filterFields[index].searchTerm);
     }
 
@@ -591,6 +594,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
             if (!isValueAlreadySelected) {
                 field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
                 console.log('selectedOptions: ' + JSON.stringify(field.selectedOptions));
+                this.filterFields[index].searchTerm = '';
             } else {
                 console.log('Value already exists in selectedOptions');
             }
