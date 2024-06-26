@@ -136,7 +136,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
 
                 if(this.isObjectChanged){
                     const errorPopup = this.template.querySelector('c-error_-pop-up');
-                    console.log('errorPopup ==> ' , errorPopup);
                     if(errorPopup){
                         errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
                     }
@@ -301,7 +300,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 }
             }
             else{
-                console.log('templateTypeForCreation ==> ' ,this.templateTypeForCreation);
+
                 this.setEmailBody();
             }
 
@@ -323,7 +322,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         if(this.isFirstTimeLoaded){
             getTemplateContent({ templateId: this.currentRecordId })
             .then(result => {
-                console.log('result : ', result);
                 this.description = result.Description__c;
                 this.bodyOfTemplate = result.Template_Body__c;
                 $(this.editor).summernote('code', this.bodyOfTemplate);
@@ -390,8 +388,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     setEmailBody(){
-        console.log('In setEmailbody method');
-        console.log('bodyOfTemplate ==> ' , this.bodyOfTemplate);
         if(this.bodyOfTemplate != '' || this.bodyOfTemplate != null && this.templateTypeForCreation != 'New'){
             $(this.editor).summernote('code', this.bodyOfTemplate);
         }
@@ -412,9 +408,10 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             Label__c: this.templateLabel,
             Template_Body__c: content,
             Description__c : this.description,
-            Template_Type__c : this.selectedType
+            Template_Type__c : this.selectedType,
+            Template_pattern__c : this.templateTypeSelect,
+            Subject__c	: this.subject
         };
-        console.log('recId ==> ' , this.currentRecordId);
 
         saveTemplate({ template : template , recId : this.currentRecordId })
             .then((res) => {
@@ -459,12 +456,10 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     async handleCancel() {
-        console.log('In handlecancel');
         var regex = /(<([^>]+)>)/ig;
 
         const editorContent = $(this.editor).summernote('code');
         const editorContentWithoutHtml = editorContent.replace(regex, "");
-        console.log('editorContentWithoutHtml ==> ' , editorContentWithoutHtml);
 
         if(editorContentWithoutHtml != ''){
 
@@ -472,14 +467,11 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             const normalizedBodyOfTemplate = this.bodyOfTemplate.replace(/\s+/g, ' ').trim();    
     
             if (normalizedEditorContent !== normalizedBodyOfTemplate) {
-                console.log('editorContent ==> ' , normalizedEditorContent);
-                console.log('bodyOfTemplate ==> ' , normalizedBodyOfTemplate);
                 this.isObjectChanged =  true;
                 this.cancelBtn = true;
         
                 setTimeout(async () => {
                     const errorPopup = this.template.querySelector('c-error_-pop-up');
-                    console.log('errorPopup ==> ', errorPopup);
         
                     if (errorPopup) {
                         errorPopup.showToast('warning', 'You will lose all changed data here', 'Warning');
@@ -562,14 +554,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     handlePopUpCancel(){
         this.isObjectChanged  = false;
-        console.log('oldobject ==> ' , this.oldObject);
         
         if(this.oldObject){
             this.selectedObject = this.oldObject;
         }
         this.cancelBtn = false;
         // $(this.editor).summernote('destroy');
-        console.log(this.selectedObject , 'SelectedObject');
     }
 
     /**

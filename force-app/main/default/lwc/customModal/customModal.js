@@ -17,8 +17,8 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api totalRecodslength;
     @api templateTypeSelect = '';
     @api isQuickTemplate = false;
+    @api subject = '';
     @track objectOptions;
-    @track subject = '';
     @track typeOptions;
     @track IsChildModal = false;
     @track isObjectChanged = false;
@@ -76,7 +76,6 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     connectedCallback(){    
-        console.log('currentRecordId ==> ' , this.currentRecordId);
         if(this.name == 'New'){
             this.templateName = '';
             this.description = '';
@@ -136,7 +135,6 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
             };
     
             const serializedState = JSON.stringify(navigationState);
-            console.log('serializedState:', serializedState);
 
             var cmpDef;                
             cmpDef = {
@@ -148,7 +146,6 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 };
 
             let encodedDef = btoa(JSON.stringify(cmpDef));
-                console.log('encodedDef : ', encodedDef);
                 this[NavigationMixin.Navigate]({
                 type: "standard__webPage",
                 attributes: {

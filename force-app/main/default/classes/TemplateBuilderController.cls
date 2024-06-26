@@ -73,7 +73,7 @@ public with sharing class TemplateBuilderController {
                     Schema.sObjectType.Template__c.fields.Description__c.isUpdateable() &&
                     Schema.sObjectType.Template__c.fields.Template_Type__c.isUpdateable()) {
                     
-                    Template__c existingTemplate = [SELECT Id, Object_Name__c, Label__c, Template_Body__c, Description__c 
+                    Template__c existingTemplate = [SELECT Id, Object_Name__c, Label__c, Template_Body__c, Description__c,Subject__c,Template_pattern__c
                                                     FROM Template__c WHERE Id = :recId WITH SECURITY_ENFORCED LIMIT 1];
                     
                     existingTemplate.Object_Name__c = template.Object_Name__c;
@@ -81,6 +81,8 @@ public with sharing class TemplateBuilderController {
                     existingTemplate.Template_Body__c = template.Template_Body__c;
                     existingTemplate.Description__c = template.Description__c;
                     existingTemplate.Template_Type__c = template.Template_Type__c;
+                    existingTemplate.Subject__c = template.Subject__c;
+                    existingTemplate.Template_pattern__c = template.Template_pattern__c;
                     System.debug('existingTemplate ==> ' + existingTemplate);
                     update existingTemplate;
                 } else {

@@ -43,7 +43,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         if (currentPageReference.state) {
             if (currentPageReference.attributes.apiName == 'template_builder') {
                 this.newPageNumber = currentPageReference.attributes.pageNumber;
-                console.log(this.newPageNumber);
                 this.fetchTemplates();
             }
         }
@@ -78,20 +77,18 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.isLoading = true;
         getTemplates()
             .then(data => {
-                // console.log('data ==> ' , data);
                 this.totalRecodslength = data.length;
-                console.log('length ==> ' , this.totalRecodslength);
-            data.sort((a, b) => {
-                const labelA = a.Label__c.toLowerCase();
-                const labelB = b.Label__c.toLowerCase();
+                data.sort((a, b) => {
+                    const labelA = a.Label__c.toLowerCase();
+                    const labelB = b.Label__c.toLowerCase();
 
-                if (labelA < labelB) return -1;
-                if (labelA > labelB) return 1;
-                return 0;
-            });
+                    if (labelA < labelB) return -1;
+                    if (labelA > labelB) return 1;
+                    return 0;
+                });
     
-            this.processTemplates(data);
-            this.isLoading = false; 
+                this.processTemplates(data);
+                this.isLoading = false; 
             
             })
             .catch(error => {
@@ -106,7 +103,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     processTemplates(data) {
-        // console.log('processtemplate:- ',JSON.stringify(data));
         // this.templates = data
         this.templates = data.map((template, index) => ({
             ...template,
@@ -116,13 +112,10 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         }));
         
         this.filteredTemplates = this.templates;
-        // console.log('filteredTemplates ==> ' , this.filteredTemplates);
         this.calculateTotalPages();
 
-        console.log(this.newPageNumber);
         if(this.newPageNumber != undefined){
             this.currentPage = this.newPageNumber;
-            console.log(this.currentPage);
         }
 
         this.displayTemplates();
@@ -167,13 +160,11 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     displayTemplates() {
         // Ensure currentPage is within valid range
-        console.log(this.currentPage);
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
         }
         const startIndex = (this.currentPage - 1) * PAGE_SIZE;
         this.visibleTemplates = this.filteredTemplates.slice(startIndex, startIndex + PAGE_SIZE);
-        // console.log('visibleTemplates ==> ', this.visibleTemplates);
         this.updatePaginationButtons();
     }
 
@@ -250,7 +241,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                     template.isActive = isActive;
                     template.Status__c = isActive ? 'Active' : 'Inactive';
                     this.filteredTemplates = [...this.templates];
-                    console.log('filteredTemplates ==> ' , this.filteredTemplates);
                     this.displayTemplates();
                     this.showToast('Status Change', `Template status changed to: ${template.Status__c}`, 'success');
                 }
@@ -308,7 +298,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             };
     
             const serializedState = JSON.stringify(navigationState);
-            // console.log('serializedState:', serializedState);
             
             var cmpDef;                
             cmpDef = {
@@ -320,7 +309,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 };
 
             let encodedDef = btoa(JSON.stringify(cmpDef));
-                console.log('encodedDef : ', encodedDef);
                 this[NavigationMixin.Navigate]({
                 type: "standard__webPage",
                 attributes: {
@@ -382,14 +370,10 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     updatePaginationButtons() {
         this.isPreviousDisabled = (this.currentPage == 1);
-        console.log('here1==>' , this.currentPage) ;
-        console.log(this.isPreviousDisabled);
 
         if(this.newPageNumber != undefined){
             if(this.newPageNumber != 1 && (this.newPageNumber == this.totalPages)){
                 this.isPreviousDisabled = false;
-                console.log('here2 ==>',this.newPageNumber);
-                console.log(this.isPreviousDisabled);
             }
             this.isNextDisabled = true;
         }
@@ -405,7 +389,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     handleAdd() {
-        // console.log('Clicked');
         this.nameForTemplate = 'New';
         this.isModalOpen = true;
     }
