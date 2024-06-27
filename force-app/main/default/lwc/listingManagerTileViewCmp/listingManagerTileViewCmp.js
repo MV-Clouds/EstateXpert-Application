@@ -13,6 +13,25 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     @track totalPages;
     @track shownProcessedListingData = [];
 
+    @api
+    get listingsdata() {
+        return this.listings;
+    }
+
+    set listingsdata(value) {
+            if (value && Array.isArray(value)) {
+                this.listings = value;
+                this.totalPages = Math.ceil(this.listings.length / this.pageSize);
+                this.updateProcessedListingData();
+                this.updatePaginationButtons();
+            } else {
+                this.listings = [];
+                this.totalPages = 1;
+                this.shownProcessedListingData = [];
+                this.updatePaginationButtons();
+            }   
+    }
+    
     connectedCallback(){
         this.totalPages = Math.ceil(this.listings.length / this.pageSize);
         this.updateProcessedListingData();
