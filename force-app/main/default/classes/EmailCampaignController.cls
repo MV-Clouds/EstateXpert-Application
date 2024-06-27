@@ -38,7 +38,7 @@ public with sharing class EmailCampaignController {
 
     @AuraEnabled
     public static List<Quick_Template__c> getQuickTemplates() {
-        return [SELECT Id, Name, Subject__c FROM Quick_Template__c];
+        return [SELECT Id, Name, Subject__c FROM Quick_Template__c WITH SECURITY_ENFORCED ];
     }
     
 
@@ -47,8 +47,9 @@ public with sharing class EmailCampaignController {
     public static List<Marketing_Email_Campaign__c> getMarketingEmails(String templateId) {
         return [SELECT Id, Name, Marketing_Campaign__c ,Subject__c,Quick_Template__c
                 FROM Marketing_Email_Campaign__c 
-                WHERE Marketing_Campaign__c = :templateId];
+                WHERE Marketing_Campaign__c = :templateId WITH SECURITY_ENFORCED ];
     }
+
     @AuraEnabled
     public static String createCampaignAndEmails(String jsonCampaignEmailData) {
         System.debug('campaignEmailDataMap ==> ' + jsonCampaignEmailData);
@@ -107,7 +108,10 @@ public with sharing class EmailCampaignController {
             campaign.BCC_Contacts__c = selectedBCCRecipientsJson; 
     
             // Insert the campaign record
-            insert campaign;
+
+            if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
+                insert campaign;
+            }
     
             List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
             List<Marketing_Email_Campaign__c> emailRecordsToInsert = new List<Marketing_Email_Campaign__c>();
