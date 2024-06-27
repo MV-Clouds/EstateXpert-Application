@@ -49,6 +49,7 @@
 .nameSection p{
     color: #2282D6;
     font-weight: 600;
+    cursor: pointer;
 }
 
 .addSection{
