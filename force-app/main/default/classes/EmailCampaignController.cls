@@ -108,7 +108,6 @@ public with sharing class EmailCampaignController {
             campaign.BCC_Contacts__c = selectedBCCRecipientsJson; 
     
             // Insert the campaign record
-
             if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
                 insert campaign;
             }
@@ -123,9 +122,21 @@ public with sharing class EmailCampaignController {
                 Marketing_Email_Campaign__c emailCampaign = new Marketing_Email_Campaign__c();
 
                 emailCampaign.Marketing_Campaign__c = campaign.Id;
-                emailCampaign.Subject__c = (String) emailData.get('subject');
+                emailCampaign.Subject__c =  String.valueOf(emailData.get('subject'));
                 emailCampaign.Quick_Template__c = String.valueOf(emailData.get('name'));
-
+                emailCampaign.Days_After_Start_Date__c	= Integer.valueOf(emailData.get('daysAfterStartDate'));
+                String timeString = (String)emailData.get('timeToSend');
+                if (!String.isEmpty(timeString)) {
+                    List<String> timeParts = timeString.split(':');
+                    if (timeParts.size() == 3) {
+                        Integer hours = Integer.valueOf(timeParts[0]);
+                        Integer minutes = Integer.valueOf(timeParts[1]);
+                        Integer seconds = Integer.valueOf(timeParts[2]);
+                        
+                        emailCampaign.TimeToSend__c = Time.newInstance(hours, minutes, seconds, 0);
+                    }
+                }
+                                
                 System.debug('emailCampaign ==> ' + emailCampaign);
 
                 emailRecordsToInsert.add(emailCampaign);
