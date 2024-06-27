@@ -586,6 +586,39 @@ export default class ListingManagerFilterCmp extends LightningElement {
         }
     }
     
+    /**
+    * Method Name: removeOptionMethod,removeOption1
+    * @description: Handle the remove of pill from under if picklist fiedls.
+    * Date: 14/06/2024
+    * Created By: Vyom Soni
+    **/
+    removeOptionMethodString(event){
+        this.removeOptionString(event);
+        setTimeout(()=>{
+            this.applyFilters();
+        },1000);
+    }
+
+    removeOptionString(event) {
+        const optionToRemove = event.currentTarget.dataset.id;
+        const index = event.currentTarget.dataset.index;
+        console.log('index' + index);
+        console.log('value'+optionToRemove);
+    
+        if (index > -1) {
+            this.filterFields[index].selectedOptions = this.filterFields[index].selectedOptions.filter(option => option.value !== optionToRemove);
+            // console.log('hi' + JSON.stringify(field.selectedOptions));
+            this.applyFilters();
+        }
+        if (this.filterFields[index].selectedOptions.length === 0) {
+            this.applyFilters();
+            this.filterFields[index].selectedOptions = null;
+            // console.log('1' + field.selectedOptions);
+            // console.log('2' + (field.selectedOptions ? field.selectedOptions.length : 0));
+           
+        }
+    }
+    
 
     // Stiring fields logic
 

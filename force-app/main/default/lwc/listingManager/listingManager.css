@@ -110,6 +110,35 @@
     
 }
 
+.noresult{
+    overflow: auto;
+    height: 81%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.noresult .tag1{
+    font-family: "Sans-Serif",Montserrat;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 25px;
+    text-align: center;
+
+}
+
+.noresult .tag2{
+    font-family: "Sans-Serif",Montserrat;
+    font-size: 0.9rem;
+    font-weight: 400;
+    line-height: 25px;
+    text-align: center;
+
+}
+
+
+
+
 .main .body .innerDiv2 .slds-cell_action-mode .slds-icon_container{
     display:none
 }

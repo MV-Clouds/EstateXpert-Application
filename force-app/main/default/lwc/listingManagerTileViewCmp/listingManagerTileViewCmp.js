@@ -31,6 +31,10 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
                 this.updatePaginationButtons();
             }   
     }
+
+    get showSection() {
+        return this.shownProcessedListingData.length === 0;
+    }
     
     connectedCallback(){
         this.totalPages = Math.ceil(this.listings.length / this.pageSize);

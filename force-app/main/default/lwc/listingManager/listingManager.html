@@ -79,84 +79,97 @@
                
                 <div class="innerDiv2">
                   <template if:true={showList}> 
-                    <div class="tableDiv">
-                        <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid" aria-label="Example advanced table of Opportunities in actionable mode">
-                            <thead>
-                              <tr class="slds-line-height_reset">
-                                <th class="slds-text-align_right slds-cell_action-mode colume1" scope="col">
-                                  <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
-                                  <div class="slds-th__action slds-th__action_form">
-                                    <lightning-input
-                                          type="checkbox"
-                                          onchange={selectAllCheckbox}
-                                          checked={checkAll}
-                                          >
-                                          </lightning-input>
-                                  </div>
-                                </th>
-                                <th class="slds-cell_action-mode imageColume" scope="col">
-                                    <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
-                                </th>
-                                <th key={listing.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
-                                  <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
-                                    <span class="slds-assistive-text">Sort by: </span>
-                                    <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
-                                      <span class="slds-truncate" title="Title">Listing Name</span>
-                                      <span class="slds-icon_container slds-icon-utility-arrowdown">
-                                        <svg data-index="Name" xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
-                                      </span>
-                                    </div>
-                                  </a>
-                                </th>
-                                <template for:each={fields} for:item="listing" for:index="index">
-                                  <th key={listing.fieldName} data-id={listing.fieldName} onclick={sortClick} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
-                                    <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
-                                      <span class="slds-assistive-text">Sort by: </span>
-                                      <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
-                                        <span class="slds-truncate" title="Title">{listing.fieldLabel}</span>
-                                        <span class="slds-icon_container slds-icon-utility-arrowdown">
-                                          <svg data-index={listing.fieldName} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
-                                        </span>
-                                      </div>
-                                    </a>
-                                  </th>
-                                </template>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <template for:each={shownProcessedListingData} for:item="listing" for:index="index">
-                                <tr key={listing.Id} aria-selected="false" class="slds-hint-parent">
-                                    <td class="slds-text-align_right slds-cell_action-mode" role="gridcell">
+                    <template if:false={showSection}>
+                        <div class="tableDiv">
+                            <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid" aria-label="Example advanced table of Opportunities in actionable mode">
+                                <thead>
+                                  <tr class="slds-line-height_reset">
+                                    <th class="slds-text-align_right slds-cell_action-mode colume1" scope="col">
+                                      <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
+                                      <div class="slds-th__action slds-th__action_form">
                                         <lightning-input
-                                            data-id={index}
-                                            type="checkbox"
-                                            checked={listing.isChecked}
-                                            value={listing.isChecked}
-                                            onchange={checkBoxValueChange}>
-                                        </lightning-input>
-                                    </td>
-                                    <td class="slds-cell_action-mode" role="gridcell">
-                                        <div class="slds-truncate">
-                                            <img class="property-image" src={listing.media_url} alt="Listing Image"/>
-                                        </div>
-                                    </td>
-                                    <th class="slds-cell_action-mode" scope="row">
-                                        <div class="slds-truncate">
-                                            <a href="#" data-id={listing.Id} onclick={redirectToRecord} tabindex="0">{listing.Name}</a>
-                                        </div>
+                                              type="checkbox"
+                                              onchange={selectAllCheckbox}
+                                              checked={checkAll}
+                                              >
+                                              </lightning-input>
+                                      </div>
                                     </th>
-                                    <template for:each={listing.orderedFields} for:item="field" for:index="index2">
-                                        <td key={field.fieldName} class="slds-cell_action-mode" role="gridcell">
+                                    <th class="slds-cell_action-mode imageColume" scope="col">
+                                        <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                    </th>
+                                    <th key={listing.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
+                                      <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                        <span class="slds-assistive-text">Sort by: </span>
+                                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                          <span class="slds-truncate" title="Title">Listing Name</span>
+                                          <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                            <svg data-index="Name" xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
+                                          </span>
+                                        </div>
+                                      </a>
+                                    </th>
+                                    <template for:each={fields} for:item="listing" for:index="index">
+                                      <th key={listing.fieldName} data-id={listing.fieldName} onclick={sortClick} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
+                                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                          <span class="slds-assistive-text">Sort by: </span>
+                                          <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                            <span class="slds-truncate" title="Title">{listing.fieldLabel}</span>
+                                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                              <svg data-index={listing.fieldName} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </th>
+                                    </template>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <template for:each={shownProcessedListingData} for:item="listing" for:index="index">
+                                    <tr key={listing.Id} aria-selected="false" class="slds-hint-parent">
+                                        <td class="slds-text-align_right slds-cell_action-mode" role="gridcell">
+                                            <lightning-input
+                                                data-id={index}
+                                                type="checkbox"
+                                                checked={listing.isChecked}
+                                                value={listing.isChecked}
+                                                onchange={checkBoxValueChange}>
+                                            </lightning-input>
+                                        </td>
+                                        <td class="slds-cell_action-mode" role="gridcell">
                                             <div class="slds-truncate">
-                                                {field.value}
+                                                <img class="property-image" src={listing.media_url} alt="Listing Image"/>
                                             </div>
                                         </td>
-                                    </template>
-                                </tr>
-                            </template>
-                            </tbody>
-                          </table>
-                    </div>
+                                        <th class="slds-cell_action-mode" scope="row">
+                                            <div class="slds-truncate">
+                                                <a href="#" data-id={listing.Id} onclick={redirectToRecord} tabindex="0">{listing.Name}</a>
+                                            </div>
+                                        </th>
+                                        <template for:each={listing.orderedFields} for:item="field" for:index="index2">
+                                            <td key={field.fieldName} class="slds-cell_action-mode" role="gridcell">
+                                                <div class="slds-truncate">
+                                                    {field.value}
+                                                </div>
+                                            </td>
+                                        </template>
+                                    </tr>
+                                </template>
+                                </tbody>
+                              </table>
+                        </div>
+                    </template>
+                    <template if:true={showSection}>
+                        <div class="noresult">
+                            <div>
+                                <div class="noresult-class">
+                                    <p class="tag1">No Result found yet...</p>
+                                    <p class="tag2">We did not find any result for your search</p>   
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
                     <div class="paginationDiv slds-var-p-around_medium">
                         <div class="btnCover">
                             <div class="leftButton slds-var-m-right_small">
@@ -177,11 +190,12 @@
                         </div>
                     </div>
                   </template>
+                  
                   <templete if:true={showTile}>
-                      <c-listing-manager-tile-view-cmp
-                        onvalueselected={handleListingSelect}
-                        listingsdata={processedListingData}
-                      ></c-listing-manager-tile-view-cmp>
+                        <c-listing-manager-tile-view-cmp
+                          onvalueselected={handleListingSelect}
+                          listingsdata={processedListingData}
+                        ></c-listing-manager-tile-view-cmp>
                   </templete>
                   <templete if:true={showMap}>
                       <c-listing-manager-mapview-cmp

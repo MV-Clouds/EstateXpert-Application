@@ -40,8 +40,12 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track shownProcessedListingData = [];
     @track wrapOn = false;
     @track propertyMediaUrls = [];
+    // @track showSection = false;
     get checkAll() {
         return this.processedListingData.every(item => item.isChecked);
+    }
+    get showSection() {
+        return this.shownProcessedListingData.length === 0;
     }
 
     connectedCallback(){
