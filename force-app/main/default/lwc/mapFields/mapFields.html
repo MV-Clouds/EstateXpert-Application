@@ -1,0 +1,98 @@
+<template>
+    <lightning-card variant="Narrow" title="Map Listing To Property" icon-name="standard:data_mapping">
+        <div class="mainDiv">
+            <div class="slds-p-around_medium">
+
+                <!-- Spinner -->
+                <template if:true={isLoading}>
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </template>
+
+                <!-- Dropdown pair for listing and property -->
+                <div class="container">
+                    <!-- Heading -->
+                    <h2 class="title">Map Listing And Property</h2>
+
+                    <!-- Buttons -->
+                    <div class="buttons">
+                        <div class="checkbox-container">
+                            <input class="checkbox" type="checkbox" name="Sync" checked={checkboxValue}
+                                onchange={handleCheckboxChange}>
+                            <label class="label-text">Auto Sync</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- picklist section -->
+            <div class="scrollable-container">
+                <template if:true={isDropdownOpen}>
+                    <template for:each={dropDownPairs} for:item="pair" for:index="index">
+                        <div key={pair.id} class="picklist-div">
+                            <lightning-layout>
+                                <lightning-layout-item size="5">
+                                    <lightning-combobox label="Listing Field" options={pair.listingOptions}
+                                        data-index={index} value={pair.selectedListing}
+                                        onchange={handleSourceFieldChange}
+                                        disabled={isAutoSyncEnabled}
+                                        class="disabled">
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="1">
+                                    <div class="symbol-container slds-m-top_x-large">
+                                        <span class="mapping-symbol">    
+                                            <img src={doubleSideArrowUrl} alt="Double Side Arrow" />
+                                        </span>
+                                    </div>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="5">
+                                    <lightning-combobox label="Property Field" options={pair.propertyOptions}
+                                        data-index={index} value={pair.selectedProperty}
+                                        onchange={handleDestinationFieldChange}
+                                        disabled={isAutoSyncEnabled}
+                                        class="disabled">
+                                    </lightning-combobox>
+                                </lightning-layout-item>
+                                <div class="icon-button-del">
+                                    <lightning-button-icon class={delButtonClass}
+                                        icon-name="utility:delete" alternative-text="Delete This Mapping" value={index}
+                                        onclick={deletePair}
+                                        disabled={isAutoSyncEnabled}>
+                                    </lightning-button-icon>
+                                </div>
+                            </lightning-layout>
+                        </div>
+                    </template>
+                    <div class="add-btn">
+                        <!-- Add new mapping button -->
+                        <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={isAutoSyncEnabled} >Add</button>
+                    </div>
+                </template>
+            </div>
+
+            <div class="save-btn">
+                <button class="slds-button slds-button_brand" disabled={savebutton} onclick={handleAddPairClick}>SAVE MAPPING</button>
+            </div>
+        </div>
+    </lightning-card>
+
+    <!-- Modal section -->
+    <template if:true={showConfirmationModal}>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container custom-width-33">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Confirmation</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p class="slds-text-align_center con-msg">Are you sure you want to save the changes?</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={closeConfirmationModal}>Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick={handleConfirmAddPair}>Confirm</button>
+                </footer>
+            </div>
+        </section>
+    </template>
+</template>
