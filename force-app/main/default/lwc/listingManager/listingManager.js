@@ -31,7 +31,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track totalSelected=0;
     @track selectedProperties;
     @track selectedListingData;
-    @track checkAll = false;
+    // @track checkAll = false;
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
@@ -40,6 +40,9 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track shownProcessedListingData = [];
     @track wrapOn = false;
     @track propertyMediaUrls = [];
+    get checkAll() {
+        return this.processedListingData.every(item => item.isChecked);
+    }
 
     connectedCallback(){
         loadStyle(this, designcss);
@@ -266,7 +269,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     selectAllCheckbox(event){
         const isChecked = event.target.checked;
-        this.checkAll = !this.checkAll;
+        // this.checkAll = !this.checkAll;
         console.log('hi'+isChecked);
         this.listingData = this.listingData.map(item => {
             return { ...item, isChecked: isChecked };
