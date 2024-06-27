@@ -46,12 +46,27 @@
                                         <div class="options-box">
                                             <ul class="options-cover">
                                                 <template for:each={option.picklistValue} for:item="option1">
-                                                    <li key={option1.value} data-index={index} data-id={option1.value} onclick={selectOption1}
-                                                        class="options-value">
-                                                        <span class="slds-media__body">
-                                                            <span class="_entity">{option1.label}</span>
-                                                        </span>
-                                                    </li>
+                                                    <template if:false={option1.showRightIcon}>
+                                                        <li key={option1.value} data-index={index} data-id={option1.value} onclick={selectOption1}
+                                                            class="options-value">
+                                                            <span class="slds-media__body">
+                                                                <span class="_entity">{option1.label}</span>
+                                                            </span>
+                                                        </li>
+                                                    </template>
+                                                    <template if:true={option1.showRightIcon}>
+                                                        <li  data-index={index} key={option1.value} data-id={option1.value} onclick={selectOption1} class="slds-listbox__item">
+                                                            <div class="slds-listbox__option slds-listbox__option_plain slds-media slds-media_small slds-media_center picklist-option">
+                                                                <span class="slds-media__body">
+                                                                    <span class="slds-truncate" title={option1.label}>{option1.label}</span>
+                                                                </span>
+                                                                <span class="slds-media__figure slds-media__figure_reverse">
+                                                                    <lightning-icon icon-name="utility:check" alternative-text="Lookup Field" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                    </template>
+                                                    
                                                 </template>
                                             </ul>
                                         </div>

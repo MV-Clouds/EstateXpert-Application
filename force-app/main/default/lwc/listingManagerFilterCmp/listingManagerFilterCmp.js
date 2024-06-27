@@ -512,14 +512,28 @@ export default class ListingManagerFilterCmp extends LightningElement {
             if (!exists) {
                 field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
                 console.log('selectedOptions' + JSON.stringify(field.selectedOptions));
+                this.searchTerm1 = ''; // Clear the search term to reset the search
+                this.isFocused1 = false; // Close the dropdown
+                this.applyFilters();
+                const newPicklistValue = field.picklistValue.map(option => {
+                    if (option.value === value) {
+                        return {...option, showRightIcon: true};
+                    }
+                    return option;
+                });
+    
+                field.picklistValue = newPicklistValue;
+                field.unchangePicklistValue = newPicklistValue;
+                fields[index] = field;
+                this.filterFields = fields;
             } else {
                 console.log('Value already exists in selectedOptions');
             }
         }
     
-        this.searchTerm1 = ''; // Clear the search term to reset the search
-        this.isFocused1 = false; // Close the dropdown
-        this.applyFilters();
+        // this.searchTerm1 = ''; // Clear the search term to reset the search
+        // this.isFocused1 = false; // Close the dropdown
+        // this.applyFilters();
     }
     
     /**
@@ -537,20 +551,41 @@ export default class ListingManagerFilterCmp extends LightningElement {
 
     removeOption1(event) {
         const optionToRemove = event.currentTarget.dataset.id;
-        const index =  event.currentTarget.dataset.index;
-        console.log('index'+index);
-        if(index > -1){
-            this.filterFields[index].selectedOptions = this.filterFields[index].selectedOptions.filter(option => option.value !== optionToRemove);
-            console.log('hi'+this.filterFields[index].selectedOptions);
-            console.log('hi'+this.filterFields[index].selectedOptions.length);
+        const index = event.currentTarget.dataset.index;
+        console.log('index' + index);
+    
+        if (index > -1) {
+            let fields = [...this.filterFields];
+            let field = {...fields[index]};
+            
+            // Update the selectedOptions array
+            field.selectedOptions = field.selectedOptions.filter(option => option.value !== optionToRemove);
+            console.log('hi' + JSON.stringify(field.selectedOptions));
+            this.applyFilters();
+            if (field.selectedOptions.length === 0) {
+                this.applyFilters();
+                field.selectedOptions = null;
+                console.log('1' + field.selectedOptions);
+                console.log('2' + (field.selectedOptions ? field.selectedOptions.length : 0));
+               
+            }
+    
+            // Update the picklistValues array to set showRightIcon to false
+            const newPicklistValue = field.picklistValue.map(option => {
+                if (option.value === optionToRemove) {
+                    return {...option, showRightIcon: false};
+                }
+                return option;
+            });
+    
+            field.picklistValue = newPicklistValue;
+            field.unchangePicklistValue = newPicklistValue;
+            fields[index] = field;
+            this.filterFields = fields;
+    
         }
-        // if(index == 0){
-        //     this.filterFields[index].selectedOptions= null;
-        //     console.log('hi'+this.filterFields[index].selectedOptions);
-        //     console.log('hi'+this.filterFields[index].selectedOptions.length);
-        // }
-        this.applyFilters();
     }
+    
 
     // Stiring fields logic
 

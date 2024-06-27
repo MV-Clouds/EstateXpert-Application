@@ -41,6 +41,10 @@
     padding-left: 1rem;
     cursor: pointer;
 }
+.combobox .options-box .picklist-option {
+    width:100%;
+    padding-right:0.7rem;
+}
 .combobox .options-box ul li svg{
     fill: black;
     width: 1rem;
