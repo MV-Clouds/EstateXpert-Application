@@ -153,6 +153,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         }
         this.pageNumber = 1;
         this.updateProcessedListingData();
+        this.updateSelectedProperties();
         this.updatePaginationButtons();
     }
 
@@ -237,6 +238,13 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                     }
                 })
                })
+            this.unchangedProcessListings.forEach(item1=>{
+                this.shownProcessedListingData.forEach(item2=>{
+                    if(item1.Id == item2.Id){
+                        item1.isChecked = item2.isChecked;
+                    }
+                })
+               })
             this.listingData.forEach(item1=>{
                 this.shownProcessedListingData.forEach(item2=>{
                     if(item1.Id == item2.Id){
@@ -266,6 +274,10 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.processedListingData = this.processedListingData.map(item => {
             return { ...item, isChecked: isChecked };
         });
+        this.unchangedProcessListings = this.unchangedProcessListings.map(item => {
+            return { ...item, isChecked: isChecked };
+        });
+        
         this.updateProcessedListingData();
         this.updateSelectedProperties();
     }
@@ -298,6 +310,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.selectedListingData = this.listingData.filter(listing => listing.isChecked);
         this.totalSelected = this.selectedProperties.length;
     }
+
 
     /**
     * Method Name : sortClick
