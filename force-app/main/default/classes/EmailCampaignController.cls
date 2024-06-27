@@ -65,6 +65,7 @@ public with sharing class EmailCampaignController {
             String fromAddress = (String) campaignEmailDataMap.get('fromAddress');
             String fromName = (String) campaignEmailDataMap.get('fromName');
             Boolean saveForFuture = (Boolean) campaignEmailDataMap.get('saveForFuture');
+            
     
             // Extract and process Primary recipients
             List<Map<String, Object>> selectedPrimaryRecipients = new List<Map<String, Object>>();
@@ -95,6 +96,15 @@ public with sharing class EmailCampaignController {
             System.debug('selectedPrimaryRecipientsJson ==> ' + selectedPrimaryRecipientsJson);
             System.debug('selectedCCRecipientsJson ==> ' + selectedCCRecipientsJson);
             System.debug('selectedBCCRecipientsJson ==> ' + selectedBCCRecipientsJson);
+
+            String selectedContactDateField = (String) campaignEmailDataMap.get('selectedContactDateField');
+
+            Date specificDate = null;
+            if((String) campaignEmailDataMap.get('specificDate') != ''){
+                String specificDateString = (String) campaignEmailDataMap.get('specificDate');
+                specificDate = Date.valueOf(specificDateString);
+            }
+
     
             // Create campaign record
             Marketing_Campaign__c campaign = new Marketing_Campaign__c();
@@ -106,6 +116,15 @@ public with sharing class EmailCampaignController {
             campaign.Primary_Recipient__c = selectedPrimaryRecipientsJson; 
             campaign.CC_Contacts__c = selectedCCRecipientsJson; 
             campaign.BCC_Contacts__c = selectedBCCRecipientsJson; 
+            if(specificDate != null){
+                campaign.Start_Date__c = specificDate;
+            }else if(selectedContactDateField != ''){
+                campaign.SelectedContactDateField__c = selectedContactDateField;               
+            }
+
+
+            System.debug('selectedContactDateField ==> ' + selectedContactDateField);
+            System.debug('specificDate ==> ' + specificDate);
     
             // Insert the campaign record
             if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){

@@ -383,6 +383,9 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     handleStartDateOptionChange(event) {
         this.startDateOption = event.detail.value;
         console.log('startDateOption ==> ' , this.startDateOption);
+        this.specificDate = '';
+        this.selectedContactDateField = '';
+        this.isFieldSelected = false;
     }
 
     handleContactDateFieldChange(event) {
@@ -479,6 +482,10 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleSave() {
+
+        console.log('specificDate ==> ' , this.specificDate);
+        console.log('selectedContactDateField ==> ' , this.selectedContactDateField);
+
         const campaignEmailData = {
             campaignName: this.emailCampaignName,
             senderMode: this.navigationStateString.senderMode,
@@ -488,7 +495,9 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             selectedPrimaryRecipients: this.transformRecipients(this.selectedPrimaryRecipients),
             selectedCCRecipients: this.transformRecipients(this.selectedCCRecipients),
             selectedBCCRecipients: this.transformRecipients(this.selectedBCCRecipients),
-            emails: this.emailsWithName
+            emails: this.emailsWithName,
+            specificDate : this.specificDate,
+            selectedContactDateField : this.selectedContactDateField
         };
 
         
