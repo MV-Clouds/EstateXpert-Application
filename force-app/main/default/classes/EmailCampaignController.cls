@@ -49,63 +49,52 @@ public with sharing class EmailCampaignController {
                 FROM Marketing_Email_Campaign__c 
                 WHERE Marketing_Campaign__c = :templateId];
     }
-
     @AuraEnabled
     public static String createCampaignAndEmails(String jsonCampaignEmailData) {
         System.debug('campaignEmailDataMap ==> ' + jsonCampaignEmailData);
-
+    
         try {
             // Deserialize the JSON string to a Map
             Map<String, Object> campaignEmailDataMap = (Map<String, Object>) JSON.deserializeUntyped(jsonCampaignEmailData);
             System.debug('campaignEmailDataMap ==> ' + campaignEmailDataMap);
-
+    
             // Extract relevant fields
             String campaignName = (String) campaignEmailDataMap.get('campaignName');
             String senderMode = (String) campaignEmailDataMap.get('senderMode');
             String fromAddress = (String) campaignEmailDataMap.get('fromAddress');
             String fromName = (String) campaignEmailDataMap.get('fromName');
             Boolean saveForFuture = (Boolean) campaignEmailDataMap.get('saveForFuture');
-
-            // Initialize strings to store recipient JSON data
-            String primaryRecipientsJsonString = '';
-            String ccRecipientsJsonString = '';
-            String bccRecipientsJsonString = '';
-
+    
             // Extract and process Primary recipients
             List<Map<String, Object>> selectedPrimaryRecipients = new List<Map<String, Object>>();
             for (Object instance : (List<Object>) campaignEmailDataMap.get('selectedPrimaryRecipients')) {
                 Map<String, Object> recipient = (Map<String, Object>) instance;
-                Map<String, Object> recipientId = (Map<String, Object>) recipient.get('id');
-                String recipientJsonString = JSON.serialize(recipientId);
-                recipient.put('id', recipientJsonString);
                 selectedPrimaryRecipients.add(recipient);
             }
-
+    
             // Extract and process CC recipients
             List<Map<String, Object>> selectedCCRecipients = new List<Map<String, Object>>();
             for (Object instance : (List<Object>) campaignEmailDataMap.get('selectedCCRecipients')) {
                 Map<String, Object> recipient = (Map<String, Object>) instance;
-                Map<String, Object> recipientId = (Map<String, Object>) recipient.get('id');
-                String recipientJsonString = JSON.serialize(recipientId);
-                recipient.put('id', recipientJsonString);
                 selectedCCRecipients.add(recipient);
             }
-
+    
             // Extract and process BCC recipients
             List<Map<String, Object>> selectedBCCRecipients = new List<Map<String, Object>>();
             for (Object instance : (List<Object>) campaignEmailDataMap.get('selectedBCCRecipients')) {
                 Map<String, Object> recipient = (Map<String, Object>) instance;
-                Map<String, Object> recipientId = (Map<String, Object>) recipient.get('id');
-                String recipientJsonString = JSON.serialize(recipientId);
-                recipient.put('id', recipientJsonString);
                 selectedBCCRecipients.add(recipient);
             }
-
+    
             // Serialize the updated lists to JSON strings
             String selectedPrimaryRecipientsJson = JSON.serialize(selectedPrimaryRecipients);
             String selectedCCRecipientsJson = JSON.serialize(selectedCCRecipients);
             String selectedBCCRecipientsJson = JSON.serialize(selectedBCCRecipients);
-
+    
+            System.debug('selectedPrimaryRecipientsJson ==> ' + selectedPrimaryRecipientsJson);
+            System.debug('selectedCCRecipientsJson ==> ' + selectedCCRecipientsJson);
+            System.debug('selectedBCCRecipientsJson ==> ' + selectedBCCRecipientsJson);
+    
             // Create campaign record
             Marketing_Campaign__c campaign = new Marketing_Campaign__c();
             campaign.Label__c = campaignName;
@@ -116,30 +105,43 @@ public with sharing class EmailCampaignController {
             campaign.Primary_Recipient__c = selectedPrimaryRecipientsJson; 
             campaign.CC_Contacts__c = selectedCCRecipientsJson; 
             campaign.BCC_Contacts__c = selectedBCCRecipientsJson; 
-
+    
             // Insert the campaign record
             insert campaign;
+    
+            List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
+            List<Marketing_Email_Campaign__c> emailRecordsToInsert = new List<Marketing_Email_Campaign__c>();
+            
+            for (Object emailDataObj : emails) {
+                System.debug('emailDataObj ==> ' + emailDataObj);
+                Map<String, Object> emailData = (Map<String, Object>) emailDataObj;
+                System.debug('emailData ==> ' + emailData);
+                Marketing_Email_Campaign__c emailCampaign = new Marketing_Email_Campaign__c();
 
-            // Optional: Handling emails if needed (commented out in the original code)
-            // List<Map<String, Object>> emails = (List<Map<String, Object>>) campaignEmailDataMap.get('emails');
-            // List<Marketing_Email_Campaign__c> emailRecords = new List<Marketing_Email_Campaign__c>();
-            // for (Map<String, Object> emailData : emails) {
-            //     Marketing_Email_Campaign__c emailCampaign = new Marketing_Email_Campaign__c();
-            //     emailCampaign.Marketing_Campaign__c = campaign.Id;
-            //     emailCampaign.Subject__c = (String) emailData.get('subject');
-            //     emailCampaign.Quick_Template__c = (String) emailData.get('name');
-            //     emailRecords.add(emailCampaign);
-            // }
-            // if (!emailRecords.isEmpty()) {
-            //     upsert emailRecords;
-            // }
+                emailCampaign.Marketing_Campaign__c = campaign.Id;
+                emailCampaign.Subject__c = (String) emailData.get('subject');
+                emailCampaign.Quick_Template__c = String.valueOf(emailData.get('name'));
 
-            return campaign.Id;
+                System.debug('emailCampaign ==> ' + emailCampaign);
+
+                emailRecordsToInsert.add(emailCampaign);
+            }
+
+            System.debug('emailRecordsToInsert ==> ' + emailRecordsToInsert);
+            
+            if (!emailRecordsToInsert.isEmpty()) {
+                insert emailRecordsToInsert;
+            }
+    
+        return campaign.Id;
+        
         } catch (Exception e) {
             System.debug('Error creating campaign and emails: ' + e.getMessage());
+            System.debug('Error creating campaign and emails: ' + e.getLineNumber());
             throw new AuraHandledException('Error creating campaign and emails: ' + e.getMessage());
         }
     }
+    
     
     
     

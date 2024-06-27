@@ -53,6 +53,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track startDateOption = 'specificDate';
 
     @track emails = [];
+    @track emailsWithName = [];
 
     @track selectedContactDateField = '';
 
@@ -391,11 +392,13 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     handleAddNewEmail() {
         const newId = this.emails.length + 1;
         this.emails = [...this.emails, { id: newId, name: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
+        this.emailsWithName = [...this.emailsWithName, { id: newId, name: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
     }
 
     handleDeleteEmail(event) {
         const emailId = event.currentTarget.dataset.id;
         this.emails = this.emails.filter(email => email.id !== parseInt(emailId, 10));
+        this.emailsWithName = this.emailsWithName.filter(email => email.id !== parseInt(emailId, 10));
     }
 
     handleNameChange(event) {
@@ -413,6 +416,17 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             }
             return email;
         });
+
+        this.emailsWithName = this.emailsWithName.map(email => {
+            if (email.id === parseInt(emailId, 10)) {
+                console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
+                email.name = selectedTemplate.Id;
+                email.subject = selectedTemplate.Subject__c;
+            }
+            return email;
+        });
+
+        
     }
 
     handleDaysAfterStartDateChange(event) {
@@ -420,6 +434,13 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         const newDaysAfterStartDate = event.target.value;
     
         this.emails = this.emails.map(email => {
+            if (email.id === parseInt(emailId, 10)) {
+                email.daysAfterStartDate = newDaysAfterStartDate;
+            }
+            return email;
+        });
+            
+        this.emailsWithName = this.emailsWithName.map(email => {
             if (email.id === parseInt(emailId, 10)) {
                 email.daysAfterStartDate = newDaysAfterStartDate;
             }
@@ -433,6 +454,14 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         const newTimeToSend = event.target.value;
     
         this.emails = this.emails.map(email => {
+            if (email.id === parseInt(emailId, 10)) {
+                email.timeToSend = newTimeToSend;
+            }
+            return email;
+        });
+
+            
+        this.emailsWithName = this.emailsWithName.map(email => {
             if (email.id === parseInt(emailId, 10)) {
                 email.timeToSend = newTimeToSend;
             }
@@ -459,7 +488,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             selectedPrimaryRecipients: this.transformRecipients(this.selectedPrimaryRecipients),
             selectedCCRecipients: this.transformRecipients(this.selectedCCRecipients),
             selectedBCCRecipients: this.transformRecipients(this.selectedBCCRecipients),
-            emails: this.emails
+            emails: this.emailsWithName
         };
 
         
