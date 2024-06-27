@@ -3,6 +3,7 @@ import getListingFields from '@salesforce/apex/ListingManagerFilterController.ge
 
 export default class ListingManagerFilterAddCmp extends LightningElement {
     @track fieldOptions = [];
+    @track options1= [];
     @track selectedFields = [];
     @track selectedField = [];
     @track breadcrumbs = [];
@@ -18,6 +19,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track comboBoxValue;
     @track operationValue;
     @track ListingFields=[];
+    @track isDisabled = true;
 
 
     connectedCallback() {
@@ -33,6 +35,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     fetchObjectFields(objectApiName) {
+        this.isDisabled = true;
         getListingFields({ objectApiName })
             .then(fields => {
                 console.log('fields'+JSON.stringify(fields));
@@ -56,6 +59,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                     const offerField = [{"value":"Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"Offer__c"}];
                     this.fieldOptions = this.fieldOptions.concat(offerField);
                     this.options1 = this.fieldOptions;
+                    this.isDisabled = false;
                     console.log('hey');
                 }
             })
@@ -71,6 +75,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     fetchObjectFieldsWithoutReference(objectApiName) {
+        this.isDisabled = true;
         getListingFields({ objectApiName })
             .then(fields => {
                 console.log('fields'+JSON.stringify(fields));
@@ -91,6 +96,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                         };
                     });
                     this.options1 = this.fieldOptions;
+                    this.isDisabled = false;
                     console.log('hey');
                 }
             })
