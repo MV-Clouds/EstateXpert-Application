@@ -272,7 +272,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     applyFilters() {
         // Initialize filteredListings with a deep copy of ListingsWrapper
         this.filteredListings = [...this.listings];
-        console.log('Initial Listings:', JSON.stringify(this.filteredListings));
+        // console.log('Initial Listings:', JSON.stringify(this.filteredListings));
     
         this.filterFields.forEach(field => {
             // Check if field has selectedOptions or has valid min/max values for filtering
@@ -284,11 +284,11 @@ export default class ListingManagerFilterCmp extends LightningElement {
             const hasFieldChecked = field.fieldChecked != null;
     
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
-                console.log(`Applying filter on field: ${field.apiName}`);
+                // console.log(`Applying filter on field: ${field.apiName}`);
     
                 if (field.objectApiName !== 'Listing__c' && field.objectApiName !== 'Offer__c') {
                     // Filter for related record in another object (Contact, Property)
-                    console.log('Filtering related object:', field.objectApiName);
+                    // console.log('Filtering related object:', field.objectApiName);
                     
                         this.filteredListings = this.filteredListings.filter(wrapper => {
                             const relatedRecord = wrapper[field.prevApiName.replace('__c', '__r')];
@@ -349,14 +349,14 @@ export default class ListingManagerFilterCmp extends LightningElement {
                   
                 }
     
-                console.log('Listings after applying filter:', JSON.stringify(this.filteredListings));
+                // console.log('Listings after applying filter:', JSON.stringify(this.filteredListings));
                 this.setFilteredListings();
             } else {
                 this.setFilteredListings();
             }
         });
     
-        console.log('Final Filtered Listings:', JSON.stringify(this.filteredListings));
+        // console.log('Final Filtered Listings:', JSON.stringify(this.filteredListings));
     }
     
       /**
@@ -681,12 +681,16 @@ export default class ListingManagerFilterCmp extends LightningElement {
 handleMinValueChange(event) {
     const index = event.currentTarget.dataset.index;
     const value = parseInt(event.target.value, 10);
-    if (!isNaN(value) && (this.filterFields[index].maxValue === undefined || value <= this.filterFields[index].maxValue)) {
-        this.filterFields[index].minValue = value;
-    } else {
-        alert('Min value cannot be more than max value.');
+    if(isNaN(value)){
+        value = 0;
     }
-    this.applyFilters();
+    this.filterFields[index].minValue = value;
+    if ( value <= this.filterFields[index].maxValue|| value === 0) {
+        this.applyFilters();
+    } else {
+        console.log('Hi'+value);
+    }
+    // this.applyFilters();
 }
 
 /**
@@ -698,12 +702,13 @@ handleMinValueChange(event) {
 handleMaxValueChange(event) {
     const index = event.currentTarget.dataset.index;
     const value = parseInt(event.target.value, 10);
-    if (!isNaN(value) && value >= this.filterFields[index].minValue) {
-        this.filterFields[index].maxValue = value;
-    } else {
-        alert('Max value cannot be less than min value.');
+    if(isNaN(value)){
+        value = 0;
     }
-    this.applyFilters();
+    this.filterFields[index].maxValue = value;
+    if ((value === 0 || value >= this.filterFields[index].minValue)) {
+        this.applyFilters();
+    }
 }
 
 /**
@@ -718,12 +723,11 @@ incrementMinValue(event) {
     if (isNaN(currentValue)) {
         currentValue = 0;
     }
-    if (currentValue + 1 <= this.filterFields[index].maxValue || this.filterFields[index].maxValue === undefined) {
-        this.filterFields[index].minValue = currentValue + 1;
-    } else {
-        alert('Min value cannot be more than max value.');
-    }
-    this.applyFilters();
+    this.filterFields[index].minValue = currentValue + 1;
+    if (currentValue + 1 <= this.filterFields[index].maxValue) {
+        this.applyFilters();
+    } 
+   
 }
 
 /**
@@ -741,7 +745,10 @@ decrementMinValue(event) {
         currentValue--;
     }
     this.filterFields[index].minValue = currentValue;
-    this.applyFilters();
+    if (currentValue - 1 <= this.filterFields[index].maxValue) {
+        this.applyFilters();
+    } 
+    
 }
 
 /**
@@ -757,7 +764,9 @@ incrementMaxValue(event) {
         currentValue = 0;
     }
     this.filterFields[index].maxValue = currentValue + 1;
-    this.applyFilters();
+    if (currentValue + 1 >= this.filterFields[index].minValue) {
+        this.applyFilters();
+    } 
 }
 
 /**
@@ -775,7 +784,9 @@ decrementMaxValue(event) {
         currentValue--;
     }
     this.filterFields[index].maxValue = currentValue;
-    this.applyFilters();
+    if (currentValue - 1 >= this.filterFields[index].minValue) {
+        this.applyFilters();
+    } 
 }
 
 

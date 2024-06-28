@@ -18,6 +18,7 @@ export default class ListingManagerMapviewCmp extends LightningElement {
         loadStyle(this, designcss);
         if(this.listings != null){
             this.loadPropertyData(this.listings);
+            console.log('Map Data:- '+ JSON.stringify(this.listings));
         }
     }
 
