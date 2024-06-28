@@ -78,9 +78,10 @@ public with sharing class ListingManagerController {
      /**
     * Method Name : getAllFields
     * @description : get all fields of the obeject.
+    * @param sObjectName String sObject name value.
     * @return String of fields Name.
     */
-    private static String getAllFields(String sObjectName) {
+    public static String getAllFields(String sObjectName) {
         // Get all fields of the given sObject
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
         List<String> fieldNames = new List<String>();
@@ -100,6 +101,9 @@ public with sharing class ListingManagerController {
      /**
     * Method Name : getForm
     * @description : get fields from the field-set and set into wrapper class.
+    * @param recordId Id value.
+    * @param objectName String Object Name value.
+    * @param fieldSetName String field-set name value.
     * @return String of fields Name.
     */
     @AuraEnabled
@@ -114,6 +118,9 @@ public with sharing class ListingManagerController {
     /**
     * Method Name : getFields
     * @description : for the retrieve the fields apiname and labels.
+    * @param recordId Id value.
+    * @param objectName String Object Name value.
+    * @param fieldSetName String field-set name value.
     * @return List<FormField>.
     */
     @AuraEnabled

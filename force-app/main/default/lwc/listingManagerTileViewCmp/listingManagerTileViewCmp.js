@@ -3,9 +3,9 @@ import blankImage from '@salesforce/resourceUrl/blankImage';
 import { NavigationMixin } from 'lightning/navigation';
 
 export default class ListingManagerTileViewCmp extends NavigationMixin(LightningElement) {
+    @api listings = [];
     @track listingData ;
     @track blankImage = blankImage;
-    @api listings = [];
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
@@ -184,7 +184,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
         }
     }
 
-  /**
+    /**
     * Method Name :goToNextFeaturedProperty
     * @description : update the page number when the next button is clicked
     * Created By: Vyom Soni

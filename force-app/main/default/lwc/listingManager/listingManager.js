@@ -1,8 +1,6 @@
 import { LightningElement,track,api} from 'lwc';
-import icons from '@salesforce/resourceUrl/listingManagerIcons';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import designcss from '@salesforce/resourceUrl/listingManagerCss';
-import imagee from '@salesforce/resourceUrl/image';
 import getListingData from '@salesforce/apex/ListingManagerController.getListingData';
 import getForm from '@salesforce/apex/ListingManagerController.getForm';
 import { NavigationMixin } from 'lightning/navigation';
@@ -11,13 +9,9 @@ import blankImage from '@salesforce/resourceUrl/blankImage';
 
 export default class ListingManager extends NavigationMixin(LightningElement){
     @api objectName = 'Listing__c';
-    @track spinnerShow=true;
     @api recordId;
     @api fieldSet = 'ListingManagerFieldSet';
-    @track listviewIcon = icons + 'listview.png';
-    @track tileviewIcon = icons + 'tileview.png';
-    @track mapviewIcon = icons + 'mapview.png';
-    @track images = imagee;
+    @track spinnerShow=true;
     @track showList = true
     @track showTile =false;
     @track showMap = false;

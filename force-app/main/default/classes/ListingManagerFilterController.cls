@@ -12,6 +12,7 @@ public without sharing class ListingManagerFilterController {
     /**
     * Method Name : getListingFields
     * @description : get the fields by parent object name.
+    * @param ObjectApIName String value.
     * @return List of Fields of all references of Listing.
     */
     @AuraEnabled
@@ -96,6 +97,8 @@ public without sharing class ListingManagerFilterController {
     /**
     * Method Name : getPicklistValues
     * @description : get static fields picklist values.
+    * @param apiName string field api name value.
+    * @param objectName string object api name value.
     * @return List of picklist values.
     */
     @AuraEnabled
@@ -161,9 +164,10 @@ public without sharing class ListingManagerFilterController {
          /**
             * Method Name : getAllFieldsWithValues
             * @description : Get all fields with value.
+            * @param obj SObject value.
             * @return map of field-name within api-name.
             */
-        private Map<String, Object> getAllFieldsWithValues(SObject obj) {
+        public Map<String, Object> getAllFieldsWithValues(SObject obj) {
             Map<String, Object> fieldMap = new Map<String, Object>();
             if (obj != null) {
                 for (SObjectField field : obj.getSObjectType().getDescribe().fields.getMap().values()) {
@@ -231,9 +235,10 @@ public without sharing class ListingManagerFilterController {
      /**
     * Method Name : getAllFields
     * @description : get all fields of the obeject.
+    * @param sObjectName String value object name.
     * @return String of fields Name.
     */
-    private static String getAllFields(String sObjectName) {
+    public static String getAllFields(String sObjectName) {
         // Get all fields of the given sObject
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
         List<String> fieldNames = new List<String>();
@@ -253,9 +258,11 @@ public without sharing class ListingManagerFilterController {
        /**
     * Method Name : getAllFieldsWithPrefix
     * @description : get all fields with prefix.
+    * @param sObjectName String value object name.
+    * @param prefix String value prefix value.
     * @return String of fields Name.
     */
-    private static String getAllFieldsWithPrefix(String sObjectName, String prefix) {
+    public static String getAllFieldsWithPrefix(String sObjectName, String prefix) {
         // Get all fields of the given sObject and prefix them for a parent relationship query
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
         List<String> fieldNames = new List<String>();

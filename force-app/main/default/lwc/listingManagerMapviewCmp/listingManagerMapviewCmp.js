@@ -2,11 +2,11 @@ import { LightningElement,track,api } from 'lwc';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import designcss from '@salesforce/resourceUrl/listingManagerCss';
 export default class ListingManagerMapviewCmp extends LightningElement {
+    @api listings = [];
     @track data = [];
     @track mapMarkers = [];
     @track mapMarkers1 = [];
     @track mapMarkers2 = []; 
-    @api listings = [];
     @track mapCenter = {
         location: {
             Latitude: 	25.5908,
