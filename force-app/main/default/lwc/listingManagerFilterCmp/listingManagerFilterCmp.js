@@ -177,7 +177,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 }
                 return f;
             });
-            console.log('Updated filterFields:', JSON.stringify(this.filterFields));
+           // console.log('Updated filterFields:', JSON.stringify(this.filterFields));
         })
         .catch(error => {
             console.error('Error loading picklist values', error);
@@ -193,9 +193,9 @@ export default class ListingManagerFilterCmp extends LightningElement {
     setListingWapper(){
         getListingsWithRelatedRecords().then(result => {
             this.listings = result.map(item => JSON.parse(item));
-            // console.log('Listings:', JSON.stringify(this.listings[1].Account.Name));
+           // console.log('Listings:', JSON.stringify(this.listings[1].Account.Name));
             this.staticFields = [...this.filterFields];
-            console.log('static fields'+JSON.stringify(this.staticFields[0]));
+           // console.log('static fields'+JSON.stringify(this.staticFields[0]));
         })
         .catch(error => {
             console.error('Error fetching listings', error);
@@ -211,7 +211,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     setOfferRecord(){
         getTheOfferRecords().then(result => {
             this.offerRecords = result;
-            console.log('offer'+JSON.stringify(this.offerRecords));
+           // console.log('offer'+JSON.stringify(this.offerRecords));
         })
         .catch(error => {
             console.error('Error fetching listings', error);
@@ -227,7 +227,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     handleValueSelected(event) {
         // Get the value from the event detail and store it in a property
         this.valueFromChild = event.detail;
-        console.log('child'+JSON.stringify(this.valueFromChild));
+       // console.log('child'+JSON.stringify(this.valueFromChild));
         this.valueFromChild = this.valueFromChild.map(field => {
             return {
                 label: field.label,
@@ -263,10 +263,10 @@ export default class ListingManagerFilterCmp extends LightningElement {
 
             };
         });
-        console.log('updated field'+JSON.stringify(this.valueFromChild));
+       // console.log('updated field'+JSON.stringify(this.valueFromChild));
         this.filterFields = [...this.filterFields, ...this.valueFromChild];
     
-        console.log('child Value:'+JSON.stringify(this.valueFromChild));
+       // console.log('child Value:'+JSON.stringify(this.valueFromChild));
     }
 
     /**
@@ -278,7 +278,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     applyFilters() {
         // Initialize filteredListings with a deep copy of ListingsWrapper
         this.filteredListings = [...this.listings];
-        // console.log('Initial Listings:', JSON.stringify(this.filteredListings));
+       // console.log('Initial Listings:', JSON.stringify(this.filteredListings));
     
         this.filterFields.forEach(field => {
             // Check if field has selectedOptions or has valid min/max values for filtering
@@ -290,11 +290,11 @@ export default class ListingManagerFilterCmp extends LightningElement {
             const hasFieldChecked = field.fieldChecked != null;
     
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
-                // console.log(`Applying filter on field: ${field.apiName}`);
+               // console.log(`Applying filter on field: ${field.apiName}`);
     
                 if (field.objectApiName !== 'Listing__c' && field.objectApiName !== 'Offer__c') {
                     // Filter for related record in another object (Contact, Property)
-                    // console.log('Filtering related object:', field.objectApiName);
+                   // console.log('Filtering related object:', field.objectApiName);
                     
                         this.filteredListings = this.filteredListings.filter(wrapper => {
                             const relatedRecord = wrapper[field.prevApiName.replace('__c', '__r')];
@@ -315,7 +315,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
 
                 } else if (field.objectApiName === 'Offer__c') {
                     // Filter for related offer records
-                    console.log('Filtering related offer records');
+                   // console.log('Filtering related offer records');
                     
                     this.filteredListings = this.filteredListings.filter(wrapper => {
                         const relatedOffers = this.offerRecords.filter(offer => offer.Listing__c === wrapper.Id);
@@ -331,7 +331,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
                                 return this.applyNumericFilter(relatedOffer, field);
                             }
                             if (field.date || field.datetime) {
-                                console.log('Applying date/datetime filter');
+                               // console.log('Applying date/datetime filter');
                                 return this.applyDateFilter(relatedOffer, field);
                             }
                             return true;
@@ -355,14 +355,14 @@ export default class ListingManagerFilterCmp extends LightningElement {
                   
                 }
     
-                // console.log('Listings after applying filter:', JSON.stringify(this.filteredListings));
+               // console.log('Listings after applying filter:', JSON.stringify(this.filteredListings));
                 this.setFilteredListings();
             } else {
                 this.setFilteredListings();
             }
         });
     
-        // console.log('Final Filtered Listings:', JSON.stringify(this.filteredListings));
+       // console.log('Final Filtered Listings:', JSON.stringify(this.filteredListings));
     }
     
       /**
@@ -455,13 +455,13 @@ export default class ListingManagerFilterCmp extends LightningElement {
     handleSearchChange1(event) {
     
         const index = event.currentTarget.dataset.id;
-        console.log('index'+index);
+       // console.log('index'+index);
         this.filterFields[index].searchTerm = event.target.value;
-            console.log('index2'+this.filterFields[index].searchTerm);
+           // console.log('index2'+this.filterFields[index].searchTerm);
             this.filterFields[index].picklistValue =this.filterFields[index].unchangePicklistValue.filter(option =>
                 option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase())
             );
-            console.log('index2'+JSON.stringify(this.filterFields[index].picklistValue));
+           // console.log('index2'+JSON.stringify(this.filterFields[index].picklistValue));
     }
 
     /**
@@ -473,7 +473,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     handleFocus1(event) {
         const index = event.currentTarget.dataset.id;
         this.filterFields[index].isFocused = true;
-        console.log('index'+index);
+       // console.log('index'+index);
         this.filterFields[index].picklistValue = this.filterFields[index].unchangePicklistValue;
         
     }
@@ -488,7 +488,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         // Delay the blur action to allow click event to be registered
 
         const index = event.currentTarget.dataset.id;
-        console.log('index'+index);
+       // console.log('index'+index);
         this.filterFields[index].picklistValue = this.filterFields[index].unchangePicklistValue;
         setTimeout(()=>{
             this.filterFields[index].isFocused = false;
@@ -504,16 +504,16 @@ export default class ListingManagerFilterCmp extends LightningElement {
     selectOption1(event) {
         const value = event.currentTarget.dataset.id;
         const index = event.currentTarget.dataset.index;
-        console.log('value' + value);
-        console.log('index' + index);
+       // console.log('value' + value);
+       // console.log('index' + index);
 
         let fields = this.filterFields; // Assuming this is where 'fields' should be declared
 
         const field = fields[index]; // Access 'fields' instead of 'this.filterFields'
-        console.log('field' + field);
+       // console.log('field' + field);
 
         if (field != null) {
-            console.log('HI');
+           // console.log('HI');
             if (field.selectedOptions == null) {
                 field.selectedOptions = [];
             }
@@ -522,7 +522,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
             const exists = field.selectedOptions.some(option => option.value === value);
             if (!exists) {
                 field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
-                console.log('selectedOptions' + JSON.stringify(field.selectedOptions));
+               // console.log('selectedOptions' + JSON.stringify(field.selectedOptions));
                 this.searchTerm1 = ''; // Clear the search term to reset the search
                 this.isFocused1 = false; // Close the dropdown
                 this.applyFilters();
@@ -539,7 +539,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 fields[index] = field;
                 this.filterFields = fields; // Update 'this.filterFields' with 'fields'
             } else {
-                console.log('Value already exists in selectedOptions');
+               // console.log('Value already exists in selectedOptions');
             }
         }
     }
@@ -566,7 +566,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     removeOption1(event) {
         const optionToRemove = event.currentTarget.dataset.id;
         const index = event.currentTarget.dataset.index;
-        console.log('index' + index);
+       // console.log('index' + index);
     
         if (index > -1) {
             let fields = [...this.filterFields];
@@ -574,13 +574,13 @@ export default class ListingManagerFilterCmp extends LightningElement {
             
             // Update the selectedOptions array
             field.selectedOptions = field.selectedOptions.filter(option => option.value !== optionToRemove);
-            console.log('hi' + JSON.stringify(field.selectedOptions));
+           // console.log('hi' + JSON.stringify(field.selectedOptions));
             this.applyFilters();
             if (field.selectedOptions.length === 0) {
                 this.applyFilters();
                 field.selectedOptions = null;
-                console.log('1' + field.selectedOptions);
-                console.log('2' + (field.selectedOptions ? field.selectedOptions.length : 0));
+               // console.log('1' + field.selectedOptions);
+               // console.log('2' + (field.selectedOptions ? field.selectedOptions.length : 0));
                
             }
     
@@ -622,19 +622,19 @@ export default class ListingManagerFilterCmp extends LightningElement {
     removeOptionString(event) {
         const optionToRemove = event.currentTarget.dataset.id;
         const index = event.currentTarget.dataset.index;
-        console.log('index' + index);
-        console.log('value'+optionToRemove);
+       // console.log('index' + index);
+       // console.log('value'+optionToRemove);
     
         if (index > -1) {
             this.filterFields[index].selectedOptions = this.filterFields[index].selectedOptions.filter(option => option.value !== optionToRemove);
-            // console.log('hi' + JSON.stringify(field.selectedOptions));
+           // console.log('hi' + JSON.stringify(field.selectedOptions));
             this.applyFilters();
         }
         if (this.filterFields[index].selectedOptions.length === 0) {
             this.applyFilters();
             this.filterFields[index].selectedOptions = null;
-            // console.log('1' + field.selectedOptions);
-            // console.log('2' + (field.selectedOptions ? field.selectedOptions.length : 0));
+           // console.log('1' + field.selectedOptions);
+           // console.log('2' + (field.selectedOptions ? field.selectedOptions.length : 0));
            
         }
     }
@@ -650,12 +650,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
     **/
     handleSearchChangeString(event) {
         const index = event.currentTarget.dataset.id;
-        console.log('index'+index);
+       // console.log('index'+index);
         this.filterFields[index].searchTerm = event.target.value;
         if (event.key === 'Enter') { // Check if Enter key was pressed
             this.addTheString(event);
         }
-        console.log('filere'+this.filterFields[index].searchTerm);
+       // console.log('filere'+this.filterFields[index].searchTerm);
     }
 
     // Adds the city to the selected options list
@@ -669,7 +669,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.id;
         const value = this.filterFields[index].searchTerm;
         
-        console.log('value: ' + value);
+       // console.log('value: ' + value);
         
         if (value !== '') {
             const field = this.filterFields[index];
@@ -683,10 +683,10 @@ export default class ListingManagerFilterCmp extends LightningElement {
         
             if (!isValueAlreadySelected) {
                 field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
-                console.log('selectedOptions: ' + JSON.stringify(field.selectedOptions));
+               // console.log('selectedOptions: ' + JSON.stringify(field.selectedOptions));
                 this.filterFields[index].searchTerm = '';
             } else {
-                console.log('Value already exists in selectedOptions');
+               // console.log('Value already exists in selectedOptions');
             }
         }
         
@@ -708,7 +708,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         if ( value <= this.filterFields[index].maxValue|| value === 0) {
             this.applyFilters();
         } else {
-            console.log('Hi'+value);
+           // console.log('Hi'+value);
         }
         // this.applyFilters();
     }
@@ -832,7 +832,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;
         this.filterFields[index].minDate = newValue;
-        console.log(`Updated minDate for field ${this.filterFields[index].apiName}:`, this.filterFields[index].minDate);
+       // console.log(`Updated minDate for field ${this.filterFields[index].apiName}:`, this.filterFields[index].minDate);
         this.applyFilters();
     }
 
@@ -846,7 +846,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;
         this.filterFields[index].maxDate = newValue;
-        console.log(`Updated maxDate for field ${this.filterFields[index].apiName}:`, this.filterFields[index].maxDate);
+       // console.log(`Updated maxDate for field ${this.filterFields[index].apiName}:`, this.filterFields[index].maxDate);
         this.applyFilters();
     }
 
@@ -874,12 +874,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
     **/
     handleReset(){
         // this.filterFields = this.staticFields
-        console.log()
+       // console.log()
         this.filterFields = this.staticFields;
-        console.log('statc'+this.staticFields)
-        console.log('filter'+this.filterFields)
-        console.log('filter'+this.filterFields.length)
-        console.log('filter'+this.staticFields[0].picklistValues)
+       // console.log('statc'+this.staticFields)
+       // console.log('filter'+this.filterFields)
+       // console.log('filter'+this.filterFields.length)
+       // console.log('filter'+this.staticFields[0].picklistValues)
         this.filterFields = this.staticFields.map(field => {
             return {
                 ...field, // Spread the existing field properties

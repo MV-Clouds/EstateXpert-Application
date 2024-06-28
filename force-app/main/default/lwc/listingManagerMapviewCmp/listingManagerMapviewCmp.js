@@ -24,7 +24,7 @@ export default class ListingManagerMapviewCmp extends LightningElement {
         loadStyle(this, designcss);
         if(this.listings != null){
             this.loadPropertyData(this.listings);
-            console.log('Map Data:- '+ JSON.stringify(this.listings));
+            // console.log('Map Data:- '+ JSON.stringify(this.listings));
         }
     }
 
@@ -62,7 +62,7 @@ export default class ListingManagerMapviewCmp extends LightningElement {
                 this.mapMarkers = [...this.mapMarkers2]; 
         }
         } catch(error){
-            console.log("Error set markers:"+error);
+            // console.log("Error set markers:"+error);
         }
     }
 }

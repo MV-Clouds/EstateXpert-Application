@@ -77,17 +77,17 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.spinnerShow = true;
         getListingData()
             .then(result => {
-                console.log('result-->',result);
+                // console.log('result-->',result);
                 this.listingData = result.listings;
                 this.propertyMediaUrls = result.medias;
                 this.listingData.forEach((listing)=>{
                     const prop_id = listing.Property__c;
-                    console.log('prop_id-->',prop_id);
+                    // console.log('prop_id-->',prop_id);
                     listing.media_url = this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : '/resource/blankImage';
                     listing.isChecked = false;
-                    console.log('property Image'+this.propertyMediaUrls[prop_id]);
+                    // console.log('property Image'+this.propertyMediaUrls[prop_id]);
                 })
-                console.log(JSON.stringify(this.listingData));
+                // console.log(JSON.stringify(this.listingData));
                 this.processListings();
             })
             .catch(error => {
@@ -140,15 +140,15 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     loadFormData() {
         getForm({ recordId: this.recordId, objectName: this.objectName, fieldSetName: this.fieldSet })
             .then(result => {
-                console.log('Data:'+ JSON.stringify(result));
+                // console.log('Data:'+ JSON.stringify(result));
                 if (result) {
                     this.fields = result.fieldsData;
-                    console.log(this.fields);
+                    // console.log(this.fields);
                 }
                 // this.isLoading = false;
             })
             .catch(error => {
-                console.log(error);
+                // console.log(error);
             })
             .finally(() => {
 
@@ -186,7 +186,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     * Created By:Vyom Soni
     */
     handleListingSelect(event){
-        console.log('Hi');
+        // console.log('Hi');
         this.processedListingData = event.detail;
         this.updateProcessedListingData();
         this.updateSelectedProperties();
@@ -229,7 +229,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     redirectToRecord(event){
         const recordId = event.target.dataset.id;
-        console.log('hi'+recordId);
+        // console.log('hi'+recordId);
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
             attributes: {
@@ -273,7 +273,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 })
                })
         }catch (e){
-            console.log('error'+e);
+            // console.log('error'+e);
         }
         this.updateSelectedProperties();
     }
@@ -287,7 +287,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     selectAllCheckbox(event){
         const isChecked = event.target.checked;
         // this.checkAll = !this.checkAll;
-        console.log('hi'+isChecked);
+        // console.log('hi'+isChecked);
         this.listingData = this.listingData.map(item => {
             return { ...item, isChecked: isChecked };
         });
