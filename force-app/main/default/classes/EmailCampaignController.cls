@@ -165,7 +165,7 @@ public with sharing class EmailCampaignController {
 
             if (!emailRecordsToInsert.isEmpty()) {
                 Id campaignId = campaign.Id;
-                EmailBatchScheduler emailBatch = new EmailBatchScheduler(campaignId);
+                EmailBatchScheduler emailBatch = new EmailBatchScheduler(campaignId,selectedPrimaryRecipientsJson,selectedCCRecipientsJson,selectedBCCRecipientsJson);
                 Database.executeBatch(emailBatch);
             }
     
