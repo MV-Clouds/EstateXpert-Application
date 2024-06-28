@@ -4,7 +4,6 @@ import { NavigationMixin } from 'lightning/navigation';
 
 export default class ListingManagerTileViewCmp extends NavigationMixin(LightningElement) {
     @api listings = [];
-    @track listingData ;
     @track blankImage = blankImage;
     @track isPrevDisabled = true;
     @track isNextDisabled = false;

@@ -6,16 +6,13 @@ import getTheOfferRecords from '@salesforce/apex/ListingManagerFilterController.
 export default class ListingManagerFilterCmp extends LightningElement {
 
     @track addModal = false;
-    @track listings;
+    @track listings = [];
     // dyanamic fields selctor variables
     @track objectApiName = '';
-    @track fields;
-    @track error;
-    @track selectedField;
-    @track valueFromChild;
+    @track valueFromChild = [];
     @track isAddButtonDisabled = true;
     @track filterFields =[];
-    offerRecords = [];
+    @track offerRecords = [];
     @track ListingsWrapper = [];
     @track filteredListings;
     @track staticFields=[{
@@ -876,10 +873,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
         // this.filterFields = this.staticFields
        // console.log()
         this.filterFields = this.staticFields;
-       // console.log('statc'+this.staticFields)
-       // console.log('filter'+this.filterFields)
-       // console.log('filter'+this.filterFields.length)
-       // console.log('filter'+this.staticFields[0].picklistValues)
         this.filterFields = this.staticFields.map(field => {
             return {
                 ...field, // Spread the existing field properties

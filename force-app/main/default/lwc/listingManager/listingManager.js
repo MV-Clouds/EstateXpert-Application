@@ -15,8 +15,8 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track showList = true
     @track showTile =false;
     @track showMap = false;
-    @track listingData;
-    @track fields;
+    @track listingData = [];
+    @track fields = [];
     @track processedListingData = [];    
     @track unchangedProcessListings = [];    
     @track blankImage = blankImage;

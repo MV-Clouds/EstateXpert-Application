@@ -16,8 +16,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track isFocused1 = false;
     @track valueIsField = false;
     @track notCheckboxValue = false;
-    @track comboBoxValue;
-    @track operationValue;
     @track ListingFields=[];
     @track isDisabled = true;
 
