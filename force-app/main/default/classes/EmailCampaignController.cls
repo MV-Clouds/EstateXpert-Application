@@ -35,14 +35,11 @@ public with sharing class EmailCampaignController {
         return options;
     }
     
-
     @AuraEnabled
     public static List<Quick_Template__c> getQuickTemplates() {
         return [SELECT Id, Name, Subject__c FROM Quick_Template__c WITH SECURITY_ENFORCED ];
     }
     
-
-
     @AuraEnabled(cacheable=true)
     public static List<Marketing_Email_Campaign__c> getMarketingEmails(String templateId) {
         return [SELECT Id, Name, Marketing_Campaign__c ,Subject__c,Quick_Template__c
@@ -105,7 +102,6 @@ public with sharing class EmailCampaignController {
                 specificDate = Date.valueOf(specificDateString);
             }
 
-    
             // Create campaign record
             Marketing_Campaign__c campaign = new Marketing_Campaign__c();
             campaign.Label__c = campaignName;
@@ -128,7 +124,7 @@ public with sharing class EmailCampaignController {
     
             // Insert the campaign record
             if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
-                insert campaign;
+                Database.insert(campaign);
             }
     
             List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
@@ -166,6 +162,12 @@ public with sharing class EmailCampaignController {
             if (!emailRecordsToInsert.isEmpty()) {
                 insert emailRecordsToInsert;
             }
+
+            if (!emailRecordsToInsert.isEmpty()) {
+                Id campaignId = campaign.Id;
+                EmailBatchScheduler emailBatch = new EmailBatchScheduler(campaignId);
+                Database.executeBatch(emailBatch);
+            }
     
         return campaign.Id;
         
@@ -174,9 +176,7 @@ public with sharing class EmailCampaignController {
             System.debug('Error creating campaign and emails: ' + e.getLineNumber());
             throw new AuraHandledException('Error creating campaign and emails: ' + e.getMessage());
         }
+        
     }
-    
-    
-    
-    
+
 }
