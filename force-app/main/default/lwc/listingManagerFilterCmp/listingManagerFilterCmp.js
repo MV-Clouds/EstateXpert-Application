@@ -129,6 +129,12 @@ export default class ListingManagerFilterCmp extends LightningElement {
 
 ]
 
+  /**
+    * Method Name: connectedCallback
+    * @description: set the picklist values, set listing record wrapper, set offre records.
+    * Date: 13/06/2024
+    * Created By: Vyom Soni
+    **/   
     connectedCallback(){
         this.filterFields =this.filterFields.concat(this.staticFields);
         this.setPicklistValue();
@@ -365,25 +371,28 @@ export default class ListingManagerFilterCmp extends LightningElement {
     * Date: 014/06/2024
     * Created By: Vyom Soni
     **/
-   applyOperatorFilter(record, field, values) {
-    const fieldValue = record[field.apiName];
-    let isMatch = false;
-
-    if (field.operatorName === 'equals') {
-        isMatch = values.includes(fieldValue);
+      applyOperatorFilter(record, field, values) {
+        const fieldValue = record[field.apiName];
+        let isMatch = false;
+    
+        if (fieldValue !== undefined && fieldValue !== null) {
+            const fieldValueLower = fieldValue.toString().toLowerCase();
+    
+            if (field.operatorName === 'equals') {
+                isMatch = values.some(value => fieldValueLower === value.toString().toLowerCase());
+            } else if (field.operatorName === 'contains') {
+                isMatch = values.some(value => fieldValueLower.includes(value.toString().toLowerCase()));
+            } else if (field.operatorName === 'includes') {
+                isMatch = values.some(value => value.toString().toLowerCase().includes(fieldValueLower));
+            } else if (field.operatorName === 'startswith') {
+                isMatch = values.some(value => fieldValueLower.startsWith(value.toString().toLowerCase()));
+            } else if (field.boolean) {
+                isMatch = fieldValue === field.fieldChecked;
+            }
+        }
+    
+        return field.isNot ? !isMatch : isMatch;
     }
-    if (field.operatorName === 'contains' || field.operatorName === 'includes') {
-        isMatch = values.some(value => fieldValue.includes(value));
-    }
-    if (field.operatorName === 'startswith') {
-        isMatch = values.some(value => fieldValue.startsWith(value));
-    }
-    if (field.boolean) {
-        isMatch = fieldValue === field.fieldChecked;
-    }
-
-    return field.isNot ? !isMatch : isMatch;
-}
     
 
       /**

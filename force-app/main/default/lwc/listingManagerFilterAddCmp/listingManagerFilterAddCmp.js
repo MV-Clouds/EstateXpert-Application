@@ -21,7 +21,12 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track ListingFields=[];
     @track isDisabled = true;
 
-
+ /**
+    * Method Name: connectedCallback
+    * @description:handle add button disable, fetch listing fields.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
     connectedCallback() {
         // Fetch fields of Listing__c object when component loads
         this.handleAddButtonDisable();

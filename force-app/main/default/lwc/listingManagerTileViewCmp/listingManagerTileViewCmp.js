@@ -13,11 +13,23 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     @track totalPages;
     @track shownProcessedListingData = [];
 
+      /**
+    * Method Name : get listingsdata
+    * @description : get the filtered listing data from listing manager component reactively
+    * date:4/06/2024
+    * Created By: Vyom Soni
+    */
     @api
     get listingsdata() {
         return this.listings;
     }
 
+      /**
+    * Method Name : set listingsdata
+    * @description : set the filtered listing data from listing manager component reactively
+    * date:4/06/2024
+    * Created By: Vyom Soni
+    */
     set listingsdata(value) {
             if (value && Array.isArray(value)) {
                 this.listings = value;
@@ -32,10 +44,22 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             }   
     }
 
+     /**
+    * Method Name : showSection
+    * @description : handle error message when no listings is found in the filtering
+    * date:4/06/2024
+    * Created By: Vyom Soni
+    */
     get showSection() {
         return this.shownProcessedListingData.length === 0;
     }
     
+    /**
+    * Method Name : connectedCallback
+    * @description : update the pagination button and listings when component loads
+    * date:4/06/2024
+    * Created By: Vyom Soni
+    */
     connectedCallback(){
         this.totalPages = Math.ceil(this.listings.length / this.pageSize);
         this.updateProcessedListingData();

@@ -14,6 +14,12 @@ export default class ListingManagerMapviewCmp extends LightningElement {
         }
     };
 
+     /**
+    * Method Name : connectedCallback
+    * @description : load selected listing data in map-markers list.
+    * date:5/06/2024
+    * Created By:Vyom Soni
+    */
     connectedCallback() {
         loadStyle(this, designcss);
         if(this.listings != null){

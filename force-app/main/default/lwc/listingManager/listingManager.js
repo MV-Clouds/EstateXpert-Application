@@ -41,13 +41,32 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track wrapOn = false;
     @track propertyMediaUrls = [];
     // @track showSection = false;
+     /**
+    * Method Name : checkAll
+    * @description : handle the checkAll checkbox in list view.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
     get checkAll() {
         return this.processedListingData.every(item => item.isChecked);
     }
+
+     /**
+    * Method Name : showSection
+    * @description : getter for the show no result found text when shownProcessedListingData.length === 0.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
     get showSection() {
         return this.shownProcessedListingData.length === 0;
     }
 
+     /**
+    * Method Name : connectedCallback
+    * @description : retrieve fields name from the field-set and retrieve listing records.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
     connectedCallback(){
         loadStyle(this, designcss);
         this.loadFormData();
