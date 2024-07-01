@@ -506,7 +506,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         let fields = this.filterFields; // Assuming this is where 'fields' should be declared
 
         const field = fields[index]; // Access 'fields' instead of 'this.filterFields'
-       console.log('field' + field);
+        console.log('field' + field);
 
         if (field != null) {
            console.log('HI');
@@ -517,10 +517,9 @@ export default class ListingManagerFilterCmp extends LightningElement {
             // Check if the value already exists in selectedOptions
             const exists = field.selectedOptions.some(option => option.value === value);
             if (!exists) {
+                this.filterFields[index].searchTerm = '';
                 field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
-               console.log('selectedOptions' + JSON.stringify(field.selectedOptions));
-                this.searchTerm1 = ''; // Clear the search term to reset the search
-                this.isFocused1 = false; // Close the dropdown
+                console.log('selectedOptions' + JSON.stringify(field.selectedOptions));
                 this.applyFilters();
 
                 const newPicklistValue = field.picklistValue.map(option => {
@@ -562,6 +561,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     removeOption1(event) {
         const optionToRemove = event.currentTarget.dataset.id;
         const index = event.currentTarget.dataset.index;
+        this.filterFields[index].searchTerm = '';
        console.log('index' + index);
     
         if (index > -1) {
@@ -920,6 +920,8 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.isAddButtonDisabled = (field.length === 0 && field.operation == null);
         
     }
+
+    
 
         /**
     * Method Name: handleReset

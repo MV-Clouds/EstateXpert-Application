@@ -445,6 +445,9 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             this.pageNumber--;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
+            setTimeout(() => {
+                this.scrollToTop();
+            }, 0);
         }
     }
 
@@ -459,6 +462,16 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             this.pageNumber++;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
+            setTimeout(() => {
+                this.scrollToTop();
+            }, 0);
+        }
+    }
+
+    scrollToTop() {
+        const tableDiv = this.template.querySelector('.tableDiv');
+        if (tableDiv) {
+            tableDiv.scrollTop = 0; 
         }
     }
 

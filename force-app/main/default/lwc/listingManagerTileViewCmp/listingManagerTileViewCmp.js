@@ -181,6 +181,9 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             this.pageNumber--;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
+            setTimeout(() => {
+                this.scrollToTop();
+            }, 0);
         }
     }
 
@@ -195,8 +198,18 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             this.pageNumber++;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
+            setTimeout(() => {
+                this.scrollToTop();
+            }, 0);
         }
     }
 
+    
+    scrollToTop() {
+        const tableDiv = this.template.querySelector('.mainDiv');
+        if (tableDiv) {
+            tableDiv.scrollTop = 0; 
+        }
+    }
     
 }
