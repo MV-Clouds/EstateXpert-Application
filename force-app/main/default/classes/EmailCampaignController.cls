@@ -112,6 +112,7 @@ public with sharing class EmailCampaignController {
             campaign.Primary_Recipient__c = selectedPrimaryRecipientsJson; 
             campaign.CC_Contacts__c = selectedCCRecipientsJson; 
             campaign.BCC_Contacts__c = selectedBCCRecipientsJson; 
+            
             if(specificDate != null){
                 campaign.Start_Date__c = specificDate;
             }else if(selectedContactDateField != ''){
@@ -160,13 +161,19 @@ public with sharing class EmailCampaignController {
             System.debug('emailRecordsToInsert ==> ' + emailRecordsToInsert);
             
             if (!emailRecordsToInsert.isEmpty()) {
-                insert emailRecordsToInsert;
+                // insert emailRecordsToInsert;
+                Database.insert(emailRecordsToInsert);
             }
 
-            if (!emailRecordsToInsert.isEmpty()) {
-                Id campaignId = campaign.Id;
-                EmailBatchScheduler emailBatch = new EmailBatchScheduler(campaignId,selectedPrimaryRecipientsJson,selectedCCRecipientsJson,selectedBCCRecipientsJson);
-                Database.executeBatch(emailBatch);
+            // Schedule each email
+            for (Marketing_Email_Campaign__c email : emailRecordsToInsert) {
+                DateTime scheduleDateTime = calculateScheduledDateTime(specificDate, Integer.valueOf(email.Days_After_Start_Date__c), email.TimeToSend__c);
+
+                if (scheduleDateTime != null) {
+                    String cronExpression = getCronExpression(scheduleDateTime);
+                    EmailCampaignScheduler emailSchedulable = new EmailCampaignScheduler(email.Id, selectedPrimaryRecipientsJson, selectedCCRecipientsJson, selectedBCCRecipientsJson);
+                    System.schedule('Email Campaign Scheduler ' + email.Id, cronExpression, emailSchedulable);
+                }
             }
     
         return campaign.Id;
@@ -177,6 +184,27 @@ public with sharing class EmailCampaignController {
             throw new AuraHandledException('Error creating campaign and emails: ' + e.getMessage());
         }
         
+    }
+
+
+    private static String getCronExpression(DateTime scheduleTime) {
+        String seconds = String.valueOf(scheduleTime.second());
+        String minutes = String.valueOf(scheduleTime.minute());
+        String hours = String.valueOf(scheduleTime.hour());
+        String dayOfMonth = String.valueOf(scheduleTime.day());
+        String month = String.valueOf(scheduleTime.month());
+        String dayOfWeek = '?';
+        String year = String.valueOf(scheduleTime.year());
+    
+        return String.format('{0} {1} {2} {3} {4} {5} {6}', 
+                             new List<String>{seconds, minutes, hours, dayOfMonth, month, dayOfWeek, year});
+    }
+
+    private static DateTime calculateScheduledDateTime(Date specificDate, Integer daysAfterStartDate, Time timeToSend) {
+        if (specificDate != null && timeToSend != null) {
+            return DateTime.newInstance(specificDate, timeToSend).addDays(daysAfterStartDate);
+        }
+        return null;
     }
 
 }
