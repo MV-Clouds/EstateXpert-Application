@@ -53,6 +53,13 @@ public with sharing class TemplateBuilderController {
         return template;
     }
 
+     /** 
+    * Method Name: insertTemplate
+    * @description: Insert Template
+    * @return Template__c id.
+    * Date: 27/06/2024 
+    * Created By: Rachit Shah 
+    */ 
 
     @AuraEnabled
     public static String insertTemplate(Template__c template) {
@@ -108,7 +115,7 @@ public with sharing class TemplateBuilderController {
                     System.debug('existingTemplate ==> ' + existingTemplate);
                     update existingTemplate;
                 } else {
-                    throw new AuraHandledException('No access to update fields on Template__c.');
+                    System.debug('No access to update fields on Template__c.');
                 }
             } else {
                 if (Schema.sObjectType.Template__c.fields.Object_Name__c.isCreateable() &&
@@ -119,11 +126,11 @@ public with sharing class TemplateBuilderController {
                     
                     insert template;
                 } else {
-                    throw new AuraHandledException('No access to create fields on Template__c.');
+                    System.debug('No access to create fields on Template__c.');
                 }
             }
         } catch (Exception e) {
-            throw new AuraHandledException('Error saving template: ' + e.getMessage());
+            System.debug('Error saving template: ' + e.getMessage());
         }
     }
 
