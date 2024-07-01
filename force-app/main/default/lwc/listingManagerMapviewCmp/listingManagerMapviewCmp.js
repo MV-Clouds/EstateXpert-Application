@@ -14,6 +14,33 @@ export default class ListingManagerMapviewCmp extends LightningElement {
         }
     };
 
+    
+      /**
+    * Method Name : get listingsdata
+    * @description : get the filtered listing data from listing manager component reactively
+    * date:4/06/2024
+    * Created By: Vyom Soni
+    */
+      @api
+      get listingsdata() {
+          return this.listings;
+      }
+  
+        /**
+      * Method Name : set listingsdata
+      * @description : set the filtered listing data from listing manager component reactively
+      * date:4/06/2024
+      * Created By: Vyom Soni
+      */
+      set listingsdata(value) {
+              if (value && Array.isArray(value)) {
+                  this.listings = value;
+                  this.loadPropertyData(this.listings);
+              } else {
+                  this.listings = [];
+              }   
+      }
+
      /**
     * Method Name : connectedCallback
     * @description : load selected listing data in map-markers list.
@@ -48,15 +75,15 @@ export default class ListingManagerMapviewCmp extends LightningElement {
                     this.mapMarkers2.push({
                         location: {
                             id: record.Id,
-                            rooms: record.Number_of_Bedrooms__c,
-                            City: record.City__c,
-                            Country: record.Country__c,
-                            PostalCode: record.Postal_Code__c,
-                            State: record.State__c,
-                            Street: record.Street__c
+                            rooms: record.MVEX__Number_of_Bedrooms__c,
+                            City: record.MVEX__City__c,
+                            Country: record.MVEX__Country__c,
+                            PostalCode: record.MVEX__Postal_Code__c,
+                            State: record.MVEX__State__c,
+                            Street: record.MVEX__Street__c
                         },
                         title: record.Name,
-                        description: `<b>Address:-</b> ${record.Street__c}, ${record.City__c}, ${record.State__c}, ${record.Country__c} <br><b>Sq_Ft:-</b> ${record.Sq_Ft__c}`
+                        description: `<b>Address:-</b> ${record.MVEX__Street__c}, ${record.MVEX__City__c}, ${record.MVEX__State__c}, ${record.MVEX__Country__c} <br><b>Sq_Ft:-</b> ${record.Sq_Ft__c}`
                     });
                 });
                 this.mapMarkers = [...this.mapMarkers2]; 

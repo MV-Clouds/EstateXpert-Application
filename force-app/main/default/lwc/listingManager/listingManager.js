@@ -8,14 +8,15 @@ import blankImage from '@salesforce/resourceUrl/blankImage';
 
 
 export default class ListingManager extends NavigationMixin(LightningElement){
-    @api objectName = 'Listing__c';
+    @api objectName = 'MVEX__Listing__c';
     @api recordId;
-    @api fieldSet = 'ListingManagerFieldSet';
+    @api fieldSet = 'MVEX__ListingManagerFieldSet';
     @track spinnerShow=true;
     @track showList = true
     @track showTile =false;
     @track showMap = false;
     @track listingData = [];
+    @track unchangedListingData = [];
     @track fields = [];
     @track processedListingData = [];    
     @track unchangedProcessListings = [];    
@@ -81,13 +82,14 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 this.listingData = result.listings;
                 this.propertyMediaUrls = result.medias;
                 this.listingData.forEach((listing)=>{
-                    const prop_id = listing.Property__c;
+                    const prop_id = listing.MVEX__Property__c;
                     // console.log('prop_id-->',prop_id);
                     listing.media_url = this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : '/resource/blankImage';
                     listing.isChecked = false;
                     // console.log('property Image'+this.propertyMediaUrls[prop_id]);
                 })
                 // console.log(JSON.stringify(this.listingData));
+                this.unchangedListingData = this.listingData;
                 this.processListings();
             })
             .catch(error => {
@@ -118,7 +120,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 Id: listing.Id,
                 Name: listing.Name,
                 media_url: listing.media_url,
-                Listing_Price__c:listing.Listing_Price__c,
+                Listing_Price__c:listing.MVEX__Listing_Price__c,
                 isChecked: listing.isChecked,
                 orderedFields
             };
@@ -164,8 +166,12 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     handleFilteredListings(event){
         const filteredListing = event.detail;
         this.processedListingData = this.unchangedProcessListings;
+        this.listingData = this.unchangedListingData;
         this.processedListingData = this.processedListingData.filter(processListing =>
             filteredListing.some(filtered => filtered.Id === processListing.Id)
+        );
+        this.listingData = this.listingData.filter(processListing => 
+            filteredListing.some(filter =>filter.Id === processListing.Id)
         );
         this.totalPages = Math.ceil(this.processedListingData.length / this.pageSize);
         if(this.totalPages == 0){
@@ -234,7 +240,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             type: 'standard__recordPage',
             attributes: {
                 recordId: recordId,
-                objectApiName: 'Listing__c', 
+                objectApiName: 'MVEX__Listing__c', 
                 actionName: 'view'
             }
         });
@@ -313,7 +319,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',
             attributes: {
-                objectApiName: 'Listing__c',
+                objectApiName: 'MVEX__Listing__c',
                 actionName: 'new'
             }
         });

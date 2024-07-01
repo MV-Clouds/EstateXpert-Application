@@ -61,6 +61,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     */
     connectedCallback(){
         this.totalPages = Math.ceil(this.listings.length / this.pageSize);
+        console.log('Listing>'+JSON.stringify(this.listings));
         this.updateProcessedListingData();
         this.updatePaginationButtons();
     }
@@ -139,7 +140,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
                 type: 'standard__recordPage',
                 attributes: {
                     recordId: recordId,
-                    objectApiName: 'Listing__c', 
+                    objectApiName: 'MVEX__Listing__c', 
                     actionName: 'view'
                 }
             });

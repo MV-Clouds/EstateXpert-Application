@@ -124,15 +124,15 @@ public without sharing class ListingManagerFilterController {
     * @description : this is a wrapper class to represent listing records with parent record.
     */
     public class ListingWrapper {
-        public Listing__c listing { get; set; }
+        public MVEX__Listing__c listing { get; set; }
         public Contact contact { get; set; }
-        public Property__c property { get; set; }
+        public MVEX__Property__c property { get; set; }
         public Account account { get; set; }
         public RecordType recordtype { get; set; }
         public User createdby { get; set; }
         public User lastmodifyby { get; set; }
         
-        public ListingWrapper(Listing__c listing, Contact contact, Property__c property , Account account,RecordType recordtype,User createdby,User lastmodifyby ) {
+        public ListingWrapper(MVEX__Listing__c listing, Contact contact,MVEX__Property__c property , Account account,RecordType recordtype,User createdby,User lastmodifyby ) {
             this.listing = listing;
             this.contact = contact;
             this.property = property;
@@ -151,10 +151,10 @@ public without sharing class ListingManagerFilterController {
             Map<String, Object> result = new Map<String, Object>();
             result.put('Id', listing.Id);
             result.put('Name', listing.Name);
-            result.put('Listing__c', getAllFieldsWithValues(listing));
-            result.put('Contact__r', getAllFieldsWithValues(contact));
-            result.put('Property__r', getAllFieldsWithValues(property));
-            result.put('Account__r', getAllFieldsWithValues(account));
+            result.put('MVEX__Listing__c', getAllFieldsWithValues(listing));
+            result.put('MVEX__Contact__r', getAllFieldsWithValues(contact));
+            result.put('MVEX__Property__r', getAllFieldsWithValues(property));
+            result.put('MVEX__Account__r', getAllFieldsWithValues(account));
             result.put('RecordTypeId', getAllFieldsWithValues(recordtype));
             result.put('CreatedBy', getAllFieldsWithValues(createdby));
             result.put('LastModifiedById', getAllFieldsWithValues(lastmodifyby));
@@ -189,23 +189,23 @@ public without sharing class ListingManagerFilterController {
         List<String> listingJsons = new List<String>();
 
         // Dynamically build the SOQL query to include all fields
-        String listingFields = String.escapeSingleQuotes(getAllFields('Listing__c'));
-        String contactFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Contact', 'Contact__r'));
-        String propertyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Property__c', 'Property__r'));
-        String accountFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Account', 'Account__r'));
+        String listingFields = String.escapeSingleQuotes(getAllFields('MVEX__Listing__c'));
+        String contactFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Contact', 'MVEX__Contact__r'));
+        String propertyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('MVEX__Property__c', 'MVEX__Property__r'));
+        String accountFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Account', 'MVEX__Account__r'));
         String recordTypeFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('RecordType', 'RecordType'));
         String createdbyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('User', 'CreatedBy'));
         String lastmodifybyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('User', 'LastModifiedBy'));
 
         // Constructing the SOQL query
         String query = 'SELECT ' + listingFields + ', ' +
-                       contactFields + ', ' +'Contact__r.HasOptedOutOfEmail'+ ', ' + 'Contact__r.HasOptedOutOfFax' + ', ' + 'Contact__r.DoNotCall' + ', '+ 'Contact__r.Pronouns' + ', '+ 'Contact__r.GenderIdentity' + ', '+
+                       contactFields + ', ' +'MVEX__Contact__r.HasOptedOutOfEmail'+ ', ' + 'MVEX__Contact__r.HasOptedOutOfFax' + ', ' + 'MVEX__Contact__r.DoNotCall' + ', '+ 'MVEX__Contact__r.Pronouns' + ', '+ 'MVEX__Contact__r.GenderIdentity' + ', '+
                        propertyFields + ', ' +
-                       accountFields + ', ' +'Account__r.Tier'+', '+
+                       accountFields + ', ' +'MVEX__Account__r.Tier'+', '+
                        recordTypeFields +', '+
                        createdbyFields + ', '+
                        lastmodifybyFields + ' '+
-                       'FROM Listing__c';
+                       'FROM MVEX__Listing__c';
 
         // Debug the constructed query
         System.debug('SOQL Query: ' + query);
@@ -215,9 +215,9 @@ public without sharing class ListingManagerFilterController {
 
         // Iterate through the listings and create wrapper instances
         for (Listing__c listing : listings) {
-            Contact relatedContact = listing.Contact__r;
-            Property__c relatedProperty = listing.Property__r;
-            Account relatedAccount= listing.Account__r;
+            Contact relatedContact = listing.MVEX__Contact__r;
+            Property__c relatedProperty = listing.MVEX__Property__r;
+            Account relatedAccount= listing.MVEX__Account__r;
             RecordType relatedRecordType= listing.RecordType;
             User relatedCreatedBy= listing.CreatedBy;
             User relatedLastModifiedBy= listing.LastModifiedBy;
@@ -285,9 +285,9 @@ public without sharing class ListingManagerFilterController {
     */
     @AuraEnabled
     public static List<Offer__c> getTheOfferRecords(){
-        String querylist = String.escapeSingleQuotes(getAllFields('Offer__c'));
+        String querylist = String.escapeSingleQuotes(getAllFields('MVEX__Offer__c'));
         String query = 'SELECT ' + querylist+' '+
-                       'FROM Offer__c WHERE Listing__c != NULL';
+                       'FROM MVEX__Offer__c WHERE MVEX__Listing__c != NULL';
         List<Offer__c> listings = Database.query(query);
         return listings;
     }

@@ -28,7 +28,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     connectedCallback() {
         // Fetch fields of Listing__c object when component loads
         this.handleAddButtonDisable();
-        this.fetchObjectFields('Listing__c');   
+        this.fetchObjectFields('MVEX__Listing__c');   
     }
 
      /**
@@ -59,7 +59,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                         };
                     });
                     // this.options1 = this.fieldOptions;
-                    const offerField = [{"value":"Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"Offer__c"}];
+                    const offerField = [{"value":"Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"MVEX__Offer__c"}];
                     this.fieldOptions = this.fieldOptions.concat(offerField);
                     this.options1 = this.fieldOptions;
                     this.isDisabled = false;
@@ -319,7 +319,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                 console.log('lastSelectedValue'+lastSelectedValue);
                 console.log('lastSelectedValue2'+typeof lastSelectedField);
                 if(lastSelectedField == null){
-                    lastSelectedField='Listing__c'
+                    lastSelectedField='MVEX__Listing__c'
                 }
                  if(clickedIndex == this.breadcrumbs.length-1){
                     console.log('byr');
@@ -332,7 +332,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                 }
                 
             } else {
-                this.fetchObjectFields('Listing__c');
+                this.fetchObjectFields('MVEX__Listing__c');
                 console.log('Hiii');
                 // this.option1 = this.unchangeFieldOptions;
             }
