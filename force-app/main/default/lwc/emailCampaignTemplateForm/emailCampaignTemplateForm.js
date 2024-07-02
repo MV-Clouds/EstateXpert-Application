@@ -46,20 +46,18 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
 
     @track startDateOptions = [
-        { label: 'Using a specific date', value: 'specificDate' },
-        { label: 'Using a contact related date field', value: 'contactDateField' },
-        { label: 'Sending emails on specific dates', value: 'specificDates' },
+        { label: 'Sending emails on specific dates', value: 'specificDate' },
     ];
     @track startDateOption = 'specificDate';
 
     @track emails = [];
-    @track emailsWithName = [];
+    @track emailsWithTemplate = [];
 
     @track selectedContactDateField = '';
 
 
     get isSpecificDateOption() {
-        return this.startDateOption === 'specificDate' || this.startDateOption === 'specificDates';
+        return this.startDateOption === 'specificDate';
     }
 
     get isContactDateFieldOption() {
@@ -101,12 +99,12 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                 if (this.emailsFromTemplate) {
                     this.emails = this.emailsFromTemplate.map(email => ({
                         id: email.Id, 
-                        name: email.Quick_Template__c,
+                        template: email.Quick_Template__c,
                         subject: email.Subject__c, 
                         daysAfterStartDate: 0, 
                         timeToSend: ''
                     }));
-                    this.emailsWithName = [...this.emails];
+                    this.emailsWithTemplate = [...this.emails];
                 }
             }
         }
@@ -185,12 +183,12 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             if (this.emailsFromTemplate) {
                 this.emails = this.emailsFromTemplate.map(email => ({
                     id: email.Id, 
-                    name: email.Quick_Template__c,
+                    template: email.Quick_Template__c,
                     subject: email.Subject__c, 
                     daysAfterStartDate: 0, 
                     timeToSend: ''
                 }));
-                this.emailsWithName = [...this.emails];
+                this.emailsWithTemplate = [...this.emails];
             }
         }
         
@@ -394,17 +392,17 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     
     handleAddNewEmail() {
         const newId = this.emails.length + 1;
-        this.emails = [...this.emails, { id: newId, name: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
-        this.emailsWithName = [...this.emailsWithName, { id: newId, name: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
+        this.emails = [...this.emails, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
+        this.emailsWithTemplate = [...this.emailsWithTemplate, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
     }
 
     handleDeleteEmail(event) {
         const emailId = event.currentTarget.dataset.id;
         this.emails = this.emails.filter(email => email.id !== parseInt(emailId, 10));
-        this.emailsWithName = this.emailsWithName.filter(email => email.id !== parseInt(emailId, 10));
+        this.emailsWithTemplate = this.emailsWithTemplate.filter(email => email.id !== parseInt(emailId, 10));
     }
 
-    handleNameChange(event) {
+    handleTemplateChange(event) {
         const emailId = event.target.dataset.id;
         const selectedTemplateId = event.detail.value;
 
@@ -420,10 +418,10 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             return email;
         });
 
-        this.emailsWithName = this.emailsWithName.map(email => {
+        this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
             if (email.id === parseInt(emailId, 10)) {
                 console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
-                email.name = selectedTemplate.Id;
+                email.template = selectedTemplate.Id;
                 email.subject = selectedTemplate.Subject__c;
             }
             return email;
@@ -443,12 +441,33 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             return email;
         });
             
-        this.emailsWithName = this.emailsWithName.map(email => {
+        this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
             if (email.id === parseInt(emailId, 10)) {
                 email.daysAfterStartDate = newDaysAfterStartDate;
             }
             return email;
         });
+    }
+
+    handleNameChange(event){
+        const emailId = event.target.dataset.id;
+        const emailName = event.target.value;
+        
+        this.emails = this.emails.map(email => {
+            if (email.id === parseInt(emailId, 10)) {
+                email.name = emailName;
+            }
+            return email;
+        });
+
+        this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
+            if (email.id === parseInt(emailId, 10)) {
+                email.name = emailName;
+            }
+            return email;
+        });
+
+        
     }
 
 
@@ -464,7 +483,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         });
 
             
-        this.emailsWithName = this.emailsWithName.map(email => {
+        this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
             if (email.id === parseInt(emailId, 10)) {
                 email.timeToSend = newTimeToSend;
             }
@@ -495,7 +514,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             selectedPrimaryRecipients: this.transformRecipients(this.selectedPrimaryRecipients),
             selectedCCRecipients: this.transformRecipients(this.selectedCCRecipients),
             selectedBCCRecipients: this.transformRecipients(this.selectedBCCRecipients),
-            emails: this.emailsWithName,
+            emails: this.emailsWithTemplate,
             specificDate : this.specificDate,
             selectedContactDateField : this.selectedContactDateField
         };

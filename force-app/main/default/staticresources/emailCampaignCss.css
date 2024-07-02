@@ -95,3 +95,7 @@ button[disabled] {
 .slds-form-element__control .slds-radio, .slds-form-element__control .slds-checkbox{
   margin-bottom: 6px;
 }
+
+.actions td{
+  padding-bottom: 0rem !important;
+}
