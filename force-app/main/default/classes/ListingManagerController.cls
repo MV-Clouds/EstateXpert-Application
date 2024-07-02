@@ -25,12 +25,12 @@ public with sharing class ListingManagerController {
     */
     @AuraEnabled
     public static WrapperClass getListingData(){
-        if (!Schema.sObjectType.Listing__c.isAccessible()) {
+        if (!Schema.sObjectType.MVEX__Listing__c.isAccessible()) {
         throw new AuraHandledException('You do not have permission to access Listing records.');
     }
         try {
-            String listingFields = String.escapeSingleQuotes(getAllFields('Listing__c'));
-            String query = 'SELECT ' + listingFields + ' ' +'FROM Listing__c';
+            String listingFields = String.escapeSingleQuotes(getAllFields('MVEX__Listing__c'));
+            String query = 'SELECT ' + listingFields + ' ' +'FROM MVEX__Listing__c';
 
         // Debug the constructed query
         System.debug('SOQL Query: ' + query);
@@ -40,27 +40,27 @@ public with sharing class ListingManagerController {
         Set<Id> propertyIds = new Set<Id>();     
 
         for(Listing__c listingrec :listing) {
-            Id propertyId = (Id)listingrec.get('Property__c');
+            Id propertyId = (Id)listingrec.get('MVEX__Property__c');
             if (propertyId != null) {
                 propertyIds.add(propertyId);
             }
         }  
 
-        if (!Schema.sObjectType.Property_File__c.isAccessible()) {
+        if (!Schema.sObjectType.MVEX__Property_File__c.isAccessible()) {
             throw new AuraHandledException('You do not have permission to access Property File records.');
         }
 
         // Check if the user has read access to the necessary fields of Property_File__c
-        if (!Schema.sObjectType.Property_File__c.fields.BaseUrl__c.isAccessible() ||
-            !Schema.sObjectType.Property_File__c.fields.Property__c.isAccessible()) {
+        if (!Schema.sObjectType.MVEX__Property_File__c.fields.MVEX__BaseUrl__c.isAccessible() ||
+            !Schema.sObjectType.MVEX__Property_File__c.fields.MVEX__Property__c.isAccessible()) {
             throw new AuraHandledException('You do not have permission to access required fields of Property File records.');
         }
 
-        List<Property_File__c> medias = [SELECT Id, BaseUrl__c, Property__c FROM Property_File__c WHERE Property__c IN:propertyIds];
+        List<Property_File__c> medias = [SELECT Id, MVEX__BaseUrl__c, MVEX__Property__c FROM MVEX__Property_File__c WHERE MVEX__Property__c IN:propertyIds];
 
         Map<Id, String> propertyMediaUrlsMap = new Map<Id, String>();
         for (Property_File__c media : medias) {
-                propertyMediaUrlsMap.put(media.Property__c,media.BaseUrl__c);
+                propertyMediaUrlsMap.put(media.MVEX__Property__c,media.MVEX__BaseUrl__c);
         }
 
 
@@ -85,14 +85,14 @@ public with sharing class ListingManagerController {
         // Get all fields of the given sObject
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(sObjectName).getDescribe().fields.getMap();
         List<String> fieldNames = new List<String>();
-        
+
         for (String fieldName : fieldMap.keySet()) {
             // Check if the field is accessible
             if (fieldMap.get(fieldName).getDescribe().isAccessible()) {
                 fieldNames.add(fieldName);
             }
         }
-        
+
         // Join the field names into a single comma-separated string
         return String.join(fieldNames, ', ');
     }
