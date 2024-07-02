@@ -261,3 +261,27 @@
 .time-div .delete-icon-cover svg:hover{
     fill: rgb(1,118,211);
 }
+
+/* booelan fields css */
+
+.boolen-field{
+    display: flex;
+}
+.boolen-field .boolean-wrapper{
+    width: 100%;
+}
+.boolen-field .delete-icon-cover{
+    width: fit-content;
+    display: flex;
+    align-items: flex-end;
+}
+.boolen-field .delete-icon-cover svg{
+    height: 1rem;
+    width: 1rem;
+    fill:rgb(134, 134, 134) ;
+    cursor: pointer;
+}
+.boolen-field .delete-icon-cover svg:hover{
+    fill: rgb(1,118,211);
+
+}

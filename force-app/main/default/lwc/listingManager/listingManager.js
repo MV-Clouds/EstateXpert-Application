@@ -84,7 +84,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 this.listingData.forEach((listing)=>{
                     const prop_id = listing.MVEX__Property__c;
                     // console.log('prop_id-->',prop_id);
-                    listing.media_url = this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : '/resource/blankImage';
+                    listing.media_url = this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : '/resource/MVEX__blankImage';
                     listing.isChecked = false;
                     // console.log('property Image'+this.propertyMediaUrls[prop_id]);
                 })
@@ -468,6 +468,12 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         }
     }
 
+         /**
+    * Method Name : scrollToTop
+    * @description : scroll to top in list
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
     scrollToTop() {
         const tableDiv = this.template.querySelector('.tableDiv');
         if (tableDiv) {

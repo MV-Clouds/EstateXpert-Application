@@ -34,6 +34,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
      /**
     * Method Name: fetchObjectFields
     * @description: fetch the fields values.
+    * @param: objectApiName- object api name.
     * Date: 07/06/2024
     * Created By: Vyom Soni
     **/
@@ -59,7 +60,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                         };
                     });
                     // this.options1 = this.fieldOptions;
-                    const offerField = [{"value":"Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"MVEX__Offer__c"}];
+                    const offerField = [{"value":"MVEX__Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"MVEX__Offer__c"}];
                     this.fieldOptions = this.fieldOptions.concat(offerField);
                     this.options1 = this.fieldOptions;
                     this.isDisabled = false;
@@ -74,6 +75,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
       /**
     * Method Name: fetchObjectFieldsWithoutReference
     * @description: fetch fields when reference field was clicked.
+    * @param: objectApiName- object api name.
     * Date: 07/06/2024
     * Created By: Vyom Soni
     **/
@@ -261,6 +263,8 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
      /**
     * Method Name: findFieldRecursively
     * @description: this method check the from fiedls hierarchy.
+    * @param: fields- fields list
+    * @param: selectedValue- selected Item in fields picklist.
     * Date: 07/06/2024
     * Created By: Vyom Soni
     **/
@@ -407,6 +411,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
       /**
     * Method Name: isLookupField
     * @description: check field is lookup or reference.
+    * @param: fieldType- field's data-type
     * Date: 07/06/2024
     * Created By: Vyom Soni
     **/

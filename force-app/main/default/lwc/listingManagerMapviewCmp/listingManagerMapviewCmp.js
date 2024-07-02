@@ -1,6 +1,6 @@
 import { LightningElement,track,api } from 'lwc';
-import { loadStyle } from 'lightning/platformResourceLoader';
-import designcss from '@salesforce/resourceUrl/listingManagerCss';
+//import designcss from '@salesforce/resourceUrl/listingManagerCss';
+
 export default class ListingManagerMapviewCmp extends LightningElement {
     @api listings = [];
     @track data = [];
@@ -29,6 +29,7 @@ export default class ListingManagerMapviewCmp extends LightningElement {
         /**
       * Method Name : set listingsdata
       * @description : set the filtered listing data from listing manager component reactively
+      * @param: value- data from the parent component
       * date:4/06/2024
       * Created By: Vyom Soni
       */
@@ -48,7 +49,6 @@ export default class ListingManagerMapviewCmp extends LightningElement {
     * Created By:Vyom Soni
     */
     connectedCallback() {
-        loadStyle(this, designcss);
         if(this.listings != null){
             this.loadPropertyData(this.listings);
             // console.log('Map Data:- '+ JSON.stringify(this.listings));
@@ -58,6 +58,7 @@ export default class ListingManagerMapviewCmp extends LightningElement {
      /**
     * Method Name : loadPropertyData
     * @description : load the marker from the selected properties.
+    * @param: data- propeties data.
     * date:5/06/2024
     * Created By:Vyom Soni
     */

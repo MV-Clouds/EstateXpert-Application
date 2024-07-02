@@ -26,6 +26,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
       /**
     * Method Name : set listingsdata
     * @description : set the filtered listing data from listing manager component reactively
+    * @param: value- data from the parent component
     * date:4/06/2024
     * Created By: Vyom Soni
     */
@@ -205,6 +206,12 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     }
 
     
+    /**
+    * Method Name :scrollToTop
+    * @description : scroll to top in tile view
+    * Created By: Vyom Soni
+    * date:4/06/2024
+    */
     scrollToTop() {
         const tableDiv = this.template.querySelector('.mainDiv');
         if (tableDiv) {
