@@ -93,8 +93,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 this.processListings();
             })
             .catch(error => {
-                this.error = error;
-                this.data = undefined;
+                console.warn('error ->'+error);
             });
         
     }
@@ -150,7 +149,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 // this.isLoading = false;
             })
             .catch(error => {
-                // console.log(error);
+                console.warn('error ->'+error);
             })
             .finally(() => {
 
@@ -279,7 +278,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 })
                })
         }catch (e){
-            // console.log('error'+e);
+            console.warn('error ->'+e);
         }
         this.updateSelectedProperties();
     }
