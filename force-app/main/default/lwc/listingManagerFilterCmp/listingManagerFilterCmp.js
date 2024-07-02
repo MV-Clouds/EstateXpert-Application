@@ -857,7 +857,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const minDate = new Date(this.filterFields[index].minDate);
         const maxDate = new Date(this.filterFields[index].maxDate);
         
-        if (minDate <= maxDate || !this.filterFields[index].maxDate) {
+        if (minDate <= maxDate || this.filterFields[index].isDateMin == true) {
             this.applyFilters();
         } else {
             console.warn(`Min date should be less than or equal to max date for field ${this.filterFields[index].apiName}`);
@@ -880,7 +880,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const minDate = new Date(this.filterFields[index].minDate);
         const maxDate = new Date(this.filterFields[index].maxDate);
     
-        if (minDate <= maxDate || !this.filterFields[index].minDate) {
+        if (minDate <= maxDate || this.filterFields[index].isDateMax == true) {
             this.applyFilters();
         } else {
             console.warn(`Max date should be greater than or equal to min date for field ${this.filterFields[index].apiName}`);
