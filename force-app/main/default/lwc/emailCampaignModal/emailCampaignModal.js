@@ -56,7 +56,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
             .then(result => {
                 this.quickTemplates = result;
                 this.quickTemplateOptions = result.map(template => ({
-                    label: template.Name,
+                    label: template.Label__c,
                     value: template.Id
                 }));
             })

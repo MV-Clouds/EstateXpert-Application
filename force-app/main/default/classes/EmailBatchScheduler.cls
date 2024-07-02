@@ -13,8 +13,8 @@ public class EmailBatchScheduler implements Database.Batchable<sObject>, Databas
     }
 
     public Database.QueryLocator start(Database.BatchableContext BC) {
-        Marketing_Email_Campaign__c campaign = [SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c
-                                                FROM Marketing_Email_Campaign__c
+        Marketing_Email__c campaign = [SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c
+                                                FROM Marketing_Email__c
                                                 WHERE Id = :emailId LIMIT 1];
 
         Quick_Template__c template = [SELECT Id, Subject__c

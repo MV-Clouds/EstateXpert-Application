@@ -36,14 +36,14 @@ public with sharing class EmailCampaignController {
     }
     
     @AuraEnabled
-    public static List<Quick_Template__c> getQuickTemplates() {
-        return [SELECT Id, Name, Subject__c FROM Quick_Template__c WITH SECURITY_ENFORCED ];
+    public static List<Template__c> getQuickTemplates() {
+        return [SELECT Id, Name, Subject__c,Label__c,Template_pattern__c FROM Template__c WHERE Template_pattern__c	= 'quickTemplate' WITH SECURITY_ENFORCED ];
     }
     
     @AuraEnabled(cacheable=true)
-    public static List<Marketing_Email_Campaign__c> getMarketingEmails(String templateId) {
+    public static List<Marketing_Email__c> getMarketingEmails(String templateId) {
         return [SELECT Id, Name, Marketing_Campaign__c ,Subject__c,Quick_Template__c
-                FROM Marketing_Email_Campaign__c 
+                FROM Marketing_Email__c 
                 WHERE Marketing_Campaign__c = :templateId WITH SECURITY_ENFORCED ];
     }
 
@@ -112,7 +112,7 @@ public with sharing class EmailCampaignController {
             campaign.Primary_Recipient__c = selectedPrimaryRecipientsJson; 
             campaign.CC_Contacts__c = selectedCCRecipientsJson; 
             campaign.BCC_Contacts__c = selectedBCCRecipientsJson; 
-            
+
             if(specificDate != null){
                 campaign.Start_Date__c = specificDate;
             }else if(selectedContactDateField != ''){
@@ -129,13 +129,13 @@ public with sharing class EmailCampaignController {
             }
     
             List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
-            List<Marketing_Email_Campaign__c> emailRecordsToInsert = new List<Marketing_Email_Campaign__c>();
+            List<Marketing_Email__c> emailRecordsToInsert = new List<Marketing_Email__c>();
             
             for (Object emailDataObj : emails) {
                 System.debug('emailDataObj ==> ' + emailDataObj);
                 Map<String, Object> emailData = (Map<String, Object>) emailDataObj;
                 System.debug('emailData ==> ' + emailData);
-                Marketing_Email_Campaign__c emailCampaign = new Marketing_Email_Campaign__c();
+                Marketing_Email__c emailCampaign = new Marketing_Email__c();
 
                 emailCampaign.Marketing_Campaign__c = campaign.Id;
                 emailCampaign.Subject__c =  String.valueOf(emailData.get('subject'));
@@ -166,7 +166,7 @@ public with sharing class EmailCampaignController {
             }
 
             // Schedule each email
-            for (Marketing_Email_Campaign__c email : emailRecordsToInsert) {
+            for (Marketing_Email__c email : emailRecordsToInsert) {
                 DateTime scheduleDateTime = calculateScheduledDateTime(specificDate, Integer.valueOf(email.Days_After_Start_Date__c), email.TimeToSend__c);
 
                 if (scheduleDateTime != null) {
