@@ -42,7 +42,7 @@ public with sharing class EmailCampaignController {
     
     @AuraEnabled(cacheable=true)
     public static List<Marketing_Email__c> getMarketingEmails(String templateId) {
-        return [SELECT Id, Name, Marketing_Campaign__c ,Subject__c,Quick_Template__c
+        return [SELECT Id, Name, Marketing_Campaign__c ,Subject__c,Quick_Template__c,Send_Date_Time__c
                 FROM Marketing_Email__c 
                 WHERE Marketing_Campaign__c = :templateId WITH SECURITY_ENFORCED ];
     }

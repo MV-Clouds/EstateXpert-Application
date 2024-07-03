@@ -255,6 +255,10 @@
                                 <th scope="col">
                                     <div class="slds-truncate" title="Time to send">Time to send</div>
                                 </th>
+
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Exact Date"> Exact Date</div>
+                                </th>
                                 <th scope="col">
                                     <div class="slds-truncate" title="Action">Action</div>
                                 </th>
@@ -309,12 +313,24 @@
                                         <div>
                                             <lightning-input
                                                 type="time"
-                                                value={email.timeToSend}
+                                                value={newDate}
                                                 onchange={handleTimeToSendChange}
                                                 data-id={email.id}
                                             ></lightning-input>
                                         </div>
                                     </td>
+
+                                    <td data-label="Exact Date"> 
+                                        <div>
+                                            <lightning-input
+                                                type="date"
+                                                value={email.sendTime}
+                                                data-id={email.id}
+                                                disabled="true"
+                                            ></lightning-input>
+                                        </div>
+                                    </td>
+
                                     <td data-label="Action" class="actions">
                                         <div class="action-btns">
                                             <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-pressed="false" data-id={email.id} onclick={handlepreviewBtn}>

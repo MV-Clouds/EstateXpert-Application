@@ -21,6 +21,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track selectedCCRecipients = [];
     @track selectedBCCRecipients = [];
     @track templateId = '';
+    @track newDate = '';
+    @track newDaysAfterStartDate = 0;
 
     @track isModalOpen = false;
     @track isPrimaryDropdownVisible = false;
@@ -102,7 +104,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                         template: email.Quick_Template__c,
                         subject: email.Subject__c, 
                         daysAfterStartDate: 0, 
-                        timeToSend: ''
+                        timeToSend: '',
                     }));
                     this.emailsWithTemplate = [...this.emails];
                 }
@@ -146,6 +148,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleSpecificDateChange(event){
         this.specificDate = event.target.value;
+        this.updateNewDate();
     }
 
     fetchDateFields() {
@@ -186,7 +189,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                     template: email.Quick_Template__c,
                     subject: email.Subject__c, 
                     daysAfterStartDate: 0, 
-                    timeToSend: ''
+                    timeToSend: '',
                 }));
                 this.emailsWithTemplate = [...this.emails];
             }
@@ -364,6 +367,28 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         this.isFieldSelected = true; // Set to true when a field is selected
     }
 
+    updateNewDate() {
+        try {
+            if (this.specificDate) {
+                const newDate = new Date(this.specificDate);
+                let days = 0 ;
+
+                if(this.newDaysAfterStartDate){
+                    days = parseInt(this.newDaysAfterStartDate, 10); 
+                }
+                console.log('days ==> ' , days);
+                newDate.setDate(newDate.getDate() + days);
+                console.log('newDate ==> ', newDate);
+                this.newDate = newDate;
+            } else {
+                this.newDate = '';
+            }
+        } catch (error) {
+            console.log('Error ==> ' , error);
+        }
+
+    }
+    
     handleRemove() {
         this.isFieldSelected = false; 
     }
@@ -392,7 +417,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     
     handleAddNewEmail() {
         const newId = this.emails.length + 1;
-        this.emails = [...this.emails, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
+        this.emails = [...this.emails, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '' ,}];
         this.emailsWithTemplate = [...this.emailsWithTemplate, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
     }
 
@@ -432,21 +457,23 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleDaysAfterStartDateChange(event) {
         const emailId = event.target.dataset.id;
-        const newDaysAfterStartDate = event.target.value;
+        this.newDaysAfterStartDate = event.target.value;
     
         this.emails = this.emails.map(email => {
             if (email.id === parseInt(emailId, 10)) {
-                email.daysAfterStartDate = newDaysAfterStartDate;
+                email.daysAfterStartDate = this.newDaysAfterStartDate;
             }
             return email;
         });
             
         this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
             if (email.id === parseInt(emailId, 10)) {
-                email.daysAfterStartDate = newDaysAfterStartDate;
+                email.daysAfterStartDate = this.newDaysAfterStartDate;
             }
             return email;
         });
+
+        this.updateNewDate();
     }
 
     handleNameChange(event){
@@ -466,6 +493,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             }
             return email;
         });
+
+        // console.log('emailsWithTemplate ==> ' , JSON.stringify(emailsWithTemplate));
 
         
     }
@@ -501,9 +530,6 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     }
 
     handleSave() {
-
-        console.log('specificDate ==> ' , this.specificDate);
-        console.log('selectedContactDateField ==> ' , this.selectedContactDateField);
 
         const campaignEmailData = {
             campaignName: this.emailCampaignName,
