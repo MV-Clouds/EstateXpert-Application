@@ -507,40 +507,39 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleSave() {
 
-        const campaignEmailData = {
-            campaignName: this.emailCampaignName,
-            senderMode: this.navigationStateString.senderMode,
-            fromAddress: this.navigationStateString.fromAddress,
-            fromName: this.navigationStateString.fromName,
-            saveForFuture: this.navigationStateString.saveForFuture,
-            selectedPrimaryRecipients: this.transformRecipients(this.selectedPrimaryRecipients),
-            selectedCCRecipients: this.transformRecipients(this.selectedCCRecipients),
-            selectedBCCRecipients: this.transformRecipients(this.selectedBCCRecipients),
-            emails: this.emailsWithTemplate,
-            specificDate : this.specificDate,
-            selectedContactDateField : this.selectedContactDateField
-        };
+        try {
+            console.log('selectedPrimaryRecipients ==> ' , JSON.stringify(this.selectedPrimaryRecipients));
+            const campaignEmailData = {
+                campaignName: this.emailCampaignName,
+                senderMode: this.navigationStateString.senderMode,
+                fromAddress: this.navigationStateString.fromAddress,
+                fromName: this.navigationStateString.fromName,
+                saveForFuture: this.navigationStateString.saveForFuture,
+                selectedPrimaryRecipients: this.transformRecipients(this.selectedPrimaryRecipients),
+                selectedCCRecipients: this.transformRecipients(this.selectedCCRecipients),
+                selectedBCCRecipients: this.transformRecipients(this.selectedBCCRecipients),
+                emails: this.emailsWithTemplate,
+                specificDate : this.specificDate,
+                selectedContactDateField : this.selectedContactDateField
+            };
+    
+            const jsonCampaignEmailData = JSON.stringify(campaignEmailData);
+            console.log('jsonCampaignEmailData ==> ' , jsonCampaignEmailData);
 
-        
-        const jsonCampaignEmailData = JSON.stringify(campaignEmailData);
-        
-        console.log('jsonCampaignEmailData ==> ' , jsonCampaignEmailData);
-        createCampaignAndEmails({ jsonCampaignEmailData })
-        .then(result => {
-            console.log('Campaign and emails created successfully:', result);
-        })
-        .catch(error => {
-            console.error('Error creating campaign and emails:', error);
-        });
+            createCampaignAndEmails({ jsonCampaignEmailData })
+            .then(result => {
+                console.log('Campaign and emails created successfully:', result);
+            })
+            .catch(error => {
+                console.error('Error creating campaign and emails:', error);
+            });
+        } catch (error) {
+            console.log('Error ==> ' , error);
+        }
     }
 
     transformRecipients(recipients) {
-        return recipients.map(recipient => ({
-            id: {
-                name: recipient.label,
-                email: recipient.email
-            }
-        }));
+        return recipients.map(recipient => recipient.value);
     }
 
 }
