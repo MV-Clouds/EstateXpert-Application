@@ -16,6 +16,11 @@
 
 }
 
+.input-date-container .slds-form-element__label{
+  font-size: 14px;  
+  font-weight: bold;
+}
+
 button[disabled] {
   cursor: default !important;
   background-color: #D2D2D2 !important;

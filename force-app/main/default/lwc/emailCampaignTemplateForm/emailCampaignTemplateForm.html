@@ -163,75 +163,10 @@
                 </div>
             </div>
             </div>
-
-
-            <fieldset class="slds-form-element slds-m-top_medium">
-                <legend class="slds-form-element__legend slds-form-element__label">How should this Email campaign start?</legend>
-                <div class="slds-form-element__control">
-                    <lightning-radio-group
-                        name="startDateOption"
-                        options={startDateOptions}
-                        value={startDateOption}>
-                    </lightning-radio-group>
-                </div>
-            </fieldset>
     
-            <template if:true={isSpecificDateOption}>
+            <div class="slds-form-element slds-m-top_medium input-date-container">
                 <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date" value={specificDate} onchange={handleSpecificDateChange}></lightning-input>
-            </template>
-
-                <template if:true={isContactDateFieldOption}>
-                    <div class="input-date-combobox">
-                        <!-- Search Input Field -->
-                        <div class={searchBoxClass}>
-                            <lightning-input
-                                type="search"
-                                label="Select the field"
-                                placeholder="Select the field"
-                                onchange={handleContactDateFieldSearchChange}
-                                onfocus={handleContactDateFieldSearchFocus}
-                                onblur={handleContactDateFieldSearchBlur}
-                                class="input-field"
-                            ></lightning-input>
-                        </div>
-            
-                        <!-- Selected Record Pill Container -->
-                        <div class={pillDivClass}>
-                            <div class="input-pil-label ">
-                                <label>Select the field</label>
-                            </div>
-                            <div class="display-pill-input">
-                                <div class="input-pill-icon">
-                                    <lightning-icon icon-name="standard:account" size="x-small" alternative-text="icon"></lightning-icon>
-                                </div>
-                                <input type="text"
-                                    id="combobox-id-1"
-                                    value={selectedContactDateField}
-                                    class="slds-input slds-combobox__input slds-combobox__input-value"
-                                    readonly
-                                />
-                                <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Remove selected option" onclick={handleRemove}>
-                                    <lightning-icon icon-name="utility:close" size="x-small" alternative-text="close icon"></lightning-icon>
-                                </button>
-                            </div>
-
-                        </div>
-            
-                        <!-- Dropdown for selecting fields -->
-                        <template if:true={isDateFieldDropdownVisible}>
-                            <div class="dropdown">
-                                <template for:each={filteredContactDateFields} for:item="field">
-                                    <div key={field.value} class="dropdown-item" onclick={handleDateFieldSelect} data-id={field.value}>
-                                        <span class="slds-icon_container slds-icon-standard-account" title="Account">
-                                            <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
-                                        </span>
-                                        <span class="container-pill-label">{field.label}</span>
-                                    </div>
-                                </template>
-                            </div>
-                        </template>
-                    </div>
-                </template>
+            </div>
 
             <template if:true={emails}>
                 <div class="table-container">
@@ -319,15 +254,9 @@
                                             ></lightning-input>
                                         </div>
                                     </td>
-
-                                    <td data-label="Exact Date"> 
+                                    <td data-label="Exact Date">
                                         <div>
-                                            <lightning-input
-                                                type="date"
-                                                value={email.sendTime}
-                                                data-id={email.id}
-                                                disabled="true"
-                                            ></lightning-input>
+                                            <lightning-input type="date" value={email.exactDate} data-id={email.id} disabled></lightning-input>
                                         </div>
                                     </td>
 

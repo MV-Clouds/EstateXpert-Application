@@ -46,34 +46,11 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track previewBtnUrl = previewBtn;
     @track deleteBtnUrl = deleteBtn;
 
-
-    @track startDateOptions = [
-        { label: 'Sending emails on specific dates', value: 'specificDate' },
-    ];
-    @track startDateOption = 'specificDate';
-
     @track emails = [];
     @track emailsWithTemplate = [];
 
     @track selectedContactDateField = '';
-
-
-    get isSpecificDateOption() {
-        return this.startDateOption === 'specificDate';
-    }
-
-    get isContactDateFieldOption() {
-        return this.startDateOption === 'contactDateField';
-    }
-
-    get searchBoxClass() {
-        return this.isFieldSelected ? 'slds-hide' : 'slds-show';
-    }
-
-    get pillDivClass() {
-        return this.isFieldSelected ? 'slds-show display-pill-input-container' : 'slds-hide';
-    }
-
+    
     /**
     * Method Name: setCurrentPageReference
     * @description: Method to load the data when click on the tab or again come on the tab with redirection
@@ -148,7 +125,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleSpecificDateChange(event){
         this.specificDate = event.target.value;
-        this.updateNewDate();
+        this.updateExactDates();
     }
 
     fetchDateFields() {
@@ -367,26 +344,24 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         this.isFieldSelected = true; // Set to true when a field is selected
     }
 
-    updateNewDate() {
-        try {
-            if (this.specificDate) {
-                const newDate = new Date(this.specificDate);
-                let days = 0 ;
+    updateExactDates() {
+        if (this.specificDate) {
+            this.emails = this.emails.map(email => {
+                const days = parseInt(email.daysAfterStartDate, 10) || 0;
+                const exactDate = new Date(this.specificDate);
+                exactDate.setDate(exactDate.getDate() + days);
+                email.exactDate = exactDate.toISOString().split('T')[0];
+                return email;
+            });
 
-                if(this.newDaysAfterStartDate){
-                    days = parseInt(this.newDaysAfterStartDate, 10); 
-                }
-                console.log('days ==> ' , days);
-                newDate.setDate(newDate.getDate() + days);
-                console.log('newDate ==> ', newDate);
-                this.newDate = newDate;
-            } else {
-                this.newDate = '';
-            }
-        } catch (error) {
-            console.log('Error ==> ' , error);
+            this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
+                const days = parseInt(email.daysAfterStartDate, 10) || 0;
+                const exactDate = new Date(this.specificDate);
+                exactDate.setDate(exactDate.getDate() + days);
+                email.exactDate = exactDate.toISOString().split('T')[0];
+                return email;
+            });
         }
-
     }
     
     handleRemove() {
@@ -417,8 +392,9 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     
     handleAddNewEmail() {
         const newId = this.emails.length + 1;
-        this.emails = [...this.emails, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '' ,}];
-        this.emailsWithTemplate = [...this.emailsWithTemplate, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '' }];
+
+        this.emails = [...this.emails, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '', exactDate: this.specificDate }];
+        this.emailsWithTemplate = [...this.emailsWithTemplate, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '', exactDate: this.specificDate }];    
     }
 
     handleDeleteEmail(event) {
@@ -473,7 +449,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             return email;
         });
 
-        this.updateNewDate();
+        this.updateExactDates();
     }
 
     handleNameChange(event){
