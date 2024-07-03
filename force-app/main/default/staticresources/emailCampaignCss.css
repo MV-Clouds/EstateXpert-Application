@@ -104,3 +104,23 @@ button[disabled] {
 .actions td{
   padding-bottom: 0rem !important;
 }
+
+.input-date-container .slds-has-error .slds-input{
+  border: 2px solid red;
+}
+
+.days-after-input .slds-has-error .slds-input{
+  border: 2px solid red;
+}
+
+.days-after-input .slds-has-error .slds-form-element__help{
+  position: absolute;
+}
+
+.days-after-input .slds-has-error .slds-input{
+  border: 2px solid red;
+}
+
+.time-to-send .slds-has-error .slds-form-element__help{
+  position: absolute;
+}

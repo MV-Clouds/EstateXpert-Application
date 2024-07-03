@@ -165,7 +165,7 @@
             </div>
     
             <div class="slds-form-element slds-m-top_medium input-date-container">
-                <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date" value={specificDate} onchange={handleSpecificDateChange}></lightning-input>
+                <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date" min={today} value={specificDate} onchange={handleSpecificDateChange}></lightning-input>
             </div>
 
             <template if:true={emails}>
@@ -235,20 +235,23 @@
                                         </div>
                                     </td>
                                     <td data-label="Days after start date">
-                                        <div>
+                                        <div class="days-after-input">
                                             <lightning-input
                                                 type="number"
                                                 value={email.daysAfterStartDate}
+                                                min="0"
+                                                message-when-range-underflow="Enter a positive number"
                                                 onchange={handleDaysAfterStartDateChange}
                                                 data-id={email.id}
                                             ></lightning-input>
                                         </div>
                                     </td>
                                     <td data-label="Time to send">
-                                        <div>
+                                        <div class="time-to-send">
                                             <lightning-input
+                                                class="timeCmp"
                                                 type="time"
-                                                value={newDate}
+                                                value={email.timeToSend}
                                                 onchange={handleTimeToSendChange}
                                                 data-id={email.id}
                                             ></lightning-input>

@@ -4,6 +4,7 @@ import getDateFieldsForPicklist from '@salesforce/apex/EmailCampaignController.g
 import createCampaignAndEmails from '@salesforce/apex/EmailCampaignController.createCampaignAndEmails';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 import plusIcon from '@salesforce/resourceUrl/plusIcon';
 import previewBtn from '@salesforce/resourceUrl/previewBtn';
@@ -50,6 +51,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track emailsWithTemplate = [];
 
     @track selectedContactDateField = '';
+
+    @track today = new Date().toISOString().split('T')[0];
     
     /**
     * Method Name: setCurrentPageReference
@@ -477,25 +480,70 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
 
     handleTimeToSendChange(event) {
-        const emailId = event.target.dataset.id;
-        const newTimeToSend = event.target.value;
+        try {
+            const emailId = event.target.dataset.id;
+            console.log('emailId-->', emailId);
     
-        this.emails = this.emails.map(email => {
-            if (email.id === parseInt(emailId, 10)) {
-                email.timeToSend = newTimeToSend;
-            }
-            return email;
-        });
-
+            const newTimeToSend = event.target.value;
+            const email = this.emails.find(email => email.id === parseInt(emailId, 10));
+    
+            const selectedDate = new Date(this.specificDate);
+            const currentTime = new Date();
+    
+            const isToday = selectedDate.toDateString() === currentTime.toDateString();
+    
+            console.log('newTimeToSend ==>  ', newTimeToSend);
+            console.log('currentTime ==>  ' , currentTime);
+    
+            // Parse the newTimeToSend into a Date object with today's date
+            const newTimeParts = newTimeToSend.split(':');
+            const newTimeDate = new Date();
+            newTimeDate.setHours(newTimeParts[0], newTimeParts[1], newTimeParts[2] || 0, 0);
+    
+            const isPastTime = isToday && newTimeDate < currentTime;
+    
+            console.log(newTimeDate < currentTime);
+            console.log(isPastTime);
             
-        this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
-            if (email.id === parseInt(emailId, 10)) {
-                email.timeToSend = newTimeToSend;
-            }
-            return email;
-        });
-    }    
+            const inputElement = this.template.querySelector(`.timeCmp[data-id="${emailId}"]`);
+
+            if (isPastTime) {
+                this.showToast('Error', 'Selected time cannot be before current time for today.', 'error');
+                console.log('emailId 1-->', emailId);
     
+    
+                if (inputElement) {
+                    inputElement.setCustomValidity("Select future time");
+                }
+    
+                return;
+            }
+            else{
+                if (inputElement) {
+                    inputElement.setCustomValidity("");
+                }           
+            }
+    
+            this.emails = this.emails.map(email => {
+                if (email.id === parseInt(emailId, 10)) {
+                    email.timeToSend = newTimeToSend;
+                }
+                return email;
+            });
+    
+            console.log('emails ==> ', JSON.stringify(this.emails));
+    
+            this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
+                if (email.id === parseInt(emailId, 10)) {
+                    email.timeToSend = newTimeToSend;
+                }
+                return email;
+            });
+        } catch (error) {
+            console.log('error ==>', error);
+        }
+    }
+
 
     handlepreviewBtn(event){
         console.log('handle preview btn');
@@ -542,4 +590,13 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         return recipients.map(recipient => recipient.value);
     }
 
+
+    showToast(title, message, variant) {
+        const toastEvent = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant
+        });
+        this.dispatchEvent(toastEvent);
+    }
 }
