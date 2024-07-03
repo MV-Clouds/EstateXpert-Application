@@ -140,6 +140,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Created By: Mitrajsinh Gohil
     */
     updateMapMarkers() {
+        try{
         const startIndex = (this.currentPage - 1) * PAGE_SIZE;
         const endIndex = startIndex + PAGE_SIZE;
         const currentPageData = this.pagedFilteredListingData.slice(startIndex, endIndex);
@@ -160,6 +161,10 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
                 media_url: listing.media_url // Set media URL for the image
             };
         });
+    }catch(error){
+        console.log('error--->',error);
+    }
+        // this.pagedFilteredListingData = this.ListingData;
     }
 
     /**
@@ -220,11 +225,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Created By: Mitrajsinh Gohil
     */
     clearFilter(event) {
+        this.isPropertyAvailable = true;
         this.filterData = event.detail;
-        this.pagedFilteredListingData = this.ListingData
+        this.pagedFilteredListingData = this.ListingData;
         this.searchTerm = ''
+        this.updateMapMarkers();
         this.isModalOpen = false;
-        this.updateMapMarkers()
     }
 
     /**

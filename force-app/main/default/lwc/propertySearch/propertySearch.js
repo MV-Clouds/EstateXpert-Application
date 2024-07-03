@@ -64,7 +64,7 @@ export default class PropertySearch extends LightningElement {
     */
     handleMinPriceChange(event) {
         this.minPrice = event.target.value;
-        if(this.minPrice > this.maxPrice) {
+        if(this.minPrice > this.maxPrice && (this.maxPrice != 0 || this.maxPrice != '')) {
             this.showMinError = true;
             this.showMaxError = false;
         } else {
@@ -80,7 +80,7 @@ export default class PropertySearch extends LightningElement {
     */
     handleMaxPriceChange(event) {
         this.maxPrice = event.target.value;
-        if(this.maxPrice < this.minPrice) {
+        if(this.maxPrice < this.minPrice && (this.maxPrice != 0 || this.maxPrice != '')) {
             this.showMaxError = true;
             this.showMinError = false;
         } else {
@@ -232,8 +232,8 @@ export default class PropertySearch extends LightningElement {
     */
     handleClearFilter() {
         this.propertyType = '';
-        this.minPrice = 0;
-        this.maxPrice = 0;
+        this.minPrice = '';
+        this.maxPrice = '';
         this.bedrooms = 0;
         this.bathrooms = 0;
         this.city = '';
