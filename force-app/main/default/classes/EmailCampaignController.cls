@@ -124,9 +124,28 @@ public with sharing class EmailCampaignController {
             for (String contactId : selectedPrimaryRecipients) {
                 Marketing_Campaign_Member__c member = new Marketing_Campaign_Member__c();
                 member.Contact__c = contactId;
+                member.Contact_Type__c = 'Primary';
                 member.Marketing_Campaign__c = campaign.Id;
                 marketingCampaignMembers.add(member);
             }
+
+
+            for (String contactId : selectedCCRecipients) {
+                Marketing_Campaign_Member__c member = new Marketing_Campaign_Member__c();
+                member.Contact__c = contactId;
+                member.Contact_Type__c = 'CC';
+                member.Marketing_Campaign__c = campaign.Id;
+                marketingCampaignMembers.add(member);
+            }
+
+            for (String contactId : selectedBCCRecipients) {
+                Marketing_Campaign_Member__c member = new Marketing_Campaign_Member__c();
+                member.Contact__c = contactId;
+                member.Contact_Type__c = 'BCC';
+                member.Marketing_Campaign__c = campaign.Id;
+                marketingCampaignMembers.add(member);
+            }
+
 
             // Insert the Marketing_Campaign_Member__c records
             if (!marketingCampaignMembers.isEmpty()) {

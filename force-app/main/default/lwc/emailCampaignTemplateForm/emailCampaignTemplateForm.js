@@ -344,7 +344,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         const selectedOption = this.contactDateFieldOptions.find(option => option.value === selectedValue);
         this.selectedContactDateField = selectedOption.label;
         this.isDateFieldDropdownVisible = false;
-        this.isFieldSelected = true; // Set to true when a field is selected
+        this.isFieldSelected = true; 
     }
 
     updateExactDates() {
@@ -553,7 +553,12 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         console.log('cancel btn is clicked');
     }
 
+
     handleSave() {
+        if (!this.validateInputs()) {
+            this.showToast('Error', 'Please ensure all required fields are filled.', 'error');
+            return;
+        }
 
         try {
             console.log('selectedPrimaryRecipients ==> ' , JSON.stringify(this.selectedPrimaryRecipients));
@@ -584,6 +589,19 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         } catch (error) {
             console.log('Error ==> ' , error);
         }
+    }
+
+
+    validateInputs() {
+        const hasRecipients = this.selectedPrimaryRecipients.length ;
+
+        const isDateSelected = this.specificDate && this.specificDate.trim() !== '';
+
+        const areEmailsValid = this.emailsWithTemplate.every(email =>
+            email.name && email.template && email.daysAfterStartDate !== null && email.timeToSend
+        );
+        
+        return hasRecipients && isDateSelected && areEmailsValid;
     }
 
     transformRecipients(recipients) {

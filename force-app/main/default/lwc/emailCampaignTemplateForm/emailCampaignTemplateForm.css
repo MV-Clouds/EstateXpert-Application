@@ -230,3 +230,7 @@ fieldset .slds-form-element__legend{
 .display-pill-input input{
     pointer-events: none;
 }
+
+.red{
+    color: red;
+}

@@ -52,6 +52,7 @@
                     onfocus={handlePrimarySearchInputFocus}
                     onblur={handlePrimarySearchInputBlur}
                     value={inputValuePrimary}
+                    required
                 ></lightning-input>
 
                 <template if:true={isPrimaryDropdownVisible}>
@@ -165,7 +166,7 @@
             </div>
     
             <div class="slds-form-element slds-m-top_medium input-date-container">
-                <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date" min={today} value={specificDate} onchange={handleSpecificDateChange}></lightning-input>
+                <lightning-input class="input-date slds-m-top_small" label="Select a date field" placeholder="Choose a date" type="date" min={today} value={specificDate} onchange={handleSpecificDateChange} required></lightning-input>
             </div>
 
             <template if:true={emails}>
@@ -175,20 +176,21 @@
                             <tr class="slds-line-height_reset">
 
                                 <th scope="col">
-                                    <div class="slds-truncate" title="Email Name">Email Name</div>
+                                    
+                                    <div class="slds-truncate" title="Email Name"><span class="red">*</span>Email Name</div>
                                 </th>
 
                                 <th scope="col">
-                                    <div class="slds-truncate" title="Email Template">Email Template</div>
+                                    <div class="slds-truncate" title="Email Template"><span class="red">*</span>Email Template</div>
                                 </th>
                                 <th scope="col">
-                                    <div class="slds-truncate" title="Subject">Subject</div>
+                                    <div class="slds-truncate" title="Subject"><span class="red">*</span>Subject</div>
                                 </th>
                                 <th scope="col">
-                                    <div class="slds-truncate" title="Days after start date">Days after start date</div>
+                                    <div class="slds-truncate" title="Days after start date"><span class="red">*</span>Days after start date</div>
                                 </th>
                                 <th scope="col">
-                                    <div class="slds-truncate" title="Time to send">Time to send</div>
+                                    <div class="slds-truncate" title="Time to send"><span class="red">*</span>Time to send</div>
                                 </th>
 
                                 <th scope="col">
