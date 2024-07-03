@@ -1,17 +1,19 @@
 import { LightningElement, api, track } from 'lwc';
 import GetListingTypes from '@salesforce/apex/PropertySearchController.GetListingTypes';
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
 export default class PropertySearch extends LightningElement {
     @api filtervalue;
     @track propertyType = '';
     @track propertyTypes = []; 
     @track minPrice = '';
-    @track minPriceRange = 0;
     @track maxPrice = '';
-    @track maxPriceRange = 1000000;
     @track bedrooms = 0;
     @track bathrooms = 0;
     @track city = '';
     @track zip = '';
+    @track showMinError = false;
+    @track showMaxError = false;
+    @track showValidationError = false;
 
     /**
     * Method Name: ConnectedCallback
@@ -63,7 +65,10 @@ export default class PropertySearch extends LightningElement {
     handleMinPriceChange(event) {
         this.minPrice = event.target.value;
         if(this.minPrice > this.maxPrice) {
-            this.maxPrice = this.minPrice;
+            this.showMinError = true;
+            this.showMaxError = false;
+        } else {
+            this.showMinError = false;
         }
     }
 
@@ -76,7 +81,10 @@ export default class PropertySearch extends LightningElement {
     handleMaxPriceChange(event) {
         this.maxPrice = event.target.value;
         if(this.maxPrice < this.minPrice) {
-            this.minPrice = this.maxPrice;
+            this.showMaxError = true;
+            this.showMinError = false;
+        } else {
+            this.showMaxError = false;
         }
     }
 
@@ -152,7 +160,17 @@ export default class PropertySearch extends LightningElement {
             };
 
             console.log('Applying Filters:', filterValues.propertyType);
-            this.dispatchEvent(new CustomEvent('changefilter', { detail: filterValues }));
+            if (this.showMinError || this.showMaxError) {
+                const evt = new ShowToastEvent({
+                    title: 'Filters Can Not be Applied',
+                    message: 'All the Errors need to be solved before applying Filter',
+                    variant: 'error',
+                  });
+                  this.dispatchEvent(evt);
+              
+            } else {
+                this.dispatchEvent(new CustomEvent('changefilter', { detail: filterValues }));
+            }
         } catch (error) {
             console.error('Error applying filters:', error);
         }
@@ -214,8 +232,8 @@ export default class PropertySearch extends LightningElement {
     */
     handleClearFilter() {
         this.propertyType = '';
-        this.minPrice = '';
-        this.maxPrice = '';
+        this.minPrice = 0;
+        this.maxPrice = 0;
         this.bedrooms = 0;
         this.bathrooms = 0;
         this.city = '';

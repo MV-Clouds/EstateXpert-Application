@@ -110,17 +110,17 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
                 this.ListingData = result.Listings;
                 this.propertyMediaUrls = result.Medias;
                 this.ListingData.forEach(row => {
-                    const prop_id = row.Property__c;
+                    const prop_id = row.MVEX__Property__c;
                     row.media_url = this.propertyMediaUrls[prop_id];
                     console.log(row.media_url);
                 });
                 this.FilteredListingData.forEach(row => {
-                    const prop_id = row.Property__c;
-                    row.media_url = row.Primary_Image_URL__c ? row.Primary_Image_URL__c : (this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : NoImageFound);
-                    row.Listing_Price__c = row.Listing_Price__c ? row.Listing_Price__c : 'TBD';
-                    row.Listing_Type__c = row.Listing_Type__c ? row.Listing_Type__c : 'Sale';
-                    row.Bedrooms__c = row.Bedrooms__c ? row.Bedrooms__c : 0;
-                    row.FullBathrooms__c = row.FullBathrooms__c ? row.FullBathrooms__c : 0;
+                    const prop_id = row.MVEX__Property__c;
+                    row.media_url = row.MVEX__Primary_Image_URL__c ? row.MVEX__Primary_Image_URL__c : (this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : NoImageFound);
+                    row.MVEX__Listing_Price__c = row.MVEX__Listing_Price__c ? row.MVEX__Listing_Price__c : 'TBD';
+                    row.MVEX__Listing_Type__c = row.MVEX__Listing_Type__c ? row.MVEX__Listing_Type__c : 'Sale';
+                    row.MVEX__Bedrooms__c = row.MVEX__Bedrooms__c ? row.MVEX__Bedrooms__c : 0;
+                    row.MVEX__Bathrooms__c = row.MVEX__Bathrooms__c ? row.MVEX__Bathrooms__c : 0;
                 });
                 this.pagedFilteredListingData = this.FilteredListingData;
                 this.totalRecords = this.pagedFilteredListingData.length;
@@ -145,16 +145,17 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         const currentPageData = this.pagedFilteredListingData.slice(startIndex, endIndex);
 
         this.mapMarkers = currentPageData.map(listing => {
+            console.log('listing.MVEX__City__c:-> ',listing.MVEX__City__c,' listing.Name:-> ',listing.Name);
             return {
                 id: listing.Id,
                 location: {
-                    Street: listing.Street__c,
-                    City: listing.City__c,
-                    State: listing.State__c,
-                    Country: listing.Country__c
+                    Street: listing.MVEX__Street__c,
+                    City: listing.MVEX__City__c,
+                    State: listing.MVEX__State__c,
+                    Country: listing.MVEX__Country__c
                 },
                 title: listing.Name,
-                description: `City: ${listing.City__c}, Sq Ft: ${listing.Sq_Ft__c}`,
+                description: `City: ${listing.MVEX__City__c}, Sq Ft: ${listing.MVEX__Sq_Ft__c}`,
                 icon: 'custom:custom26', // Set custom marker icon
                 media_url: listing.media_url // Set media URL for the image
             };
@@ -185,13 +186,13 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
 
         this.pagedFilteredListingData = this.ListingData.filter(property => {
             const searchProperty = property.Name.toLowerCase().includes(this.searchTerm)
-            const matchesPropertyType = !propertyType || property.Listing_Type__c == propertyType;
-            const matchesPrice = (minPrice != 0 ? property.Listing_Price__c >= minPrice ? true : false : true) &&
-                (maxPrice != 0 ? property.Listing_Price__c <= maxPrice ? true : false : true)
-            const matchesBedrooms = bedrooms != 0 ? property.Bedrooms__c == bedrooms ? true : false : true;
-            const matchesBathrooms = bathrooms != 0 ? property.FullBathrooms__c == bathrooms ? true : false : true;
-            const matchesCity = city != '' ? (property.City__c != undefined && property.City__c != '') ? property.City__c.toLowerCase() == city.toLowerCase() ? true : false : false : true;
-            const matchesZipCode = zip != '' ? property.Zip_Postal_Code__c != '' ? property.Zip_Postal_Code__c == zip ? true : false : false : true;
+            const matchesPropertyType = !propertyType || property.MVEX__Listing_Type__c == propertyType;
+            const matchesPrice = (minPrice != 0 ? property.MVEX__Listing_Price__c >= minPrice ? true : false : true) &&
+                (maxPrice != 0 ? property.MVEX__Listing_Price__c <= maxPrice ? true : false : true)
+            const matchesBedrooms = bedrooms != 0 ? property.MVEX__Bedrooms__c == bedrooms ? true : false : true;
+            const matchesBathrooms = bathrooms != 0 ? property.MVEX__Bathrooms__c == bathrooms ? true : false : true;
+            const matchesCity = city != '' ? (property.MVEX__City__c != undefined && property.MVEX__City__c != '') ? property.MVEX__City__c.toLowerCase() == city.toLowerCase() ? true : false : false : true;
+            const matchesZipCode = zip != '' ? property.MVEX__Zip_Postal_Code__c != '' ? property.MVEX__Zip_Postal_Code__c == zip ? true : false : false : true;
 
             return searchProperty && matchesPropertyType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipCode;
         });
