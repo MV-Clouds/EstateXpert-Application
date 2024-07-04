@@ -404,8 +404,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleDeleteEmail(event) {
         const emailId = event.currentTarget.dataset.id;
-        this.emails = this.emails.filter(email => email.id !== emailId);
-        this.emailsWithTemplate = this.emailsWithTemplate.filter(email => email.id !== emailId);
+        this.emails = this.emails.filter(email => email.id != emailId);
+        this.emailsWithTemplate = this.emailsWithTemplate.filter(email => email.id != emailId);
     }
 
     handleTemplateChange(event) {
@@ -545,6 +545,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                 }
                 return email;
             });
+
+            console.log('emailsWithTemplate ==> ' , JSON.stringify(this.emailsWithTemplate));
         } catch (error) {
             console.log('error ==>', error);
         }
