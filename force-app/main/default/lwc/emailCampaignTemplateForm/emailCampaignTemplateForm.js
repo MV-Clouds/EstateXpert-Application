@@ -83,8 +83,9 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                         id: email.Id, 
                         template: email.Quick_Template__c,
                         subject: email.Subject__c, 
-                        daysAfterStartDate: 0, 
+                        daysAfterStartDate: email.Days_After_Start_Date__c, 
                         timeToSend: '',
+                        name : email.Name
                     }));
                     this.emailsWithTemplate = [...this.emails];
                 }
@@ -168,8 +169,9 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                     id: email.Id, 
                     template: email.Quick_Template__c,
                     subject: email.Subject__c, 
-                    daysAfterStartDate: 0, 
+                    daysAfterStartDate: email.Days_After_Start_Date__c, 
                     timeToSend: '',
+                    name : email.Name
                 }));
                 this.emailsWithTemplate = [...this.emails];
             }
@@ -402,8 +404,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
     handleDeleteEmail(event) {
         const emailId = event.currentTarget.dataset.id;
-        this.emails = this.emails.filter(email => email.id !== parseInt(emailId, 10));
-        this.emailsWithTemplate = this.emailsWithTemplate.filter(email => email.id !== parseInt(emailId, 10));
+        this.emails = this.emails.filter(email => email.id !== emailId);
+        this.emailsWithTemplate = this.emailsWithTemplate.filter(email => email.id !== emailId);
     }
 
     handleTemplateChange(event) {
@@ -415,19 +417,15 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         console.log('');
 
         this.emails = this.emails.map(email => {
-            if (email.id === parseInt(emailId, 10)) {
-                console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
-                email.subject = selectedTemplate.Subject__c;
-            }
+            console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
+            email.subject = selectedTemplate.Subject__c;
             return email;
         });
 
         this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
-            if (email.id === parseInt(emailId, 10)) {
-                console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
-                email.template = selectedTemplate.Id;
-                email.subject = selectedTemplate.Subject__c;
-            }
+            console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
+            email.template = selectedTemplate.Id;
+            email.subject = selectedTemplate.Subject__c;
             return email;
         });
 
@@ -439,16 +437,12 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         this.newDaysAfterStartDate = event.target.value;
     
         this.emails = this.emails.map(email => {
-            if (email.id === parseInt(emailId, 10)) {
-                email.daysAfterStartDate = this.newDaysAfterStartDate;
-            }
+            email.daysAfterStartDate = this.newDaysAfterStartDate;
             return email;
         });
             
         this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
-            if (email.id === parseInt(emailId, 10)) {
-                email.daysAfterStartDate = this.newDaysAfterStartDate;
-            }
+            email.daysAfterStartDate = this.newDaysAfterStartDate;
             return email;
         });
 
@@ -458,18 +452,16 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     handleNameChange(event){
         const emailId = event.target.dataset.id;
         const emailName = event.target.value;
+
+        console.log('emailName ==> ' , emailName);
         
         this.emails = this.emails.map(email => {
-            if (email.id === parseInt(emailId, 10)) {
-                email.name = emailName;
-            }
+            email.name = emailName;
             return email;
         });
 
         this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
-            if (email.id === parseInt(emailId, 10)) {
-                email.name = emailName;
-            }
+            email.name = emailName;
             return email;
         });
 
@@ -485,7 +477,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             console.log('emailId-->', emailId);
     
             const newTimeToSend = event.target.value;
-            const email = this.emails.find(email => email.id === parseInt(emailId, 10));
+            const email = this.emails.find(email => email.id === emailId);
     
             const selectedDate = new Date(this.specificDate);
             const currentTime = new Date();
@@ -525,18 +517,14 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             }
     
             this.emails = this.emails.map(email => {
-                if (email.id === parseInt(emailId, 10)) {
-                    email.timeToSend = newTimeToSend;
-                }
+                email.timeToSend = newTimeToSend;
                 return email;
             });
     
             console.log('emails ==> ', JSON.stringify(this.emails));
     
             this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
-                if (email.id === parseInt(emailId, 10)) {
-                    email.timeToSend = newTimeToSend;
-                }
+                email.timeToSend = newTimeToSend;
                 return email;
             });
         } catch (error) {
@@ -595,11 +583,18 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     validateInputs() {
         const hasRecipients = this.selectedPrimaryRecipients.length ;
 
-        const isDateSelected = this.specificDate && this.specificDate.trim() !== '';
+        console.log('hasRecipients ==> ' ,hasRecipients);
 
+        const isDateSelected = this.specificDate && this.specificDate.trim() !== '';
+        console.log('isDateSelected ==> ' ,isDateSelected);
+
+        console.log('emailsWithTemplate ==> ' , JSON.stringify(this.emailsWithTemplate));
         const areEmailsValid = this.emailsWithTemplate.every(email =>
             email.name && email.template && email.daysAfterStartDate !== null && email.timeToSend
         );
+
+        console.log('areEmailsValid ==> ' ,areEmailsValid);
+
         
         return hasRecipients && isDateSelected && areEmailsValid;
     }

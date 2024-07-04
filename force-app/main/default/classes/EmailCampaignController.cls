@@ -42,7 +42,7 @@ public with sharing class EmailCampaignController {
     
     @AuraEnabled(cacheable=true)
     public static List<Marketing_Email__c> getMarketingEmails(String templateId) {
-        return [SELECT Id, Name, Marketing_Campaign__c ,Subject__c,Quick_Template__c,Send_Date_Time__c
+        return [SELECT Id, Name, Marketing_Campaign__c ,Subject__c,Quick_Template__c,Send_Date_Time__c,Days_After_Start_Date__c,TimeToSend__c
                 FROM Marketing_Email__c 
                 WHERE Marketing_Campaign__c = :templateId WITH SECURITY_ENFORCED ];
     }
@@ -163,6 +163,7 @@ public with sharing class EmailCampaignController {
 
                 emailCampaign.Marketing_Campaign__c = campaign.Id;
                 emailCampaign.Subject__c =  String.valueOf(emailData.get('subject'));
+                emailCampaign.Name = String.valueOf(emailData.get('name'));
                 emailCampaign.Quick_Template__c = String.valueOf(emailData.get('template'));
                 emailCampaign.Days_After_Start_Date__c	= Integer.valueOf(emailData.get('daysAfterStartDate'));
                 String timeString = (String)emailData.get('timeToSend');
@@ -174,6 +175,7 @@ public with sharing class EmailCampaignController {
                         Integer seconds = Integer.valueOf(timeParts[2]);
                         
                         emailCampaign.TimeToSend__c = Time.newInstance(hours, minutes, seconds, 0);
+                        emailCampaign.Send_Date_Time__c = DateTime.newInstance(specificDate,Time.newInstance(hours, minutes, seconds, 0));
                     }
                 }
                                 
