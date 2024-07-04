@@ -1,4 +1,4 @@
-import { LightningElement, api, track, wire } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import getObjectFields from '@salesforce/apex/MapFieldCmp.getObjectFields';
 import saveMappings from '@salesforce/apex/MapFieldCmp.saveMappings';
 import getMetadata from '@salesforce/apex/MapFieldCmp.getMetadata';
@@ -10,33 +10,51 @@ export default class MapFields extends LightningElement {
     @track selectedValues = [];
     @track comboboxes = [];
     @track dropDownPairs = [];
-    @track ListingOptions = [];
-    @track MainListingOptions = [];
-    @track updateListing = [];
-    @track updateProperty = [];
-    @track PropertyOptions = [];
-    @track MainPropertyOptions = [];
-    @track checkboxValue = false;
-    @track isLoading = false;
-    @track isDropdownOpen = false;
-    @track savebutton = true;
+    ListingOptions = [];
+    MainListingOptions = [];
+    updateListing = [];
+    updateProperty = [];
+    PropertyOptions = [];
+    MainPropertyOptions = [];
+    checkboxValue = false;
+    isLoading=false;
+    isDropdownOpen = false;
+    savebutton=true;
+    options = [{ label: 'Sync', value: 'option1' }];
+    selectedListingFieldApiName;
     @track showConfirmationModal = false;
-    @track selectedListingFieldApiName;
-    @track doubleSideArrowUrl = doubleSideArrow;
-    
-    @track options = [{ label: 'Sync', value: 'option1' }];
 
+    doubleSideArrowUrl = doubleSideArrow;
+
+     /**
+    * Method Name: delButtonClass
+    * @description: handle the delete button enable/disable.
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     get delButtonClass() {
         return this.isAutoSyncEnabled ? 'slds-m-left_x-small del-button disabled-del' : ' slds-m-left_x-small del-button';
     }
 
+      /**
+    * Method Name: isAutoSyncEnabled
+    * @description: handle the autosync checkbox enable/disable..
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     get isAutoSyncEnabled() {
         return this.checkboxValue;
     }
 
+     /**
+    * Method Name: connectedCallback
+    * @description: fetch the listing object fields.
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     connectedCallback(){
         this.isLoading = true;
-        getObjectFields({ objectName: 'Listing__c' })
+        getObjectFields({ objectName: 'MVEX__Listing__c' })
             .then(data => {
                 this.handleListingObjectFields(data);
                 if(this.MainListingOptions.length != 0){
@@ -50,9 +68,15 @@ export default class MapFields extends LightningElement {
    
             this.filterAndUpdateListingOptions();
     }
-
+    
+    /**
+    * Method Name: callPropertyFields
+    * @description: fetch the property object fieds.
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     callPropertyFields(){
-        getObjectFields({ objectName: 'Property__c' })
+        getObjectFields({ objectName: 'MVEX__Property__c' })
         .then(data => {
             this.handlePropertyObjectFields(data);
             if(this.MainPropertyOptions.length != 0){
@@ -65,10 +89,15 @@ export default class MapFields extends LightningElement {
         }); 
     }
 
+    /**
+    * Method Name: handleListingObjectFields
+    * @description: set listing object fields.
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     handleListingObjectFields(data) {
         // Handle the retrieved fields for Listing__c object
-        const excludedFields = ['Id', 'OwnerId', 'CreatedById', 'CreatedDate', 'LastModifiedById', 'LastModifiedDate', 'SystemModstamp', 'Year_Built__c', 'LastViewedDate', 'LastReferencedDate', 'RecordTypeId', 'Listing_RecordType__c', 'IsDeleted','Agent_ID__c'];
-        const filteredFields = data.filter(field => !excludedFields.includes(field.apiName));
+        const filteredFields = data;
         if (data) {
             this.MainListingOptions = filteredFields.map((field) => ({
                 label: field.label,
@@ -79,10 +108,15 @@ export default class MapFields extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: handlePropertyObjectFields
+    * @description: set property object fields.
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     handlePropertyObjectFields(data) {
         // Handle the retrieved fields for Property__c object
-        const excludedFields = ['Property_ID__c', 'OwnerId', 'Year_Built__c', 'Property_RecordType__c', 'RecordTypeId', 'CreatedById', 'CreatedDate', 'LastModifiedById', 'LastModifiedDate', 'SystemModstamp', 'IsDeleted'];
-        const filteredFields = data.filter(field => !excludedFields.includes(field.apiName));
+        const filteredFields = data;
         if (data) {
             this.MainPropertyOptions = filteredFields.map((field) => ({
                 label: field.label,
@@ -94,7 +128,12 @@ export default class MapFields extends LightningElement {
     }
 
 
-    //Get metadata from the record and set in picklists pair 
+      /**
+    * Method Name: getMetadataFunction
+    * @description: Get metadata from the record and set in picklists pair 
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     getMetadataFunction(){
         
         getMetadata().then(result => {
@@ -109,6 +148,13 @@ export default class MapFields extends LightningElement {
         this.filterAndUpdatePropertyOptions();
     }
 
+    /**
+    * Method Name: parseAndSetMappings
+    * @description: set the dropdown pairs using the metadata string
+    * @params mappingString string value
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     parseAndSetMappings(mappingString) {
         const mappings = mappingString.split(';');
         if(this.ListingOptions != null){
@@ -136,6 +182,12 @@ export default class MapFields extends LightningElement {
         
     }
 
+    /**
+    * Method Name: setCheckboxValue
+    * @description: set the checkbox value
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     setCheckboxValue(checkboxValue){
         if(checkboxValue == 'true'){
             this.checkboxValue = true;
@@ -144,15 +196,19 @@ export default class MapFields extends LightningElement {
         }
     }
 
-    //Filter the property base on the selected listing
+     /**
+    * Method Name: filterPropertyOptions
+    * @description: set property option according listing data-type
+    * @params: selectedListing string vlaue
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     filterPropertyOptions(selectedListing) {
         if (!selectedListing) return; // No listing field selected yet
         this.filterAndUpdatePropertyOptions();
-        // console.log(selectedListing);
         const selectedListingField = this.ListingOptions.find(
             (option) => option.value === selectedListing
         );
-        // console.log('Selected Listing Field:', selectedListingField);
         if (!selectedListingField || !selectedListingField.dataType) {
             return;
         }
@@ -165,10 +221,14 @@ export default class MapFields extends LightningElement {
     }
 
 
-    //Handle picklists selection
+    /**
+    * Method Name: handleSourceFieldChange
+    * @description: Handle picklists selection of listing fileds
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     handleSourceFieldChange(event) {
         const index = event.target.dataset.index;
-        // console.log(index);
         this.selectedListingFieldApiName = event.detail.value;
        
        this.dropDownPairs[index].selectedListing = event.detail.value;
@@ -180,6 +240,13 @@ export default class MapFields extends LightningElement {
        
     }
 
+    /**
+    * Method Name: updateListingOptionsAfterIndex
+    * @description: remove the selected item from other dropdown pairs
+    * @params startIndex integer value
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     updateListingOptionsAfterIndex(startIndex) {
         for (let i = startIndex; i < this.dropDownPairs.length; i++) {
             const pair = this.dropDownPairs[i];
@@ -193,6 +260,12 @@ export default class MapFields extends LightningElement {
         }
     }
     
+    /**
+    * Method Name: handleDestinationFieldChange
+    * @description: Handle picklists selection of property fileds
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     handleDestinationFieldChange(event) {
         // Implement if needed
         const index = event.target.dataset.index;
@@ -206,7 +279,12 @@ export default class MapFields extends LightningElement {
         
     }
 
-    //Exculde the selected picklists values from both lisitng and property
+      /**
+    * Method Name: filterAndUpdateListingOptions
+    * @description: Exculde the selected picklists values from lisitng fields
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     filterAndUpdateListingOptions() {
 
         this.updateListing = this.MainListingOptions;
@@ -224,7 +302,12 @@ export default class MapFields extends LightningElement {
         this.updateListing = [];
     }
 
-
+    /**
+    * Method Name: filterAndUpdateListingOptions
+    * @description: Exculde the selected picklists values from property fields
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     filterAndUpdatePropertyOptions() {
         this.updateProperty = this.MainPropertyOptions;
         const selectedListingValues = this.dropDownPairs.map(pair => pair.selectedProperty);
@@ -236,22 +319,37 @@ export default class MapFields extends LightningElement {
         this.updateProperty = [];
     }
 
+    /**
+    * Method Name: excludeSelectedOptionFromListing
+    * @description: update the removed listing fields list
+    * @params selectedValue object value
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     excludeSelectedOptionFromListing(selectedValue) {
         this.updateListing = this.updateListing.filter(option => option.value !== selectedValue);
-
-        // console.log('Update Listing'+this.ListingOptions.length);
     }
 
+     /**
+    * Method Name: excludeSelectedOptionFromProperty
+    * @description: update the removed property fields list
+    * @params selectedValue object value
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     excludeSelectedOptionFromProperty(selectedValue) {
         this.updateProperty = this.updateProperty.filter(option => option.value !== selectedValue);
 
-        // console.log('Update Proprty'+this.ListingOptions.length);
     }
 
-    //Add and delete pair of picklists
+      /**
+    * Method Name: addNewPair
+    * @description: Add dropdown pair of picklists
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     addNewPair() {
-        // console.log('Before adding new pair - Listing Options:', this.ListingOptions);
-        
+       
         this.filterAndUpdateListingOptions();
         this.filterAndUpdatePropertyOptions();
         const newPair = {
@@ -262,8 +360,7 @@ export default class MapFields extends LightningElement {
             propertyOptions: [] ,
             isPropertyPicklistDisabled: true 
         };
-        // console.log('After adding new pair - Listing Options:', this.ListingOptions);
-        
+       
         this.dropDownPairs.push(newPair);
         this,this.savebutton = true;
         const isPropertyValid = this.dropDownPairs.every(pair => pair.selectedProperty);
@@ -274,10 +371,14 @@ export default class MapFields extends LightningElement {
         
     }
 
+    /**
+    * Method Name: deletePair
+    * @description: delete dropdown pair of picklists
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     deletePair(event) {
         const index = event.target.value;
-        const selectedListingFieldApiName = this.dropDownPairs[index].selectedListing;
-        
         this.dropDownPairs = this.dropDownPairs.filter((pair, i) => i !== index);
         this.filterAndUpdateListingOptions();
         this.filterAndUpdatePropertyOptions();
@@ -288,6 +389,12 @@ export default class MapFields extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: handleCheckboxChange
+    * @description: handle checkbox 
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     handleCheckboxChange() {
        if(this.checkboxValue==false){
         this.checkboxValue = true;
@@ -295,11 +402,16 @@ export default class MapFields extends LightningElement {
         this.checkboxValue = false;
        }
        this.savebutton = false;
-    //    console.log(this.checkboxValue);
     }
 
 
     //Handle the mapping to store in metadata type
+      /**
+    * Method Name: handleCheckboxChange
+    * @description: handle checkbox 
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     createMappingString() {
         let mappingString = '';
         for (let i = 0; i < this.dropDownPairs.length; i++) {
@@ -312,13 +424,17 @@ export default class MapFields extends LightningElement {
         return mappingString;
     }
 
+    /**
+    * Method Name: saveMappingsToMetadata
+    * @description: save the updated mapping in the metadata
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     saveMappingsToMetadata() {
         const mappingsData = this.createMappingString();
         const checkboxValue = this.checkboxValue;
-        // console.log(mappingsData);
         saveMappings({ mappingsData , checkboxValue})
-            .then(result => {
-                // console.log('Mappings saved successfully:', result);
+            .then(() => {
                 this.showToast('Success', 'Mappings saved successfully', 'success');
                 const event = new CustomEvent('modalclose', {
                     detail: { message: false }
@@ -333,8 +449,13 @@ export default class MapFields extends LightningElement {
             });
     }
 
-  
     //Conformation modal and the alert
+    /**
+    * Method Name: handleAddPairClick
+    * @description: Conformation modal and the alert
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     handleAddPairClick() {
         const isValid = this.dropDownPairs.every(pair => pair.selectedProperty);
         if (!isValid) {
@@ -345,6 +466,12 @@ export default class MapFields extends LightningElement {
         this.showConfirmationModal = true;
     }
 
+    /**
+    * Method Name: handleConfirmAddPair
+    * @description: handle the confirm button in modal
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     handleConfirmAddPair() {
         // Handle adding a new pair here
         this.saveMappingsToMetadata();
@@ -353,11 +480,26 @@ export default class MapFields extends LightningElement {
         this.showConfirmationModal = false;
     }
 
+    /**
+    * Method Name: closeConfirmationModal
+    * @description: handle the close button in modal
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     closeConfirmationModal() {
         // Close the confirmation modal if canceled
         this.showConfirmationModal = false;
     }
 
+    /**
+    * Method Name: handleConfirmAddPair
+    * @description: show the toast messsage
+    * params: title string value
+    * params: message string value
+    * params: variant string value
+    * Date: 28/06/2024
+    * Created By: Vyom Soni
+    **/
     showToast(title, message, variant) {
         const toastEvent = new ShowToastEvent({
             title: title,

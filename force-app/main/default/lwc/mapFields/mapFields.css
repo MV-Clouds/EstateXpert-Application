@@ -33,6 +33,10 @@
 
 .title {
     margin-right: 20px; 
+    font-size: 25px;
+    font-family: Arial, sans-serif; 
+    font-weight: bold; 
+    color: #333; 
 }
 
 .checkbox-group {
@@ -60,13 +64,6 @@
     justify-content: center;
     align-items: center;
     margin-right: 20px;
-}
-
-.title {
-    font-size: 25px;
-    font-family: Arial, sans-serif; 
-    font-weight: bold; 
-    color: #333; 
 }
 
 .checkbox-group .slds-checkbox {
