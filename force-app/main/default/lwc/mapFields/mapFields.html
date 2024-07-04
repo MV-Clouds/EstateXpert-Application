@@ -26,7 +26,6 @@
 
             <!-- picklist section -->
             <div class="scrollable-container">
-                <template if:true={isDropdownOpen}>
                     <template for:each={dropDownPairs} for:item="pair" for:index="index">
                         <div key={pair.id} class="picklist-div">
                             <lightning-layout>
@@ -67,7 +66,6 @@
                         <!-- Add new mapping button -->
                         <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={isAutoSyncEnabled} >Add</button>
                     </div>
-                </template>
             </div>
 
             <div class="save-btn">

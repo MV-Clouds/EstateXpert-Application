@@ -1,4 +1,4 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, track } from 'lwc';
 import getObjectFields from '@salesforce/apex/MapFieldCmp.getObjectFields';
 import saveMappings from '@salesforce/apex/MapFieldCmp.saveMappings';
 import getMetadata from '@salesforce/apex/MapFieldCmp.getMetadata';
@@ -6,9 +6,6 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import doubleSideArrow from '@salesforce/resourceUrl/doubleSideArrow';
 
 export default class MapFields extends LightningElement {
-    @api recordId;
-    @track selectedValues = [];
-    @track comboboxes = [];
     @track dropDownPairs = [];
     @track ListingOptions = [];
     @track MainListingOptions = [];
@@ -18,7 +15,6 @@ export default class MapFields extends LightningElement {
     @track MainPropertyOptions = [];
     @track checkboxValue = false;
     @track isLoading=false;
-    @track isDropdownOpen = false;
     @track savebutton=true;
     @track options = [{ label: 'Sync', value: 'option1' }];
     @track showConfirmationModal = false;
@@ -80,7 +76,6 @@ export default class MapFields extends LightningElement {
             this.handlePropertyObjectFields(data);
             if(this.MainPropertyOptions.length != 0){
                 this.getMetadataFunction();  
-                this.isDropdownOpen = true;
             }
         })
         .catch(error => {
@@ -324,7 +319,7 @@ export default class MapFields extends LightningElement {
     /**
     * Method Name: excludeSelectedOptionFromListing
     * @description: update the removed listing fields list
-    * @param selectedValue object value
+    * @param: selectedValue object value
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/
@@ -335,7 +330,7 @@ export default class MapFields extends LightningElement {
      /**
     * Method Name: excludeSelectedOptionFromProperty
     * @description: update the removed property fields list
-    * @param selectedValue object value
+    * @param: selectedValue object value
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/
@@ -497,9 +492,9 @@ export default class MapFields extends LightningElement {
     /**
     * Method Name: handleConfirmAddPair
     * @description: show the toast messsage
-    * param: title string value
-    * param: message string value
-    * param: variant string value
+    * @param: title string value
+    * @param: message string value
+    * @param: variant string value
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/
