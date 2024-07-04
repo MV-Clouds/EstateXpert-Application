@@ -10,18 +10,17 @@ export default class MapFields extends LightningElement {
     @track selectedValues = [];
     @track comboboxes = [];
     @track dropDownPairs = [];
-    ListingOptions = [];
-    MainListingOptions = [];
-    updateListing = [];
-    updateProperty = [];
-    PropertyOptions = [];
-    MainPropertyOptions = [];
-    checkboxValue = false;
-    isLoading=false;
-    isDropdownOpen = false;
-    savebutton=true;
-    options = [{ label: 'Sync', value: 'option1' }];
-    selectedListingFieldApiName;
+    @track ListingOptions = [];
+    @track MainListingOptions = [];
+    @track updateListing = [];
+    @track updateProperty = [];
+    @track PropertyOptions = [];
+    @track MainPropertyOptions = [];
+    @track checkboxValue = false;
+    @track isLoading=false;
+    @track isDropdownOpen = false;
+    @track savebutton=true;
+    @track options = [{ label: 'Sync', value: 'option1' }];
     @track showConfirmationModal = false;
 
     doubleSideArrowUrl = doubleSideArrow;
@@ -137,8 +136,14 @@ export default class MapFields extends LightningElement {
     getMetadataFunction(){
         
         getMetadata().then(result => {
-            this.parseAndSetMappings(result[0]);
-            this.setCheckboxValue(result[1]);
+            if(result[0] != null){
+                this.parseAndSetMappings(result[0]);
+            }
+            if(result[1]==null){
+                this.setCheckboxValue(result[0]);
+            }else{
+                this.setCheckboxValue(result[1]);
+            }
             
         }).catch(error => {
             console.error('Error fetching metadata:', error);
@@ -151,7 +156,7 @@ export default class MapFields extends LightningElement {
     /**
     * Method Name: parseAndSetMappings
     * @description: set the dropdown pairs using the metadata string
-    * @params mappingString string value
+    * @param mappingString string value
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/
@@ -199,7 +204,7 @@ export default class MapFields extends LightningElement {
      /**
     * Method Name: filterPropertyOptions
     * @description: set property option according listing data-type
-    * @params: selectedListing string vlaue
+    * @param: selectedListing string vlaue
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/
@@ -229,21 +234,18 @@ export default class MapFields extends LightningElement {
     **/
     handleSourceFieldChange(event) {
         const index = event.target.dataset.index;
-        this.selectedListingFieldApiName = event.detail.value;
-       
        this.dropDownPairs[index].selectedListing = event.detail.value;
        this.dropDownPairs[index].propertyOptions = this.filterPropertyOptions(event.detail.value);
        this.dropDownPairs[index].isPropertyPicklistDisabled = false;
        //this.filterPropertyOptions();
        this.updateListingOptionsAfterIndex(index);
        this.filterAndUpdateListingOptions();
-       
     }
 
     /**
     * Method Name: updateListingOptionsAfterIndex
     * @description: remove the selected item from other dropdown pairs
-    * @params startIndex integer value
+    * @param startIndex integer value
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/
@@ -322,7 +324,7 @@ export default class MapFields extends LightningElement {
     /**
     * Method Name: excludeSelectedOptionFromListing
     * @description: update the removed listing fields list
-    * @params selectedValue object value
+    * @param selectedValue object value
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/
@@ -333,7 +335,7 @@ export default class MapFields extends LightningElement {
      /**
     * Method Name: excludeSelectedOptionFromProperty
     * @description: update the removed property fields list
-    * @params selectedValue object value
+    * @param selectedValue object value
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/
@@ -431,6 +433,7 @@ export default class MapFields extends LightningElement {
     * Created By: Vyom Soni
     **/
     saveMappingsToMetadata() {
+        
         const mappingsData = this.createMappingString();
         const checkboxValue = this.checkboxValue;
         saveMappings({ mappingsData , checkboxValue})
@@ -494,9 +497,9 @@ export default class MapFields extends LightningElement {
     /**
     * Method Name: handleConfirmAddPair
     * @description: show the toast messsage
-    * params: title string value
-    * params: message string value
-    * params: variant string value
+    * param: title string value
+    * param: message string value
+    * param: variant string value
     * Date: 28/06/2024
     * Created By: Vyom Soni
     **/

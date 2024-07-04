@@ -16,23 +16,16 @@ public with sharing class MapFieldCmp {
    */
    @AuraEnabled
    public static List<Map<String, String>> getObjectFields(String objectName) {
-       List<Map<String, String>> fieldDetails = new List<Map<String, String>>();
+       List<Map<String, String>> fieldDetails = new List<Map<String, String>>();    
    
        // Query Mapping_Metadata__mdt
-       Mapping_Metadata__mdt metaData = [SELECT Mapping_String__c, Autometic_Sync__c, BlockedFields__c FROM Mapping_Metadata__mdt LIMIT 1];
+       Mapping_Metadata__mdt metaData = [SELECT Mapping_String__c, Automatic_Sync__c, BlockedFields__c FROM Mapping_Metadata__mdt WITH SECURITY_ENFORCED LIMIT 1];
    
        Schema.DescribeSObjectResult describeResult = Schema.getGlobalDescribe().get(objectName).getDescribe();
    
        // Get all fields for the object
        Map<String, Schema.SObjectField> allFieldsMap = describeResult.fields.getMap();
-       
-       // Remove blocked fields
-       Set<String> blockedFields = new Set<String>(metaData.BlockedFields__c.split(';'));
-       allFieldsMap.keySet().removeAll(blockedFields);
-       System.debug('allFieldsMap ==>' + allFieldsMap);
-       System.debug('allFieldsMap lenghth ==> ' + allFieldsMap.size());
-
-   
+    
        // Get unwritable fields
        Set<String> unwritableFields = new Set<String>();
        for (String fieldName : allFieldsMap.keySet()) {
@@ -45,6 +38,13 @@ public with sharing class MapFieldCmp {
        System.debug('unwritableFields lenghth ==> ' + unwritableFields.size());
 
        allFieldsMap.keySet().removeAll(unwritableFields);
+
+       Set<String> blockedFields = new Set<String>();
+        if (metaData.BlockedFields__c != null) {
+            blockedFields.addAll(new List<String>(metaData.BlockedFields__c.split(';')));
+        }
+        System.debug('Blocked Fields: ' + blockedFields);
+        allFieldsMap.keySet().removeAll(blockedFields);
    
        for (Schema.SObjectField field : allFieldsMap.values()) {
            Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
@@ -74,9 +74,10 @@ public with sharing class MapFieldCmp {
    */
    @AuraEnabled
    public static void saveMappings( String mappingsData ,Boolean checkboxValue){
+
        //fetch records
        List<Mapping_Metadata__mdt> metaList = 
-       [Select MasterLabel, DeveloperName, Mapping_String__c From Mapping_Metadata__mdt];
+       [Select MasterLabel, DeveloperName, Mapping_String__c From Mapping_Metadata__mdt WITH SECURITY_ENFORCED];
        
        //instance of the record
        Metadata.CustomMetadata mdata = new Metadata.CustomMetadata();
@@ -91,7 +92,7 @@ public with sharing class MapFieldCmp {
        mdata.values.add(instance);
 
        Metadata.CustomMetadataValue instance2 = new Metadata.CustomMetadataValue();
-       instance2.field = 'Autometic_Sync__c';
+       instance2.field = 'Automatic_Sync__c';
        instance2.value = checkboxValue;
        //adding the value to the record
        mdata.values.add(instance2);
@@ -113,9 +114,9 @@ public with sharing class MapFieldCmp {
     @AuraEnabled
     public static List<String> getMetadata() {
         List<String> metadataValues = new List<String>();
-        
+    
         // Fetch records
-        List<Mapping_Metadata__mdt> metadataRecords = [SELECT Mapping_String__c, Autometic_Sync__c FROM Mapping_Metadata__mdt LIMIT 1];
+        List<Mapping_Metadata__mdt> metadataRecords = [SELECT Mapping_String__c, Automatic_Sync__c FROM Mapping_Metadata__mdt WITH SECURITY_ENFORCED LIMIT 1];
         
         // Check if records exist
         if (!metadataRecords.isEmpty()) {
@@ -123,7 +124,7 @@ public with sharing class MapFieldCmp {
             
             // Add field values to the list
             metadataValues.add(metadataRecord.Mapping_String__c);
-            metadataValues.add(String.valueOf(metadataRecord.Autometic_Sync__c));
+            metadataValues.add(String.valueOf(metadataRecord.Automatic_Sync__c));
         }
         
         return metadataValues;
