@@ -300,12 +300,9 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
             this.handleAddButtonDisable();
 
             if (this.selectedValues.length > 0) {
-                var lastSelectedValue = this.selectedValues[this.selectedValues.length - 1];
                 var lastSelectedField = this.selectedFields[this.selectedFields.length - 1].objectApiName;
                 if(lastSelectedField == null){
                     lastSelectedField='MVEX__Listing__c'
-                }
-                 if(clickedIndex == this.breadcrumbs.length-1){
                 }else {
                     this.fetchObjectFieldsWithoutReference(lastSelectedField);
                 }
