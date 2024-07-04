@@ -291,4 +291,15 @@ public without sharing class ListingManagerFilterController {
         List<Offer__c> listings = Database.query(query);
         return listings;
     }
+
+    /**
+    * Method Name : getStaticFields
+    * @description : get the static fields from the custom metadata.
+    * @return String of JSON data.
+    */
+    @AuraEnabled
+    public static String getStaticFields() {
+        ListingManagerFilterConfig__mdt filterConfig = [SELECT StaticFields__c FROM ListingManagerFilterConfig__mdt LIMIT 1];
+        return filterConfig.StaticFields__c;
+    }
 }

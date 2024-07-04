@@ -5,12 +5,19 @@ import getListingData from '@salesforce/apex/ListingManagerController.getListing
 import getForm from '@salesforce/apex/ListingManagerController.getForm';
 import { NavigationMixin } from 'lightning/navigation';
 import blankImage from '@salesforce/resourceUrl/blankImage';
+import Icons from '@salesforce/resourceUrl/listingManagerIcons';
 
 
 export default class ListingManager extends NavigationMixin(LightningElement){
     @api objectName = 'MVEX__Listing__c';
     @api recordId;
     @api fieldSet = 'MVEX__ListingManagerFieldSet';
+    //Icons
+    @track listIcon = Icons + '/ListIcon.png';
+    @track tileIcon = Icons + '/TileIcon.png';
+    @track mapIcon = Icons + '/MapIcon.png';
+    @track arrowUp = Icons + '/arrowUp.png';
+    @track leftIcon = Icons + '/left.png'
     @track spinnerShow=true;
     @track showList = true
     @track showTile =false;
@@ -26,7 +33,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track totalSelected=0;
     @track selectedProperties;
     @track selectedListingData;
-    // @track checkAll = false;
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
@@ -35,7 +41,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track shownProcessedListingData = [];
     @track wrapOn = false;
     @track propertyMediaUrls = [];
-    // @track showSection = false;
      /**
     * Method Name : checkAll
     * @description : handle the checkAll checkbox in list view.
@@ -78,17 +83,14 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.spinnerShow = true;
         getListingData()
             .then(result => {
-                // console.log('result-->',result);
+                
                 this.listingData = result.listings;
                 this.propertyMediaUrls = result.medias;
                 this.listingData.forEach((listing)=>{
                     const prop_id = listing.MVEX__Property__c;
-                    // console.log('prop_id-->',prop_id);
                     listing.media_url = this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : '/resource/MVEX__blankImage';
                     listing.isChecked = false;
-                    // console.log('property Image'+this.propertyMediaUrls[prop_id]);
                 })
-                // console.log(JSON.stringify(this.listingData));
                 this.unchangedListingData = this.listingData;
                 this.processListings();
             })
@@ -141,12 +143,9 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     loadFormData() {
         getForm({ recordId: this.recordId, objectName: this.objectName, fieldSetName: this.fieldSet })
             .then(result => {
-                // console.log('Data:'+ JSON.stringify(result));
                 if (result) {
                     this.fields = result.fieldsData;
-                    // console.log(this.fields);
                 }
-                // this.isLoading = false;
             })
             .catch(error => {
                 console.warn('error ->'+error);
@@ -234,7 +233,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     redirectToRecord(event){
         const recordId = event.target.dataset.id;
-        // console.log('hi'+recordId);
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
             attributes: {
@@ -254,7 +252,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     checkBoxValueChange(event){
         try{
             const checkboxId = Number(event.target.dataset.id);
-            // this.listingData[checkboxId].isChecked = event.target.checked;
             this.shownProcessedListingData[checkboxId].isChecked = event.target.checked;
             this.processedListingData.forEach(item1=>{
                 this.shownProcessedListingData.forEach(item2=>{
@@ -291,8 +288,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     selectAllCheckbox(event){
         const isChecked = event.target.checked;
-        // this.checkAll = !this.checkAll;
-        // console.log('hi'+isChecked);
         this.listingData = this.listingData.map(item => {
             return { ...item, isChecked: isChecked };
         });
@@ -397,7 +392,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     * Created By:Vyom Soni
     */
      updateSortIcons() {
-        const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown svg');
+        const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown img');
         allHeaders.forEach(icon => {
             icon.classList.remove('rotate-asc', 'rotate-desc');
         });
@@ -489,7 +484,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     wrapFilter() {
         if (this.wrapOn) {
-            const svgElement = this.template.querySelector('.innerDiv1 .filterWrap svg');
+            const svgElement = this.template.querySelector('.innerDiv1 .filterWrap img');
             svgElement.classList.remove('svgRotate');
 
             const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
@@ -503,7 +498,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
 
             this.wrapOn = false;
         } else {
-            const svgElement = this.template.querySelector('.innerDiv1 .filterWrap svg');
+            const svgElement = this.template.querySelector('.innerDiv1 .filterWrap img');
             svgElement.classList.add('svgRotate');
 
             const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');

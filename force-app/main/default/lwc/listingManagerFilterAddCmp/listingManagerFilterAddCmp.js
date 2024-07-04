@@ -1,5 +1,6 @@
 import { LightningElement, track,api } from 'lwc';
 import getListingFields from '@salesforce/apex/ListingManagerFilterController.getListingFields';
+import Icons from '@salesforce/resourceUrl/listingManagerIcons';
 
 export default class ListingManagerFilterAddCmp extends LightningElement {
     @track fieldOptions = [];
@@ -10,7 +11,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track selectedValues = [];
     @track showCombobox = true;
     @track unchangeFieldOptions = [];
-    // Custom combobox properties
+    @track chevRight = Icons + '/chevRight.png';
     @track searchTerm1 = '';
     @track selectedOptions1 = [];
     @track isFocused1 = false;
@@ -26,7 +27,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     connectedCallback() {
-        // Fetch fields of Listing__c object when component loads
         this.handleAddButtonDisable();
         this.fetchObjectFields('MVEX__Listing__c');   
     }
@@ -42,7 +42,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.isDisabled = true;
         getListingFields({ objectApiName })
             .then(fields => {
-                console.log('fields'+JSON.stringify(fields));
                 var filteredFields = fields.filter(field => field.fieldAPIName !== 'OwnerId');
                 if(this.breadcrumbs.length >0){
                     filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
@@ -59,12 +58,10 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                             // Include reference fields if any
                         };
                     });
-                    // this.options1 = this.fieldOptions;
                     const offerField = [{"value":"MVEX__Offer__c","label":"Offer","type":"REFERENCE","objectApiName":"MVEX__Offer__c"}];
                     this.fieldOptions = this.fieldOptions.concat(offerField);
                     this.options1 = this.fieldOptions;
                     this.isDisabled = false;
-                    console.log('hey');
                 }
             })
             .catch(error => {
@@ -83,7 +80,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.isDisabled = true;
         getListingFields({ objectApiName })
             .then(fields => {
-                console.log('fields'+JSON.stringify(fields));
                 var filteredFields = fields;
                 if(this.breadcrumbs.length >0){
                     filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
@@ -102,7 +98,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
                     });
                     this.options1 = this.fieldOptions;
                     this.isDisabled = false;
-                    console.log('hey');
                 }
             })
             .catch(error => {
@@ -214,9 +209,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.valueIsField = true;
         this.selectedField= [this.selectedFields.length > 0 ? this.selectedFields[this.selectedFields.length - 1] : null];
         
-        
-        console.log('log'+JSON.stringify(this.selectedField));
-        console.log('if'+JSON.stringify(this.selectedFields.length > 0 ? this.selectedFields[this.selectedFields.length - 1] : null));
     }
 
     /**
@@ -228,12 +220,10 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     handleFieldSelect(event) {
         const selectedValue = event.currentTarget.dataset.id;
         const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
-        // const selectedField = this.findFieldRecursively(this.fieldOptions, selectedValue);
     
         if (selectedValue && selectedField && !this.selectedValues.includes(selectedValue)) {
             
             this.selectedFields.push({ label: selectedField.label, objectApiName: selectedField.objectApiName,value:selectedField.value,type:selectedField.type,picklistValues:selectedField.picklistValues,prevApiName:this.selectedValues.length > 0 ? this.selectedValues[this.selectedValues.length - 1]:''}); // Only store the label
-            console.log('selected'+JSON.stringify(this.selectedFields));
             this.selectedValues.push(selectedValue);
             this.updateBreadcrumbs();
         }
@@ -252,7 +242,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.selectedField = [];
         this.valueIsField = false;
         const selectedValue = event.currentTarget.dataset.id;
-        // console.log('Id'+selectedValue);
         const selectedField = this.fieldOptions.find(option => option.value === selectedValue);
         if(selectedField != null){
             this.handleFieldSelect(event);
@@ -271,15 +260,12 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     findFieldRecursively(fields, selectedValue) {
         for (let field of fields) {
             if (field.apiName === selectedValue || field.value === selectedValue) {
-                // console.log("Field found:", field);
                 return field; // Return the field if found
             }
             // If the current field is a reference field and has referenceFields, recursively search them
             if (field.type === 'REFERENCE' && field.referenceFields && field.referenceFields.length > 0) {
-                // console.log("Recursing into referenceFields:", field.referenceFields);
                 const foundField = this.findFieldRecursively(field.referenceFields, selectedValue);
                 if (foundField) {
-                    // console.log("Found field in referenceFields:", foundField);
                     return foundField; // Return the found field if it exists
                 }
             }
@@ -298,9 +284,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         this.breadcrumbs = this.selectedFields.map(selectedValue => {
             return { label: selectedValue.label };
         });
-        
-        console.log('this.breadcrumbs'+JSON.stringify(this.breadcrumbs));
-        console.log('this.breadcrumbs'+JSON.stringify(this.selectedValues));
     }
 
      /**
@@ -311,7 +294,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     **/
         handleBreadcrumbClick(event) {
             const clickedIndex = parseInt(event.currentTarget.dataset.index, 10);
-            console.log('0'+clickedIndex);
             this.selectedFields = this.selectedFields.slice(0, clickedIndex);
             this.selectedValues = this.selectedValues.slice(0, clickedIndex);
             this.selectedField = [];
@@ -320,25 +302,16 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
             if (this.selectedValues.length > 0) {
                 var lastSelectedValue = this.selectedValues[this.selectedValues.length - 1];
                 var lastSelectedField = this.selectedFields[this.selectedFields.length - 1].objectApiName;
-                console.log('lastSelectedValue'+lastSelectedValue);
-                console.log('lastSelectedValue2'+typeof lastSelectedField);
                 if(lastSelectedField == null){
                     lastSelectedField='MVEX__Listing__c'
                 }
                  if(clickedIndex == this.breadcrumbs.length-1){
-                    console.log('byr');
-                    console.log('2'+clickedIndex);
                 }else {
-                    console.log('lastSelec'+lastSelectedField);
-                    console.log('lastSelec2'+lastSelectedValue);
-                    console.log('3'+clickedIndex);
                     this.fetchObjectFieldsWithoutReference(lastSelectedField);
                 }
                 
             } else {
                 this.fetchObjectFields('MVEX__Listing__c');
-                console.log('Hiii');
-                // this.option1 = this.unchangeFieldOptions;
             }
     
             this.showCombobox = true;
@@ -441,7 +414,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     handleNotCheckboxChange(event) {
         this.notCheckboxValue = event.target.checked;
         this.selectedField[0].isNot = event.target.checked;
-        console.log('1'+JSON.stringify(this.selectedField));
     }
 
     /**
@@ -452,7 +424,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     **/
     operationSelect(event){
         this.selectedField[0].operation = event.target.value;
-        console.log('2'+JSON.stringify(this.selectedField));
         this.handleAddButtonDisable();
     }
 

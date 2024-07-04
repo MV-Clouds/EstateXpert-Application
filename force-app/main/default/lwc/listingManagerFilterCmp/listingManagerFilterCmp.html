@@ -27,19 +27,11 @@
                                                 onkeyup={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1} />
                                             <span
                                                 class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
-                                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
-                                                    fill="#fff">
-                                                    <path
-                                                        d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z" />
-                                                </svg>
+                                                <img class="listing-manager-icon" src={searchIcon} />
                                             </span>
                                         </div>
                                         <div class="delete-icon-cover" >
-                                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                                fill="#fff">
-                                                <path
-                                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                                            </svg>
+                                            <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                                         </div>
                                     </div>
                                     <template if:true={option.isFocused}>
@@ -86,11 +78,7 @@
                                                         <button
                                                             class="slds-button slds-button_icon slds-button_icon slds-pill__remove pill-remove"
                                                             title="Remove" data-index={index} onclick={removeOptionMethod} data-id={option2.value}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
-                                                                viewBox="0 0 520 520" fill="#fff">
-                                                                <path
-                                                                    d="m310 254 130-131c6-6 6-15 0-21l-20-21c-6-6-15-6-21 0L268 212a10 10 0 0 1-14 0L123 80c-6-6-15-6-21 0l-21 21c-6 6-6 15 0 21l131 131c4 4 4 10 0 14L80 399c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l131-131a10 10 0 0 1 14 0l131 131c6 6 15 6 21 0l21-21c6-6 6-15 0-21L310 268a10 10 0 0 1 0-14z" />
-                                                            </svg>
+                                                            <img class="listing-manager-icon" src={closeIcon} />
                                                             <span class="slds-assistive-text">Remove</span>
                                                         </button>
                                                     </span>
@@ -127,24 +115,14 @@
                                                     onkeyup={handleSearchChangeString}/>
                                                 <span
                                                     class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
-                                                        viewBox="0 0 520 520" fill="#fff">
-                                                        <path
-                                                            d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z" />
-                                                    </svg>
+                                                    <img class="listing-manager-icon" src={searchIcon} />
                                                 </span>
                                             </div>
-                                            <div class="plus" data-id={index} onclick={addTheString}><svg xmlns="http://www.w3.org/2000/svg"
-                                                    height="52" width="52" viewBox="0 0 520 520" fill="#fff">
-                                                    <path
-                                                        d="M300 290h165c8 0 15-7 15-15v-30c0-8-7-15-15-15H300c-6 0-10-4-10-10V55c0-8-7-15-15-15h-30c-8 0-15 7-15 15v165c0 6-4 10-10 10H55c-8 0-15 7-15 15v30c0 8 7 15 15 15h165c6 0 10 4 10 10v165c0 8 7 15 15 15h30c8 0 15-7 15-15V300c0-6 4-10 10-10z" />
-                                                </svg></div>
+                                            <div class="plus" data-id={index} onclick={addTheString}>
+                                                <img class="listing-manager-icon" src={addIcon} />
+                                            </div>
                                             <div class="delete-icon-cover">
-                                                <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                                    fill="#fff">
-                                                    <path
-                                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                                                </svg>
+                                                <img class="listing-manager-icon" data-id={index} onclick={clearSearch}  src={deleteIcon} />
                                             </div>
                                         </div>
                                     </div>
@@ -162,11 +140,7 @@
                                                         <button
                                                             class="slds-button slds-button_icon slds-button_icon slds-pill__remove pill-remove"
                                                             title="Remove" data-index={index} onclick={removeOptionMethodString} data-id={option2.value}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
-                                                                viewBox="0 0 520 520" fill="#fff">
-                                                                <path
-                                                                    d="m310 254 130-131c6-6 6-15 0-21l-20-21c-6-6-15-6-21 0L268 212a10 10 0 0 1-14 0L123 80c-6-6-15-6-21 0l-21 21c-6 6-6 15 0 21l131 131c4 4 4 10 0 14L80 399c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l131-131a10 10 0 0 1 14 0l131 131c6 6 15 6 21 0l21-21c6-6 6-15 0-21L310 268a10 10 0 0 1 0-14z" />
-                                                            </svg>
+                                                           <img class="listing-manager-icon" src={closeIcon} />
                                                             <span class="slds-assistive-text">Remove</span>
                                                         </button>
                                                     </span>
@@ -210,11 +184,7 @@
                                                 </div>
                                             </div>
                                             <div class="delete-icon-cover">
-                                                <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                                    fill="#fff">
-                                                    <path
-                                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                                                </svg>
+                                                <img class="listing-manager-icon" data-id={index} onclick={clearSearch}  src={deleteIcon} />
                                             </div>
                                         </div>
                                     </div>
@@ -242,11 +212,7 @@
                                                 </div>
                                             </div>
                                             <div class="delete-icon-cover">
-                                                <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                                    fill="#fff">
-                                                    <path
-                                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                                                </svg>
+                                               <img class="listing-manager-icon" data-id={index} onclick={clearSearch}  src={deleteIcon} />
                                             </div>
                                         </div>
                                     </div>
@@ -274,11 +240,7 @@
                                                 </div>
                                             </div>
                                             <div class="delete-icon-cover">
-                                                <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                                    fill="#fff">
-                                                    <path
-                                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                                                </svg>
+                                                <img class="listing-manager-icon" data-id={index} onclick={clearSearch}  src={deleteIcon} />
                                             </div>
                                         </div>
                                     </div>
@@ -309,39 +271,19 @@
                                                     role="none">
                                                     <input type="text" class="slds-input slds-combobox__input min-max-input-div"
                                                         placeholder="Min.." data-index={index} data-id={index} value={option.minValue} onkeyup={handleMinValueChange} />
-                                                    <svg class="up-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
-                                                        width="52" viewBox="0 0 520 520" fill="#fff" data-index={index} data-id={option.minValue} onclick={incrementMinValue}>
-                                                        <path
-                                                            d="M437 380H83c-10 0-17-13-9-22l173-212c6-8 19-8 25 0l175 212c7 9 1 22-10 22z" />
-                                                    </svg>
-                                                    <svg class="down-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
-                                                        width="52" viewBox="0 0 520 520" fill="#fff" data-index={index} data-id={option.minValue} onclick={decrementMinValue}>
-                                                        <path
-                                                            d="M83 140h354c10 0 17 13 9 22L273 374c-6 8-19 8-25 0L73 162c-7-9-1-22 10-22z" />
-                                                    </svg>
+                                                    <img class="listing-manager-icon up-btn-max-min  max-min" src={upIcon} data-index={index} data-id={option.minValue} onclick={incrementMinValue} />
+                                                    <img class="listing-manager-icon down-btn-max-min  max-min" src={downIcon}  data-index={index} data-id={option.minValue} onclick={decrementMinValue}/>
                                                 </div>
                                                 <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
                                                     role="none">
                                                     <input type="text" class="slds-input slds-combobox__input min-max-input-div"
                                                         placeholder="Max.." data-index={index} data-id={option.maxValue} value={option.maxValue} onkeyup={handleMaxValueChange} />
-                                                    <svg class="up-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
-                                                        width="52" viewBox="0 0 520 520" fill="#fff"  data-index={index} data-id={option.maxValue} onclick={incrementMaxValue}>
-                                                        <path
-                                                            d="M437 380H83c-10 0-17-13-9-22l173-212c6-8 19-8 25 0l175 212c7 9 1 22-10 22z" />
-                                                    </svg>
-                                                    <svg class="down-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
-                                                        width="52" viewBox="0 0 520 520" fill="#fff"  data-index={index} data-id={option.maxValue} onclick={decrementMaxValue}>
-                                                        <path
-                                                            d="M83 140h354c10 0 17 13 9 22L273 374c-6 8-19 8-25 0L73 162c-7-9-1-22 10-22z" />
-                                                    </svg>
+                                                     <img class="listing-manager-icon up-btn-max-min  max-min" src={upIcon} data-index={index} data-id={option.maxValue} onclick={incrementMaxValue} />
+                                                    <img class="listing-manager-icon down-btn-max-min  max-min" src={downIcon} data-index={index} data-id={option.maxValue} onclick={decrementMaxValue}/>
                                                 </div>
                                             </div>
                                             <div class="delete-icon-cover">
-                                                <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                                    fill="#fff">
-                                                    <path
-                                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                                                </svg>
+                                                <img class="listing-manager-icon" data-id={index} onclick={clearSearch}  src={deleteIcon} />
                                             </div>
                                         </div>
                                     </div>
@@ -363,24 +305,12 @@
                                                     role="none">
                                                     <input type="text" class="slds-input slds-combobox__input min-max-input-div"
                                                         placeholder="Min.." data-index={index} data-id={index} value={option.minValue} onkeyup={handleMinValueChange} />
-                                                    <svg class="up-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
-                                                        width="52" viewBox="0 0 520 520" fill="#fff" data-index={index} data-id={option.minValue} onclick={incrementMinValue}>
-                                                        <path
-                                                            d="M437 380H83c-10 0-17-13-9-22l173-212c6-8 19-8 25 0l175 212c7 9 1 22-10 22z" />
-                                                    </svg>
-                                                    <svg class="down-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
-                                                        width="52" viewBox="0 0 520 520" fill="#fff" data-index={index} data-id={option.minValue} onclick={decrementMinValue}>
-                                                        <path
-                                                            d="M83 140h354c10 0 17 13 9 22L273 374c-6 8-19 8-25 0L73 162c-7-9-1-22 10-22z" />
-                                                    </svg>
+                                                    <img class="listing-manager-icon up-btn-max-min  max-min" src={upIcon} data-index={index} data-id={option.minValue} onclick={incrementMinValue} />
+                                                    <img class="listing-manager-icon down-btn-max-min  max-min" src={downIcon}  data-index={index} data-id={option.minValue} onclick={decrementMinValue}/>
                                                 </div>
                                             </div>
                                             <div class="delete-icon-cover">
-                                                <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                                    fill="#fff">
-                                                    <path
-                                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                                                </svg>
+                                                <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                                             </div>
                                         </div>
                                     </div>
@@ -402,24 +332,12 @@
                                                     role="none">
                                                     <input type="text" class="slds-input slds-combobox__input min-max-input-div"
                                                         placeholder="Max.." data-index={index} data-id={option.maxValue} value={option.maxValue} onkeyup={handleMaxValueChange} />
-                                                    <svg class="up-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
-                                                        width="52" viewBox="0 0 520 520" fill="#fff"  data-index={index} data-id={option.maxValue} onclick={incrementMaxValue}>
-                                                        <path
-                                                            d="M437 380H83c-10 0-17-13-9-22l173-212c6-8 19-8 25 0l175 212c7 9 1 22-10 22z" />
-                                                    </svg>
-                                                    <svg class="down-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
-                                                        width="52" viewBox="0 0 520 520" fill="#fff"  data-index={index} data-id={option.maxValue} onclick={decrementMaxValue}>
-                                                        <path
-                                                            d="M83 140h354c10 0 17 13 9 22L273 374c-6 8-19 8-25 0L73 162c-7-9-1-22 10-22z" />
-                                                    </svg>
+                                                     <img class="listing-manager-icon up-btn-max-min  max-min" src={upIcon} data-index={index} data-id={option.maxValue} onclick={incrementMaxValue} />
+                                                    <img class="listing-manager-icon down-btn-max-min max-min" src={downIcon} data-index={index} data-id={option.maxValue} onclick={decrementMaxValue}/>
                                                 </div>
                                             </div>
                                             <div class="delete-icon-cover">
-                                                <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                                    fill="#fff">
-                                                    <path
-                                                        d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                                                </svg>
+                                               <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                                             </div>
                                         </div>
                                     </div>
@@ -440,11 +358,6 @@
                                     </template>
                                 </span>
                                 <span>
-                                    <template if:true={option.isNot}>
-                                        <label class="slds-form-element__label operator-div">not  </label>
-                                    </template>
-                                </span>
-                                <span>
                                     <label class="slds-form-element__label operator-div">{option.operatorName} </label>
                                 </span>
                                 <lightning-input
@@ -463,13 +376,7 @@
                             ></lightning-input>
                             </div>
     
-                        <div class="delete-icon-cover">
-                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                fill="#fff">
-                                <path
-                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                            </svg>
-                        </div>
+                        <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                         </div>
                     </template>
                     <template if:true={option.isDateMax}>
@@ -489,11 +396,7 @@
                             </div>
     
                         <div class="delete-icon-cover single">
-                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                fill="#fff">
-                                <path
-                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                            </svg>
+                            <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                         </div>
                         </div>
                     </template>
@@ -514,11 +417,7 @@
                             </div>
     
                         <div class="delete-icon-cover single">
-                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                fill="#fff">
-                                <path
-                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                            </svg>
+                            <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                         </div>
                         </div>
                     </template>
@@ -547,11 +446,7 @@
                             </div>
     
                         <div class="delete-icon-cover single">
-                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                fill="#fff">
-                                <path
-                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                            </svg>
+                            <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                         </div>
                         </div>
                     </template>
@@ -572,11 +467,7 @@
                             </div>
     
                         <div class="delete-icon-cover single">
-                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                fill="#fff">
-                                <path
-                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                            </svg>
+                           <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                         </div>
                         </div>
                     </template>
@@ -604,11 +495,7 @@
                             </div>
     
                         <div class="delete-icon-cover">
-                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                fill="#fff">
-                                <path
-                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                            </svg>
+                            <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                         </div>
                         </div>
                     </template>
@@ -632,11 +519,7 @@
                         </div>
 
                         <div class="delete-icon-cover">
-                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
-                                fill="#fff">
-                                <path
-                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
-                            </svg>
+                            <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                         </div>
                     </div>  
                 </template>
@@ -645,10 +528,7 @@
 
         <div class="field-add-btn plus">
             <div class="add-btn-cover" onclick={openModal}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff">
-                    <path
-                        d="M300 290h165c8 0 15-7 15-15v-30c0-8-7-15-15-15H300c-6 0-10-4-10-10V55c0-8-7-15-15-15h-30c-8 0-15 7-15 15v165c0 6-4 10-10 10H55c-8 0-15 7-15 15v30c0 8 7 15 15 15h165c6 0 10 4 10 10v165c0 8 7 15 15 15h30c8 0 15-7 15-15V300c0-6 4-10 10-10z" />
-                </svg>
+                <img class="listing-manager-icon" src={addIcon} />
             </div>
         </div>
 
@@ -656,7 +536,7 @@
 
         <div class="field-reset-btn plus">
             <div class="add-btn-cover refreshBtn">
-                <svg onclick={handleReset} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M465 40h-30c-8 0-15 7-15 15v70c0 9-5 13-12 7l-10-10a210 210 0 1 0-12 309c7-6 7-16 1-22l-21-21c-5-5-14-6-20-1a152 152 0 0 1-172 14 152 152 0 0 1 77-281 150 150 0 0 1 118 58c3 8-4 12-13 12h-70c-8 0-15 7-15 15v31c0 8 6 14 14 14h183c7 0 13-6 13-13V55c-1-8-8-15-16-15z"/></svg>
+                <img class="listing-manager-icon" onclick={handleReset} src={resetIcon} />
             </div>
             <lightning-button label="Search" onclick={applyFilters} class="slds-var-m-left_x-small"></lightning-button>
         </div>

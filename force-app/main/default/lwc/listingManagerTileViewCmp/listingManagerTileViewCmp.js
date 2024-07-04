@@ -1,10 +1,12 @@
 import { LightningElement,track,api} from 'lwc';
 import blankImage from '@salesforce/resourceUrl/blankImage';
 import { NavigationMixin } from 'lightning/navigation';
+import Icons from '@salesforce/resourceUrl/listingManagerIcons';
 
 export default class ListingManagerTileViewCmp extends NavigationMixin(LightningElement) {
     @api listings = [];
     @track blankImage = blankImage;
+    @track shareIcon = Icons + '/shareIcon.png';
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
@@ -62,7 +64,6 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     */
     connectedCallback(){
         this.totalPages = Math.ceil(this.listings.length / this.pageSize);
-        console.log('Listing>'+JSON.stringify(this.listings));
         this.updateProcessedListingData();
         this.updatePaginationButtons();
     }
@@ -94,30 +95,22 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             const checkboxId = Number(event.target.dataset.id);
             const isChecked = event.target.checked;
 
-            // console.log(`Checkbox ID: ${checkboxId}, Checked: ${isChecked}`);
-
             // Update the shownProcessedListingData array
             this.shownProcessedListingData = this.shownProcessedListingData.map((item, index) => {
                 if (index === checkboxId) {
-                    // console.log(`Updating shownProcessedListingData at index ${index} with isChecked: ${isChecked}`);
                     return { ...item, isChecked: isChecked };
                 }
                 return item;
             });
 
-            // console.log('Updated shownProcessedListingData:', JSON.stringify(this.shownProcessedListingData));
-
             // Sync the changes with the listings array
             this.listings = this.listings.map(item1 => {
                 const matchedItem = this.shownProcessedListingData.find(item2 => item1.Id === item2.Id);
                 if (matchedItem) {
-                    // console.log(`Syncing listing item ID ${item1.Id} with isChecked: ${matchedItem.isChecked}`);
                     return { ...item1, isChecked: matchedItem.isChecked };
                 }
                 return item1;
             });
-
-            // console.log('Updated listings:', JSON.stringify(this.listings));
 
             // Call the parent update method if necessary
             this.setValueInParent();
@@ -136,7 +129,6 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
         event.preventDefault();
         const recordId = event.target.dataset.id;
         if(recordId != null){
-            // console.log('hi'+recordId);
             this[NavigationMixin.Navigate]({
                 type: 'standard__recordPage',
                 attributes: {

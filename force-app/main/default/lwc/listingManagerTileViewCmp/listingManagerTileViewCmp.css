@@ -128,3 +128,9 @@
     text-align: center;
 
 }
+
+.listing-manager-icon{
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}

@@ -62,14 +62,11 @@ public with sharing class ListingManagerController {
         for (Property_File__c media : medias) {
                 propertyMediaUrlsMap.put(media.MVEX__Property__c,media.MVEX__BaseUrl__c);
         }
-
-
         WrapperClass wc = new WrapperClass();
         wc.listings = listing;
         wc.medias = propertyMediaUrlsMap;          
         return wc;
-            // List<Listing__c> listings = [SELECT Id,imageUrl__c,Name,Listing_Price__c,Bathrooms__c,Bedrooms__c,Size__c,	Status__c,Year_Built__c,City__c,Zip_Postal_Code__c,State__c,Street__c,Sq_Ft__c FROM Listing__c  WITH SECURITY_ENFORCED];
-            // return listings;
+        
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

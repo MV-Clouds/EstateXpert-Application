@@ -4,18 +4,14 @@
             <div class="bread-crumb-cover">
                 <label class="listing-label">Listing</label>
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff">
-                        <path d="m179 44 207 205c6 6 6 16 0 22L179 476c-6 6-16 6-22 0l-22-22c-6-6-6-16 0-22l163-161c6-6 6-16 0-22L136 88c-6-6-6-16 0-22l22-22c6-5 15-5 21 0z"/>
-                    </svg>
+                    <img class="listing-manager-icon" src={chevRight} />
                 </span>
             </div>
             <template for:each={breadcrumbs} for:item="breadcrumb" for:index="index">
                 <div class="bread-crumb-cover" key={breadcrumb.apiName}>
                     <lightning-breadcrumb label={breadcrumb.label} data-index={index} onclick={handleBreadcrumbClick}></lightning-breadcrumb>
                     <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff">
-                            <path d="m179 44 207 205c6 6 6 16 0 22L179 476c-6 6-16 6-22 0l-22-22c-6-6-6-16 0-22l163-161c6-6 6-16 0-22L136 88c-6-6-6-16 0-22l22-22c6-5 15-5 21 0z"/>
-                        </svg>
+                        <img class="listing-manager-icon" src={chevRight} />
                     </span>
                 </div>
             </template>

@@ -17,18 +17,14 @@
 }
 
 .main .slds-page-header__row .slds-page-header__col-controls .activeButton{
-    background-color: rgb(1, 118, 211);
+    background-color: rgb(206 233 254);
 }
 
-.main .slds-page-header__row .slds-page-header__col-controls .slds-button svg{
+.main .slds-page-header__row .slds-page-header__col-controls .slds-button img{
     height:  .875rem;
     width:  .875rem;
-    fill: rgb(116, 116, 116);
 }
 
-.main .slds-page-header__row .slds-page-header__col-controls .slds-button .activeSvg{
-    fill: rgb(255, 254, 254);
-}
 
 .main .body{
     width: 100%;
@@ -70,15 +66,14 @@
     border-left: 1px solid #c9c9c9;
 }
 
-.main .body .innerDiv1 .filterWrap svg{
+.main .body .innerDiv1 .filterWrap img{
     height: 1rem;
     width: 0.8rem;
-    fill: black;
     cursor: pointer;
     transition: 0.6s;
 }
 
-.main .body .innerDiv1 .filterWrap .svgRotate{
+.main .body .innerDiv1 .filterWrap .imgRotate{
     transform: rotate(180deg);
     transition: 0.6s;
 }
@@ -159,9 +154,8 @@
 .main .body .innerDiv2 .colume2:hover .slds-icon_container{
    display:block;
 }
-.main .body .innerDiv2 .slds-icon-utility-arrowdown svg{
+.main .body .innerDiv2 .slds-icon-utility-arrowdown img{
     height: 0.8rem;
-    fill: #0176d3;
 }
 .rotate-asc {
     transform: rotate(0deg);
@@ -187,4 +181,10 @@
     display: flex;
     justify-content: center;
     align-items: center;  
+}
+
+.listing-manager-icon{
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
 }

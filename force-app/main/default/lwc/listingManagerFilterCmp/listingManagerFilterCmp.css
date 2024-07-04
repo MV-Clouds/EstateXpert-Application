@@ -1,20 +1,22 @@
 .combobox{
     margin: 0.5rem;
 }
-.combobox .combobox-cover .combox-div span svg{
-    fill: rgb(116, 116, 116);
+
+.combobox .combobox-cover .combox-div span img{
     width: 1rem;
     height: 1rem;
 }
+
 .combobox .operator-div{
     color: rgb(116, 116, 116);
 }
-.combobox .pill-section .pill-body svg{
-    fill: rgb(116, 116, 116);
+
+.combobox .pill-section .pill-body img{
     width: 1rem;
     height: 1rem;
     cursor: pointer;
 }
+
 .combobox .pill-section {
     position: relative;
     padding: 0;
@@ -22,17 +24,21 @@
     height: fit-content;
     overflow: hidden;
 }
+
 .combobox .pill-section ul{
     height: fit-content;
 }
-.combobox .pill-section .pill-body svg{
+
+.combobox .pill-section .pill-body img{
     cursor: pointer;
 }
+
 .combobox .options-box {
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
     border: 1px solid var(--slds-g-color-border-base-4, rgb(229, 229, 229));
     border-radius: 0.2rem;
 }
+
 .combobox .options-box ul li {
     height: 2rem;
     display: flex;
@@ -41,33 +47,34 @@
     padding-left: 1rem;
     cursor: pointer;
 }
+
 .combobox .options-box .picklist-option {
     width:100%;
     padding-right:0.7rem;
 }
-.combobox .options-box ul li svg{
-    fill: black;
+
+.combobox .options-box ul li img{
     width: 1rem;
     height: 1rem;
 }
+
 .combobox .input-delete-cover{
     display: flex;
 }
+
 .combobox .input-delete-cover .delete-icon-cover{
     margin-left: 0.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.combobox .input-delete-cover .delete-icon-cover svg{
+
+.combobox .input-delete-cover .delete-icon-cover img{
     height: 1rem;
     width: 1rem;
-    fill: rgb(134,134,134);
     cursor: pointer;
 }
-.combobox .input-delete-cover .delete-icon-cover svg:hover{
-    fill: rgb(1,118,211);
-}
+
 .combobox .input-delete-cover .plus{
     width: 1.5rem;
     display: flex;
@@ -78,87 +85,70 @@
     border-radius: 0.2rem;
     cursor: pointer;
 }
-.combobox .input-delete-cover .plus svg{
+
+.combobox .input-delete-cover .plus img{
   width: 1rem;
   height: 1rem;
-  fill: black;
 }
+
 .combobox .input-delete-cover .min-max-input-cover{
     width: 100%;
 }
+
 .combobox .min-max-input-div{
     margin-bottom:0.5rem ;
 }
+
 .min-max-input-div:hover .up-btn-max-min{
     display: block;
 }
+
 .min-max-input-div:hover .down-btn-max-min{
     display: block;
 }
+
+.max-min{
+ width: 0.8rem;
+    position: absolute;
+    right: 0.5rem;
+    cursor: pointer;
+    height: fit-content;
+    user-select: none;
+}
+
  .up-btn-max-min{
-    fill: rgb(134,134,134);
-    width: 0.8rem;
-    position: absolute;
-    right: 0.5rem;
     top: 0rem;
-    /* display: none; */
-    cursor: pointer;
-    height: fit-content;
-    user-select: none;
 }
- .up-btn-max-min:hover{
-    fill: rgb(1,118,211);
-   
-}
- .down-btn-max-min{
-    fill: rgb(134,134,134);
-    width: 0.8rem;
-    position: absolute;
-    right: 0.5rem;
+
+.down-btn-max-min{
     bottom: 0.4rem;
-    /* display: none; */
-    cursor: pointer;
-    height: fit-content;
-    user-select: none;
 }
- .down-btn-max-min:hover{
-    fill: rgb(1,118,211);
-}
+
 .field-add-btn {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .field-reset-btn {
     display: flex;
     justify-content: end;
     align-items: center;
 }
 
-.field-add-btn .add-btn-cover{
+.add-btn-cover{
     border: 1px solid #747474;
     border-radius: 0.3rem;
     margin: 1rem;
-    cursor: pointer;
+    padding: 0.25rem 0.4rem 0.4rem 0.4rem;
 }
-.field-add-btn .add-btn-cover svg{
-    fill: #747474;
+
+.add-btn-cover img{
     width: 1rem;
     height: 1rem;
-    margin: 0.4rem;
-}
-.field-reset-btn .add-btn-cover{
-    border: 1px solid #747474;
-    border-radius: 0.3rem;
-    margin: 1rem;
-}
-.field-reset-btn .add-btn-cover svg{
-    fill: #747474;
-    width: 1rem;
-    height: 1rem;
-    margin: 0.4rem;
     cursor: pointer;
 }
+
 .advanced-checkbox{
     display: flex;
 }
@@ -182,16 +172,6 @@
 
 }
 
-.slds-m-around_medium {
-    margin: 1rem;
-}
-.slds-m-top_medium {
-    margin-top: 1rem;
-}
-.slds-text-color_error {
-    color: red;
-}
-
 
 /* date-time-field */
 
@@ -209,22 +189,19 @@
     align-items: center;
     position: relative;
 }
-.date-time-div .delete-icon-cover svg{
+.date-time-div .delete-icon-cover img{
     height: 1rem;
     width: 1rem;
-    fill: rgb(134,134,134);
     cursor: pointer;
     position: absolute;
     top: 5.3rem;
     left: 0.2rem;
 
 }
-.date-time-div .single svg{
+.date-time-div .single img{
     top: 3.6rem;
 }
-.date-time-div .delete-icon-cover svg:hover{
-    fill: rgb(1,118,211);
-}
+
 .time-div{
     padding: 0rem 0.5rem 0rem 0.5rem;
     display: flex;
@@ -232,7 +209,6 @@
 }
 .time-div .input-cover{
     width: 100%;
-    padding: 0rem 1rem 0rem 0rem;
 }
 .time-div .input-cover .input-tag{
     margin-top: -1rem;
@@ -244,44 +220,47 @@
     justify-content: center;
     align-items: center;
     position: relative;
+    width: 1.5rem;
 }
 
-.time-div .delete-icon-cover svg{
+.time-div .delete-icon-cover img{
     height: 1rem;
     width: 1rem;
-    fill: rgb(134,134,134);
     cursor: pointer;
     position: absolute;
-    top: 3.5rem;
-    left: -1.1rem;
+    top: 3rem;
+    left: 0.3rem;
 }
-.time-div .single svg{
+
+.time-div .single img{
     top: 2.2rem;
 }
-.time-div .delete-icon-cover svg:hover{
-    fill: rgb(1,118,211);
-}
+
 
 /* booelan fields css */
 
 .boolen-field{
     display: flex;
 }
+
 .boolen-field .boolean-wrapper{
     width: 100%;
 }
+
 .boolen-field .delete-icon-cover{
     width: fit-content;
     display: flex;
     align-items: flex-end;
 }
-.boolen-field .delete-icon-cover svg{
+
+.boolen-field .delete-icon-cover img{
     height: 1rem;
     width: 1rem;
-    fill:rgb(134, 134, 134) ;
     cursor: pointer;
 }
-.boolen-field .delete-icon-cover svg:hover{
-    fill: rgb(1,118,211);
 
+.listing-manager-icon{
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
 }
