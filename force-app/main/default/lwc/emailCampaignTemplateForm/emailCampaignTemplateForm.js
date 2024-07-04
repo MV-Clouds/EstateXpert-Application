@@ -412,20 +412,26 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         const emailId = event.target.dataset.id;
         const selectedTemplateId = event.detail.value;
 
-        const selectedTemplate = this.quickTemplates.find(template => template.Id === selectedTemplateId);
-
-        console.log('');
+        const selectedTemplate = this.quickTemplates.find(template => template.Id == selectedTemplateId);
+        console.log('selectedTemplate ==> ' , JSON.stringify(selectedTemplate));
 
         this.emails = this.emails.map(email => {
             console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
-            email.subject = selectedTemplate.Subject__c;
+            console.log('selectedTemplate.Name ==> ' , selectedTemplate.Subject__c);
+            console.log('email.id ==> ' , email.id);
+            console.log('emailId ==> ' , emailId);
+            if (email.id == emailId) {
+                email.subject = selectedTemplate.Subject__c;
+            }
             return email;
         });
 
         this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
             console.log('selectedTemplate.Name ==> ' , selectedTemplate.Name);
-            email.template = selectedTemplate.Id;
-            email.subject = selectedTemplate.Subject__c;
+            if (email.id == emailId) {
+                email.template = selectedTemplate.Id;
+                email.subject = selectedTemplate.Subject__c;
+            }
             return email;
         });
 
@@ -437,12 +443,16 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         this.newDaysAfterStartDate = event.target.value;
     
         this.emails = this.emails.map(email => {
-            email.daysAfterStartDate = this.newDaysAfterStartDate;
+            if (email.id == emailId) {
+                email.daysAfterStartDate = this.newDaysAfterStartDate;
+            }
             return email;
         });
             
         this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
-            email.daysAfterStartDate = this.newDaysAfterStartDate;
+            if (email.id == emailId) {
+                email.daysAfterStartDate = this.newDaysAfterStartDate;
+            }
             return email;
         });
 
@@ -456,12 +466,16 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         console.log('emailName ==> ' , emailName);
         
         this.emails = this.emails.map(email => {
-            email.name = emailName;
+            if (email.id == emailId) {
+                email.name = emailName;
+            }
             return email;
         });
 
         this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
-            email.name = emailName;
+            if (email.id == emailId) {
+                email.name = emailName;
+            }
             return email;
         });
 
@@ -477,7 +491,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             console.log('emailId-->', emailId);
     
             const newTimeToSend = event.target.value;
-            const email = this.emails.find(email => email.id === emailId);
+            const email = this.emails.find(email => email.id == emailId);
     
             const selectedDate = new Date(this.specificDate);
             const currentTime = new Date();
@@ -517,14 +531,18 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             }
     
             this.emails = this.emails.map(email => {
-                email.timeToSend = newTimeToSend;
+                if (email.id == emailId) {
+                    email.timeToSend = newTimeToSend;
+                }
                 return email;
             });
     
             console.log('emails ==> ', JSON.stringify(this.emails));
     
             this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
-                email.timeToSend = newTimeToSend;
+                if (email.id == emailId) {
+                    email.timeToSend = newTimeToSend;
+                }
                 return email;
             });
         } catch (error) {
@@ -548,6 +566,21 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             return;
         }
 
+
+        const daysAfterStartDateValues = this.emails.map(email => email.daysAfterStartDate);
+        const uniqueDaysAfterStartDateValues = new Set(daysAfterStartDateValues);
+
+        if (daysAfterStartDateValues.length !== uniqueDaysAfterStartDateValues.size) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'There are duplicate "Days After Start Date" values. Please ensure each email has a unique "Days After Start Date" value.',
+                    variant: 'error'
+                })
+            );
+            return;
+        }
+        
         try {
             console.log('selectedPrimaryRecipients ==> ' , JSON.stringify(this.selectedPrimaryRecipients));
             const campaignEmailData = {
