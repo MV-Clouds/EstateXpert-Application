@@ -58,17 +58,29 @@ public with sharing class MarketingEmailTriggerHandler {
             }
         }
 
-        Map<Id, Contact> contacts = new Map<Id, Contact>([
-            SELECT Id, FirstName, LastName
-            FROM Contact
-            WHERE Id IN :contactIds
-        ]);
-
         if (!campaignIds.isEmpty() && !contactIds.isEmpty()) {
             Map<Id, Marketing_Campaign__c> campaigns = new Map<Id, Marketing_Campaign__c>(
                 [SELECT Id, SelectedContactDateField__c FROM Marketing_Campaign__c WHERE Id IN :campaignIds]
             );
-
+        
+            String contactQuery = 'SELECT Id, FirstName, LastName';
+            
+            Set<String> contactFields = new Set<String>();
+            for (Marketing_Campaign__c campaign : campaigns.values()) {
+                if (campaign.SelectedContactDateField__c != null) {
+                    contactFields.add(campaign.SelectedContactDateField__c);
+                }
+            }
+            
+            for (String field : contactFields) {
+                contactQuery += ', ' + field;
+            }
+            
+            contactQuery += ' FROM Contact WHERE Id IN :contactIds';
+        
+            List<Contact> contactList = Database.query(contactQuery);
+            Map<Id, Contact> contacts = new Map<Id, Contact>(contactList);
+            
             if (isInsert) {
                 List<Email_Member__c> emailMembersToCreate = new List<Email_Member__c>();
                 for (Marketing_Email__c email : marketingEmails) {

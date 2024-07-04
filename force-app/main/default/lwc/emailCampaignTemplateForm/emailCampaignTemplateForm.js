@@ -10,7 +10,6 @@ import plusIcon from '@salesforce/resourceUrl/plusIcon';
 import previewBtn from '@salesforce/resourceUrl/previewBtn';
 import deleteBtn from '@salesforce/resourceUrl/deleteBtn';
 
-
 export default class EmailCampaignTemplateForm extends LightningElement {
     @track contacts = [];
     @track filteredPrimaryContacts = [];
@@ -53,7 +52,30 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     @track selectedContactDateField = '';
 
     @track today = new Date().toISOString().split('T')[0];
+
+
+    @track startDateOptions = [
+        { label: 'Sending emails on specific dates', value: 'specificDate' },
+        { label: 'Using a contact related date field', value: 'contactDateField' },
+    ];
+    @track startDateOption = 'specificDate';
     
+    get isSpecificDateOption() {
+        return this.startDateOption === 'specificDate';
+    }
+
+    get isContactDateFieldOption() {
+        return this.startDateOption === 'contactDateField';
+    }
+
+    get searchBoxClass() {
+        return this.isFieldSelected ? 'slds-hide' : 'slds-show';
+    }
+
+    get pillDivClass() {
+        return this.isFieldSelected ? 'slds-show display-pill-input-container' : 'slds-hide';
+    }
+
     /**
     * Method Name: setCurrentPageReference
     * @description: Method to load the data when click on the tab or again come on the tab with redirection
@@ -389,6 +411,16 @@ export default class EmailCampaignTemplateForm extends LightningElement {
         this.specificDate = '';
         this.selectedContactDateField = '';
         this.isFieldSelected = false;
+
+        this.emails = this.emails.map(email => {
+            email.exactDate = '';
+            return email;
+        });
+
+        this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
+            email.exactDate = '';
+            return email;
+        });
     }
 
     handleContactDateFieldChange(event) {
@@ -620,7 +652,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
         console.log('hasRecipients ==> ' ,hasRecipients);
 
-        const isDateSelected = this.specificDate && this.specificDate.trim() !== '';
+        const isDateSelected = ((this.specificDate && this.specificDate.trim() != '') || this.selectedContactDateField != '');
         console.log('isDateSelected ==> ' ,isDateSelected);
 
         console.log('emailsWithTemplate ==> ' , JSON.stringify(this.emailsWithTemplate));

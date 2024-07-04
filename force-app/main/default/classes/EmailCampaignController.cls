@@ -102,9 +102,14 @@ public with sharing class EmailCampaignController {
                 }
             }
 
-            String specificDateString = (String) campaignEmailDataMap.get('specificDate');
-            Date specificDate = Date.valueOf(specificDateString);
+            String selectedContactDateField = (String) campaignEmailDataMap.get('selectedContactDateField');
 
+            Date specificDate = null;
+
+            if((String) campaignEmailDataMap.get('specificDate') != ''){
+                String specificDateString = (String) campaignEmailDataMap.get('specificDate');
+                specificDate = Date.valueOf(specificDateString);
+            }
             // Create campaign record
             Marketing_Campaign__c campaign = new Marketing_Campaign__c();
             campaign.Label__c = campaignName;
@@ -112,8 +117,13 @@ public with sharing class EmailCampaignController {
             campaign.From_Address__c = fromAddress;
             campaign.From_Name__c = fromName;
             campaign.Is_Marketing_Campaign_Template__c = saveForFuture;
-    
-            // Insert the campaign record
+
+            if(specificDate != null){
+                campaign.Start_Date__c = specificDate;
+            }else if(selectedContactDateField != ''){
+                campaign.SelectedContactDateField__c = selectedContactDateField;               
+            }    
+            
             if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
                 Database.insert(campaign);
             }
@@ -175,7 +185,10 @@ public with sharing class EmailCampaignController {
                         Integer seconds = Integer.valueOf(timeParts[2]);
                         
                         emailCampaign.TimeToSend__c = Time.newInstance(hours, minutes, seconds, 0);
-                        emailCampaign.Send_Date_Time__c = DateTime.newInstance(specificDate,Time.newInstance(hours, minutes, seconds, 0));
+
+                        if(specificDate != null){
+                            emailCampaign.Send_Date_Time__c = DateTime.newInstance(specificDate,Time.newInstance(hours, minutes, seconds, 0));
+                        }
                     }
                 }
                                 
@@ -199,5 +212,56 @@ public with sharing class EmailCampaignController {
         }
         
     }
+
+    @InvocableMethod(label='Send Emails' description='Send emails to primary, cc, and bcc recipients')
+    public static void sendEmails(List<EmailRequest> emailRequests) {
+        List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+        
+        for (EmailRequest request : emailRequests) {
+            for (String toAddress : request.toAddresses) {
+                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                
+                email.setToAddresses(new List<String>{toAddress});
+                
+                if (request.ccAddresses != null && !request.ccAddresses.isEmpty()) {
+                    email.setCcAddresses(request.ccAddresses);
+                }
+                
+                if (request.bccAddresses != null && !request.bccAddresses.isEmpty()) {
+                    email.setBccAddresses(request.bccAddresses);
+                }
+                
+                email.setSubject(request.subject);
+                email.setHtmlBody(request.body);
+                emails.add(email);
+            }
+        }
+        
+        if (!emails.isEmpty()) {
+            try {
+                Messaging.sendEmail(emails);
+            } catch (Exception e) {
+                System.debug('Error sending emails: ' + e.getMessage());
+            }
+        }
+    }
+    
+    public class EmailRequest {
+        @InvocableVariable(required=true description='List of primary recipient email addresses')
+        public List<String> toAddresses;
+        
+        @InvocableVariable(description='List of CC recipient email addresses')
+        public List<String> ccAddresses;
+        
+        @InvocableVariable(description='List of BCC recipient email addresses')
+        public List<String> bccAddresses;
+        
+        @InvocableVariable(required=true description='Subject of the email')
+        public String subject;
+        
+        @InvocableVariable(required=true description='Body of the email')
+        public String body;
+    }
+
 
 }
