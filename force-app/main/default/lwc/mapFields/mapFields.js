@@ -359,7 +359,7 @@ export default class MapFields extends LightningElement {
         };
        
         this.dropDownPairs.push(newPair);
-        this,this.savebutton = true;
+        this.savebutton = true;
         const isPropertyValid = this.dropDownPairs.every(pair => pair.selectedProperty);
         const isListingValid = this.dropDownPairs.every(pair => pair.selectedListing);
         if (isListingValid && isPropertyValid) {
