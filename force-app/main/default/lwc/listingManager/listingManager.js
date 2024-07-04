@@ -485,7 +485,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     wrapFilter() {
         if (this.wrapOn) {
             const svgElement = this.template.querySelector('.innerDiv1 .filterWrap img');
-            svgElement.classList.remove('svgRotate');
+            svgElement.classList.remove('imgRotate');
 
             const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
             filterDiv.classList.remove('removeInnerDiv1');
@@ -499,7 +499,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             this.wrapOn = false;
         } else {
             const svgElement = this.template.querySelector('.innerDiv1 .filterWrap img');
-            svgElement.classList.add('svgRotate');
+            svgElement.classList.add('imgRotate');
 
             const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
             filterDiv.classList.add('removeInnerDiv1');
