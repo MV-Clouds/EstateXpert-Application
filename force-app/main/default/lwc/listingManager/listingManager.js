@@ -4,7 +4,6 @@ import designcss from '@salesforce/resourceUrl/listingManagerCss';
 import getListingData from '@salesforce/apex/ListingManagerController.getListingData';
 import getForm from '@salesforce/apex/ListingManagerController.getForm';
 import { NavigationMixin } from 'lightning/navigation';
-import blankImage from '@salesforce/resourceUrl/blankImage';
 import Icons from '@salesforce/resourceUrl/listingManagerIcons';
 
 
@@ -27,7 +26,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track fields = [];
     @track processedListingData = [];    
     @track unchangedProcessListings = [];    
-    @track blankImage = blankImage;
     @track sortField = '';
     @track sortOrder = 'asc';
     @track totalSelected=0;

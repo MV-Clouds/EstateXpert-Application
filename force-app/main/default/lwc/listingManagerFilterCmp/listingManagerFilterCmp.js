@@ -26,6 +26,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     @track ListingsWrapper = [];
     @track filteredListings;
     @track staticFields=[];
+    @track unchangeFields = [];
 
     /**
     * Method Name: connectedCallback
@@ -94,6 +95,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 }
                 return f;
             });
+            this.staticFields = this.filterFields;
         })
         .catch(error => {
             console.error('Error loading picklist values', error);
@@ -109,7 +111,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
     setListingWapper(){
         getListingsWithRelatedRecords().then(result => {
             this.listings = result.map(item => JSON.parse(item));
-            this.staticFields = [...this.filterFields];
         })
         .catch(error => {
             console.error('Error fetching listings', error);
@@ -262,10 +263,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
                     if (field.date || field.datetime) {
                         this.filteredListings = this.filteredListings.filter(wrapper => this.applyDateFilter(wrapper.MVEX__Listing__c, field));
                     }
-
-                  
                 }
-    
                 this.setFilteredListings();
             } else {
                 this.setFilteredListings();
@@ -281,7 +279,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     * Date: 014/06/2024
     * Created By: Vyom Soni
     **/
-      applyOperatorFilter(record, field, values) {
+    applyOperatorFilter(record, field, values) {
         const fieldValue = record[field.apiName];
         let isMatch = false;
     
@@ -296,15 +294,21 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 isMatch = values.some(value => value.toString().toLowerCase().includes(fieldValueLower));
             } else if (field.operatorName === 'startswith') {
                 isMatch = values.some(value => fieldValueLower.startsWith(value.toString().toLowerCase()));
-            } else if (field.boolean) {
-                isMatch = fieldValue === field.fieldChecked;
-            }
+            } 
         }
     
         return field.isNot ? !isMatch : isMatch;
     }
 
-      applyBooleanFilter(record, field) {
+     /**
+    * Method Name: applyBooleanFilter
+    * @description: this method apply in boolean filter case.
+    * @param: record- single record.field
+    * @param: field- field's object
+    * Date: 014/06/2024
+    * Created By: Vyom Soni
+    **/
+    applyBooleanFilter(record, field) {
         const fieldValue = record[field.apiName];
         let isMatch = false;
     
@@ -612,7 +616,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
         } else {
            console.log('value'+value);
         }
-        // this.applyFilters();
     }
 
     /**
@@ -788,8 +791,9 @@ export default class ListingManagerFilterCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     handleReset(){
+        this.staticFields[0].picklistValue[0].showRightIcon = false;
         this.filterFields = this.staticFields;
-        this.filterFields = this.staticFields.map(field => {
+        this.filterFields = this.filterFields.map(field => {
             return {
                 ...field, // Spread the existing field properties
                 selectedOptions: null,
@@ -797,7 +801,8 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 maxValue: null,
                 minDate: null,
                 maxDate: null,
-                fieldChecked: null
+                fieldChecked: null,
+                picklistValue:field.picklistValue
             };
         });
         this.applyFilters();
@@ -805,8 +810,8 @@ export default class ListingManagerFilterCmp extends LightningElement {
 
     // Modal cmp 
        /**
-    * Method Name: handleReset
-    * @description: Remove the all except static fields.
+    * Method Name: handleClose
+    * @description: handle the close event of modal.
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
@@ -815,8 +820,8 @@ export default class ListingManagerFilterCmp extends LightningElement {
     }
 
         /**
-    * Method Name: handleReset
-    * @description: Remove the all except static fields.
+    * Method Name: handleSave
+    * @description: handle the sae evnet in modal.
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
@@ -843,8 +848,8 @@ export default class ListingManagerFilterCmp extends LightningElement {
     }
 
         /**
-    * Method Name: handleReset
-    * @description: Remove the all except static fields.
+    * Method Name: openModal
+    * @description: open the moda.
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
