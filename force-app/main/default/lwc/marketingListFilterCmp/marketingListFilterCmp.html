@@ -1,8 +1,6 @@
 <template>
     <div class="slds-var-p-around_small">
-
-        <!-- Listing Type Fields -->
-        <template if:true={filterFields}>
+         <template if:true={filterFields}>
             <template for:each={filterFields} for:item="option" for:index="index">
                 <template if:true={option.picklist}>
                     <div key={option.apiName} class="slds-form-element combobox">
@@ -23,8 +21,8 @@
                                         <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
                                             role="none">
                                             <input type="text" class="slds-input slds-combobox__input"
-                                                placeholder={option.label} data-id={index}
-                                                onchange={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1} />
+                                                placeholder={option.label} data-id={index} value={option.searchTerm}
+                                                onkeyup={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1} />
                                             <span
                                                 class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
                                                 <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
@@ -46,12 +44,27 @@
                                         <div class="options-box">
                                             <ul class="options-cover">
                                                 <template for:each={option.picklistValue} for:item="option1">
-                                                    <li key={option1.value} data-index={index} data-id={option1.value} onclick={selectOption1}
-                                                        class="options-value">
-                                                        <span class="slds-media__body">
-                                                            <span class="_entity">{option1.label}</span>
-                                                        </span>
-                                                    </li>
+                                                    <template if:false={option1.showRightIcon}>
+                                                        <li key={option1.value} data-index={index} data-id={option1.value} onclick={selectOption1}
+                                                            class="options-value">
+                                                            <span class="slds-media__body">
+                                                                <span class="_entity">{option1.label}</span>
+                                                            </span>
+                                                        </li>
+                                                    </template>
+                                                    <template if:true={option1.showRightIcon}>
+                                                        <li  data-index={index} key={option1.value} data-id={option1.value} onclick={selectOption1} class="slds-listbox__item">
+                                                            <div class="slds-listbox__option slds-listbox__option_plain slds-media slds-media_small slds-media_center picklist-option">
+                                                                <span class="slds-media__body">
+                                                                    <span class="slds-truncate" title={option1.label}>{option1.label}</span>
+                                                                </span>
+                                                                <span class="slds-media__figure slds-media__figure_reverse">
+                                                                    <lightning-icon icon-name="utility:check" alternative-text="Lookup Field" size="x-small"></lightning-icon>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                    </template>
+                                                    
                                                 </template>
                                             </ul>
                                         </div>
@@ -108,8 +121,8 @@
                                             <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
                                                 role="none">
                                                 <input type="text" class="slds-input slds-combobox__input"
-                                                    placeholder={option.label}  data-id={index}
-                                                    onchange={handleSearchChangeString} />
+                                                    placeholder={option.label}  data-id={index} value={option.searchTerm}
+                                                    onkeyup={handleSearchChangeString}/>
                                                 <span
                                                     class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
                                                     <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
@@ -146,7 +159,7 @@
                                                     <span class="slds-icon_container slds-pill__remove" title="Remove">
                                                         <button
                                                             class="slds-button slds-button_icon slds-button_icon slds-pill__remove pill-remove"
-                                                            title="Remove" data-index={index} onclick={removeOptionMethod} data-id={option2.value}>
+                                                            title="Remove" data-index={index} onclick={removeOptionMethodString} data-id={option2.value}>
                                                             <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52"
                                                                 viewBox="0 0 520 520" fill="#fff">
                                                                 <path
@@ -308,7 +321,7 @@
                                                 <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
                                                     role="none">
                                                     <input type="text" class="slds-input slds-combobox__input min-max-input-div"
-                                                        placeholder="Max.." data-index={index} data-id={option.maxValue} value={option.maxValue} onchange={handleMaxValueChange} />
+                                                        placeholder="Max.." data-index={index} data-id={option.maxValue} value={option.maxValue} onkeyup={handleMaxValueChange} />
                                                     <svg class="up-btn-max-min" xmlns="http://www.w3.org/2000/svg" height="52"
                                                         width="52" viewBox="0 0 520 520" fill="#fff"  data-index={index} data-id={option.maxValue} onclick={incrementMaxValue}>
                                                         <path
@@ -526,8 +539,8 @@
                                 data-id={index}
                                 class="input-tag"
                                 type="date"
-                                value={option.maxDate}
-                                onchange={handleMaxDate}
+                                value={option.minDate}
+                                onchange={handleMinDate}
                             ></lightning-input>
                             </div>
     
@@ -551,8 +564,8 @@
                                 data-id={index}
                                 class="input-tag"
                                 type="date"
-                                value={option.minDate}
-                                onchange={handleMinDate}
+                                value={option.maxDate}
+                                onchange={handleMaxDate}
                             ></lightning-input>
                             </div>
     
@@ -599,20 +612,29 @@
                     </template>
                 </template>
                 <template if:true={option.boolean}>
-                    <div key={option.apiName} class="slds-form-element combobox min-max-field">
-    
-                        <label class="slds-form-element__label">{option.label}</label>
-                        <span>
-                            <template if:true={option.isNot}>
-                                <label class="slds-form-element__label operator-div">not  </label>
-                            </template>
-                        </span>
-                        <span>
-                            <label class="slds-form-element__label operator-div">{option.operatorName} </label>
-                        </span>
-            
-                        <div class="slds-form-element__control">
-                            <lightning-input type="checkbox" value={option.fieldChecked} data-index={index} onclick={checkboxFieldChange}></lightning-input>
+                    <div key={option.apiName} class="slds-form-element combobox boolen-field">
+                        <div class="boolean-wrapper">
+                            <label class="slds-form-element__label">{option.label}</label>
+                            <span>
+                                <template if:true={option.isNot}>
+                                    <label class="slds-form-element__label operator-div">not  </label>
+                                </template>
+                            </span>
+                            <span>
+                                <label class="slds-form-element__label operator-div">{option.operatorName} </label>
+                            </span>
+                
+                            <div class="slds-form-element__control">
+                                <lightning-input type="checkbox" value={option.fieldChecked} data-index={index} onclick={checkboxFieldChange}></lightning-input>
+                            </div>
+                        </div>
+
+                        <div class="delete-icon-cover">
+                            <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
+                                fill="#fff">
+                                <path
+                                    d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z" />
+                            </svg>
                         </div>
                     </div>  
                 </template>

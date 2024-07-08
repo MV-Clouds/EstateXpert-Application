@@ -55,7 +55,12 @@
     border-radius: 0.5rem;
     border: 2px solid rgb(42, 32, 32);
     background: linear-gradient(179deg, #E9EEFF, #F4FFF6);
-    padding: 0.7rem;
+     /* padding: 0.7rem; */
+    overflow: hidden;
+}
+.main .body .innerDiv1 .filterCmp-cover{
+    height: 100%;
+    width: 100%;
     overflow: auto;
 }
 
@@ -137,6 +142,34 @@
 .tableDiv .slds-table_resizable-cols thead th, .slds-table--resizable-cols thead th {
     background-color: rgb(220, 235, 249);
 }
+
+
+.noresult{
+    overflow: auto;
+    height: 81%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.noresult .tag1{
+    font-family: "Sans-Serif",Montserrat;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 25px;
+    text-align: center;
+
+}
+
+.noresult .tag2{
+    font-family: "Sans-Serif",Montserrat;
+    font-size: 0.9rem;
+    font-weight: 400;
+    line-height: 25px;
+    text-align: center;
+
+}
+
 
 .main .body .innerDiv2 .slds-cell_action-mode .slds-icon_container{
     display:none

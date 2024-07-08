@@ -1,145 +1,57 @@
 import { LightningElement,track} from 'lwc';
+import getStaticFields from '@salesforce/apex/MarketingListFilterController.getStaticFields';
 import getPicklistValues from '@salesforce/apex/MarketingListFilterController.getPicklistValues';
-import getListingsWithRelatedRecords from '@salesforce/apex/MarketingListFilterController.getListingsWithRelatedRecords';
+import getContactsWithRelatedRecords from '@salesforce/apex/MarketingListFilterController.getContactsWithRelatedRecords';
 import getTheInquiryRecords from '@salesforce/apex/MarketingListFilterController.getTheInquiryRecords';
 
 export default class MarketingListFilterCmp extends LightningElement {
     @track addModal = false;
-    @track listings;
+    @track contacts = [];
     // dyanamic fields selctor variables
     @track objectApiName = '';
-    @track fields;
-    @track error;
-    @track selectedField;
-    @track valueFromChild;
+    @track valueFromChild = [];
     @track isAddButtonDisabled = true;
     @track filterFields =[];
-    InquiryRecords = [];
-    @track ListingsWrapper = [];
-    @track filteredListings;
-    @track staticFields=[{
-        label:'Listing Type',
-        type:'PICKLIST',
-        apiName:'Listing_Type__c',
-        objectApiName:'Inquiry__c',
-        operatorName:'equals',
-        searchTerm:'',
-        minValue:0,
-        maxValue:0,
-        isFocused:false,
-        isNot: false,
-        picklist:true,
-    },
-    {
-        label:'Status',
-        type:'PICKLIST',
-        apiName:'Status__c',
-        objectApiName:'Inquiry__c',
-        operatorName:'equals',
-        searchTerm:'',
-        minValue:0,
-        maxValue:0,
-        isFocused:false,
-        isNot: false,
-        picklist:true,     
-    },
-    {
-        label:'Property Type',
-        type:'PICKLIST',
-        apiName:'Property_Type__c',
-        objectApiName:'Inquiry__c',
-        operatorName:'equals',
-        searchTerm:'',
-        minValue:0,
-        maxValue:0,
-        isFocused:false,
-        isNot: false,
-        picklist:true,
-    },
-    {
-        label : 'City',
-        type: 'STRING',
-        apiName: 'City__c',
-        objectApiName :'Inquiry__c',
-        searchTerm:'',
-        minValue:0,
-        maxValue:0,
-        operatorName: 'contains',
-        isFocused:false,
-        isNot: false,
-        string:true,
-    },
-    {
-        label : 'Listing Price',
-        type: 'CURRENCY',
-        apiName: 'Listing_Price__c',
-        objectApiName :'Listing__c',
-        searchTerm:'',
-        minValue:0,
-        maxValue:0,
-        operatorName: 'range',
-        isRange:true,
-        isFocused:false,
-        isNot: false,
-        currency:true,
-    },
-    {
-        label : 'Bedrooms - min',
-        type: 'DOUBLE',
-        apiName: 'Bedrooms_min__c',
-        objectApiName :'Inquiry__c',
-        searchTerm:'',
-        minValue:0,
-        maxValue:0,
-        operatorName: 'range',
-        isFocused:false,
-        isNot: false,
-        double:true,
+    @track InquiryRecords = [];
+    @track filteredContacts =[];
+    @track staticFields=[];
 
-    },
-    {
-        label : 'Bathrooms - min',
-        type: 'DOUBLE',
-        apiName: 'Bathrooms_min__c',
-        objectApiName :'Inquiry__c',
-        searchTerm:'',
-        minValue:0,
-        maxValue:0,
-        operatorName: 'range',
-        isRange:true,
-        isFocused:false,
-        isNot: false,
-        double:true,
-    },
-    {
-        label : 'Size - min',
-        type: 'DOUBLE',
-        apiName: '	Size_min__c',
-        objectApiName :'Inquiry__c',
-        searchTerm:'',
-        minValue:0,
-        maxValue:0,
-        operatorName: 'range',
-        isRange:true,
-        isFocused:false,
-        isNot: false,
-        double:true,
+     /**
+    * Method Name: connectedCallback
+    * @description: set the get static fields, set contact record wrapper, set Inquiry records.
+    * Date: 25/06/2024
+    * Created By: Vyom Soni
+    **/   
+    connectedCallback(){
+
+        this.initializeStaticFields();
+        this.setContactWapper();
+        this.setInquiryRecord();
+
     }
 
-]
-
-    connectedCallback(){
-        this.filterFields =this.filterFields.concat(this.staticFields);
-        this.setPicklistValue();
-        this.setListingWapper();
-        this.setInquiryRecord();
-        
+    /**
+    * Method Name: initializeStaticFields
+    * @description: get the static fields from custom metadata.
+    * Date: 25/06/2024
+    * Created By: Vyom Soni
+    **/  
+    initializeStaticFields() {
+        getStaticFields()
+            .then(result => {
+                this.staticFields = JSON.parse(result);
+                this.filterFields = this.filterFields.concat(this.staticFields);
+                this.setPicklistValue();
+            })
+            .catch(error => {
+                console.error('Error loading static fields from metadata', error);
+            });
     }
 
     /**
     * Method Name: setPicklistValue
     * @description: get the picklist values one by one for static fields.
-    * Date: 13/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/    
     setPicklistValue(){
@@ -148,13 +60,12 @@ export default class MarketingListFilterCmp extends LightningElement {
                 this.loadPicklistValues(field);
                 }
         });
-        
     }
 
     /**
     * Method Name: loadPicklistValues
     * @description: add the picklist values in the static fields.
-    * Date: 13/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/    
     loadPicklistValues(field) {
@@ -170,7 +81,7 @@ export default class MarketingListFilterCmp extends LightningElement {
                 }
                 return f;
             });
-            console.log('Updated filterFields:', JSON.stringify(this.filterFields));
+            this.staticFields = this.filterFields;
         })
         .catch(error => {
             console.error('Error loading picklist values', error);
@@ -178,49 +89,45 @@ export default class MarketingListFilterCmp extends LightningElement {
     }
 
      /**
-    * Method Name: handleChange
-    * @description: handle the radio button select.
-    * Date: 07/06/2024
+    * Method Name: setContactWapper
+    * @description: retrieve the  contacts wrapper.data
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
-    setListingWapper(){
-        getListingsWithRelatedRecords().then(result => {
-            this.listings = result.map(item => JSON.parse(item));
-          //  console.log('Listings:', JSON.stringify(this.listings[1].Account.Name));
+    setContactWapper(){
+        getContactsWithRelatedRecords().then(result => {
+            this.contacts = result.map(item => JSON.parse(item));
             this.staticFields = [...this.filterFields];
-            console.log('static fields'+JSON.stringify(this.listings));
         })
         .catch(error => {
-            console.error('Error fetching listings', error);
+            console.error('Error fetching contacts', error);
         });
     }
 
     /**
     * Method Name: setInquiryRecord
-    * @description: get the Inquiry records.
-    * Date: 07/06/2024
+    * @description: set the Inquiry records.
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     setInquiryRecord(){
         getTheInquiryRecords().then(result => {
             this.InquiryRecords = result;
-            console.log('Inquiry'+JSON.stringify(this.InquiryRecords));
         })
         .catch(error => {
-            console.error('Error fetching listings', error);
+            console.error('Error fetching contacts', error);
         });
     }
 
       /**
     * Method Name: handleValueSelected
     * @description: this method is set the field from the child field-add cmp .
-    * Date: 07/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleValueSelected(event) {
         // Get the value from the event detail and store it in a property
         this.valueFromChild = event.detail;
-        console.log('child'+JSON.stringify(this.valueFromChild));
         this.valueFromChild = this.valueFromChild.map(field => {
             return {
                 label: field.label,
@@ -229,11 +136,13 @@ export default class MarketingListFilterCmp extends LightningElement {
                 prevFieldApiName : field.prevFieldApiName,
                 objectApiName: field.objectApiName,
                 operatorName: field.operation,
-                picklistValue:field.picklistValues||[], // Set operatorName based on type
-                unchangePicklistValue:field.picklistValues||[], // Set operatorName based on type
+                picklistValue: field.picklistValues||[], // Set operatorName based on type
+                unchangePicklistValue: field.picklistValues||[], // Set operatorName based on type
                 prevApiName : field.prevApiName,
                 minValue:0,
                 maxValue:0,
+                minDate:null,
+                maxDate:null,
                 isNot: field.isNot,
                 searchTerm:'',
                 isFocused:false,
@@ -254,22 +163,18 @@ export default class MarketingListFilterCmp extends LightningElement {
 
             };
         });
-        console.log('updated field'+JSON.stringify(this.valueFromChild));
         this.filterFields = [...this.filterFields, ...this.valueFromChild];
-    
-        console.log('child Value:'+JSON.stringify(this.valueFromChild));
     }
 
     /**
-    * Method Name: handleChange
-    * @description: handle the radio button select.
-    * Date: 07/06/2024
+    * Method Name: applyFilters
+    * @description: apply the filters on the contacts.
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     applyFilters() {
-        // Initialize filteredListings with a deep copy of ListingsWrapper
-        this.filteredListings = [...this.listings];
-        console.log('Initial Listings:', JSON.stringify(this.filteredListings));
+        
+        this.filteredContacts = [...this.contacts];
     
         this.filterFields.forEach(field => {
             // Check if field has selectedOptions or has valid min/max values for filtering
@@ -281,19 +186,20 @@ export default class MarketingListFilterCmp extends LightningElement {
             const hasFieldChecked = field.fieldChecked != null;
     
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
-                console.log(`Applying filter on field: ${field.apiName}`);
-    
+               
                 if (field.objectApiName !== 'Contact' && field.objectApiName !== 'Inquiry__c') {
                     // Filter for related record in another object (Contact, Property)
-                    console.log('Filtering related object:', field.objectApiName);
-                    
-                        this.filteredListings = this.filteredListings.filter(wrapper => {
+                  
+                        this.filteredContacts = this.filteredContacts.filter(wrapper => {
                             const relatedRecord = wrapper[field.prevApiName.replace('__c', '__r')];
                             if (!relatedRecord) return false;
                         
-                            if (hasSelectedOptions && (field.picklist || field.string || field.id || field.boolean)) {
+                            if (hasSelectedOptions && (field.picklist || field.string || field.id)) {
                                 const values = field.selectedOptions.map(option => option.value);
                                 return this.applyOperatorFilter(relatedRecord, field, values);
+                            }
+                            if (field.boolean) {
+                                return this.applyBooleanFilter(relatedRecord, field);
                             }
                             if (field.currency || field.double) {
                                 return this.applyNumericFilter(relatedRecord, field);
@@ -305,88 +211,115 @@ export default class MarketingListFilterCmp extends LightningElement {
                         });
 
                 } else if (field.objectApiName === 'Inquiry__c') {
-                    // Filter for related Inquiry records
-                    console.log('Filtering related Inquiry records');
+                    // Filter for related offer records
                     
-                    this.filteredListings = this.filteredListings.filter(wrapper => {
-                        const relatedInquirys = this.InquiryRecords.filter(Inquiry => Inquiry.Listing__c === wrapper.Id);
+                    this.filteredContacts = this.filteredContacts.filter(wrapper => {
+                        const relatedOffers = this.InquiryRecords.filter(offer => offer.Contact__c === wrapper.Id);
     
-                        if (!relatedInquirys.length) return false;
+                        if (!relatedOffers.length) return false;
     
-                        return relatedInquirys.some(relatedInquiry => {
-                            if (field.picklist || field.string || field.id || field.boolean) {
+                        return relatedOffers.some(relatedOffer => {
+                            if (field.picklist || field.string || field.id ) {
                                 const values = field.selectedOptions.map(option => option.value);
-                                return this.applyOperatorFilter(relatedInquiry, field, values);
+                                return this.applyOperatorFilter(relatedOffer, field, values);
+                            }
+                            if (field.boolean) {
+                                return this.applyBooleanFilter(relatedOffer, field);
                             }
                             if (field.currency || field.double) {
-                                return this.applyNumericFilter(relatedInquiry, field);
+                                return this.applyNumericFilter(relatedOffer, field);
                             }
                             if (field.date || field.datetime) {
-                                console.log('Applying date/datetime filter');
-                                return this.applyDateFilter(relatedInquiry, field);
+                                return this.applyDateFilter(relatedOffer, field);
                             }
                             return true;
                         });
                     });
                 } else {
-                    // Filter for fields in Listing__c object
-                    if (hasSelectedOptions && (field.picklist || field.string || field.id || field.boolean)) {
+                    if (hasSelectedOptions && (field.picklist || field.string || field.id )) {
                         const values = field.selectedOptions.map(option => option.value);
-                        this.filteredListings = this.filteredListings.filter(wrapper => this.applyOperatorFilter(wrapper.Listing__c, field, values));
+                        this.filteredContacts = this.filteredContacts.filter(wrapper => this.applyOperatorFilter(wrapper.Contact, field, values));
                     }
-                    
+                    if (field.boolean) {
+                        this.filteredContacts = this.filteredContacts.filter(wrapper => this.applyBooleanFilter(wrapper.Contact, field));
+                    }
                     if (field.currency || field.double) {
-                        this.filteredListings = this.filteredListings.filter(wrapper => this.applyNumericFilter(wrapper.Listing__c, field));
+                        this.filteredContacts = this.filteredContacts.filter(wrapper => this.applyNumericFilter(wrapper.Contact, field));
                     }
-                    
                     if (field.date || field.datetime) {
-                        this.filteredListings = this.filteredListings.filter(wrapper => this.applyDateFilter(wrapper.Listing__c, field));
-                    }
-
-                  
+                        this.filteredContacts = this.filteredContacts.filter(wrapper => this.applyDateFilter(wrapper.Contact, field));
+                    } 
                 }
-    
-                console.log('Listings after applying filter:', JSON.stringify(this.filteredListings));
-                this.setFilteredListings();
+                this.setFilteredContacts();
             } else {
-                this.setFilteredListings();
+                this.setFilteredContacts();
             }
         });
     
-        console.log('Final Filtered Listings:', JSON.stringify(this.filteredListings));
     }
     
-      /**
+    /**
     * Method Name: applyOperatorFilter
     * @description: this method handke filtering about string ,picklist,Id,Url,boolean.
-    * Date: 014/06/2024
+    * @param: record- single record.field
+    * @param: field- field's object
+    * @returns:boolean value
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
-   applyOperatorFilter(record, field, values) {
-    const fieldValue = record[field.apiName];
-    let isMatch = false;
+    applyOperatorFilter(record, field, values) {
+        const fieldValue = record[field.apiName];
+        let isMatch = false;
+    
+        if (fieldValue !== undefined && fieldValue !== null) {
+            const fieldValueLower = fieldValue.toString().toLowerCase();
+    
+            if (field.operatorName === 'equals') {
+                isMatch = values.some(value => fieldValueLower === value.toString().toLowerCase());
+            } else if (field.operatorName === 'contains') {
+                isMatch = values.some(value => fieldValueLower.includes(value.toString().toLowerCase()));
+            } else if (field.operatorName === 'includes') {
+                isMatch = values.some(value => value.toString().toLowerCase().includes(fieldValueLower));
+            } else if (field.operatorName === 'startswith') {
+                isMatch = values.some(value => fieldValueLower.startsWith(value.toString().toLowerCase()));
+            } else if (field.boolean) {
+                isMatch = fieldValue === field.fieldChecked;
+            }
+        }
+    
+        return field.isNot ? !isMatch : isMatch;
+    }
 
-    if (field.operatorName === 'equals') {
-        isMatch = values.includes(fieldValue);
+    /**
+    * Method Name: applyBooleanFilter
+    * @description: this method apply in boolean filter case
+    * @param: record- single record.field
+    * @param: field- field's object
+    * @returns:boolean value
+    * Date: 25/06/2024
+    * Created By: Vyom Soni
+    **/
+    applyBooleanFilter(record, field) {
+        const fieldValue = record[field.apiName];
+        let isMatch = false;
+    
+        if (fieldValue !== undefined && fieldValue !== null) {
+            if (field.boolean) {
+                isMatch = fieldValue === field.fieldChecked;
+            }
+        }
+    
+        return field.isNot ? !isMatch : isMatch;
     }
-    if (field.operatorName === 'contains' || field.operatorName === 'includes') {
-        isMatch = values.some(value => fieldValue.includes(value));
-    }
-    if (field.operatorName === 'startswith') {
-        isMatch = values.some(value => fieldValue.startsWith(value));
-    }
-    if (field.boolean) {
-        isMatch = fieldValue === field.fieldChecked;
-    }
-
-    return field.isNot ? !isMatch : isMatch;
-}
     
 
-      /**
+    /**
     * Method Name: applyNumericFilter
-    * @description: this method handke filtering about Numbers, currency.
-    * Date: 14/06/2024
+    * @description: this method handle filtering about Numbers, currency.
+    * @param: record- single record.field
+    * @param: field- field's object
+    * @returns:boolean value
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     applyNumericFilter(record, field) {
@@ -401,7 +334,9 @@ export default class MarketingListFilterCmp extends LightningElement {
      /**
     * Method Name: applyDateFilter
     * @description: this method handle the date fields.
-    * Date: 14/06/2024
+    * @param: record- single record.field
+    * @param: field- field's object
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     applyDateFilter(record, field) {
@@ -416,16 +351,15 @@ export default class MarketingListFilterCmp extends LightningElement {
         return field.isNot ? !inRange : inRange;
     }
     
-
       /**
-    * Method Name: setFilteredListings
-    * @description: set Listings in the Parent listing manager component.
-    * Date: 14/06/2024
+    * Method Name: setFilteredContacts
+    * @description: set Contacts in the Parent contact manager component.
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
-    setFilteredListings(){
+    setFilteredContacts(){
         const customEvent = new CustomEvent('valueselected', {
-            detail: this.filteredListings
+            detail: this.filteredContacts
         });
         
         // Dispatch the custom event
@@ -434,149 +368,200 @@ export default class MarketingListFilterCmp extends LightningElement {
    
     // Picklist field methods
 
-        /**
+    /**
     * Method Name: handleSearchChange1
     * @description: Handle the search option feature in picklist fields.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleSearchChange1(event) {
-    
         const index = event.currentTarget.dataset.id;
-        console.log('index'+index);
         this.filterFields[index].searchTerm = event.target.value;
-            console.log('index2'+this.filterFields[index].searchTerm);
             this.filterFields[index].picklistValue =this.filterFields[index].unchangePicklistValue.filter(option =>
                 option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase())
             );
-            console.log('index2'+JSON.stringify(this.filterFields[index].picklistValue));
     }
 
-       /**
+    /**
     * Method Name: handleFocus1
     * @description: Handle the Focus event in picklist fiedls.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleFocus1(event) {
         const index = event.currentTarget.dataset.id;
         this.filterFields[index].isFocused = true;
-        console.log('index'+index);
-        this.filterFields[index].picklistValue = this.filterFields[index].unchangePicklistValue;
-        
+        this.filterFields[index].picklistValue = this.filterFields[index].unchangePicklistValue;   
     }
 
      /**
     * Method Name: handleBlur1
     * @description: Handle the blur event in picklist fiedls.
-    * Date: 14/06/2024
+   * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleBlur1(event) {
         // Delay the blur action to allow click event to be registered
 
         const index = event.currentTarget.dataset.id;
-        console.log('index'+index);
-        this.filterFields[index].picklistValue = this.filterFields[index].unchangePicklistValue;
         setTimeout(()=>{
             this.filterFields[index].isFocused = false;
         },300);
+        
     }
 
-       /**
+    /**
     * Method Name: selectOption1
     * @description: Handle the slection of option in picklist fiedls.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     selectOption1(event) {
         const value = event.currentTarget.dataset.id;
         const index = event.currentTarget.dataset.index;
-        console.log('value' + value);
-        console.log('index' + index);
-    
-        const field = this.filterFields[index];
-        console.log('field' + field);
-    
+
+        let fields = this.filterFields; // Assuming this is where 'fields' should be declared
+
+        const field = fields[index]; // Access 'fields' instead of 'this.filterFields'
         if (field != null) {
-            console.log('HI');
             if (field.selectedOptions == null) {
                 field.selectedOptions = [];
             }
-    
+
             // Check if the value already exists in selectedOptions
             const exists = field.selectedOptions.some(option => option.value === value);
             if (!exists) {
+                this.filterFields[index].searchTerm = '';
                 field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
-                console.log('selectedOptions' + JSON.stringify(field.selectedOptions));
+                this.applyFilters();
+
+                const newPicklistValue = field.unchangePicklistValue.map(option => {
+                    if (option.value === value) {
+                        return {...option, showRightIcon: true};
+                    }
+                    return option;
+                });
+
+                field.picklistValue = newPicklistValue;
+                field.unchangePicklistValue = newPicklistValue;
+                fields[index] = field;
+                this.filterFields = fields;
+             
             } else {
-                console.log('Value already exists in selectedOptions');
+               console.log('Value already exists in selectedOptions');
             }
         }
-    
-        this.searchTerm1 = ''; // Clear the search term to reset the search
-        this.isFocused1 = false; // Close the dropdown
-        //  this.applyFilters();
     }
     
     /**
-    * Method Name: removeOptionMethod,removeOption1
+    * Method Name: removeOptionMethod
     * @description: Handle the remove of pill from under if picklist fiedls.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     removeOptionMethod(event){
         this.removeOption1(event);
         setTimeout(()=>{
-            //  this.applyFilters();
+            this.applyFilters();
         },1000);
     }
 
+     /**
+    * Method Name: removeOption1
+    * @description: Handle the remove of pill from under if picklist fiedls.
+    * Date: 25/06/2024
+    * Created By: Vyom Soni
+    **/
     removeOption1(event) {
         const optionToRemove = event.currentTarget.dataset.id;
-        const index =  event.currentTarget.dataset.index;
-        console.log('index'+index);
-        if(index >0){
-            this.filterFields[index].selectedOptions = this.filterFields[index].selectedOptions.filter(option => option.value !== optionToRemove);
-            console.log('hi'+this.filterFields[index].selectedOptions);
-            console.log('hi'+this.filterFields[index].selectedOptions.length);
+        const index = event.currentTarget.dataset.index;
+        this.filterFields[index].searchTerm = '';
+     
+        if (index > -1) {
+            let fields = [...this.filterFields];
+            let field = {...fields[index]};
+            
+            // Update the selectedOptions array
+            field.selectedOptions = field.selectedOptions.filter(option => option.value !== optionToRemove);
+            this.applyFilters();
+            if (field.selectedOptions.length === 0) {
+                this.applyFilters();
+                field.selectedOptions = null;
+            }
+    
+            // Update the picklistValues array to set showRightIcon to false
+            const newPicklistValue = field.picklistValue.map(option => {
+                if (option.value === optionToRemove) {
+                    return {...option, showRightIcon: false};
+                }
+                return option;
+            });
+    
+            field.picklistValue = newPicklistValue;
+            field.unchangePicklistValue = newPicklistValue;
+            fields[index] = field;
+            this.filterFields = fields;
+    
         }
-        if(index == 0){
-            this.filterFields[index].selectedOptions= null;
-            console.log('hi'+this.filterFields[index].selectedOptions);
-            console.log('hi'+this.filterFields[index].selectedOptions.length);
-        }
-        //  this.applyFilters();
+    }
+    
+    /**
+    * Method Name: removeOptionMethodString
+    * @description: call the removeOptionString and applyFilter method.
+    * Date: 25/06/2024
+    * Created By: Vyom Soni
+    **/
+    removeOptionMethodString(event){
+        this.removeOptionString(event);
+        setTimeout(()=>{
+            this.applyFilters();
+        },1000);
     }
 
-    // Stiring fields logic
+     /**
+    * Method Name: removeOptionString
+    * @description: Handle remove the pill from the string fields.
+    * Date: 25/06/2024
+    * Created By: Vyom Soni
+    **/
+    removeOptionString(event) {
+        const optionToRemove = event.currentTarget.dataset.id;
+        const index = event.currentTarget.dataset.index;
+        if (index > -1) {
+            this.filterFields[index].selectedOptions = this.filterFields[index].selectedOptions.filter(option => option.value !== optionToRemove);
+            if (this.filterFields[index].selectedOptions.length === 0) {
+                this.filterFields[index].selectedOptions = null;
+            }
+            this.applyFilters();
+        }
+    
+    }
 
      /**
     * Method Name: handleSearchChangeString
     * @description: Handle the string change in string fiedls.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleSearchChangeString(event) {
         const index = event.currentTarget.dataset.id;
-        console.log('index'+index);
         this.filterFields[index].searchTerm = event.target.value;
-        console.log('filere'+this.filterFields[index].searchTerm);
+        if (event.key === 'Enter') { // Check if Enter key was pressed
+            this.addTheString(event);
+        }
     }
 
     // Adds the city to the selected options list
     /**
     * Method Name: addTheString
     * @description: Handle the string add in the multi selection in string fiedls.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     addTheString(event) {
         const index = event.currentTarget.dataset.id;
         const value = this.filterFields[index].searchTerm;
-        
-        console.log('value: ' + value);
-        
+      
         if (value !== '') {
             const field = this.filterFields[index];
         
@@ -589,190 +574,215 @@ export default class MarketingListFilterCmp extends LightningElement {
         
             if (!isValueAlreadySelected) {
                 field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
-                console.log('selectedOptions: ' + JSON.stringify(field.selectedOptions));
+                this.filterFields[index].searchTerm = '';
             } else {
-                console.log('Value already exists in selectedOptions');
+               console.log('Value already exists in selectedOptions');
             }
         }
         
-        //  this.applyFilters();
+        this.applyFilters();
     }
 
-     /**
-    * Method Name: handleMinValueChange
-    * @description: handle the min value change in the number Input field.
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
+    /**
+     * Method Name: handleMinValueChange
+     * @description: Handle the min value change in the number Input field.
+     * Date: 25/06/2024
+     * Created By: Vyom Soni
+     **/
     handleMinValueChange(event) {
         const index = event.currentTarget.dataset.index;
-        console.log('index'+index);
-        const value = event.target.value;
+        let value = parseInt(event.target.value, 10);
+        if(isNaN(value)){
+            value = 0;
+        }
         this.filterFields[index].minValue = value;
-        console.log('filterFields'+this.filterFields[index].minValue);
-        //  this.applyFilters();
+        if ( this.filterFields[index].isMin == true|| value <= this.filterFields[index].maxValue|| value === 0) {
+            this.applyFilters();
+        } 
     }
 
-    
-      /**
-    * Method Name: handleMaxValueChange
-    * @description: Handle change in the max input field.
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
+    /**
+     * Method Name: handleMaxValueChange
+     * @description: Handle change in the max input field.
+     * Date: 25/06/2024
+     * Created By: Vyom Soni
+     **/
     handleMaxValueChange(event) {
         const index = event.currentTarget.dataset.index;
-        console.log('index'+index);
-        const value = event.target.value;
+        let value = parseInt(event.target.value, 10);
+        if(isNaN(value)){
+            value = 0;
+        }
         this.filterFields[index].maxValue = value;
-        console.log('filterFields'+this.filterFields[index].maxValue);
-        //  this.applyFilters();
+        if ((this.filterFields[index].isMax ==true ||value === 0 || value >= this.filterFields[index].minValue)) {
+            this.applyFilters();
+        }
     }
 
-     /**
-    * Method Name: incrementMinValue
-    * @description:  Increment the min input value
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
+    /**
+     * Method Name: incrementMinValue
+     * @description: Increment the min input value
+     * Date: 25/06/2024
+     * Created By: Vyom Soni
+     **/
     incrementMinValue(event) {
         const index = event.currentTarget.dataset.index;
-        console.log('index'+index);
-        const currentValue = parseInt(this.filterFields[index].minValue, 10);
-        if (!isNaN(currentValue)) {
-            this.filterFields[index].minValue = currentValue + 1;
-            console.log('filterFields'+this.filterFields[index].minValue);
-        } else {
-            this.filterFields[index].minValue = 0;
+        let currentValue = parseInt(this.filterFields[index].minValue, 10);
+        if (isNaN(currentValue)) {
+            currentValue = 0;
         }
-        //  this.applyFilters();
+        this.filterFields[index].minValue = currentValue + 1;
+        if (this.filterFields[index].isMin == true||currentValue + 1 <= this.filterFields[index].maxValue) {
+            this.applyFilters();
+        } 
+    
     }
 
-      /**
-    * Method Name: decrementMinValue
-    * @description:  decrement the min input value
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
+    /**
+     * Method Name: decrementMinValue
+     * @description: Decrement the min input value
+     * Date: 25/06/2024
+     * Created By: Vyom Soni
+     **/
     decrementMinValue(event) {
         const index = event.currentTarget.dataset.index;
-        const currentValue = parseInt(this.filterFields[index].minValue, 10);
-        if (!isNaN(currentValue) && currentValue > 0) {
-            this.filterFields[index].minValue = currentValue - 1;
+        let currentValue = parseInt(this.filterFields[index].minValue, 10);
+        if (isNaN(currentValue) || currentValue <= 0) {
+            currentValue = 0;
         } else {
-            this.filterFields[index].minValue = 0;
+            currentValue--;
         }
-        //  this.applyFilters();
+        this.filterFields[index].minValue = currentValue;
+        if (this.filterFields[index].isMin == true||currentValue - 1 <= this.filterFields[index].maxValue) {
+            this.applyFilters();
+        } 
     }
 
-         /**
-    * Method Name: incrementMaxValue
-    * @description:  incremaent the max input value
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
+    /**
+     * Method Name: incrementMaxValue
+     * @description: Increment the max input value
+     * Date: 25/06/2024
+     * Created By: Vyom Soni
+     **/
     incrementMaxValue(event) {
         const index = event.currentTarget.dataset.index;
-        const currentValue = parseInt(this.filterFields[index].maxValue, 10);
-        if (!isNaN(currentValue)) {
-            this.filterFields[index].maxValue = currentValue + 1;
-        } else {
-            this.filterFields[index].maxValue = 0;
+        let currentValue = parseInt(this.filterFields[index].maxValue, 10);
+        if (isNaN(currentValue)) {
+            currentValue = 0;
         }
-        //  this.applyFilters();
+        this.filterFields[index].maxValue = currentValue + 1;
+        if (this.filterFields[index].isMax == true||currentValue + 1 >= this.filterFields[index].minValue) {
+            this.applyFilters();
+        } 
     }
 
-         /**
-    * Method Name: decrementMaxValue
-    * @description:  decrement the max input value
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
+    /**
+     * Method Name: decrementMaxValue
+     * @description: Decrement the max input value
+     * Date: 25/06/2024
+     * Created By: Vyom Soni
+     **/
     decrementMaxValue(event) {
         const index = event.currentTarget.dataset.index;
-        const currentValue = parseInt(this.filterFields[index].maxValue, 10);
-        if (!isNaN(currentValue) && currentValue > 0) {
-            this.filterFields[index].maxValue = currentValue - 1;
+        let currentValue = parseInt(this.filterFields[index].maxValue, 10);
+        if (isNaN(currentValue) || currentValue <= this.filterFields[index].minValue) {
+            //alert('Max value cannot be less than min value.');
         } else {
-            this.filterFields[index].maxValue = 0;
+            currentValue--;
         }
-        //  this.applyFilters();
+        this.filterFields[index].maxValue = currentValue;
+        if (this.filterFields[index].isMax == true||currentValue - 1 >= this.filterFields[index].minValue) {
+            this.applyFilters();
+        } 
     }
 
-        /**
+
+    /**
     * Method Name: checkboxFieldChange
     * @description:  handle th checkbox field change
-    * Date: 9/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     checkboxFieldChange(event){
         const index = event.currentTarget.dataset.index;
         this.filterFields[index].fieldChecked = !this.filterFields[index].fieldChecked;
-        //  this.applyFilters();
+        this.applyFilters();
     }
 
-       /**
+    /**
     * Method Name: handleMinDate
     * @description:  handle min date field change
-    * Date: 9/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleMinDate(event) {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;
         this.filterFields[index].minDate = newValue;
-        console.log(`Updated minDate for field ${this.filterFields[index].apiName}:`, this.filterFields[index].minDate);
-        //  this.applyFilters();
+       
+        // Perform validation
+        const minDate = new Date(this.filterFields[index].minDate);
+        const maxDate = new Date(this.filterFields[index].maxDate);
+        
+        if (minDate <= maxDate || !this.filterFields[index].maxDate) {
+            this.applyFilters();
+        } else {
+            console.warn(`Min date should be less than or equal to max date for field ${this.filterFields[index].apiName}`);
+        }
     }
-
-        /**
-    * Method Name: handleMaxDate
-    * @description:  handle max date field change
-    * Date: 9/06/2024
-    * Created By: Vyom Soni
-    **/
+    
+    /**
+     * Method Name: handleMaxDate
+     * @description: handle max date field change
+     * Date: 25/06/2024
+     * Created By: Vyom Soni
+     **/
     handleMaxDate(event) {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;
         this.filterFields[index].maxDate = newValue;
-        console.log(`Updated maxDate for field ${this.filterFields[index].apiName}:`, this.filterFields[index].maxDate);
-        //  this.applyFilters();
+       
+        // Perform validation
+        const minDate = new Date(this.filterFields[index].minDate);
+        const maxDate = new Date(this.filterFields[index].maxDate);
+    
+        if (minDate <= maxDate || !this.filterFields[index].minDate) {
+            this.applyFilters();
+        } else {
+            console.warn(`Max date should be greater than or equal to min date for field ${this.filterFields[index].apiName}`);
+        }
     }
 
      // Clears the search input field
     /**
     * Method Name: clearSearch
     * @description: Removes a field from the filed list.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
-     clearSearch(event) {
+    clearSearch(event) {
         const index = event.currentTarget.dataset.id;
         if (index > -1 && index < this.filterFields.length) {
             this.filterFields.splice(index, 1);
         }
-        //  this.applyFilters();
+        this.applyFilters();
     }
 
      //handel reset
-       /**
+    /**
     * Method Name: handleReset
     * @description: Remove the all except static fields.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleReset(){
         // this.filterFields = this.staticFields
-        console.log()
         this.filterFields = this.staticFields;
-        console.log('statc'+this.staticFields)
-        console.log('filter'+this.filterFields)
-        console.log('filter'+this.filterFields.length)
-        console.log('filter'+this.staticFields[0].picklistValues)
         this.filterFields = this.staticFields.map(field => {
             return {
                 ...field, // Spread the existing field properties
                 selectedOptions: null,
+                picklistValue:field.picklistValue,
                 minValue: null,
                 maxValue: null,
                 minDate: null,
@@ -780,29 +790,29 @@ export default class MarketingListFilterCmp extends LightningElement {
                 fieldChecked: null
             };
         });
-        //  this.applyFilters();
+        this.applyFilters();
     }
 
     // Modal cmp 
-       /**
-    * Method Name: handleReset
+    /**
+    * Method Name: handleClose
     * @description: Remove the all except static fields.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleClose() {
         this.addModal = false;
     }
 
-        /**
-    * Method Name: handleReset
-    * @description: Remove the all except static fields.
-    * Date: 14/06/2024
+    /**
+    * Method Name: handleSave
+    * @description: call the handleButtonClick method from child component.
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleSave() {
         this.addModal = false;
-        const childComponent = this.template.querySelector('c-listing-manager-filter-add-cmp');
+        const childComponent = this.template.querySelector('c-marketing-list-filter-add-cmp');
 
         if (childComponent) {
             // Call the method on the child component
@@ -811,22 +821,22 @@ export default class MarketingListFilterCmp extends LightningElement {
     }
 
     
-        /**
+    /**
     * Method Name: handleFieldChange
     * @description: fetch the custom event data and set pop-up add button disable.
-    * Date: 14/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleFieldChange(event) {
         const field = event.detail;
-        this.isAddButtonDisabled = (field.length === 0 && field.operation == null);
-        
+        this.isAddButtonDisabled = (field.length === 0 && field.operation == null);  
     }
+    
 
-        /**
-    * Method Name: handleReset
-    * @description: Remove the all except static fields.
-    * Date: 14/06/2024
+    /**
+    * Method Name: openModal
+    * @description: open the pop-up modal.
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     openModal(){

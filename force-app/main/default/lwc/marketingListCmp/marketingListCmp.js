@@ -6,16 +6,16 @@ import getForm from '@salesforce/apex/MarketingListCmpController.getForm';
 import { NavigationMixin } from 'lightning/navigation';
 import blankImage from '@salesforce/resourceUrl/blankImage';
 
-
 export default class MarketingListCmp extends NavigationMixin(LightningElement) {
     @api objectName = 'Contact';
-    @track spinnerShow=true;
     @api recordId;
     @api fieldSet = 'MarketingListFieldSet';
+    @track spinnerShow=true;
     @track showList = true
     @track showTile =false;
-    @track contactData;
-    @track fields;
+    @track unchangedContactData = [];
+    @track contactData =[];
+    @track fields =[];
     @track processedContactData = [];    
     @track unchangedProcessContact = [];    
     @track blankImage = blankImage;
@@ -24,123 +24,163 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @track totalSelected=0;
     @track selectedProperties;
     @track selctedContactData;
-    @track checkAll = false;
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
     @track pageSize = 30;
     @track totalPages;
     @track shownProcessedContactData = [];
-    // @track propertyMediaUrls = [];
 
+     /**
+    * Method Name : checkAll
+    * @description : handle the checkAll checkbox in list view.
+    * Date: 22/07/2024
+    * Created By:Vyom Soni
+    */
+     get checkAll() {
+        return this.processedContactData.every(item => item.isChecked);
+    }
+
+     /**
+    * Method Name : showSection
+    * @description : getter for the show no result found text when shownProcessedContactData.length === 0.
+    * Date: 22/07/2024
+    * Created By:Vyom Soni
+    */
+    get showSection() {
+        return this.shownProcessedContactData.length === 0;
+    }
+
+      /**
+    * Method Name : connectedCallback
+    * @description : retrieve fields name from the field-set and retrieve Contact records.
+    * Date: 22/07/2024
+    * Created By:Vyom Soni
+    */
     connectedCallback(){
         loadStyle(this, designcss);
         this.loadFormData();
         this.getContactData();
     }
     
-     /**
-    * Method Name : getListingData
-    * @description : retrieve the data listing data from the salesforce
+      /**
+    * Method Name : getContactData
+    * @description : retrieve the data Contact data from the salesforce
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     getContactData(){
         this.spinnerShow = true;
         getContactData()
             .then(result => {
-                console.log('result-->',result);
                 this.contactData = result.contacts;
-                // this.propertyMediaUrls = result.medias;
-                this.contactData.forEach((listing)=>{
-                    const prop_id = listing.Property__c;
-                    console.log('prop_id-->',prop_id);
-                    listing.media_url = '/resource/blankImage';
-                    listing.isChecked = false;
-                    // console.log('property Image'+this.propertyMediaUrls[prop_id]);
+                this.contactData.forEach((con)=>{
+                    con.media_url = '/resource/blankImage';
+                    con.isChecked = false;
                 })
-                console.log(JSON.stringify(this.contactData));
-                this.processListings();
+                this.unchangedContactData = this.contactData;
+                this.processContacts();
             })
             .catch(error => {
-                this.error = error;
-                this.data = undefined;
+                console.warn('error ->'+error);
             });
     }
 
-    /**
-    * Method Name : processListings
-    * @description : set the listing data inorder of the fields data
+      /**
+    * Method Name : processContacts
+    * @description : set the contact data inorder of the fields data
+   * Date: 22/07/2024
     * Created By:Vyom Soni
     */
-    processListings() {
-        // Process the listing data and create the required data structure
-        this.processedContactData = this.contactData.map(listing => {
-            // For each listing, map the fields to create an array of ordered fields
+    processContacts() {
+        this.processedContactData = this.contactData.map(con => {
             let orderedFields = this.fields.map(field => {
                 return {
                     fieldName: field.fieldName,
-                    value: listing[field.fieldName] || '' // Get the value of each field from the listing data
+                    value: con[field.fieldName] || '' 
                 };
             });
-            // Return the listing with its processed ordered fields
             return {
-                Id: listing.Id,
-                Name: listing.Name,
-                Email: listing.Email,
-                Phone: listing.Phone,
-                LeadSource : listing.LeadSource,
-                media_url : listing.media_url,
-                isChecked: listing.isChecked,
+                Id: con.Id,
+                Name: con.Name,
+                Email: con.Email,
+                Phone: con.Phone,
+                LeadSource : con.LeadSource,
+                media_url : con.media_url,
+                isChecked: con.isChecked,
                 orderedFields
             };
         });
         this.unchangedProcessContact = this.processedContactData;
         this.totalPages = Math.ceil(this.processedContactData.length / this.pageSize);
         this.spinnerShow = false;
-        this.updateProcessedListingData();
+        this.updateProcessedContactData();
         this.updatePaginationButtons();
     }
      
     /**
     * Method Name : loadFormData
     * @description : retrieve the fields data from the salesforce
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     loadFormData() {
         getForm({ recordId: this.recordId, objectName: this.objectName, fieldSetName: this.fieldSet })
             .then(result => {
-                console.log('Data:'+ JSON.stringify(result));
                 if (result) {
                     this.fields = result.fieldsData;
-                    console.log(this.fields);
                 }
-                // this.isLoading = false;
             })
             .catch(error => {
-                console.log(error);
+                console.warn('error ->'+error);
             })
             .finally(() => {
 
             });
     }
 
-
     /**
-    * Method Name : handleListingSelect
-    * @description : handle data from the tile cmp
-    * Date: 14/06/2024
+    * Method Name : handleFilteredContacts
+    * @description : set the data comming from the filter cmp
+    *  Date: 22/07/2024
     * Created By:Vyom Soni
     */
-    handleListingSelect(event){
-        console.log('Hi');
-        this.processedListingData = event.detail;
-        this.updateProcessedListingData();
+    handleFilteredContacts(event){
+        const filteredContact = event.detail;
+        this.processedContactData = this.unchangedProcessContact;
+        this.processedContactData = this.processedContactData.filter(processCon =>
+            filteredContact.some(filtered => filtered.Id === processCon.Id)
+        );
+        this.contactData = this.contactData.filter(processCon => 
+            filteredContact.some(filter =>filter.Id === processCon.Id)
+        );
+        this.totalPages = Math.ceil(this.processedContactData.length / this.pageSize);
+        if(this.totalPages == 0){
+            this.totalPages = 1;
+        }
+        this.pageNumber = 1;
+        this.updateProcessedContactData();
+        this.updateSelectedProperties();
+        this.updatePaginationButtons();
+    }
+
+
+    /**
+    * Method Name : handleContactSelect
+    * @description : handle data from the tile cmp
+    *  Date: 22/07/2024
+    * Created By:Vyom Soni
+    */
+    handleContactSelect(event){
+        this.processedContactData = event.detail;
+        this.updateProcessedContactData();
         this.updateSelectedProperties();
     }
 
      /**
     * Method Name : handleMenuTabClick
     * @description : handle the menu clicks in the header
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     handleMenuTabClick(evt){
@@ -164,12 +204,12 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     
     /**
     * Method Name : redirectToRecord
-    * @description : redirect to listing record recordPage
+    * @description : redirect to contact record recordPage
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     redirectToRecord(event){
         const recordId = event.target.dataset.id;
-        console.log('hi'+recordId);
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
             attributes: {
@@ -183,13 +223,12 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : checkBoxValueChange
     * @description : handle the checkbox change
-    * date: 11/06/2024
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     checkBoxValueChange(event){
         try{
             const checkboxId = Number(event.target.dataset.id);
-            // this.listingData[checkboxId].isChecked = event.target.checked;
             this.shownProcessedContactData[checkboxId].isChecked = event.target.checked;
             this.processedContactData.forEach(item1=>{
                 this.shownProcessedContactData.forEach(item2=>{
@@ -198,7 +237,14 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
                     }
                 })
                })
-            this.listingData.forEach(item1=>{
+            this.unchangedProcessContact.forEach(item1=>{
+                this.shownProcessedContactData.forEach(item2=>{
+                    if(item1.Id == item2.Id){
+                        item1.isChecked = item2.isChecked;
+                    }
+                })
+               })
+            this.contactData.forEach(item1=>{
                 this.shownProcessedContactData.forEach(item2=>{
                     if(item1.Id == item2.Id){
                         item1.isChecked = item2.isChecked;
@@ -206,7 +252,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
                 })
                })
         }catch (e){
-            console.log('error'+e);
+            console.log('error ->'+e);
         }
         this.updateSelectedProperties();
     }
@@ -214,28 +260,29 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
       /**
     * Method Name : selectAllCheckbox
     * @description : select the all checkbox
-    * date: 11/06/2024
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     selectAllCheckbox(event){
         const isChecked = event.target.checked;
-        this.checkAll = !this.checkAll;
-        console.log('hi'+isChecked);
         this.contactData = this.contactData.map(item => {
             return { ...item, isChecked: isChecked };
         });
         this.processedContactData = this.processedContactData.map(item => {
             return { ...item, isChecked: isChecked };
         });
-        this.updateProcessedListingData();
+        this.unchangedProcessContact = this.unchangedProcessContact.map(item => {
+            return { ...item, isChecked: isChecked };
+        });
+        this.updateProcessedContactData();
         this.updateSelectedProperties();
     }
 
     
       /**
-    * Method Name : goTONewListing
-    * @description : Redirect the new listing page
-    * date: 11/06/2024
+    * Method Name : goTONewContact
+    * @description : Redirect the new contact page
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     goTONewContact(){
@@ -248,20 +295,22 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
         });
     }
 
-    /**
+     /**
     * Method Name : updateSelectedProperties
     * @description : update the properties as selected
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     updateSelectedProperties() {
-        this.selectedProperties = this.processedContactData.filter(listing => listing.isChecked);
-        this.selctedContactData = this.contactData.filter(listing => listing.isChecked);
+        this.selectedProperties = this.processedContactData.filter(con => con.isChecked);
+        this.selctedContactData = this.contactData.filter(con => con.isChecked);
         this.totalSelected = this.selectedProperties.length;
     }
 
     /**
     * Method Name : sortClick
     * @description : this methods apply the sorting on the all fields
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     sortClick(event) {
@@ -279,6 +328,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : sortData
     * @description : this methods apply the sorting on the all fields
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
     sortData() {
@@ -313,10 +363,10 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : updateSortIcons
     * @description : this method update the sort icons in the wrapbutton
-    * date : 11/06/2024
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
-     updateSortIcons() {
+    updateSortIcons() {
         const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown svg');
         allHeaders.forEach(icon => {
             icon.classList.remove('rotate-asc', 'rotate-desc');
@@ -330,41 +380,74 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
 
     //pagination login
 
-      /**
-    * Method Name : updateProcessedListingData,updatePaginationButtons,goToPrevFeaturedProperty,goToNextFeaturedProperty
-    * @description : this all method is used for the pagination in list view
+     /**
+    * Method Name : updateProcessedContactData
+    * @description : this method update shown contacts in pagination
+    * Date: 22/07/2024
     * Created By:Vyom Soni
     */
-    updateProcessedListingData() {
+    updateProcessedContactData() {
         const start = (this.pageNumber - 1) * this.pageSize;
         const end = start + this.pageSize;
         this.shownProcessedContactData = this.processedContactData.slice(start, end);
     }
 
+    /**
+    * Method Name : updatePaginationButtons
+    * @description : update the pagination buttons
+    * Date: 22/07/2024
+    * Created By:Vyom Soni
+    */
     updatePaginationButtons() {
         this.isPrevDisabled = this.pageNumber === 1;
         this.isNextDisabled = this.pageNumber === this.totalPages;
     }
 
+     /**
+    * Method Name : goToPrevFeaturedProperty
+    * @description : handle the back button click in the  pagination
+    * Date: 22/07/2024
+    * Created By:Vyom Soni
+    */
     goToPrevFeaturedProperty() {
         if (this.pageNumber > 1) {
             this.pageNumber--;
-            this.updateProcessedListingData();
+            this.updateProcessedContactData();
             this.updatePaginationButtons();
+            setTimeout(() => {
+                this.scrollToTop();
+            }, 0);
         }
     }
 
+     /**
+    * Method Name : goToNextFeaturedProperty
+    * @description : handle the next button click in the  pagination
+    * Date: 22/07/2024
+    * Created By:Vyom Soni
+    */
     goToNextFeaturedProperty() {
         if (this.pageNumber < this.totalPages) {
             this.pageNumber++;
-            this.updateProcessedListingData();
+            this.updateProcessedContactData();
             this.updatePaginationButtons();
+            setTimeout(() => {
+                this.scrollToTop();
+            }, 0);
         }
     }
 
-
-
-  
-
+    /**
+    * Method Name : scrollToTop
+    * @description : scroll to top in list
+    * Date: 22/07/2024
+    * Created By:Vyom Soni
+    */
+    scrollToTop() {
+        const tableDiv = this.template.querySelector('.tableDiv');
+            if (tableDiv) {
+                tableDiv.scrollTop = 0; 
+        }
+    }
     
 }
