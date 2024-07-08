@@ -1,11 +1,21 @@
+/**
+* Class Name : MarketingListFilterController
+* Test Class : Pending
+* Date : 23/06/2024
+* Created By : Vyom Soni
+* Last Modified Date : 08-07-2024
+* Last Modified By : Vyom Soni
+* @description : Used in MarektingListFilterCmp and MarketingListFilterAddCmp LWC components.
+*/
 public with sharing class MarketingListFilterController {
-      /**
-    * Method Name : getListingFields
+    /**
+    * Method Name : getContactFields
     * @description : get the fields by parent object name.
-    * @return List of Fields of all references of Listing.
+    * @param ObjectApIName String value
+    * @return List of Fields of all references of Contact.
     */
     @AuraEnabled
-    public static List<FieldDetails> getListingFields(String objectApiName) {
+    public static List<FieldDetails> getContactFields(String objectApiName) {
         List<FieldDetails> fieldDetailsList = new List<FieldDetails>();
 
         // Get the Describe result for the given object
@@ -86,6 +96,8 @@ public with sharing class MarketingListFilterController {
     /**
     * Method Name : getPicklistValues
     * @description : get static fields picklist values.
+    * @param apiName string field api name value.
+    * @param objectName string object api name value.
     * @return List of picklist values.
     */
     @AuraEnabled
@@ -107,10 +119,10 @@ public with sharing class MarketingListFilterController {
     }
 
     /**
-    * Class Name : ListingWrapper
-    * @description : this is a wrapper class to represent listing records with parent record.
+    * Class Name : ContactWrapper
+    * @description : this is a wrapper class to represent Contact records with parent record.
     */
-    public class ListingWrapper {
+    public class ContactWrapper {
         public Contact contact { get; set; }
         public Contact masterRecord { get; set; }
         public Contact reportTo { get; set; }
@@ -119,7 +131,7 @@ public with sharing class MarketingListFilterController {
         public User createdby { get; set; }
         public User lastmodifyby { get; set; }
         
-        public ListingWrapper(Contact contact, Contact masterRecord , Contact reportTo,Account account,Individual individual,User createdby,User lastmodifyby ) {
+        public ContactWrapper(Contact contact, Contact masterRecord , Contact reportTo,Account account,Individual individual,User createdby,User lastmodifyby ) {
             this.contact = contact;
             this.masterRecord = masterRecord;
             this.reportTo = reportTo;
@@ -129,11 +141,11 @@ public with sharing class MarketingListFilterController {
             this.lastmodifyby = lastmodifyby;
         }
 
-          /**
-            * Method Name : toJson
-            * @description : Convert the JSON data into string.
-            * @return String of listing data.
-            */
+        /**
+        * Method Name : toJson
+        * @description : Convert the JSON data into string.
+        * @return String of contact data.
+        */
         public String toJson() {
             Map<String, Object> result = new Map<String, Object>();
             result.put('Id', contact.Id);
@@ -148,11 +160,12 @@ public with sharing class MarketingListFilterController {
             return JSON.serialize(result);
         }
 
-         /**
-            * Method Name : getAllFieldsWithValues
-            * @description : Get all fields with value.
-            * @return map of field-name within api-name.
-            */
+        /**
+        * Method Name : getAllFieldsWithValues
+        * @description : Get all fields with value.
+        * @param obj SObject value.
+        * @return map of field-name within api-name.
+        */
         private Map<String, Object> getAllFieldsWithValues(SObject obj) {
             Map<String, Object> fieldMap = new Map<String, Object>();
             if (obj != null) {
@@ -166,13 +179,13 @@ public with sharing class MarketingListFilterController {
     }
 
      /**
-    * Method Name : getListingsWithRelatedRecords
-    * @description : get listing with related records.
+    * Method Name : getContactsWithRelatedRecords
+    * @description : get contact with related records.
     * @return List of picklist values.
     */
     @AuraEnabled
-    public static List<String> getListingsWithRelatedRecords() {
-        List<String> listingJsons = new List<String>();
+    public static List<String> getContactsWithRelatedRecords() {
+        List<String> contactJsons = new List<String>();
 
         // Dynamically build the SOQL query to include all fields
         String contactFields = String.escapeSingleQuotes(getAllFields('Contact'));
@@ -197,10 +210,10 @@ public with sharing class MarketingListFilterController {
         // Debug the constructed query
         System.debug('SOQL Query: ' + query);
 
-        // Fetch the listings with related records
+        // Fetch the contacts with related records
         List<Contact> contacts = Database.query(query);
 
-        // Iterate through the listings and create wrapper instances
+        // Iterate through the contacts and create wrapper instances
         for (Contact contact : contacts) {
             Contact relatedMasterRecord = contact.MasterRecord;
             Contact relatedReportsToId= contact.ReportsTo;
@@ -208,20 +221,21 @@ public with sharing class MarketingListFilterController {
             Individual relatedIndividual= contact.Individual;
             User relatedCreatedBy= contact.CreatedBy;
             User relatedLastModifiedBy= contact.LastModifiedBy;
-            ListingWrapper lw = new ListingWrapper(contact,relatedMasterRecord,relatedReportsToId,relatedAccount,relatedIndividual,relatedCreatedBy,relatedLastModifiedBy);
-            listingJsons.add(lw.toJson());
+            ContactWrapper lw = new ContactWrapper(contact,relatedMasterRecord,relatedReportsToId,relatedAccount,relatedIndividual,relatedCreatedBy,relatedLastModifiedBy);
+            contactJsons.add(lw.toJson());
         }
 
-        // Debug the listing wrapper records
-        System.debug('Listing Wrappers JSON: ' + listingJsons);
+        // Debug the contact wrapper records
+        System.debug('Contact Wrappers JSON: ' + contactJsons);
 
-        return listingJsons;
+        return contactJsons;
     }
 
     
      /**
     * Method Name : getAllFields
     * @description : get all fields of the obeject.
+    * @param sObjectName String value object name.
     * @return String of fields Name.
     */
     private static String getAllFields(String sObjectName) {
@@ -241,9 +255,11 @@ public with sharing class MarketingListFilterController {
     }
     
 
-       /**
+    /**
     * Method Name : getAllFieldsWithPrefix
     * @description : get all fields with prefix.
+    * @param sObjectName String value object name.
+    * @param prefix String value prefix value.
     * @return String of fields Name.
     */
     private static String getAllFieldsWithPrefix(String sObjectName, String prefix) {
@@ -262,7 +278,7 @@ public with sharing class MarketingListFilterController {
         return String.join(fieldNames, ', ');
     }
 
-   /**
+    /**
     * Method Name : getTheOfferRecords
     * @description : get all offer records.
     * @return String of fields Name.
@@ -272,9 +288,30 @@ public with sharing class MarketingListFilterController {
         String querylist = String.escapeSingleQuotes(getAllFields('Inquiry__c'));
         String query = 'SELECT ' + querylist+' '+
                        'FROM Inquiry__c WHERE Contact__c != NULL';
-        List<Inquiry__c> listings = Database.query(query);
-        return listings;
+        List<Inquiry__c> contacts = Database.query(query);
+        return contacts;
+    }
+
+    /**
+    * Method Name : getStaticFields
+    * @description : get the static fields from the custom metadata.
+    * @return String of JSON data.
+    */
+    @AuraEnabled
+    public static String getStaticFields() {
+           // Check if the user has read access to MarketingListFilterConfig__mdt object
+        if (!Schema.MarketingListFilterConfig__mdt.SObjectType.getDescribe().isAccessible()) {
+            throw new AuraHandledException('You do not have permission to access MarketingListFilterConfig__mdt.');
+        }
+        // Check if the user has read access to StaticFields__c field
+        if (!Schema.MarketingListFilterConfig__mdt.StaticFields__c.getDescribe().isAccessible()) {
+            throw new AuraHandledException('You do not have permission to access StaticFields__c.');
+        }
+        
+        // Perform the SOQL query
+        MarketingListFilterConfig__mdt filterConfig = [SELECT StaticFields__c FROM MarketingListFilterConfig__mdt LIMIT 1];
+        
+        
+        return filterConfig.StaticFields__c;
     }
 }
-// Account__r.Tier'+', '+
-// Contact__r.HasOptedOutOfEmail'+ ', ' + 'Contact__r.HasOptedOutOfFax' + ', ' + 'Contact__r.DoNotCall' + ', '+ 'Contact__r.Pronouns' + ', '+ 'Contact__r.GenderIdentity' + ', '+
