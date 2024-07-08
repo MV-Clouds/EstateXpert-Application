@@ -70,21 +70,6 @@
     font-weight: 600;
 }
 
-.shareIconDiv{
-    position: absolute;
-    bottom: 0.7rem;
-    right: 0.7rem;
-    cursor: pointer;;
-}
-.shareIconDiv svg{
-    fill: #757575;
-    width: 1rem;
-    height: 1rem;
-}
-.shareIconDiv:hover svg{
-    fill:  #2282D6;
-}
-
 /* pagination css */
 
 .paginationDiv{

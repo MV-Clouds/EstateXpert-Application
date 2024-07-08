@@ -26,7 +26,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
     @track ListingsWrapper = [];
     @track filteredListings;
     @track staticFields=[];
-    @track unchangeFields = [];
 
     /**
     * Method Name: connectedCallback
@@ -171,8 +170,8 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 isDateMax:field.operation === 'datemaximum',
                 isDateMin :field.operation === 'dateminimum', 
                 isRange:field.operation === 'range',
-                isMax:field.operation === 'minimum',
-                isMin :field.operation === 'maximum',
+                isMax:field.operation === 'maximum',
+                isMin :field.operation === 'minimum',
 
             };
         });
