@@ -18,7 +18,7 @@ public class PropertyInfoBuilder {
         try {
             Map<String, Object> jsonMap = new Map<String, Object>();
         
-            List<Portal_Listing_Mapping__c> portalListing = [SELECT Id, Name, Value_Mapping__c, MVEX__Data_Type__c FROM Portal_Listing_Mapping__c WHERE Portal_Name__c = 'Rightmove'];
+            List<Portal_Listing_Mapping__c> portalListing = [SELECT Id, Name, Value_Mapping__c, MVEX__Data_Type__c FROM Portal_Listing_Mapping__c WHERE Portal_Name__c = 'Rightmove' WITH SECURITY_ENFORCED];
 
             Map<String, String> valueMappingMap = new Map<String, String>();
             Map<String, String> dataTypeMap = new Map<String, String>();
