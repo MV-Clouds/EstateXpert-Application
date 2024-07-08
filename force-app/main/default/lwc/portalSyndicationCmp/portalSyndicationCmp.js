@@ -59,20 +59,21 @@ export default class PortalSyndicationCmp extends LightningElement {
 
   handleRowAction(event) {
     try {
-      let rowId = event.detail.row.Id;
+      let portalName = event.detail.row.pname;
+      let rowId = event.detail.row.id;
       let actionType = event.detail.row.buttonLabel;
       if (event.detail.action.name === "publish") {
-        this.handleButtonClick(this.data, rowId, actionType);
+        this.handleButtonClick(this.data, rowId, actionType, portalName);
       }
     } catch (error) {
       console.error('Error handling row action:', error);
     }
   }
 
-  async handleButtonClick(data, rowId, actionType) {
+  async handleButtonClick(data, rowId, actionType, portalName) {
     this.showSpinner = true;
     data.forEach((element) => {
-      if (rowId === element.Id) {
+      if (rowId === element.id) {
         if (element.flag === true) {
           console.log('if block');
           element.flag = false;
@@ -92,7 +93,7 @@ export default class PortalSyndicationCmp extends LightningElement {
     });
 
     console.log("rowId", rowId);
-    let response = await createPortalListingRecord({ portalId: rowId, listingId: this.recordId, actionType: actionType });
+    let response = await createPortalListingRecord({ portalId: rowId, listingId: this.recordId, actionType: actionType, portalName: portalName });
     console.log("response", response);
     let newList = [...data];
     console.log('newList', newList);
