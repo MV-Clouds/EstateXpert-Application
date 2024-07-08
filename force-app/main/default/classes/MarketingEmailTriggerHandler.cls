@@ -30,6 +30,8 @@ public with sharing class MarketingEmailTriggerHandler {
     }
 
     private void handleCampaignLogic(List<Marketing_Email__c> marketingEmails, Boolean isInsert) {
+        
+       try {
         Set<Id> campaignIds = new Set<Id>();
         Set<Id> contactIds = new Set<Id>();
 
@@ -85,12 +87,14 @@ public with sharing class MarketingEmailTriggerHandler {
                 List<Email_Member__c> emailMembersToCreate = new List<Email_Member__c>();
                 for (Marketing_Email__c email : marketingEmails) {
                     Marketing_Campaign__c campaign = campaigns.get(email.Marketing_Campaign__c);
+                    System.debug('campaign ==> ' + campaign);
                     if (campaign != null && campaign.SelectedContactDateField__c != null) {
                         List<Marketing_Campaign_Member__c> members = campaignMembersMap.get(campaign.Id);
                         if (members != null) {
                             for (Marketing_Campaign_Member__c member : members) {
                                 Contact contact = contacts.get(member.Contact__c);
                                 if (contact != null) {
+                                    System.debug('contact ==> ' + contact);
                                     Date selectedDate = (Date) contact.get(campaign.SelectedContactDateField__c);
                                     if (selectedDate != null) {
                                         DateTime scheduleDateTime = DateTime.newInstance(selectedDate, email.TimeToSend__c);
@@ -144,5 +148,9 @@ public with sharing class MarketingEmailTriggerHandler {
                 }
             }
         }
+       } catch (Exception e) {
+        System.debug('Exception ==> ' + e);
+        System.debug('Line number ==> ' + e.getLineNumber());
+       }
     }
 }

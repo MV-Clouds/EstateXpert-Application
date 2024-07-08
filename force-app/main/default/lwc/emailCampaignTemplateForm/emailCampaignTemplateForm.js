@@ -106,7 +106,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                         template: email.Quick_Template__c,
                         subject: email.Subject__c, 
                         daysAfterStartDate: email.Days_After_Start_Date__c, 
-                        timeToSend: '',
+                        timeToSend: '09:00',
                         name : email.Name
                     }));
                     this.emailsWithTemplate = [...this.emails];
@@ -192,7 +192,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
                     template: email.Quick_Template__c,
                     subject: email.Subject__c, 
                     daysAfterStartDate: email.Days_After_Start_Date__c, 
-                    timeToSend: '',
+                    timeToSend: '09:00',
                     name : email.Name
                 }));
                 this.emailsWithTemplate = [...this.emails];
@@ -430,8 +430,8 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     handleAddNewEmail() {
         const newId = this.emails.length + 1;
 
-        this.emails = [...this.emails, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '', exactDate: this.specificDate }];
-        this.emailsWithTemplate = [...this.emailsWithTemplate, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '', exactDate: this.specificDate }];    
+        this.emails = [...this.emails, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '09:00', exactDate: this.specificDate }];
+        this.emailsWithTemplate = [...this.emailsWithTemplate, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '09:00', exactDate: this.specificDate }];    
     }
 
     handleDeleteEmail(event) {
@@ -600,21 +600,30 @@ export default class EmailCampaignTemplateForm extends LightningElement {
             return;
         }
 
-
-        const daysAfterStartDateValues = this.emails.map(email => email.daysAfterStartDate);
-        const uniqueDaysAfterStartDateValues = new Set(daysAfterStartDateValues);
-
-        if (daysAfterStartDateValues.length !== uniqueDaysAfterStartDateValues.size) {
+        const uniqueDateTimeValues = new Set();
+        let hasDuplicateDateTime = false;
+    
+        this.emailsWithTemplate.forEach(email => {
+            const dateTimeKey = `${email.daysAfterStartDate}-${email.timeToSend}`;
+            if (uniqueDateTimeValues.has(dateTimeKey)) {
+                hasDuplicateDateTime = true;
+                return;
+            } else {
+                uniqueDateTimeValues.add(dateTimeKey);
+            }
+        });
+    
+        if (hasDuplicateDateTime) {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Error',
-                    message: 'There are duplicate "Days After Start Date" values. Please ensure each email has a unique "Days After Start Date" value.',
+                    message: 'There are duplicate "Days After Start Date" and "Time to Send" values. Please ensure each email has a unique combination of these values.',
                     variant: 'error'
                 })
             );
             return;
         }
-        
+    
         try {
             console.log('selectedPrimaryRecipients ==> ' , JSON.stringify(this.selectedPrimaryRecipients));
             const campaignEmailData = {
@@ -650,17 +659,17 @@ export default class EmailCampaignTemplateForm extends LightningElement {
     validateInputs() {
         const hasRecipients = this.selectedPrimaryRecipients.length ;
 
-        console.log('hasRecipients ==> ' ,hasRecipients);
+        // console.log('hasRecipients ==> ' ,hasRecipients);
 
         const isDateSelected = ((this.specificDate && this.specificDate.trim() != '') || this.selectedContactDateField != '');
-        console.log('isDateSelected ==> ' ,isDateSelected);
+        // console.log('isDateSelected ==> ' ,isDateSelected);
 
-        console.log('emailsWithTemplate ==> ' , JSON.stringify(this.emailsWithTemplate));
+        // console.log('emailsWithTemplate ==> ' , JSON.stringify(this.emailsWithTemplate));
         const areEmailsValid = this.emailsWithTemplate.every(email =>
             email.name && email.template && email.daysAfterStartDate !== null && email.timeToSend
         );
 
-        console.log('areEmailsValid ==> ' ,areEmailsValid);
+        // console.log('areEmailsValid ==> ' ,areEmailsValid);
 
         
         return hasRecipients && isDateSelected && areEmailsValid;
