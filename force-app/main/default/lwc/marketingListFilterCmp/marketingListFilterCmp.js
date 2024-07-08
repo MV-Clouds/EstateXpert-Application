@@ -8,7 +8,6 @@ export default class MarketingListFilterCmp extends LightningElement {
     @track addModal = false;
     @track contacts = [];
     // dyanamic fields selctor variables
-    @track objectApiName = '';
     @track valueFromChild = [];
     @track isAddButtonDisabled = true;
     @track filterFields =[];
@@ -187,7 +186,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
                
-                if (field.objectApiName !== 'Contact' && field.objectApiName !== 'Inquiry__c') {
+                if (field.objectApiName !== 'Contact' && field.objectApiName !== 'MVEX__Inquiry__c') {
                     // Filter for related record in another object (Contact, Property)
                   
                         this.filteredContacts = this.filteredContacts.filter(wrapper => {
@@ -210,16 +209,18 @@ export default class MarketingListFilterCmp extends LightningElement {
                             return true;
                         });
 
-                } else if (field.objectApiName === 'Inquiry__c') {
+                } else if (field.objectApiName === 'MVEX__Inquiry__c') {
                     // Filter for related offer records
-                    
+                    console.log('Hi');
                     this.filteredContacts = this.filteredContacts.filter(wrapper => {
-                        const relatedOffers = this.InquiryRecords.filter(offer => offer.Contact__c === wrapper.Id);
+                        const relatedOffers = this.InquiryRecords.filter(offer => offer.MVEX__Contact__c === wrapper.Id);
     
                         if (!relatedOffers.length) return false;
     
                         return relatedOffers.some(relatedOffer => {
                             if (field.picklist || field.string || field.id ) {
+                                console.log('relatedOffers ->'+relatedOffer);
+                                console.log('field ->'+field);
                                 const values = field.selectedOptions.map(option => option.value);
                                 return this.applyOperatorFilter(relatedOffer, field, values);
                             }
@@ -777,6 +778,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     **/
     handleReset(){
         // this.filterFields = this.staticFields
+        this.staticFields[0].picklistValue[0].showRightIcon = false;
         this.filterFields = this.staticFields;
         this.filterFields = this.staticFields.map(field => {
             return {

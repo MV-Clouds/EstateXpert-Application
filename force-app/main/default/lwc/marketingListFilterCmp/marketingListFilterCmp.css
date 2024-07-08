@@ -95,33 +95,27 @@
 .min-max-input-div:hover .down-btn-max-min{
     display: block;
 }
- .up-btn-max-min{
+.min-max{
     fill: rgb(134,134,134);
     width: 0.8rem;
     position: absolute;
     right: 0.5rem;
-    top: 0rem;
     /* display: none; */
     cursor: pointer;
     height: fit-content;
     user-select: none;
 }
- .up-btn-max-min:hover{
+.up-btn-max-min{  
+    top: 0rem;
+}
+.up-btn-max-min:hover{
     fill: rgb(1,118,211);
    
 }
- .down-btn-max-min{
-    fill: rgb(134,134,134);
-    width: 0.8rem;
-    position: absolute;
-    right: 0.5rem;
+.down-btn-max-min{
     bottom: 0.4rem;
-    /* display: none; */
-    cursor: pointer;
-    height: fit-content;
-    user-select: none;
 }
- .down-btn-max-min:hover{
+.down-btn-max-min:hover{
     fill: rgb(1,118,211);
 }
 .field-add-btn {

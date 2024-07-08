@@ -14,8 +14,6 @@ export default class MarketingListFilterAddCmp extends LightningElement {
     @track isFocused1 = false;
     @track valueIsField = false;
     @track notCheckboxValue = false;
-    @track comboBoxValue;
-    @track operationValue;
     @track contactFields=[];
     @track options1=[];
     @track isDisabled = true;
@@ -58,7 +56,7 @@ export default class MarketingListFilterAddCmp extends LightningElement {
                             // Include reference fields if any
                         };
                     });
-                    const offerField = [{"value":"Inquiry__c","label":"Inquiry","type":"REFERENCE","objectApiName":"Inquiry__c"}];
+                    const offerField = [{"value":"MVEX__Inquiry__c","label":"Inquiry","type":"REFERENCE","objectApiName":"MVEX__Inquiry__c"}];
                     this.fieldOptions = this.fieldOptions.concat(offerField);
                     this.options1 = this.fieldOptions;
                     this.isDisabled = false;

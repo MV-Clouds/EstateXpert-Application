@@ -284,11 +284,11 @@ public with sharing class MarketingListFilterController {
     * @return String of fields Name.
     */
     @AuraEnabled
-    public static List<Inquiry__c> getTheInquiryRecords(){
-        String querylist = String.escapeSingleQuotes(getAllFields('Inquiry__c'));
+    public static List<MVEX__Inquiry__c> getTheInquiryRecords(){
+        String querylist = String.escapeSingleQuotes(getAllFields('MVEX__Inquiry__c'));
         String query = 'SELECT ' + querylist+' '+
-                       'FROM Inquiry__c WHERE Contact__c != NULL';
-        List<Inquiry__c> contacts = Database.query(query);
+                       'FROM MVEX__Inquiry__c WHERE MVEX__Contact__c != NULL';
+        List<MVEX__Inquiry__c> contacts = Database.query(query);
         return contacts;
     }
 
@@ -300,18 +300,18 @@ public with sharing class MarketingListFilterController {
     @AuraEnabled
     public static String getStaticFields() {
            // Check if the user has read access to MarketingListFilterConfig__mdt object
-        if (!Schema.MarketingListFilterConfig__mdt.SObjectType.getDescribe().isAccessible()) {
+        if (!Schema.MVEX__MarketingListFilterConfig__mdt.SObjectType.getDescribe().isAccessible()) {
             throw new AuraHandledException('You do not have permission to access MarketingListFilterConfig__mdt.');
         }
         // Check if the user has read access to StaticFields__c field
-        if (!Schema.MarketingListFilterConfig__mdt.StaticFields__c.getDescribe().isAccessible()) {
+        if (!Schema.MVEX__MarketingListFilterConfig__mdt.MVEX__StaticFields__c.getDescribe().isAccessible()) {
             throw new AuraHandledException('You do not have permission to access StaticFields__c.');
         }
         
         // Perform the SOQL query
-        MarketingListFilterConfig__mdt filterConfig = [SELECT StaticFields__c FROM MarketingListFilterConfig__mdt LIMIT 1];
+        MVEX__MarketingListFilterConfig__mdt filterConfig = [SELECT MVEX__StaticFields__c FROM MVEX__MarketingListFilterConfig__mdt LIMIT 1];
         
         
-        return filterConfig.StaticFields__c;
+        return filterConfig.MVEX__StaticFields__c;
     }
 }

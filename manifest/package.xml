@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <types>
-        <members>*</members>
-        <name>ApexClass</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>LightningComponentBundle</name>
-    </types>
-    <version>59.0</version>
+	<types>
+		<members>MarketingListCmpController</members>
+		<members>MarketingListFilterController</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>MarketingListFilterConfig.StaticFields</members>
+		<name>CustomMetadata</name>
+	</types>
+	<types>
+		<members>MarketingListFilterConfig__mdt</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Contact.MarketingListFieldSet</members>
+		<name>FieldSet</name>
+	</types>
+	<types>
+		<members>marketingListCmp</members>
+		<members>marketingListFilterAddCmp</members>
+		<members>marketingListFilterCmp</members>
+		<members>marketingListTileView</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>60.0</version>
 </Package>

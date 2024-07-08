@@ -16,9 +16,9 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
     * Created By: Vyom Soni
     */
      @api
-     get contactsdata() {
-         return this.contacts;
-     }
+    get contactsdata() {
+        return this.contacts;
+    }
  
     /**
      * Method Name : set contactsdata

@@ -4,12 +4,11 @@ import designcss from '@salesforce/resourceUrl/listingManagerCss';
 import getContactData from '@salesforce/apex/MarketingListCmpController.getContactData';
 import getForm from '@salesforce/apex/MarketingListCmpController.getForm';
 import { NavigationMixin } from 'lightning/navigation';
-import blankImage from '@salesforce/resourceUrl/blankImage';
 
 export default class MarketingListCmp extends NavigationMixin(LightningElement) {
     @api objectName = 'Contact';
     @api recordId;
-    @api fieldSet = 'MarketingListFieldSet';
+    @api fieldSet = 'MVEX__MarketingListFieldSet';
     @track spinnerShow=true;
     @track showList = true
     @track showTile =false;
@@ -18,12 +17,10 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @track fields =[];
     @track processedContactData = [];    
     @track unchangedProcessContact = [];    
-    @track blankImage = blankImage;
     @track sortField = '';
     @track sortOrder = 'asc';
     @track totalSelected=0;
     @track selectedProperties;
-    @track selctedContactData;
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
@@ -214,7 +211,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             type: 'standard__recordPage',
             attributes: {
                 recordId: recordId,
-                objectApiName: 'Contact', 
+                objectApiName: 'Contact',
                 actionName: 'view'
             }
         });
@@ -285,12 +282,15 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     * Date: 22/07/2024
     * Created By:Vyom Soni
     */
-    goTONewContact(){
+    goTOContactPage(){
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',
             attributes: {
                 objectApiName: 'Contact',
                 actionName: 'new'
+            },
+            state: {
+                useRecordTypeCheck: 1
             }
         });
     }
@@ -303,7 +303,6 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     */
     updateSelectedProperties() {
         this.selectedProperties = this.processedContactData.filter(con => con.isChecked);
-        this.selctedContactData = this.contactData.filter(con => con.isChecked);
         this.totalSelected = this.selectedProperties.length;
     }
 

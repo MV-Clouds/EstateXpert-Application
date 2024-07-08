@@ -21,7 +21,7 @@ public with sharing class MarketingListCmpController {
     /**
     * Method Name : getContactData
     * @description : for the retrieve the contact data.
-    * @return List<Contact__c>.
+    * @return List<Contact>.
     */
     @AuraEnabled
     public static WrapperClass getContactData(){
