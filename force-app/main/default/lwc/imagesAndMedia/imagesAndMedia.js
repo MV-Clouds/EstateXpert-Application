@@ -9,7 +9,6 @@ import { publish, MessageContext } from 'lightning/messageService';
 import Refresh_msg from '@salesforce/messageChannel/refreshMessageChannel__c';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from '@salesforce/apex';
-import updateSortOrder from '@salesforce/apex/ImageAndMediaController.updateSortOrder';
 import watermarkjs from "@salesforce/resourceUrl/watermarkjs";
 import videoThumbnail from '@salesforce/resourceUrl/videothumbnail';
 import buffer from 'c/buffer';
@@ -228,51 +227,119 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     saveChanges() {
         try {
-            let changedRecords = this.data.filter((dataItem, index) => {
-                let fetchedItem = this.fetchedData[index];
-                return JSON.stringify(dataItem) !== JSON.stringify(fetchedItem);
-            });
-
-            let modifiedRecords = changedRecords.map(record => {
-                let modifiedRecord = { Id: record.Id };
+            let recordMap = new Map();
+    
+            // Prepare the media list to save
+            let combinedMediaListToSave = this.saveOrder();
+            console.log('combinedMediaListToSave-->', JSON.stringify(combinedMediaListToSave));
+    
+            // Iterate over this.data to initialize the map with existing records
+            this.data.forEach(record => {
+                let existingRecord = { Id: record.Id };
                 for (let key in record) {
                     if (key !== 'MVEX__BaseUrl__c' && key !== 'MVEX__Size__c' && key !== 'MVEX__Property__c') {
                         if (key === 'MVEX__Tags__c' && Array.isArray(record[key])) {
-                            modifiedRecord[key] = record[key].join(';');
+                            existingRecord[key] = record[key].join(';');
                         } else {
-                            modifiedRecord[key] = record[key];
+                            existingRecord[key] = record[key];
                         }
                     }
                 }
-                return modifiedRecord;
+                recordMap.set(record.Id, existingRecord);
             });
-
-            console.log('modifiedRecords-->', JSON.stringify(modifiedRecords));
-            
+    
+            // Iterate over combinedMediaListToSave and merge sort fields into the map
+            combinedMediaListToSave.forEach(media => {
+                if (!recordMap.has(media.Id)) {
+                    recordMap.set(media.Id, { Id: media.Id });
+                }
+                let existingRecord = recordMap.get(media.Id);
+                for (let key in media) {
+                    if (media.hasOwnProperty(key) && key !== 'Id') {
+                        existingRecord[key] = media[key];
+                    }
+                }
+            });
+    
+            let finalListToUpdate = Array.from(recordMap.values());
+    
+            console.log('finalListToUpdate-->', JSON.stringify(finalListToUpdate));
+    
+            // Make a single Apex callout with the final list
             updatePropertyFileRecords({
-                itemsToUpdate: modifiedRecords
+                itemsToUpdate: finalListToUpdate
             })
             .then(result => {
                 console.log('result', result);
                 if (result === 'success') {
                     this.disabledSave = true;
                     this.disabledCancel = true;
-                    this.fetchingdata();
                     this.showToast('Success', 'Records updated successfully', 'success');
-                }
-                else {
+                    this.fetchingdata();
+                } else {
                     this.showToast('Error', result, 'error');
                 }
             })
             .catch(error => {
                 console.log('error', error);
             });
-
-            this.saveOrder();
-
+    
         } catch (error) {
             console.log('error in saveChanges -> ', error);
         }
+    }
+    
+    /**
+    * Method Name: saveOrder
+    * @description: Used to save order.
+    * Date: 09/07/2024
+    * Created By: Karan Singh
+    **/
+    saveOrder() {
+        let combinedMediaListToSave = [];
+    
+        if (this.sortOn.includes('Expose')) {
+            combinedMediaListToSave = combinedMediaListToSave.concat(this.prepareMediaListToSave('Expose', this.Expose));
+        }
+        if (this.sortOn.includes('Website')) {
+            combinedMediaListToSave = combinedMediaListToSave.concat(this.prepareMediaListToSave('Website', this.Website));
+        }
+        if (this.sortOn.includes('Portal')) {
+            combinedMediaListToSave = combinedMediaListToSave.concat(this.prepareMediaListToSave('Portal', this.Portal));
+        }
+    
+        // console.log('combinedMediaListToSave-->', JSON.stringify(combinedMediaListToSave));
+        return combinedMediaListToSave;
+    }
+    
+    /**
+    * Method Name: prepareMediaListToSave
+    * @description: Used to prepare media list to save.
+    * Date: 09/07/2024
+    * Created By: Karan Singh
+    **/
+    prepareMediaListToSave(type, mediaList) {
+        return mediaList.map((media, index) => {
+            let mediaObject = {
+                Id: media.Id,
+            };
+    
+            switch (type) {
+                case 'Expose':
+                    mediaObject.MVEX__Sort_on_Expose__c = index;
+                    break;
+                case 'Website':
+                    mediaObject.MVEX__Sort_on_Website__c = index;
+                    break;
+                case 'Portal':
+                    mediaObject.MVEX__Sort_on_Portal_Feed__c = index;
+                    break;
+                default:
+                    break;
+            }
+    
+            return mediaObject;
+        });
     }
 
     /**
@@ -609,68 +676,6 @@ export default class ImagesAndMedia extends LightningElement {
     }
 
     /**
-    * Method Name: saveOrder
-    * @description: Used to save order.
-    * Date: 27/06/2024
-    * Created By: Karan Singh
-    **/
-    saveOrder() {
-        if (this.sortOn.includes('Expose')) {
-            this.saveOrderInApex('Expose', this.Expose);
-        }
-        if (this.sortOn.includes('Website')) {
-            this.saveOrderInApex('Website', this.Website);
-        }
-        if (this.sortOn.includes('Portal')) {
-            this.saveOrderInApex('Portal', this.Portal);
-        }
-        this.sortOn = [];
-    }
-
-    /**
-    * Method Name: saveOrderInApex
-    * @description: Used to save order in apex.
-    * Date: 27/06/2024
-    * Created By: Karan Singh
-    **/
-    saveOrderInApex(type, mediaList) {
-        let mediaListToSave = mediaList.map((media) => {
-            let mediaObject = {
-                Id: media.Id,
-            };
-            return mediaObject;
-        });
-        if (type === 'Expose') {
-
-            for (let i = 0; i < mediaListToSave.length; i++) {
-                mediaListToSave[i].MVEX__Sort_on_Expose__c = i;
-            }
-        }
-        if (type === 'Website') {
-
-            for (let i = 0; i < mediaListToSave.length; i++) {
-                mediaListToSave[i].MVEX__Sort_on_Website__c = i;
-            }
-        }
-        if (type === 'Portal') {
-
-            for (let i = 0; i < mediaListToSave.length; i++) {
-                mediaListToSave[i].MVEX__Sort_on_Portal_Feed__c = i;
-            }
-        }
-        
-        updateSortOrder({ mediaList: mediaListToSave })
-            .then(result => {
-                if (result) {
-                    console.log('result-->', result);
-                }
-            })
-            .catch(error => {
-                console.error('Error updating sort order:', error);
-            });
-    }
-
-    /**
     * Method Name: handleDelete
     * @description: Used to handle delete.
     * Date: 27/06/2024
@@ -731,9 +736,9 @@ export default class ImagesAndMedia extends LightningElement {
     * Created By: Karan Singh
     **/
     handleCheckboxChange(event) {
-        const key = event.target.dataset.key;
-        const field = event.target.dataset.field;
-        const value = event.target.checked;
+        const key = event.currentTarget.dataset.key;
+        const field = event.currentTarget.dataset.field;
+        const value = event.currentTarget.checked;
     
         const updatedData = this.data.map(item => {
             if (item.Id === key) {
@@ -1150,7 +1155,6 @@ export default class ImagesAndMedia extends LightningElement {
     handleDragEnter(event) {
         event.preventDefault();
         event.target.closest(".dropableimage").classList.add("highlight");
-        clearTimeout(leaveTimeout);
     }
 
     /**
@@ -1164,9 +1168,7 @@ export default class ImagesAndMedia extends LightningElement {
         event.preventDefault();
         const dropableImage = event.currentTarget.closest(".dropableimage");
         if (!dropableImage.contains(event.relatedTarget)) {
-            leaveTimeout = setTimeout(() => {
-                dropableImage.classList.remove("highlight");
-            }, 200);
+            dropableImage.classList.remove("highlight");
         }
     }
 

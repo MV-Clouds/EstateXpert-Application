@@ -162,26 +162,6 @@ public with sharing class ImageAndMediaControllerTest {
     }
 
     /**
-    * Method Name : testUpdateSortOrder
-    * @description : Used to test updatesortorder method.
-    */
-    @isTest
-    static void testUpdateSortOrder() {
-        try {
-            List<Property_File__c> propertyFiles = [SELECT Id FROM Property_File__c LIMIT 2];
-
-            Test.startTest();
-            Boolean result = ImageAndMediaController.updateSortOrder(propertyFiles);
-            Boolean result1 = ImageAndMediaController.updateSortOrder(null);
-            Test.stopTest();
-
-            System.assert(result, 'Sort order should be updated successfully');
-        } catch (Exception e) {
-            ErrorHandler.insert_errordata(e, 'ImageAndMediaControllerTest', 'testUpdateSortOrder', 'Error while updating sort order.');
-        }
-    }
-
-    /**
     * Method Name : testGetS3ConfigSettings
     * @description : Used to test gets3configsettings method.
     */

@@ -158,25 +158,6 @@ public with sharing class ImageAndMediaController {
     }
 
     /**
-    * Method Name : updateSortOrder
-    * @param mediaList to stored the Property_File__c records
-    * @return Boolean value
-    * @description : Used to sort Property_File__c records.
-    */
-    @AuraEnabled
-    public static Boolean updateSortOrder(List<Property_File__c> mediaList){
-        try {
-            if(mediaList.size() > 0 && Property_File__c.SObjectType.getDescribe().isUpdateable()){ 
-                update mediaList;
-            }
-            return true;
-        } catch (Exception e) {
-            ErrorHandler.insert_errordata(e, 'ImageAndMediaController', 'updateSortOrder', 'Error while updating Property_File__c record.');
-            return false;
-        }
-    }
-
-    /**
     * Method Name : getS3ConfigSettings
     * @return AWS_Config__c details
     * @description : Used to return the AWS_Config__c custom setting record.
