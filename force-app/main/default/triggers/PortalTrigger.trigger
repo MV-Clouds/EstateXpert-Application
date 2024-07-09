@@ -2,11 +2,8 @@ trigger PortalTrigger on Portal__c (after insert, after update, after delete, af
 
     PortalTriggerHandler handler = new PortalTriggerHandler();
     
-        if(Trigger.isAfter && Trigger.isInsert){
-            handler.OnAfterInsert(Trigger.new);
-        }
+    if(Trigger.isAfter && Trigger.isInsert){
+        handler.onAfterInsert(Trigger.new);
+    }
         
-        else if(Trigger.isBefore && Trigger.isUpdate){
-            handler.OnBeforeUpdate(Trigger.new);
-        }
 }
