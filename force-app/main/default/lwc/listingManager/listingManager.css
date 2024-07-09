@@ -101,8 +101,17 @@
 
 .tableDiv{
     overflow: auto;
-    height: 81%;
-    
+    height: 81%;   
+}
+
+.tableDiv .fields-names{
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.tableDiv .colume2{
+    width: 9rem;
 }
 
 .noresult{
@@ -187,4 +196,59 @@
     width: 1rem;
     height: 1rem;
     cursor: pointer;
+}
+
+
+
+@media only screen and (max-width: 768px) { 
+    .main .body{
+        flex-direction: column;
+        background: white;
+        padding-bottom: 0rem;
+    }
+
+    .main .body .innerDiv1{
+        position: relative;
+        width: 100%;
+        flex-direction: column-reverse;
+    }
+
+    .main .body .innerDiv1 .filterDiv{
+        padding-bottom: 0rem;
+    }
+
+    .main .body .innerDiv1 .filterWrap{
+        background-color: rgb(243, 243, 243);
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-right: 1px solid #c9c9c9;
+        border-left: 1px solid #c9c9c9;
+        position: relative;
+    }
+
+    .main .body .innerDiv2{
+        overflow: visible;
+        width: 100%;
+        height: 30rem;
+        /* margin-bottom: -1rem; */
+    }
+
+    .noresult{
+        height: 24rem;
+    }
+
+    .paginationDiv{
+        height: fit-content;
+    }
+
+    .main .body .innerDiv1 .wrap-icon{
+         rotate: 90deg;
+    }
+
+    .tableDiv{
+        height: 85%;
+    }
 }

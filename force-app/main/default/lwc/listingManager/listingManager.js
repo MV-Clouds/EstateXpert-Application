@@ -39,6 +39,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track shownProcessedListingData = [];
     @track wrapOn = false;
     @track propertyMediaUrls = [];
+    @track screenWidth = 0;
      /**
     * Method Name : checkAll
     * @description : handle the checkAll checkbox in list view.
@@ -66,9 +67,27 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     * Created By:Vyom Soni
     */
     connectedCallback(){
+        this.updateScreenWidth();
+        // Add event listener for window resize
+        window.addEventListener('resize', this.handleResize.bind(this));
         loadStyle(this, designcss);
         this.loadFormData();
         this.getListingData();
+    }
+
+    disconnectedCallback() {
+        // Remove event listener when component is destroyed
+        window.removeEventListener('resize', this.handleResize.bind(this));
+    }
+
+    handleResize() {
+        // Update screen width when window is resized
+        this.updateScreenWidth();
+    }
+
+    updateScreenWidth() {
+        this.screenWidth = window.innerWidth;
+        console.log('screen width ->'+this.screenWidth);
     }
 
      /**
@@ -488,12 +507,22 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
             filterDiv.classList.remove('removeInnerDiv1');
 
-            const div1 = this.template.querySelector('.innerDiv1');
-            div1.style.width = '30%';
+            if(this.screenWidth >= 768){
+                const div1 = this.template.querySelector('.innerDiv1');
+                div1.style.width = '30%';
+                div1.style.height = '100%';
+                const div2 = this.template.querySelector('.innerDiv2');
+                div2.style.width = '70%';
+                div2.style.height = '100%';
+            }else{
+                const div1 = this.template.querySelector('.innerDiv1');
+                div1.style.height = 'fit-content';
+                div1.style.width = '100%';
 
-            const div2 = this.template.querySelector('.innerDiv2');
-            div2.style.width = '70%';
-
+                const div2 = this.template.querySelector('.innerDiv2');
+                div2.style.height = '30rem';
+                div2.style.width = '100%';
+            }
             this.wrapOn = false;
         } else {
             const svgElement = this.template.querySelector('.innerDiv1 .filterWrap img');
@@ -502,11 +531,21 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
             filterDiv.classList.add('removeInnerDiv1');
 
-            const div1 = this.template.querySelector('.innerDiv1');
-            div1.style.width = 'fit-content';
-
-            const div2 = this.template.querySelector('.innerDiv2');
-            div2.style.width = '100%';
+            if(this.screenWidth >= 768){
+                const div1 = this.template.querySelector('.innerDiv1');
+                div1.style.width = 'fit-content';
+                div1.style.height = '100%';
+                const div2 = this.template.querySelector('.innerDiv2');
+                div2.style.height = '100%';
+                div2.style.width = '100%';
+            }else{
+                const div1 = this.template.querySelector('.innerDiv1');
+                div1.style.height = '30rem';
+                div1.style.width = '100%';
+                const div2 = this.template.querySelector('.innerDiv2');
+                div2.style.height = '100%';
+                div2.style.width = '100%';
+            }
 
             this.wrapOn = true;
         }
