@@ -1,7 +1,3 @@
-/* eslint-disable no-useless-escape */
-/* eslint-disable no-useless-concat */
-/* eslint-disable no-return-assign */
-/* eslint-disable no-prototype-builtins */
 import { LightningElement, track, api, wire } from "lwc";
 import getS3ConfigSettings from "@salesforce/apex/ImageAndMediaController.getS3ConfigSettings";
 import { loadScript } from "lightning/platformResourceLoader";
