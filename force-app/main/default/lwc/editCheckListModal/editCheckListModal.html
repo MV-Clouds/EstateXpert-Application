@@ -1,0 +1,107 @@
+<template>
+    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+        class="slds-modal slds-fade-in-open slds-modal_small section_css">
+        <div class="editchecklistcss">
+            <lightning-button-icon class="slds-modal__close" title="Close" size="large" icon-name="utility:close"
+                icon-class="slds-button_icon-inverse" variant="bare-inverse"
+                onclick={handleDialogueClose}></lightning-button-icon>
+
+            <div class="slds-modal__header blue-header">
+                <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">Manage Your Checklist
+                </h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium slds-p-bottom_small" id="modal-content-id-1">
+                <div class="header_container_css">
+                    <div class="object_name_css">
+                        Selected Object : <b>{selectedObjectName}</b>
+                    </div>
+                    <div class="header_title_css">
+                        <button class="add-new-btn" onclick={addNewRow}>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.85714 9.14286H0V6.85714H6.85714V0H9.14286V6.85714H16V9.14286H9.14286V16H6.85714V9.14286Z" fill="white"/>
+                            </svg>
+                            Add New
+                        </button>
+                    </div>
+                </div>
+                <div class="tableContainer">
+                    <template if:true={isDataAvailable}>
+                        <div class="popup__header-row">
+                            <div class="slds-col">
+                                <p class="header-text">Checklist Name</p>
+                            </div>
+                            <div class="slds-col">
+                                <p class="header-text">Field Name</p>
+                            </div>
+                            <div class="slds-col">
+                                <p class="header-text">Operator</p>
+                            </div>
+                            <div class="slds-col">
+                                <p class="header-text">Value</p>
+                            </div>
+                            <div class="slds-col">
+                                <p class="header-text padding_css">Order</p>
+                            </div>
+                            <div class="slds-col">
+                                <p class="header-text">Action</p>
+                            </div>
+                        </div>
+                        <div class="popup__recordValues">
+                            <template for:each={checklistItems} for:item="item" for:index="index">
+                                <div key={item.id} class="popup__data-row">
+                                    <div class="slds-col wrap_css">
+                                        <lightning-input type="text" value={item.Name} data-index={index} data-field="Name" onchange={handleInputChange} variant="label-hidden"></lightning-input>
+                                    </div>
+                                    <div class="slds-col wrap_css">
+                                        <lightning-combobox value={item.MVEX__Field_Name__c} data-index={index} data-field="MVEX__Field_Name__c" options={fieldoptions} onchange={handleFieldNameChange} variant="label-hidden"></lightning-combobox>
+                                    </div>
+                                    <div class="slds-col wrap_css">
+                                        <lightning-combobox value={item.MVEX__Operator__c} data-index={index} data-field="MVEX__Operator__c" options={operatorOptions} onchange={handleOperatorChange} variant="label-hidden"></lightning-combobox>
+                                    </div>
+                                    <div class="slds-col wrap_css">
+                                        <lightning-input type="text" value={item.MVEX__Value__c} data-index={index} data-field="MVEX__Value__c" onchange={handleInputChange} variant="label-hidden"></lightning-input>
+                                    </div>
+                                    <div class="slds-col wrap_css">
+                                        <div class="slds-button-group order_btn_grp" role="group">
+                                            <button class="order_btn" aria-pressed="false" data-index={index} data-action="up" onclick={handleOrderChange}>
+                                                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M8.81667 6L5 2.2915L1.175 6L0 4.8583L5 -4.65616e-08L10 4.8583L8.81667 6Z" fill="#0176D3"/>
+                                                </svg>                                                
+                                            </button>
+                                            <button class="order_btn" aria-pressed="false" data-index={index} data-action="down" onclick={handleOrderChange}>
+                                                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1.18333 8.21036e-08L5 3.7085L8.825 1.0942e-08L10 1.1417L5 6L0 1.1417L1.18333 8.21036e-08Z" fill="#0176D3"/>
+                                                </svg>                                                
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col wrap_css">
+                                        <lightning-button-icon icon-name="utility:delete" alternative-text="Delete" onclick={handleDelete} data-index={index}></lightning-button-icon>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template if:false={isDataAvailable}>
+                        <div class="no-data-container">
+                            <span>No Checklist available for this object, please create a checklist first.</span>
+                        </div>
+                    </template>
+                </div>
+                <div class="footerbtns">
+                    <button class="cancel_btn_css" aria-label="Cancel and close"
+                    onclick={handleDialogueClose}>Cancel</button>
+                    <button class="save_btn_css" onclick={saveChecklistRecords}>Save</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+
+    <template if:true={isSpinner}>
+        <div class="spinner_class">
+            <span class="loader"></span>
+            <span class="loadertext">L &nbsp; ading</span>
+        </div>
+    </template>
+</template>
