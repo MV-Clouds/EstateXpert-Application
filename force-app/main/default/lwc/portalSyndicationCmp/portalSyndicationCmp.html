@@ -1,7 +1,7 @@
 <!-- sldsValidatorIgnore -->
 <template>
-  <lightning-card title="Portal Syndication" style="padding: 15px">
-    <div style="height: 200px; padding: 0 15px">
+  <lightning-card title="Portal Syndication">
+    <div style="height: 200px; padding: 0 15px;">
       <c-my-custom-type-datatable
       key-field="id"
       hide-checkbox-column="true"
@@ -19,4 +19,9 @@
     </div>
   </div>
   </lightning-card>
+  <template if:true={isErrorPopup}>
+    <div class="popup-container my_popup_container">
+        <c-error-popup-for-portals jsonbody={errorBody} portalname={portalName} onhidepopup={handleHidePopup}></c-error-popup-for-portals>
+    </div>
+</template>
 </template>
