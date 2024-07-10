@@ -162,88 +162,6 @@ public with sharing class ImageAndMediaControllerTest {
     }
 
     /**
-    * Method Name : testUpdateMediaName
-    * @description : Used to test updatemedianame method.
-    */
-    @isTest
-    static void testUpdateMediaName() {
-        try {
-            List<Property_File__c> propertyFiles = [SELECT Id, Name, Tags__c FROM Property_File__c];
-        
-            Map<String, Object> mediaInfoMap = new Map<String, Object>{
-                'recordId' => propertyFiles[0].Id,
-                'fileName' => 'Updated Name',
-                'picklistValues' => new Set<String>{ 'Interior', 'Exterior' }
-            };
-            
-            List<Map<String, Object>> mediaInfoList = new List<Map<String, Object>>{ mediaInfoMap };
-            String dataMapJSON = JSON.serialize(mediaInfoList);
-
-            Test.startTest();
-            Boolean result = ImageAndMediaController.updateMediaName(dataMapJSON);
-            Boolean result1 = ImageAndMediaController.updateMediaName(null);
-            Test.stopTest();
-
-            System.assert(result, 'Media name should be updated successfully');
-            
-            Property_File__c updatedPropertyFile = [SELECT Id, Name, Tags__c FROM Property_File__c WHERE Id = :propertyFiles[0].Id];
-            
-            System.assertEquals('Updated Name', updatedPropertyFile.Name, 'Name should be updated');
-            System.assertEquals('Interior;Exterior', updatedPropertyFile.Tags__c, 'Tags should be updated');
-        } catch (Exception e) {
-            ErrorHandler.insert_errordata(e, 'ImageAndMediaControllerTest', 'testUpdateMediaName', 'Error while updating media name.');
-        }
-    }
-
-    /**
-    * Method Name : testUpdateOrderState
-    * @description : Used to test updateorderstate method.
-    */
-    @isTest
-    static void testUpdateOrderState() {
-        try {
-            List<Property_File__c> propertyFiles = [SELECT Id FROM Property_File__c LIMIT 2];
-            List<Id> exposeIds = new List<Id>{ propertyFiles[0].Id };
-            List<Id> exposeIdsFalse = new List<Id>{ propertyFiles[1].Id };
-
-            Test.startTest();
-            Boolean result = ImageAndMediaController.updateOrderState(exposeIds, exposeIds, exposeIds, exposeIdsFalse, exposeIdsFalse, exposeIdsFalse);
-            Boolean result1 = ImageAndMediaController.updateOrderState(null, null, null, null, null, null);
-            Test.stopTest();
-
-            System.assert(result, 'Order state should be updated successfully');
-            
-            Property_File__c exposedMedia = [SELECT Id, IsOnExpose__c FROM Property_File__c WHERE Id = :propertyFiles[0].Id];
-            Property_File__c notExposedMedia = [SELECT Id, IsOnExpose__c FROM Property_File__c WHERE Id = :propertyFiles[1].Id];
-
-            System.assert(exposedMedia.IsOnExpose__c, 'Media should be exposed');
-            System.assert(!notExposedMedia.IsOnExpose__c, 'Media should not be exposed');
-        } catch (Exception e) {
-            ErrorHandler.insert_errordata(e, 'ImageAndMediaControllerTest', 'testUpdateOrderState', 'Error while updating order state.');
-        }
-    }
-
-    /**
-    * Method Name : testUpdateSortOrder
-    * @description : Used to test updatesortorder method.
-    */
-    @isTest
-    static void testUpdateSortOrder() {
-        try {
-            List<Property_File__c> propertyFiles = [SELECT Id FROM Property_File__c LIMIT 2];
-
-            Test.startTest();
-            Boolean result = ImageAndMediaController.updateSortOrder(propertyFiles);
-            Boolean result1 = ImageAndMediaController.updateSortOrder(null);
-            Test.stopTest();
-
-            System.assert(result, 'Sort order should be updated successfully');
-        } catch (Exception e) {
-            ErrorHandler.insert_errordata(e, 'ImageAndMediaControllerTest', 'testUpdateSortOrder', 'Error while updating sort order.');
-        }
-    }
-
-    /**
     * Method Name : testGetS3ConfigSettings
     * @description : Used to test gets3configsettings method.
     */
@@ -257,6 +175,40 @@ public with sharing class ImageAndMediaControllerTest {
             System.assertNotEquals(null, config, 'Config settings should not be null');
         } catch (Exception e) {
             ErrorHandler.insert_errordata(e, 'ImageAndMediaControllerTest', 'testGetS3ConfigSettings', 'Error while getting S3 config settings.');
+        }
+    }
+
+    /**
+    * Method Name : testGetS3ConfigSettings
+    * @description : Used to test gets3configsettings method.
+    */
+    @isTest
+    static void testUpdatePropertyFileRecords() {
+        try {
+            List<Property_File__c> propertyFiles = [SELECT Id, Name, Property__c, BaseUrl__c, Size__c, IsOnPortalFeed__c, IsOnWebsite__c, IsOnExpose__c, Tags__c FROM Property_File__c LIMIT 1];
+
+            List<Map<String, Object>> propertyFileMaps = new List<Map<String, Object>>();
+            for (Property_File__c file : [SELECT Id, Name, Property__c, BaseUrl__c, Size__c, IsOnPortalFeed__c, IsOnWebsite__c, IsOnExpose__c, Tags__c FROM Property_File__c LIMIT 1]) {
+                Map<String, Object> fileMap = new Map<String, Object>{
+                    'Id' => file.Id,
+                    'Name' => file.Name,
+                    'IsOnPortalFeed__c' => file.IsOnPortalFeed__c,
+                    'IsOnWebsite__c' => file.IsOnWebsite__c,
+                    'IsOnExpose__c' => file.IsOnExpose__c,
+                    'Tags__c' => file.Tags__c
+                };
+                propertyFileMaps.add(fileMap);
+            }
+
+            // Call the method to test
+            Test.startTest();
+            String result = ImageAndMediaController.updatePropertyFileRecords(propertyFileMaps);
+            Test.stopTest();
+
+            // Add assertions here
+            System.assertEquals('success', result, 'Method should return success');
+        } catch (Exception e) {
+            ErrorHandler.insert_errordata(e, 'ImageAndMediaControllerTest', 'testUpdatePropertyFileRecords', 'Error while updating property file records.');
         }
     }
 }
