@@ -232,14 +232,16 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         }else if(target == "3"){
             this.showMap = true;
         }
-                this.template.querySelectorAll(".menuButton").forEach(tabel => {
-                        tabel.classList.remove("activeButton");
-                });
-                this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("activeButton");
-                this.template.querySelectorAll(".menuButton svg").forEach(tabdata => {
-                    tabdata.classList.remove("activeSvg");
-                });
-                this.template.querySelector('[data-id="' + target + '"]').classList.add("activeSvg");
+        setTimeout(()=>{
+            this.template.querySelectorAll(".menuButton").forEach(tabel => {
+                    tabel.classList.remove("activeButton");
+            });
+            this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("activeButton");
+            this.template.querySelectorAll(".menuButton svg").forEach(tabdata => {
+                tabdata.classList.remove("activeSvg");
+            });
+            this.template.querySelector('[data-id="' + target + '"]').classList.add("activeSvg");
+        },0);
     }
 
     /**
@@ -540,7 +542,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
                 div2.style.width = '100%';
             }else{
                 const div1 = this.template.querySelector('.innerDiv1');
-                div1.style.height = '30rem';
+                div1.style.height = 'fit-content';
                 div1.style.width = '100%';
                 const div2 = this.template.querySelector('.innerDiv2');
                 div2.style.height = '100%';
