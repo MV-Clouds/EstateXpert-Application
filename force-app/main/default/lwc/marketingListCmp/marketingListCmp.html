@@ -31,7 +31,7 @@
                         </div>
                         <div class="slds-page-header__row second-row">
                             <div class="slds-page-header__col-meta">
-                                <p class="slds-page-header__meta-text">{totalSelected} Items Selected</p>
+                                <p class="slds-page-header__meta-text">{totalSelected} Items Sorted by {selectedFieldsString}</p>
                             </div>
                             <div class="slds-page-header__col-controls">
                                 <div class="slds-page-header__controls">
@@ -73,7 +73,7 @@
                             <div class="tableDiv" id="tableDiv">
                                 <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid" aria-label="Example advanced table of Opportunities in actionable mode">
                                     <thead>
-                                    <tr class="slds-line-height_reset">
+                                    <tr class="slds-line-height_reset fields-names">
                                         <th class="slds-text-align_right slds-cell_action-mode colume1" scope="col">
                                         <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
                                         <div class="slds-th__action slds-th__action_form">
@@ -85,9 +85,9 @@
                                                 </lightning-input>
                                         </div>
                                         </th>
-                                        <th class="slds-cell_action-mode imageColume" scope="col">
+                                        <!-- <th class="slds-cell_action-mode imageColume" scope="col">
                                             <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
-                                        </th>
+                                        </th> -->
                                         <th key={contact.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
                                         <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
                                             <span class="slds-assistive-text">Sort by: </span>
@@ -126,11 +126,11 @@
                                                     onchange={checkBoxValueChange}>
                                                 </lightning-input>
                                             </td>
-                                            <td class="slds-cell_action-mode" role="gridcell">
+                                            <!-- <td class="slds-cell_action-mode" role="gridcell">
                                                 <div class="slds-truncate">
                                                     <img class="property-image" src={contact.media_url} alt="contact Image"/>
                                                 </div>
-                                            </td>
+                                            </td> -->
                                             <th class="slds-cell_action-mode" scope="row">
                                                 <div class="slds-truncate">
                                                     <a href="#" data-id={contact.Id} onclick={redirectToRecord} tabindex="0">{contact.Name}</a>

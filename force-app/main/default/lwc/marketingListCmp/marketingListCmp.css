@@ -7,6 +7,8 @@
 .main{
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .main .slds-icon_small, .slds-icon--small{
@@ -45,6 +47,7 @@
     height: 76%;
     display: flex;
     margin-top: 1rem;
+    flex-grow: 1;
 }
 
 .main .body .innerDiv1{
@@ -54,7 +57,7 @@
     margin-right: 1rem;
     border-radius: 0.5rem;
     border: 2px solid rgb(42, 32, 32);
-    background: linear-gradient(179deg, #E9EEFF, #F4FFF6);
+    background: linear-gradient(180deg, #E9EEFF, #F4FFF6);
      /* padding: 0.7rem; */
     overflow: hidden;
 }
@@ -137,8 +140,14 @@
 .tableDiv{
     overflow: auto;
     height: 85%;
-    
 }
+
+.tableDiv .fields-names{
+    position: sticky;
+    top: 0;
+    z-index: 98;
+}
+
 .tableDiv .slds-table_resizable-cols thead th, .slds-table--resizable-cols thead th {
     background-color: rgb(220, 235, 249);
 }

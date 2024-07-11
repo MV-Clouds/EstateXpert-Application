@@ -13,6 +13,10 @@
 .add-modal-cover .bread-crumb-cover{
     display: flex;
 }
+.add-modal-cover .bread-crumb-cover .contact-label{
+    margin-right: 0.5rem;
+    font-weight: 500;
+}
 .bread-crumb-cover svg{
     fill: black;
     width: 0.8rem;

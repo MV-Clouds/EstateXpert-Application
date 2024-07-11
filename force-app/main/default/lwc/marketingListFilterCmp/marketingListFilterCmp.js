@@ -14,6 +14,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     @track InquiryRecords = [];
     @track filteredContacts =[];
     @track staticFields=[];
+    @track selectedFieldsString = [];
 
      /**
     * Method Name: connectedCallback
@@ -159,7 +160,7 @@ export default class MarketingListFilterCmp extends LightningElement {
                 isRange:field.operation === 'range',
                 isMax:field.operation === 'minimum',
                 isMin :field.operation === 'maximum',
-
+                message:''
             };
         });
         this.filterFields = [...this.filterFields, ...this.valueFromChild];
@@ -174,7 +175,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     applyFilters() {
         
         this.filteredContacts = [...this.contacts];
-    
+        this.selectedFieldsString = [];
         this.filterFields.forEach(field => {
             // Check if field has selectedOptions or has valid min/max values for filtering
             const hasSelectedOptions = field.selectedOptions && field.selectedOptions.length > 0;
@@ -185,10 +186,11 @@ export default class MarketingListFilterCmp extends LightningElement {
             const hasFieldChecked = field.fieldChecked != null;
     
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
-               
+                console.log(field.label);
+                this.selectedFieldsString.push(field.label);
+                console.log(this.selectedFieldsString);
                 if (field.objectApiName !== 'Contact' && field.objectApiName !== 'MVEX__Inquiry__c') {
                     // Filter for related record in another object (Contact, Property)
-                  
                         this.filteredContacts = this.filteredContacts.filter(wrapper => {
                             const relatedRecord = wrapper[field.prevApiName.replace('__c', '__r')];
                             if (!relatedRecord) return false;
@@ -211,7 +213,6 @@ export default class MarketingListFilterCmp extends LightningElement {
 
                 } else if (field.objectApiName === 'MVEX__Inquiry__c') {
                     // Filter for related offer records
-                    console.log('Hi');
                     this.filteredContacts = this.filteredContacts.filter(wrapper => {
                         const relatedOffers = this.InquiryRecords.filter(offer => offer.MVEX__Contact__c === wrapper.Id);
     
@@ -352,15 +353,18 @@ export default class MarketingListFilterCmp extends LightningElement {
         return field.isNot ? !inRange : inRange;
     }
     
-      /**
+    /**
     * Method Name: setFilteredContacts
     * @description: set Contacts in the Parent contact manager component.
     * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     setFilteredContacts(){
+        console.log('selectyedFilelds'+JSON.stringify(this.selectedFieldsString));
+        const filtercontacts =  this.filteredContacts;
+        const fields = this.selectedFieldsString;
         const customEvent = new CustomEvent('valueselected', {
-            detail: this.filteredContacts
+            detail:  {filtercontacts,fields}
         });
         
         // Dispatch the custom event
@@ -381,6 +385,40 @@ export default class MarketingListFilterCmp extends LightningElement {
             this.filterFields[index].picklistValue =this.filterFields[index].unchangePicklistValue.filter(option =>
                 option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase())
             );
+            if (event.key === 'Enter') { // Check if Enter key was pressed
+                let fields = this.filterFields; // Assuming this is where 'fields' should be declared
+                const value = this.filterFields[index].picklistValue[0].value;
+                console.log('value'+value);
+                const field = fields[index]; // Access 'fields' instead of 'this.filterFields'
+                if (field != null) {
+                    if (field.selectedOptions == null) {
+                        field.selectedOptions = [];
+                    }
+        
+                    // Check if the value already exists in selectedOptions
+                    const exists = field.selectedOptions.some(option => option.value === value);
+                    if (!exists) {
+                        this.filterFields[index].searchTerm = '';
+                        field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
+                        this.applyFilters();
+        
+                        const newPicklistValue = field.unchangePicklistValue.map(option => {
+                            if (option.value === value) {
+                                return {...option, showRightIcon: true};
+                            }
+                            return option;
+                        });
+        
+                        field.picklistValue = newPicklistValue;
+                        field.unchangePicklistValue = newPicklistValue;
+                        fields[index] = field;
+                        this.filterFields = fields;
+                        this.handleBlur1(event);
+                    } else {
+                       console.log('Value already exists in selectedOptions');
+                    }
+                }
+            }
     }
 
     /**
@@ -418,6 +456,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     selectOption1(event) {
+      
         const value = event.currentTarget.dataset.id;
         const index = event.currentTarget.dataset.index;
 
@@ -594,7 +633,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let value = parseInt(event.target.value, 10);
         if(isNaN(value)){
-            value = 0;
+            value = null;
         }
         this.filterFields[index].minValue = value;
         if ( this.filterFields[index].isMin == true|| value <= this.filterFields[index].maxValue|| value === 0) {
@@ -612,7 +651,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let value = parseInt(event.target.value, 10);
         if(isNaN(value)){
-            value = 0;
+            value = null;
         }
         this.filterFields[index].maxValue = value;
         if ((this.filterFields[index].isMax ==true ||value === 0 || value >= this.filterFields[index].minValue)) {
@@ -630,7 +669,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let currentValue = parseInt(this.filterFields[index].minValue, 10);
         if (isNaN(currentValue)) {
-            currentValue = 0;
+            currentValue = null;
         }
         this.filterFields[index].minValue = currentValue + 1;
         if (this.filterFields[index].isMin == true||currentValue + 1 <= this.filterFields[index].maxValue) {
@@ -649,7 +688,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let currentValue = parseInt(this.filterFields[index].minValue, 10);
         if (isNaN(currentValue) || currentValue <= 0) {
-            currentValue = 0;
+            currentValue = null;
         } else {
             currentValue--;
         }
@@ -669,7 +708,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let currentValue = parseInt(this.filterFields[index].maxValue, 10);
         if (isNaN(currentValue)) {
-            currentValue = 0;
+            currentValue = null;
         }
         this.filterFields[index].maxValue = currentValue + 1;
         if (this.filterFields[index].isMax == true||currentValue + 1 >= this.filterFields[index].minValue) {
@@ -688,6 +727,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         let currentValue = parseInt(this.filterFields[index].maxValue, 10);
         if (isNaN(currentValue) || currentValue <= this.filterFields[index].minValue) {
             //alert('Max value cannot be less than min value.');
+            currentValue = null;
         } else {
             currentValue--;
         }

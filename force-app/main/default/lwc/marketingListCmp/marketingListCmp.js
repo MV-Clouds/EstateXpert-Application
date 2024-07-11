@@ -27,6 +27,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @track pageSize = 30;
     @track totalPages;
     @track shownProcessedContactData = [];
+    @track selectedFieldsString = [];
 
      /**
     * Method Name : checkAll
@@ -131,9 +132,6 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             .catch(error => {
                 console.warn('error ->'+error);
             })
-            .finally(() => {
-
-            });
     }
 
     /**
@@ -143,7 +141,10 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     * Created By:Vyom Soni
     */
     handleFilteredContacts(event){
-        const filteredContact = event.detail;
+        const filteredContact = event.detail.filtercontacts;
+        this.selectedFieldsString =event.detail.fields;
+        console.log('contacts'+filteredContact);
+        console.log('fields'+typeof fields);
         this.processedContactData = this.unchangedProcessContact;
         this.processedContactData = this.processedContactData.filter(processCon =>
             filteredContact.some(filtered => filtered.Id === processCon.Id)
