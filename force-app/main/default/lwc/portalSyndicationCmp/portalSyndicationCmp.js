@@ -28,15 +28,15 @@ export default class PortalSyndicationCmp extends LightningElement {
   @track isInitalRender = true;
   @api recordId;
   @track portalId;
-  data = [];
-  showSpinner = true;
-  columns = columns;
+  @track data = [];
+  @track showSpinner = true;
+  @track columns = columns;
   @track status;
   @track responseBody;
   @track errorBody;
   @track portalName;
   @track isErrorPopup = false;
-  subscription = {};
+  @track subscription = {};
   @api channelName = '/event/ResponseEvent__e';
 
   /**
@@ -50,35 +50,13 @@ export default class PortalSyndicationCmp extends LightningElement {
       const data = await fetchPortals({ listingId: this.recordId });
       this.data = data;
       this.showSpinner = this.data.length > 0 ? false : true;
-      var isPortal = this.checkPortals();
+      let isPortal = this.checkPortals();
       if (isPortal) {
         this.registerErrorListener();
         this.handleSubscribe();
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-    }
-  }
-
-  /**
-  * Method Name: renderedCallback
-  * @description: Used to set the style.
-  * Date: 09/07/2024
-  * Created By: Karan Singh
-  **/
-  renderedCallback() {
-    if (this.isInitalRender) {
-      const body = document.querySelector("body");
-
-      const style = document.createElement('style');
-      style.innerText = `
-        tr .slds-hint-parent{
-          height: 42px;
-        }
-      `;
-
-      body.appendChild(style);
-      this.isInitalRender = false;
     }
   }
 
@@ -103,7 +81,7 @@ export default class PortalSyndicationCmp extends LightningElement {
   handleSubscribe() {
     const self = this;
     const messageCallback = function (response) {
-      var obj = JSON.parse(JSON.stringify(response));
+      let obj = JSON.parse(JSON.stringify(response));
       console.log('obj', obj);
       let objData = obj.data.payload;
       self.status = objData.MVEX__Status__c;
@@ -261,9 +239,9 @@ export default class PortalSyndicationCmp extends LightningElement {
       return true;
     } else if (portalName === 'Rightmove' && actionType === 'Publish') {
       return true;
-    } else {
-      return false;
-    }
+    } 
+
+    return false;
   }
 
   /**
