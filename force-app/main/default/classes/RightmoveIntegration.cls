@@ -167,23 +167,28 @@ public with sharing class RightmoveIntegration {
             
             System.debug('Response Status: ' + res3.getStatus());
             System.debug('Response Body: ' + res3.getBody());
+            String responseBody = res3.getBody();
+
+            Map<String, Object> jsonMap = (Map<String, Object>) JSON.deserializeUntyped(res3.getBody());
+            Boolean successValue = (Boolean) jsonMap.get('success');
             
             List<PortalListing__c> portalListing = [SELECT Id, Portal__c, Listing__c, SystemIsActive__c, API_Response__c FROM PortalListing__c WHERE SystemIsActive__c = true AND Portal__c =: portalId AND Listing__c =: listingId WITH SECURITY_ENFORCED LIMIT 1];
 
-            if (res3.getStatusCode() == 200) {
-                String responseBody = res3.getBody();
-                if (!portalListing.isEmpty()) {
+            if (res3.getStatusCode() == 200 && successValue) {
+                if (!portalListing.isEmpty() && PortalListing__c.SObjectType.getDescribe().isUpdateable()) {
                     portalListing[0].API_Response__c = responseBody;
                     update portalListing;
                 }
+                PlatformEventCtrl.publishEvent('Success', responseBody, 'Rightmove');
             } else {
                 System.debug('Request failed with status code: ' + res3.getStatusCode());
                 System.debug('Error Response: ' + res3.getBody());
-                String responseBody = res3.getBody();
-                if (!portalListing.isEmpty()) {
+                if (!portalListing.isEmpty() && PortalListing__c.SObjectType.getDescribe().isUpdateable()) {
                     portalListing[0].API_Response__c = responseBody;
+                    portalListing[0].SystemIsActive__c = false;
                     update portalListing;
                 }
+                PlatformEventCtrl.publishEvent('Failed', responseBody, 'Rightmove');
             }
         } catch (Exception e) {
             System.debug('Exception: ' + e.getMessage());

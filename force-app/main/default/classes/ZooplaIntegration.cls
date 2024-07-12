@@ -175,18 +175,23 @@ public with sharing class ZooplaIntegration {
 
             if (res3.getStatusCode() == 200) {
                 String responseBody = res3.getBody();
-                if (!portalListing.isEmpty()) {
+                if (!portalListing.isEmpty() && PortalListing__c.SObjectType.getDescribe().isUpdateable()) {
                     portalListing[0].API_Response__c = responseBody;
                     update portalListing;
                 }
+                PlatformEventCtrl.publishEvent('Success', responseBody, 'Zoopla');
+
             } else {
                 System.debug('Request failed with status code: ' + res3.getStatusCode());
                 System.debug('Error Response: ' + res3.getBody());
                 String responseBody = res3.getBody();
-                if (!portalListing.isEmpty()) {
+                if (!portalListing.isEmpty() && PortalListing__c.SObjectType.getDescribe().isUpdateable()) {
+                    portalListing[0].SystemIsActive__c = false;
                     portalListing[0].API_Response__c = responseBody;
                     update portalListing;
                 }
+                PlatformEventCtrl.publishEvent('Failed', responseBody, 'Zoopla');
+
             }
         } catch (Exception e) {
             System.debug('Exception: ' + e.getMessage());
