@@ -387,7 +387,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.id;
         this.filterFields[index].searchTerm = event.target.value;
             this.filterFields[index].picklistValue =this.filterFields[index].unchangePicklistValue.filter(option =>
-                option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase())
+                option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase().trim())
             );
     }
 
@@ -574,7 +574,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     **/
     addTheString(event) {
         const index = event.currentTarget.dataset.id;
-        const value = this.filterFields[index].searchTerm;
+        const value = this.filterFields[index].searchTerm.trim();
         
         
         if (value !== '') {

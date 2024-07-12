@@ -96,7 +96,7 @@
                                         <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
                                     </th>
                                     <th key={listing.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
-                                      <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                      <div class="slds-th__action slds-text-link_reset" role="button" tabindex="0">
                                         <span class="slds-assistive-text">Sort by: </span>
                                         <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
                                           <span class="slds-truncate" title="Title">Listing Name</span>
@@ -104,11 +104,11 @@
                                             <img data-index="Name" class="listing-manager-icon" src={arrowUp} />
                                           </span>
                                         </div>
-                                      </a>
+                                    </div>
                                     </th>
                                     <template for:each={fields} for:item="listing" for:index="index">
                                       <th key={listing.fieldName} data-id={listing.fieldName} onclick={sortClick} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
-                                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                        <div class="slds-th__action slds-text-link_reset" role="button" tabindex="0">
                                           <span class="slds-assistive-text">Sort by: </span>
                                           <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
                                             <span class="slds-truncate" title="Title">{listing.fieldLabel}</span>
@@ -116,7 +116,7 @@
                                                 <img data-index={listing.fieldName} class="listing-manager-icon" src={arrowUp} />
                                             </span>
                                           </div>
-                                        </a>
+                                        </div>
                                       </th>
                                     </template>
                                   </tr>
@@ -140,7 +140,7 @@
                                         </td>
                                         <th class="slds-cell_action-mode" scope="row">
                                             <div class="slds-truncate">
-                                                <a href="#" data-id={listing.Id} onclick={redirectToRecord} tabindex="0">{listing.Name}</a>
+                                                <a data-id={listing.Id} onclick={redirectToRecord} tabindex="0">{listing.Name}</a>
                                             </div>
                                         </th>
                                         <template for:each={listing.orderedFields} for:item="field" for:index="index2">
