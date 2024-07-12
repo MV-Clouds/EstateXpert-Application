@@ -6,7 +6,6 @@ export default class ErrorPopupForPortals extends LightningElement {
     @api portalname;
     @track firstHeader;
     @track secondHeader;
-    @track isInitalRender = true;
     @track errors = [];
 
     /**
