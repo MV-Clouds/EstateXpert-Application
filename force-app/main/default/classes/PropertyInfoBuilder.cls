@@ -149,6 +149,10 @@ public class PropertyInfoBuilder {
                     return Integer.valueOf((String) value);
                 } else if (dataType.equalsIgnoreCase('boolean')) {
                     return Boolean.valueOf((String) value);
+                } else if (dataType.equalsIgnoreCase('datetime')) {
+                    return Datetime.valueOfGmt((String) value).format('dd-MM-yyyy HH:mm:ss');
+                } else if (dataType.equalsIgnoreCase('date')) {
+                    return ((Date) value).format();
                 } else {
                     return String.valueOf(value);
                 }
