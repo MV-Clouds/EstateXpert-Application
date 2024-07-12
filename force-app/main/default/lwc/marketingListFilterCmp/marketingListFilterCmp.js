@@ -382,7 +382,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         } else {
             this.filterFields[index].message = null; // Clear the message if the input length is valid
             this.filterFields[index].picklistValue =this.filterFields[index].unchangePicklistValue.filter(option =>
-                option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase())
+                option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase().trim())
             );
             if (event.key === 'Enter') { // Check if Enter key was pressed
                 let fields = this.filterFields; // Assuming this is where 'fields' should be declared
@@ -605,7 +605,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     **/
     addTheString(event) {
         const index = event.currentTarget.dataset.id;
-        const value = this.filterFields[index].searchTerm;
+        const value = this.filterFields[index].searchTerm.trim();
       
         if (value !== '') {
             const field = this.filterFields[index];
