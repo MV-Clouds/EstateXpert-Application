@@ -3,16 +3,16 @@
         <div class="main_header_cls">
             <div slot="title" class="slds-media slds-media_centre header_block_css">
                 <div class="sub_header_css">
-                    <div class="slds-media__figure">
-                        <img src="/resource/iconimg" alt="Portal Icon" class="icon">
+                    <div>
+                        <img src="/resource/MVEX__iconimg" alt="Portal Icon" class="icon">
                     </div>
                     <div class="slds-p-left_xxx-small portal_mapping">
                         Portal Mapping
                     </div>
                 </div>
-                
+
                 <button class="back_button" onclick={backToControlCenter}>
-                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
                         <path fill-rule="evenodd" clip-rule="evenodd"
                             d="M0.30542 6.24365C0.10986 6.44084 0 6.70825 0 6.98708C0 7.2659 0.10986 7.53332 0.30542 7.73051L6.20652 13.679C6.30275 13.7794 6.41786 13.8595 6.54513 13.9146C6.67239 13.9697 6.80928 13.9987 6.94778 14C7.08629 14.0012 7.22365 13.9746 7.35185 13.9217C7.48005 13.8688 7.59652 13.7907 7.69447 13.692C7.79241 13.5933 7.86987 13.4759 7.92232 13.3467C7.97477 13.2174 8.00116 13.079 7.99996 12.9393C7.99876 12.7997 7.96998 12.6617 7.91531 12.5334C7.86064 12.4052 7.78117 12.2891 7.68154 12.1921L2.51794 6.98708L7.68154 1.78203C7.87156 1.58371 7.9767 1.31809 7.97432 1.04239C7.97195 0.766681 7.86224 0.502945 7.66883 0.307984C7.47542 0.113023 7.21379 0.00243378 6.94028 3.8147e-05C6.66677 -0.00235748 6.40326 0.10363 6.20652 0.295174L0.30542 6.24365Z"
                             fill="black" />
@@ -30,113 +30,118 @@
                 <p>For more information about this feature, <a href="#">Click here</a></p>
             </div>
         </div>
-        <div class="main_body_cls">
-            <div>
+        <div class="main_body">
+            <div class="main_body_cls">
+                <div>
+                    <div class="card-header" slot="title">
+                        <div
+                            class="slds-text-heading_small slds-truncate slds-text-weight_bold available_css slds-p-left_medium slds-p-right_medium tooltip_css">
+                            Available Portals <lightning-helptext
+                                content="Hover on a portal to add new mapping"></lightning-helptext>
+                        </div>
+                    </div>
 
-                <div class="card-header" slot="title">
-                    <div
-                        class="slds-text-heading_small slds-truncate slds-text-weight_bold available_css slds-p-left_medium slds-p-right_medium tooltip_css">
-                        Available Portals <lightning-helptext
-                            content="Hover on a portal to add new mapping"></lightning-helptext>
+                    <div class="grid-style available-portals slds-p-left_medium slds-p-right_medium">
+                        <template for:each={portals} for:item="portal">
+                            <div key={portal.id}>
+                                <div class="portal-box" onmouseover={handleMouseOver} onmouseout={handleMouseOut}>
+                                    <img src={portal.logo} alt={portal.name} class="portal-logo">
+                                    <div class="portal-info">
+                                        <div class="portal-name">{portal.name}</div>
+                                        <button class="settings" data-portalname={portal.name}
+                                            data-portaliconurl={portal.logo} onclick={handleNew}>New</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
-
-
-                <div class="grid-style available-portals slds-p-left_medium slds-p-right_medium">
-                    <template for:each={portals} for:item="portal">
-                        <div key={portal.id}>
-                            <div class="portal-box" onmouseover={handleMouseOver} onmouseout={handleMouseOut}>
-                                <img src={portal.logo} alt={portal.name} class="portal-logo">
-                                <div class="portal-info">
-                                    <div class="portal-name">{portal.name}</div>
-                                    <button class="settings" data-portalname={portal.name}
-                                        data-portaliconurl={portal.logo} onclick={handleNew}>New</button>
+                <div>
+                    <div class="card-header" slot="title">
+                        <div
+                            class="slds-text-heading_small slds-truncate slds-p-left_medium slds-p-right_medium slds-text-weight_bold availale_css1">
+                            Connected Portals
+                        </div>
+                    </div>
+                    <div class="field-mapping-container">
+                        <div class="tableContainer">
+                            <div class="portalMapping_header-row">
+                                <div class="slds-col">
+                                    <p class="header-text">No.</p>
+                                </div>
+                                <div class="slds-col">
+                                    <p class="header-text">Title</p>
+                                </div>
+                                <div class="slds-col">
+                                    <p class="header-text">Name</p>
+                                </div>
+                                <div class="slds-col">
+                                    <p class="header-text">Status</p>
+                                </div>
+                                <div class="slds-col">
+                                    <p class="header-text">Action</p>
                                 </div>
                             </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-
-            <div>
-                <div class="card-header" slot="title">
-                    <div
-                        class="slds-text-heading_small slds-truncate slds-p-left_medium slds-p-right_medium slds-text-weight_bold availale_css1">
-                        Connected Portals</div>
-
-                </div>
-                <div class="field-mapping-container">
-                    <div class="tableContainer">
-                        <div class="portalMapping_header-row">
-                            <div class="slds-col">
-                                <p class="header-text">No.</p>
-                            </div>
-                            <div class="slds-col">
-                                <p class="header-text">Title</p>
-                            </div>
-                            <div class="slds-col">
-                                <p class="header-text">Name</p>
-                            </div>
-                            <div class="slds-col">
-                                <p class="header-text">Status</p>
-                            </div>
-                            <div class="slds-col">
-                                <p class="header-text">Action</p>
-                            </div>
-                        </div>
-                        <div class="portalMapping_recordValues">
-                            <template if:true={isPortalData}>
-                                <template for:each={portalRecordList} for:item="record" for:index="index">
-                                    <div key={record.val.Id} class="portalMapping_data-row">
-                                        <div class="slds-col">
-                                            {record.number}
+                            <div class="portalMapping_recordValues">
+                                <template if:true={isPortalData}>
+                                    <template for:each={portalRecordList} for:item="record" for:index="index">
+                                        <div key={record.val.Id} class="portalMapping_data-row">
+                                            <div class="slds-col">
+                                                {record.number}
+                                            </div>
+                                            <div class="slds-col font_style_css">
+                                                <img src={record.val.MVEX__Endpoint__c} alt={record.val.MVEX__Generator__c}
+                                                    class="small-logo">
+                                            </div>
+                                            <div class="slds-col font_style_css">
+                                                {record.val.Name}
+                                            </div>
+                                            <div class="slds-col">
+                                                <template if:true={record.val.MVEX__Is_Active__c}>
+                                                    <span class="badge">Active</span>
+                                                </template>
+                                                <template if:false={record.val.MVEX__Is_Active__c}>
+                                                    <span class="badge-red">Inactive</span>
+                                                </template>
+                                            </div>
+                                            <div class="slds-col">
+                                                <lightning-button label="View details" data-portalname={record.val.Name}
+                                                    data-portaliconurl={record.val.MVEX__Endpoint__c}
+                                                    data-portalstatus={record.val.MVEX__Is_Active__c}
+                                                    data-portalgen={record.val.MVEX__Generator__c}
+                                                    data-portalid={record.val.Id}
+                                                    onclick={handleClick}></lightning-button>
+                                            </div>
                                         </div>
-                                        <div class="slds-col font_style_css">
-                                            <img src={record.val.Endpoint__c} alt={record.val.Generator__c}
-                                                class="small-logo">
-                                        </div>
-                                        <div class="slds-col font_style_css">
-                                            {record.val.Name}
-                                        </div>
-                                        <div class="slds-col">
-                                            <template if:true={record.val.Is_Active__c}>
-                                                <span class="badge">Active</span>
-                                            </template>
-                                            <template if:false={record.val.Is_Active__c}>
-                                                <span class="badge-red">Inactive</span>
-                                            </template>
-                                        </div>
-                                        <div class="slds-col">
-                                            <lightning-button label="View details" data-portalname={record.val.Name} data-portaliconurl={record.val.Endpoint__c} data-portalstatus={record.val.Is_Active__c} data-portalgen={record.val.Generator__c} data-portalid={record.val.Id} onclick={handleClick}></lightning-button>
-                                        </div>
+                                    </template>
+                                </template>
+                                <template if:false={isPortalData}>
+                                    <div class="no_portal_css">
+                                        No Portals are available to show.
                                     </div>
                                 </template>
-                            </template>
-                            <template if:false={isPortalData}>
-                                <div class="no_portal_css">
-                                    No Portals are available to show.
-                                </div>
-                            </template>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
-
-
-
-
 
     <lightning-layout>
         <template if:true={showModal}>
             <c-new-pop-up onhidepopup={handleHidePopup} get-portal-name={clickedPortalName}
-                get-portal-icon-url={clickedPortalIconURL} onrefreshpageonhide={handleHideAndRefreshPage}></c-new-pop-up>
+                get-portal-icon-url={clickedPortalIconURL}
+                onrefreshpageonhide={handleHideAndRefreshPage}></c-new-pop-up>
         </template>
     </lightning-layout>
 
+    <template if:true={isSpinner}>
+        <div class="spinner_class">
+            <span class="loader"></span>
+            <span class="loadertext">L &nbsp; ading</span>
+        </div>
+    </template>
 
 </template>

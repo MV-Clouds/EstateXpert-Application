@@ -1,8 +1,8 @@
 /**
 * Class Name : PortalMappingController
-* Test Class : Pending
+* Test Class : PortalMappingControllerTest
 * Created By : Karan Singh
-* Last Modified Date : 06/06/2024
+* Last Modified Date : 10/07/2024
 * Last Modified By : Karan Singh
 * @description : Used in portalMappingComponent and portalMappingLandingPage LWC components
 */
@@ -16,12 +16,12 @@ public with sharing class PortalMappingController {
     @AuraEnabled
     public static List<Portal__c> getPortalRecords(){
         try {
-
-            List<Portal__c> listOfPortalRecords = [SELECT Id, Endpoint__c, Generator__c, Name, Is_Active__c FROM Portal__c WITH SECURITY_ENFORCED ORDER BY Name];
+            List<Portal__c> listOfPortalRecords = [SELECT Id, endpoint__c, Generator__c, Name, Is_Active__c FROM Portal__c WITH SECURITY_ENFORCED ORDER BY Name];
             return listOfPortalRecords;
 
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            ErrorHandler.insert_errordata(e, 'PortalMappingController', 'getPortalRecords', 'Error while fetching Portal__c records.');
+            return null;
         }
     }
 
@@ -62,21 +62,24 @@ public with sharing class PortalMappingController {
 
             List<Portal_Listing_Mapping__c> portalListingMap ;
             if (portalName != null) {
-                portalListingMap = [SELECT Id, Name, Listing_Field_API_Name__c, Portal_Field_Description__c, Portal_Field_Example__c, Required__c FROM Portal_Listing_Mapping__c WHERE Portal_Name__c =: portalName WITH SECURITY_ENFORCED ORDER BY Name];
+                portalListingMap = [SELECT Id, Name, Listing_Field_API_Name__c, Portal_Field_Description__c, Portal_Field_Example__c, Required__c, Allowed_Field_Datatype__c FROM Portal_Listing_Mapping__c WHERE Portal_Name__c =: portalName WITH SECURITY_ENFORCED ORDER BY Required__c DESC, Name ASC];
             }
 
-            Blocked_Fields__c blockFields = Blocked_Fields__c.getOrgDefaults();
+            sObject blockFields = getBlockedFields(portalName);
 
-            Set<String> blockedFields = new Set<String>(blockFields.Fields_Name__c.split(';'));
+            Set<String> blockedFields = new Set<String>();
+            if (blockFields != null && blockFields.get('MVEX__Fields_Name__c') != null) {
+                blockedFields = new Set<String>(((String)blockFields.get('MVEX__Fields_Name__c')).split(';'));
+            }
 
-            Schema.DescribeSObjectResult describeResult = Schema.getGlobalDescribe().get('Listing__c').getDescribe();
+            Schema.DescribeSObjectResult describeResult = Schema.getGlobalDescribe().get('MVEX__Listing__c').getDescribe();
             Map<String, Schema.SObjectField> allFieldsMap = describeResult.fields.getMap();
             
             List<FieldInfo> fieldsInfoList = new List<FieldInfo>();
             
             for (Schema.SObjectField field : allFieldsMap.values()) {
                 Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
-                fieldsInfoList.add(new FieldInfo(fieldDescribe.getLabel(), fieldDescribe.getName()));
+                fieldsInfoList.add(new FieldInfo(fieldDescribe.getLabel(), fieldDescribe.getName(), fieldDescribe.getType())); // Pass field data type here
             }
             
             fieldsInfoList.sort();
@@ -85,6 +88,7 @@ public with sharing class PortalMappingController {
                 Map<String, String> fieldMap = new Map<String, String>();
                 fieldMap.put('label', fieldInfo.label);
                 fieldMap.put('apiName', fieldInfo.apiName);
+                fieldMap.put('dataType', String.valueOf(fieldInfo.dataType));
                 fieldDetails.add(fieldMap);
             }
 
@@ -93,12 +97,13 @@ public with sharing class PortalMappingController {
                 Map<String, String> metadataMap = new Map<String, String>();
                 metadataMap.put('Id', (String)record.get('Id'));
                 metadataMap.put('Name', (String)record.get('Name'));
-                metadataMap.put('Listing_Field_API_Name__c', (String)record.get('Listing_Field_API_Name__c'));
-                metadataMap.put('Portal_Field_Description__c', (String)record.get('Portal_Field_Description__c'));
-                metadataMap.put('Portal_Field_Example__c', (String)record.get('Portal_Field_Example__c'));
+                metadataMap.put('MVEX__Listing_Field_API_Name__c', (String)record.get('MVEX__Listing_Field_API_Name__c'));
+                metadataMap.put('MVEX__Portal_Field_Description__c', (String)record.get('MVEX__Portal_Field_Description__c'));
+                metadataMap.put('MVEX__Portal_Field_Example__c', (String)record.get('MVEX__Portal_Field_Example__c'));
+                metadataMap.put('MVEX__Allowed_Field_Datatype__c', (String)record.get('MVEX__Allowed_Field_Datatype__c'));
 
-                Boolean requiredField = (Boolean)record.get('Required__c');
-                metadataMap.put('Required__c', requiredField == true ? String.valueOf(requiredField) : '');
+                Boolean requiredField = (Boolean)record.get('MVEX__Required__c');
+                metadataMap.put('MVEX__Required__c', requiredField == true ? String.valueOf(requiredField) : '');
 
                 portalMetadataDetails.add(metadataMap);
             }
@@ -107,7 +112,30 @@ public with sharing class PortalMappingController {
 
             return result;
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            ErrorHandler.insert_errordata(e, 'PortalMappingController', 'getObjectFields', 'Error while fetching Portal__c records.');
+            return null;
+        }
+    }
+
+    /**
+    * Method Name : getBlockedFields
+    * @description : Method is used to get the blocked fields.
+    * @param portalName: Name of the Portal.
+    * @return sObject: Returns the custom setting record of the specified type and name.
+    */
+    public static sObject getBlockedFields(String portalName) {
+        if (portalName == 'Propertyfinder') {
+            return BFFPF__c.getOrgDefaults();
+        } else if (portalName == 'Zoopla') {
+            return BFFZ__c.getOrgDefaults();
+        } else if (portalName == 'Bayut') {
+            return BFFB__c.getOrgDefaults();
+        } else if (portalName == 'Rightmove') {
+            return BFFR__c.getOrgDefaults();
+        } else if (portalName == 'Dubizzle') {
+            return BFFB__c.getOrgDefaults();
+        } else {
+            return null;
         }
     }
 
@@ -119,10 +147,12 @@ public with sharing class PortalMappingController {
     public class FieldInfo implements Comparable {
         public String label;
         public String apiName;
+        public Schema.DisplayType dataType; // Change dataType variable type
         
-        public FieldInfo(String label, String apiName) {
+        public FieldInfo(String label, String apiName, Schema.DisplayType dataType) { // Update constructor to include dataType of type Schema.DisplayType
             this.label = label;
             this.apiName = apiName;
+            this.dataType = dataType;
         }
         
         public Integer compareTo(Object other) {
@@ -135,13 +165,15 @@ public with sharing class PortalMappingController {
     * Method Name : saveChangedFields
     * @description : Method is used to save the Portal and Listing field mapping in custom metadata records.
     * @param changedFields List<Map<String, String>> value.
+    * @param jsonList String value.
+    * @param portalName String value.
     * @return deploy request Id.
     * Last Update Date : 07/06/2024
     * Updated By : Karan Singh
     * Change Description : Made the required changes for saving the PortalListingMapping records updates.
     */
     @AuraEnabled
-    public static string saveChangedFields(List<Map<String, String>> changedFields) {
+    public static string saveChangedFields(List<Map<String, String>> changedFields, String jsonList, String portalName) {
         try {
             // Check object-level permissions
             if (!Portal_Listing_Mapping__c.SObjectType.getDescribe().isAccessible() || 
@@ -159,18 +191,27 @@ public with sharing class PortalMappingController {
             for (Map<String, String> changedField : changedFields) {
                 Portal_Listing_Mapping__c record = new Portal_Listing_Mapping__c();
                 record.Id = changedField.get('Id');
-                record.Listing_Field_API_Name__c = changedField.get('Listing_Field_API_Name__c');
+                record.Listing_Field_API_Name__c = changedField.get('MVEX__Listing_Field_API_Name__c');
 
                 recordsToUpdate.add(record);
             }
 
             if (!recordsToUpdate.isEmpty()) {
                 update recordsToUpdate;
+
+                List<Portal__c> portalToUpdate = [SELECT Id, Field_Mapping__c, Generator__c FROM Portal__c WHERE Generator__c =: portalName WITH SECURITY_ENFORCED LIMIT 1];
+                if (!portalToUpdate.isEmpty() && Portal__c.SObjectType.getDescribe().isUpdateable()) {
+
+                    portalToUpdate[0].Field_Mapping__c = jsonList;
+
+                    update portalToUpdate;
+                }
             }
 
             return 'Success';
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            ErrorHandler.insert_errordata(e, 'PortalMappingController', 'saveChangedFields', 'Error while saving Portal_Listing_Mapping__c records.');
+            return null;
         }
     }
 
@@ -218,7 +259,8 @@ public with sharing class PortalMappingController {
                 }
             }
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            ErrorHandler.insert_errordata(e, 'PortalMappingController', 'portalAction', 'Error while performing Portal__c record actions.');
+            return null;
         }
     }
 
@@ -248,37 +290,110 @@ public with sharing class PortalMappingController {
     }
 
     /**
-    * Method Name : savePropertyPortalRecord
-    * @description : Method is used for deleting the Portal__c object record.
-    * @param portalWrapper propertyPortalWrapper value.
-    */
-    @AuraEnabled
-    public static void savePropertyPortalRecord(String portalWrapper) {
-        PropertyPortalWrapper wrapper = (PropertyPortalWrapper)JSON.deserialize(portalWrapper, PropertyPortalWrapper.class);
-        
-        if (Portal__c.SObjectType.getDescribe().isAccessible() && Portal__c.SObjectType.getDescribe().isCreateable()) {
-            Portal__c newportal = new Portal__c();
-            newportal.Name = wrapper.title;
-            newportal.Endpoint__c = wrapper.getPortalIconUrl;
-            newportal.Is_Active__c = true;
-            newportal.Generator__c = wrapper.portalname == 'Property Finder' ? 'Propertyfinder' : wrapper.portalname;
-
-            insert newportal;
-        }
-    
-    }
-
-    /**
     * Wrapper Class Name : PropertyPortalWrapper
     * @description : This Wrapper class used for method name savePropertyPortalRecord.
     */
     public class PropertyPortalWrapper {
-        @AuraEnabled public String title;
-        @AuraEnabled public String email;
-        @AuraEnabled public String url;
-        @AuraEnabled public String externalImage;
+        @AuraEnabled public String name;
         @AuraEnabled public String portalname;
         @AuraEnabled public String getPortalIconUrl;
+        @AuraEnabled public String certificate;
+        @AuraEnabled public String branch_reference;
+        @AuraEnabled public String branch_name;
+        @AuraEnabled public String street_name;
+        @AuraEnabled public String town_or_city;
+        @AuraEnabled public String postal_code;
+        @AuraEnabled public String country_code;
+        @AuraEnabled public String is_test_portal;
+        @AuraEnabled public String differentiator_values;
     }
+
+    /**
+    * Method Name : savePropertyPortalRecord
+    * @description : Method is used for deleting the Portal__c object record.
+    * @param portalWrapper propertyPortalWrapper value.
+    * @param portalName String value.
+    */
+    @AuraEnabled
+    public static void savePropertyPortalRecord(String portalWrapper, String portalName) {
+        try {
+            PropertyPortalWrapper wrapper = (PropertyPortalWrapper)JSON.deserialize(portalWrapper, PropertyPortalWrapper.class);
+            List<Portal_Listing_Mapping__c> portalListingMaps = [SELECT Id, Listing_Field_API_Name__c, Name FROM Portal_Listing_Mapping__c WHERE Portal_Name__c =: portalName AND Listing_Field_API_Name__c != null];
+            Map<String, String> jsonBodyMap = new Map<String, String>();
+
+            for (Portal_Listing_Mapping__c mapping : portalListingMaps) {
+                jsonBodyMap.put(mapping.Listing_Field_API_Name__c, mapping.Name);
+            }
+            String jsonBody = JSON.serialize(jsonBodyMap);
+            
+            String portalId;
+            if (Portal__c.SObjectType.getDescribe().isAccessible() && Portal__c.SObjectType.getDescribe().isCreateable()) {
+                Portal__c newportal = new Portal__c();
+                newportal.Name = wrapper.name;
+                newportal.Endpoint__c = wrapper.getPortalIconUrl;
+                newportal.Is_Active__c = true;
+                newportal.Portal_Configuration__c = portalWrapper;
+                newportal.Field_Mapping__c = jsonBody;
+                newportal.Generator__c = wrapper.portalname == 'Property Finder' ? 'Propertyfinder' : wrapper.portalname;
+
+                insert newportal;
+
+                portalId = newportal.Id;
+            }
+
+            if (wrapper.portalname == 'Zoopla') {
+                ZooplaIntegration.zooplaCreateAndUpdateBranch(portalWrapper, portalId);
+            }
+        } catch (Exception e) {
+            ErrorHandler.insert_errordata(e, 'PortalMappingController', 'savePropertyPortalRecord', 'Error while saving Portal__c record.');
+        }
+    }
+
+    /**
+    * Wrapper Class Name : FieldList
+    * @description : This Wrapper class used for method name getAllCustomFields.
+    */
+    public class FieldList {
+        @AuraEnabled
+        public String label { get; set; }
+        @AuraEnabled
+        public String value { get; set; }
+        
+        public FieldList(String label, String value) {
+            this.label = label;
+            this.value = value;
+        }
+    }
+
+    /**
+    * Method Name : getAllCustomFields
+    * @description : Method is used for fetching all the custom fields from the Listing__c object.
+    * @return List<FieldList> value.
+    */
+    @AuraEnabled
+    public static List<FieldList> getAllCustomFields() {
+        List<FieldList> customFields = new List<FieldList>();
+
+        try {
+            Schema.DescribeSObjectResult describeResult = Schema.getGlobalDescribe().get('MVEX__Listing__c').getDescribe();
+
+            Map<String, Schema.SObjectField> fieldsMap = describeResult.fields.getMap();
+
+            for (Schema.SObjectField field : fieldsMap.values()) {
+                Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
+                
+                if (fieldDescribe.isCustom()) {
+                    String fieldLabel = fieldDescribe.getLabel();
+                    String fieldApiName = fieldDescribe.getName();
+                    customFields.add(new FieldList(fieldLabel, fieldApiName));
+                }
+            }
+        } catch (Exception e) {
+            ErrorHandler.insert_errordata(e, 'PortalMappingController', 'getAllCustomFields', 'Error while fetching custom fields from Listing__c object.');
+        }
+
+        return customFields;
+    }
+    
 
 }
