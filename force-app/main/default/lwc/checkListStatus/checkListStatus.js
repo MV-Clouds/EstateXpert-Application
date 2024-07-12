@@ -7,8 +7,8 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class CheckListStatus extends LightningElement {
     @track checklistItems = []; // Initialize as an empty array
     @track showEditModal = false;
-    @api objectName;
-    @api recordId;
+    @track objectName;
+    @track recordId;
     @track isSpinner = true;
 
     @wire(CurrentPageReference)
