@@ -45,16 +45,9 @@ export default class PortalSyndicationCmp extends LightningElement {
   * Date: 09/07/2024
   * Created By: Karan Singh
   **/
-  async connectedCallback() {
+  connectedCallback() {
     try {
-      const data = await fetchPortals({ listingId: this.recordId });
-      this.data = data;
-      this.showSpinner = this.data.length > 0 ? false : true;
-      let isPortal = this.checkPortals();
-      if (isPortal) {
-        this.registerErrorListener();
-        this.handleSubscribe();
-      }
+      this.fetchPortalDatas();
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -70,6 +63,29 @@ export default class PortalSyndicationCmp extends LightningElement {
     unsubscribe(this.subscription, response => {
       console.log('Unsubscribed from platform event channel', response);
     });
+  }
+
+  /**
+  * Method Name: fetchPortalDatas
+  * @description: Used to fetch the portal datas.
+  * Date: 12/07/2024
+  * Created By: Karan Singh
+  **/
+  fetchPortalDatas(){
+    fetchPortals({ listingId: this.recordId })
+      .then(data => {
+        this.data = data;
+        this.showSpinner = this.data.length > 0 ? false : true;
+        let isPortal = this.checkPortals();
+        if (isPortal) {
+          this.registerErrorListener();
+          this.handleSubscribe();
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        this.showSpinner = false;
+      });
   }
 
   /**
