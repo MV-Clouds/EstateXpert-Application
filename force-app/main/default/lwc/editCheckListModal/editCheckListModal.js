@@ -13,6 +13,7 @@ export default class EditCheckListModal extends LightningElement {
     @track checklistItems;
     @track checklistRecords;
     @track isSpinner = true;
+    @track setScroll = false;
     // @track isOrderChanged = false;
 
     operatorOptions = [
@@ -31,6 +32,14 @@ export default class EditCheckListModal extends LightningElement {
         console.log('recordId', this.recordId);
         this.getObjectFieldsAndName();
 	}
+
+    renderedCallback(){
+        if(this.setScroll){
+            const container = this.template.querySelector('.tableContainer');
+            container.scrollTop = container.scrollHeight;
+            this.setScroll = false;
+        }
+}
 
     /**
     * Method Name: getObjectFieldsAndName
@@ -169,13 +178,7 @@ export default class EditCheckListModal extends LightningElement {
                 MVEX__Value__c: ''
             };
             this.checklistItems = [...this.checklistItems, newItem];
-    
-            // Delay the scroll to ensure the DOM has updated
-            // If we remove the setTimeout, the scroll will not work
-            setTimeout(() => {
-                const container = this.template.querySelector('.tableContainer');
-                container.scrollTop = container.scrollHeight;
-            }, 0);
+            this.setScroll = true;
         } catch (error) {
             console.log('error', error);
         }
