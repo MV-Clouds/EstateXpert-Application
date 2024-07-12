@@ -10,9 +10,9 @@
         <div class="groupbtn">
           <lightning-button-group>
             <lightning-button label="Save Changes" onclick={saveChanges} variant="brand"
-              disabled={disabledSave}></lightning-button>
+              disabled={disableEnableBtn}></lightning-button>
             <lightning-button label="Cancel" onclick={cancelChanges} variant="brand-outline"
-              disabled={disabledCancel}></lightning-button>
+              disabled={disableEnableBtn}></lightning-button>
           </lightning-button-group>
         </div>
 
@@ -221,7 +221,6 @@
                     <lightning-input class="checkbox-portal statusbox" type="checkbox" label="Is On Portal Feed"
                       name="portal" value={item.MVEX__IsOnPortalFeed__c} data-field="MVEX__IsOnPortalFeed__c" data-key={item.Id} onchange={handleCheckboxChange}
                       checked={item.MVEX__IsOnPortalFeed__c}></lightning-input>
-
                   </div>
                 </td>
                 <td data-label="actions">
@@ -334,14 +333,14 @@
             </button>
           </header>
           <div class="slds-modal__content slds-p-around_medium modalbody">
-            <label for="title" class="slds-m-bottom_small label"><b>Title:</b></label>
+            <label for="title" class="slds-m-bottom_small label"><b class="astrick_css">*</b><b>Title:</b></label>
             <lightning-input onchange={storeUrl} label="Title" variant="label-hidden" required></lightning-input>
             <br />
-            <label for="link" class="slds-m-bottom_small label"><b>External Link (URL):</b></label>
+            <label for="link" class="slds-m-bottom_small label"><b class="astrick_css">*</b><b>External Link (URL):</b></label>
             <lightning-input variant="label-hidden" label="External Link (URL)" onchange={storeUrl}
               required></lightning-input>
             <br />
-            <label for="type" class="slds-m-bottom_small label" style="margin-bottom: 4px;"><b>Type:</b></label>
+            <label for="type" class="slds-m-bottom_small label" style="margin-bottom: 4px;"><b class="astrick_css">*</b><b>Type:</b></label>
             <lightning-combobox name="Type" variant="label-hidden" value={selectedUrlType} options={options}
               onchange={handleLinkType} required></lightning-combobox>
 
@@ -349,7 +348,7 @@
 
           <footer class="slds-modal__footer footerlink">
             <div class="popup-btn">
-              <button class="slds-button slds-button_brand" onclick={upload_image}
+              <button class="slds-button slds-button_brand" onclick={uploadImage}
                 disabled={disabledUpload}>Upload</button>
               <button class="slds-button slds-button_brand buttons_close" onclick={closepopup}>Close</button>
             </div>
