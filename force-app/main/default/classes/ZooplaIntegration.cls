@@ -180,6 +180,7 @@ public with sharing class ZooplaIntegration {
                     update portalListing;
                 }
                 PlatformEventCtrl.publishEvent('Success', responseBody, 'Zoopla');
+
             } else {
                 System.debug('Request failed with status code: ' + res3.getStatusCode());
                 System.debug('Error Response: ' + res3.getBody());
@@ -190,6 +191,7 @@ public with sharing class ZooplaIntegration {
                     update portalListing;
                 }
                 PlatformEventCtrl.publishEvent('Failed', responseBody, 'Zoopla');
+
             }
         } catch (Exception e) {
             System.debug('Exception: ' + e.getMessage());

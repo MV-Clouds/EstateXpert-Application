@@ -5,18 +5,16 @@ import AWS_SDK from "@salesforce/resourceUrl/AWSSDK";
 import fetchListingAndImages from "@salesforce/apex/ImageAndMediaController.fetchListingAndImages";
 import createmediaforlisting from "@salesforce/apex/ImageAndMediaController.createmediaforlisting";
 import deletelistingmedia from "@salesforce/apex/ImageAndMediaController.deletelistingmedia";
-import updateMediaName from "@salesforce/apex/ImageAndMediaController.updateMediaName";
-import updateOrderState from '@salesforce/apex/ImageAndMediaController.updateOrderState';
 import { publish, MessageContext } from 'lightning/messageService';
 import Refresh_msg from '@salesforce/messageChannel/refreshMessageChannel__c';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from '@salesforce/apex';
-import updateSortOrder from '@salesforce/apex/ImageAndMediaController.updateSortOrder';
 import watermarkjs from "@salesforce/resourceUrl/watermarkjs";
 import videoThumbnail from '@salesforce/resourceUrl/videothumbnail';
 import buffer from 'c/buffer';
 import estatexpertLogo from '@salesforce/resourceUrl/watermarkLogo';
 import uploadImageresponsiveCSS from '@salesforce/resourceUrl/UploadImageCss';
+import updatePropertyFileRecords from '@salesforce/apex/ImageAndMediaController.updatePropertyFileRecords';
 import { loadStyle } from 'lightning/platformResourceLoader';
 
 
@@ -40,27 +38,18 @@ export default class ImagesAndMedia extends LightningElement {
     @track isDeleteAll = false;
     @track isWatermark = true;
     @track recIdToDelete;
-    @track disabledCancel = true;
     @track imageUrlToUpload;
     @track isdelete = false;
     @track recIdToUpdate = [];
-    @track disabledSave = true;
     @track disabledCheckbox = true;
     @track currentImgName;
     @track imgOldName = [];
-    @track imgName = [];
     @track imageTitleToUpload;
     @track selectedUrlType = 'Image';
     @track Expose = [];
     @track Website = [];
     @track Portal = [];
     @track sortOn = [];
-    @track exposeRecordsToUpdate = [];
-    @track portalRecordsToUpdate = [];
-    @track websiteRecordsToUpdate = [];
-    @track exposeRecordsToUpdateFalse = [];
-    @track portalRecordsToUpdateFalse = [];
-    @track websiteRecordsToUpdateFalse = [];
     @track leaveTimeout;
     @track disabledUpload = true;
     @track items = [];
@@ -81,6 +70,7 @@ export default class ImagesAndMedia extends LightningElement {
     @track dataMap = [];
     @track confData;
     @track fileURL = [];
+    @track fetchedData = [];
 
     get options() {
         return [
@@ -179,19 +169,14 @@ export default class ImagesAndMedia extends LightningElement {
                     if (result != null) {
                         this.data = result.listingImages;
                         this.propertyId = result.propertyId;
-                        this.exposeRecordsToUpdateFalse = [];
-                        this.websiteRecordsToUpdateFalse = [];
-                        this.portalRecordsToUpdateFalse = [];
-                        this.exposeRecordsToUpdate = [];
-                        this.websiteRecordsToUpdate = [];
-                        this.portalRecordsToUpdate = [];
 
-                        this.Expose = this.data.filter(media => media.Sort_on_Expose__c !== null && media.IsOnExpose__c !== false).sort((a, b) => a.Sort_on_Expose__c - b.Sort_on_Expose__c);
-                        this.Website = this.data.filter(media => media.Sort_on_Website__c !== null && media.IsOnWebsite__c !== false).sort((a, b) => a.Sort_on_Website__c - b.Sort_on_Website__c);
-                        this.Portal = this.data.filter(media => media.Sort_on_Portal_Feed__c !== null && media.IsOnPortalFeed__c !== false).sort((a, b) => a.Sort_on_Portal_Feed__c - b.Sort_on_Portal_Feed__c);
-                        this.data.forEach(row => row.Size__c = row.Size__c ? row.Size__c + ' ' + 'kb' : 'External');
-                        this.data.forEach(row => row.Tags__c = row.Tags__c ? row.Tags__c.split(";") : '');
+                        this.Expose = this.data.filter(media => media.MVEX__Sort_on_Expose__c !== null && media.MVEX__IsOnExpose__c !== false).sort((a, b) => a.MVEX__Sort_on_Expose__c - b.MVEX__Sort_on_Expose__c);
+                        this.Website = this.data.filter(media => media.MVEX__Sort_on_Website__c !== null && media.MVEX__IsOnWebsite__c !== false).sort((a, b) => a.MVEX__Sort_on_Website__c - b.MVEX__Sort_on_Website__c);
+                        this.Portal = this.data.filter(media => media.MVEX__Sort_on_Portal_Feed__c !== null && media.MVEX__IsOnPortalFeed__c !== false).sort((a, b) => a.MVEX__Sort_on_Portal_Feed__c - b.MVEX__Sort_on_Portal_Feed__c);
+                        this.data.forEach(row => row.MVEX__Size__c = row.MVEX__Size__c ? row.MVEX__Size__c + ' ' + 'kb' : 'External');
+                        this.data.forEach(row => row.MVEX__Tags__c = row.MVEX__Tags__c ? row.MVEX__Tags__c.split(";") : '');
                         this.isData = result.listingImages && result.listingImages.length > 0;
+                        this.fetchedData = JSON.parse(JSON.stringify(this.data));
                         this.showSpinner = false;
 
                         const message = { refresh: true };
@@ -210,7 +195,7 @@ export default class ImagesAndMedia extends LightningElement {
                     }
                 }).catch(error => {
                     this.showSpinner = false;
-                    console.error('Error fetching data:', JSON.stringify(error));
+                    console.error('Error fetching data:', error);
                 });
         } catch (error) {
             this.showSpinner = false;
@@ -240,40 +225,117 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     saveChanges() {
         try {
-            if (this.exposeRecordsToUpdate || this.websiteRecordsToUpdate || this.portalRecordsToUpdate || this.exposeRecordsToUpdateFalse || this.websiteRecordsToUpdateFalse || this.portalRecordsToUpdateFalse) {
-                updateOrderState({
-                    exposeIds: this.exposeRecordsToUpdate,
-                    websiteIds: this.websiteRecordsToUpdate,
-                    portalIds: this.portalRecordsToUpdate,
-                    exposeIdsFalse: this.exposeRecordsToUpdateFalse,
-                    websiteIdsFalse: this.websiteRecordsToUpdateFalse,
-                    portalIdsFalse: this.portalRecordsToUpdateFalse
-                }).then(result => {
-                    if (result) {
-                        this.isPopup = false;
-                        this.exposeRecordsToUpdate = [];
-                        this.websiteRecordsToUpdate = [];
-                        this.portalRecordsToUpdate = [];
-                        this.disabledSave = true;
-                        this.disabledCancel = true;
-                        this.fetchingdata();
-                    } else {
-                        this.showToast('Error', 'Error in updating the order.', 'error');
+            let recordMap = new Map();
+    
+            // Prepare the media list to save
+            let combinedMediaListToSave = this.saveOrder();
+            console.log('combinedMediaListToSave-->', JSON.stringify(combinedMediaListToSave));
+    
+            // Iterate over this.data to initialize the map with existing records
+            this.data.forEach(record => {
+                let existingRecord = { Id: record.Id };
+                for (let key in record) {
+                    if (key !== 'MVEX__BaseUrl__c' && key !== 'MVEX__Size__c' && key !== 'MVEX__Property__c') {
+                        if (key === 'MVEX__Tags__c' && Array.isArray(record[key])) {
+                            existingRecord[key] = record[key].join(';');
+                        } else {
+                            existingRecord[key] = record[key];
+                        }
                     }
-                }).catch(error => {
-                    console.error('Error:', JSON.stringify(error));
-                    this.showToast('Error', JSON.stringify(error), 'error');
-                });
-            }
-
-            if (this.imgOldName.length != 0) {
-                this.editImageName();
-            }
-
-            this.saveOrder();
+                }
+                recordMap.set(record.Id, existingRecord);
+            });
+    
+            // Iterate over combinedMediaListToSave and merge sort fields into the map
+            combinedMediaListToSave.forEach(media => {
+                if (!recordMap.has(media.Id)) {
+                    recordMap.set(media.Id, { Id: media.Id });
+                }
+                let existingRecord = recordMap.get(media.Id);
+                for (let key in media) {
+                    if (media.hasOwnProperty(key) && key !== 'Id') {
+                        existingRecord[key] = media[key];
+                    }
+                }
+            });
+    
+            let finalListToUpdate = Array.from(recordMap.values());
+    
+            console.log('finalListToUpdate-->', JSON.stringify(finalListToUpdate));
+    
+            // Make a single Apex callout with the final list
+            updatePropertyFileRecords({
+                itemsToUpdate: finalListToUpdate
+            })
+            .then(result => {
+                console.log('result', result);
+                if (result === 'success') {
+                    this.showToast('Success', 'Records updated successfully', 'success');
+                    this.fetchingdata();
+                } else {
+                    this.showToast('Error', result, 'error');
+                }
+            })
+            .catch(error => {
+                console.log('error', error);
+            });
+    
         } catch (error) {
             console.log('error in saveChanges -> ', error);
         }
+    }
+    
+    /**
+    * Method Name: saveOrder
+    * @description: Used to save order.
+    * Date: 09/07/2024
+    * Created By: Karan Singh
+    **/
+    saveOrder() {
+        let combinedMediaListToSave = [];
+    
+        if (this.sortOn.includes('Expose')) {
+            combinedMediaListToSave = combinedMediaListToSave.concat(this.prepareMediaListToSave('Expose', this.Expose));
+        }
+        if (this.sortOn.includes('Website')) {
+            combinedMediaListToSave = combinedMediaListToSave.concat(this.prepareMediaListToSave('Website', this.Website));
+        }
+        if (this.sortOn.includes('Portal')) {
+            combinedMediaListToSave = combinedMediaListToSave.concat(this.prepareMediaListToSave('Portal', this.Portal));
+        }
+    
+        // console.log('combinedMediaListToSave-->', JSON.stringify(combinedMediaListToSave));
+        return combinedMediaListToSave;
+    }
+    
+    /**
+    * Method Name: prepareMediaListToSave
+    * @description: Used to prepare media list to save.
+    * Date: 09/07/2024
+    * Created By: Karan Singh
+    **/
+    prepareMediaListToSave(type, mediaList) {
+        return mediaList.map((media, index) => {
+            let mediaObject = {
+                Id: media.Id,
+            };
+    
+            switch (type) {
+                case 'Expose':
+                    mediaObject.MVEX__Sort_on_Expose__c = index;
+                    break;
+                case 'Website':
+                    mediaObject.MVEX__Sort_on_Website__c = index;
+                    break;
+                case 'Portal':
+                    mediaObject.MVEX__Sort_on_Portal_Feed__c = index;
+                    break;
+                default:
+                    break;
+            }
+    
+            return mediaObject;
+        });
     }
 
     /**
@@ -283,19 +345,10 @@ export default class ImagesAndMedia extends LightningElement {
     * Created By: Karan Singh
     **/
     cancelChanges() {
-        this.disabledSave = true;
-        this.disabledCancel = true;
-        this.imgName = [];
         this.imgOldName = [];
         this.recIdToUpdate = [];
         this.picklistValues = [];
         this.finalPicklistValues = [];
-        this.websiteRecordsToUpdate = [];
-        this.exposeRecordsToUpdate = [];
-        this.portalRecordsToUpdate = [];
-        this.exposeRecordsToUpdateFalse = [];
-        this.websiteRecordsToUpdateFalse = [];
-        this.portalRecordsToUpdateFalse = [];
         this.data = [];
         this.fetchingdata();
     }
@@ -360,6 +413,7 @@ export default class ImagesAndMedia extends LightningElement {
     * Created By: Karan Singh
     **/
     uploadImage() {
+        console.log('selectedUrlType', this.selectedUrlType);
         this.isPopup = false;
         if (this.imageTitleToUpload && this.imageUrlToUpload) {
             this.isPopup = false;
@@ -387,6 +441,7 @@ export default class ImagesAndMedia extends LightningElement {
                                 this.isEdit = false;
                                 this.imageTitleToUpload = null;
                                 this.isNull = true;
+                                this.showToast('Success', 'Image uploaded successfully.', 'success');
                             } else {
                                 this.showToast('Error', 'Image url invalid.', 'error');
                             }
@@ -397,8 +452,7 @@ export default class ImagesAndMedia extends LightningElement {
                         });
                     }
                 }
-            }
-            if (this.selectedUrlType === 'Video') {
+            } else if (this.selectedUrlType === 'Video') {
                 if (!this.imageUrlToUpload.match(/\.(png|jpg|jpeg|gif|png|svg)(\?.*)?$/)) {
                     const videoId = this.createThumb(this.imageUrlToUpload);
                     this.isPopup = false;
@@ -423,6 +477,7 @@ export default class ImagesAndMedia extends LightningElement {
                                 this.isEdit = false;
                                 this.imageTitleToUpload = null;
                                 this.isNull = true;
+                                this.showToast('Success', 'Video uploaded successfully.', 'success');
                             } else {
                                 this.showToast('Error', 'Video url invalid.', 'error');
                             }
@@ -435,8 +490,7 @@ export default class ImagesAndMedia extends LightningElement {
                     this.showToast('Error', 'Invalid Url kindly check url and type', 'error');
                     this.isPopup = true;
                 }
-            }
-            else {
+            } else {
                 this.showToast('Error', 'Image URL and file name are required.', 'error');
             }
         }
@@ -542,28 +596,21 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     confirmEdit() {
         try {
-            if (this.eventImgName != undefined) {
-                this.imgName.push(this.eventImgName);
-            }
-            else {
-                this.imgName.push(this.imgOldName[this.imgOldName.length - 1])
-            }
             this.removeDuplicates(this.picklistValues);
             if (this.picklistValues !== this.finalPicklistValues) {
                 this.finalPicklistValues.push(this.picklistValues);
             }
             let rec_id = this.recIdToUpdate[this.recIdToUpdate.length - 1];
             let index_of_record = this.data.findIndex(item => item.Id === rec_id);
-            this.data[index_of_record].Tags__c = this.picklistValues;
+            this.data[index_of_record].MVEX__Tags__c = this.picklistValues;
             if (this.eventImgName != undefined) {
                 this.data[index_of_record].Name = this.eventImgName;
             }
             this.eventImgName = undefined;
             this.picklistValues = [];
-            this.disabledSave = false;
-            this.disabledCancel = false;
             this.isEdit = false;
             this.saveEditbtnDisabled = true;
+
         } catch (error) {
             console.log('error in confirmEdit -> ', error);
         }
@@ -577,61 +624,6 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     removeDuplicates(arr) {
         return [...new Set(arr)];
-    }
-
-    /**
-    * Method Name: editImageName
-    * @description: Used to edit image name.
-    * Date: 27/06/2024
-    * Created By: Karan Singh
-    **/
-    editImageName() {
-        try {
-            if (this.imgName.length > 0) {
-                this.imgName.forEach((imageName, index) => {
-                    let recordId = this.recIdToUpdate[index];
-                    let stageNames = this.finalPicklistValues[index].length > 0 ? this.finalPicklistValues[index] : null;
-
-                    // Check if recordId already exists in the dataMap
-                    let existingData = this.dataMap.find(item => item.recordId === recordId);
-
-                    if (existingData) {
-                        // Update filename and picklistValues
-                        existingData.fileName = imageName;
-                        existingData.picklistValues = stageNames;
-                    } else {
-                        // Add new entry to the dataMap
-                        let data = {
-                            recordId: recordId,
-                            fileName: imageName,
-                            picklistValues: stageNames
-                        };
-                        this.dataMap.push(data);
-                    }
-                });
-                console.log('datamap--> ', JSON.stringify(this.dataMap));
-                updateMediaName({ dataMapJSON: JSON.stringify(this.dataMap) })
-                    .then(result => {
-                        if (result) {
-                            this.eventImgName = undefined;
-                            this.imgName = [];
-                            this.imgOldName = [];
-                            this.recIdToUpdate = [];
-                            this.picklistValues = [];
-                            this.finalPicklistValues = [];
-                            this.fetchingdata();
-                            this.isNull = true;
-                        } else {
-                            this.showToast('Error', 'Something went wrong while updating image name.', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.log('Error ==>', error);
-                    });
-            }
-        } catch (error) {
-            console.log('error in editImageName -> ', error);
-        }
     }
 
     /**
@@ -657,8 +649,6 @@ export default class ImagesAndMedia extends LightningElement {
         this.isPopup = false;
         this.isdelete = false;
         this.isEdit = false;
-        this.disabledCancel = true;
-        this.disabledSave = true;
         this.isDeleteAll = false;
         if (this.isData != true) {
             this.disabledDelete = true;
@@ -674,68 +664,6 @@ export default class ImagesAndMedia extends LightningElement {
     showImageInModal(imageUrl) {
         this.modalImageUrl = imageUrl;
         this.isModalOpen = true;
-    }
-
-    /**
-    * Method Name: saveOrder
-    * @description: Used to save order.
-    * Date: 27/06/2024
-    * Created By: Karan Singh
-    **/
-    saveOrder() {
-        if (this.sortOn.includes('Expose')) {
-            this.save_order_in_apex('Expose', this.Expose);
-        }
-        if (this.sortOn.includes('Website')) {
-            this.save_order_in_apex('Website', this.Website);
-        }
-        if (this.sortOn.includes('Portal')) {
-            this.save_order_in_apex('Portal', this.Portal);
-        }
-        this.sortOn = [];
-    }
-
-    /**
-    * Method Name: save_order_in_apex
-    * @description: Used to save order in apex.
-    * Date: 27/06/2024
-    * Created By: Karan Singh
-    **/
-    save_order_in_apex(type, mediaList) {
-        let mediaListToSave = mediaList.map((media) => {
-            let mediaObject = {
-                Id: media.Id,
-            };
-            return mediaObject;
-        });
-        if (type === 'Expose') {
-
-            for (let i = 0; i < mediaListToSave.length; i++) {
-                mediaListToSave[i].Sort_on_Expose__c = i;
-            }
-        }
-        if (type === 'Website') {
-
-            for (let i = 0; i < mediaListToSave.length; i++) {
-                mediaListToSave[i].Sort_on_Website__c = i;
-            }
-        }
-        if (type === 'Portal') {
-
-            for (let i = 0; i < mediaListToSave.length; i++) {
-                mediaListToSave[i].Sort_on_Portal_Feed__c = i;
-            }
-        }
-        //pass the mediaListToSave to apex method named updateSortOrder and takes parameter list of PropertyMedia__c as mediaList to update the sort order
-        updateSortOrder({ mediaList: mediaListToSave })
-            .then(result => {
-                if (result) {
-                    console.log('result-->', result);
-                }
-            })
-            .catch(error => {
-                console.error('Error updating sort order:', error);
-            });
     }
 
     /**
@@ -788,75 +716,31 @@ export default class ImagesAndMedia extends LightningElement {
     get formattedData() {
         return this.data.map(item => ({
             ...item,
-            Size__c: `${item.Size__c}kb`
+            MVEX__Size__c: `${item.MVEX__Size__c}kb`
         }));
     }
 
     /**
-    * Method Name: storeCheckedValue
-    * @description: Used to store checked value.
-    * Date: 27/06/2024
+    * Method Name: handleCheckboxChange
+    * @description: Used to handle checkbox change.
+    * Date: 08/07/2024
     * Created By: Karan Singh
     **/
-    storeCheckedValue(event) {
-        try {
-            const keyToRemove = event.currentTarget.dataset.key;
+    handleCheckboxChange(event) {
+        const key = event.currentTarget.dataset.key;
+        const field = event.currentTarget.dataset.field;
+        const value = event.currentTarget.checked;
+    
+        const updatedData = this.data.map(item => {
+            if (item.Id === key) {
+                return { ...item, [field]: value };
+            }
+            return item;
+        });
+    
+        this.data = updatedData;
 
-            if (event.target.name === 'expose') {
-                if (event.detail.checked === true) {
-                    this.exposeRecordsToUpdate.push(event.currentTarget.dataset.key);
-                    if (this.exposeRecordsToUpdateFalse.includes(keyToRemove)) {
-                        this.exposeRecordsToUpdateFalse = this.exposeRecordsToUpdateFalse.filter(item => item !== keyToRemove);
-                    }
-                    this.disabledSave = false;
-                    this.disabledCancel = false;
-
-                } else {
-                    this.exposeRecordsToUpdateFalse.push(event.currentTarget.dataset.key);
-                    if (this.exposeRecordsToUpdateFalse.includes(keyToRemove)) {
-                        this.exposeRecordsToUpdate = this.exposeRecordsToUpdate.filter(item => item !== keyToRemove);
-                    }
-                    this.disabledSave = false;
-                    this.disabledCancel = false;
-                }
-            }
-            if (event.target.name === 'website') {
-                if (event.detail.checked === true) {
-                    this.websiteRecordsToUpdate.push(event.currentTarget.dataset.key);
-                    if (this.websiteRecordsToUpdateFalse.includes(keyToRemove)) {
-                        this.websiteRecordsToUpdateFalse = this.websiteRecordsToUpdateFalse.filter(item => item !== keyToRemove);
-                    }
-                    this.disabledSave = false;
-                    this.disabledCancel = false;
-                } else {
-                    this.websiteRecordsToUpdateFalse.push(event.currentTarget.dataset.key);
-                    if (this.websiteRecordsToUpdateFalse.includes(keyToRemove)) {
-                        this.websiteRecordsToUpdate = this.websiteRecordsToUpdate.filter(item => item !== keyToRemove);
-                    }
-                    this.disabledSave = false;
-                    this.disabledCancel = false;
-                }
-            }
-            if (event.target.name === 'portal') {
-                if (event.detail.checked === true) {
-                    this.portalRecordsToUpdate.push(event.currentTarget.dataset.key);
-                    if (this.portalRecordsToUpdateFalse.includes(keyToRemove)) {
-                        this.portalRecordsToUpdateFalse = this.portalRecordsToUpdateFalse.filter(item => item !== keyToRemove);
-                    }
-                    this.disabledSave = false;
-                    this.disabledCancel = false;
-                } else {
-                    this.portalRecordsToUpdateFalse.push(event.currentTarget.dataset.key);
-                    if (this.portalRecordsToUpdateFalse.includes(keyToRemove)) {
-                        this.portalRecordsToUpdate = this.portalRecordsToUpdate.filter(item => item !== keyToRemove);
-                    }
-                    this.disabledSave = false;
-                    this.disabledCancel = false;
-                }
-            }
-        } catch (error) {
-            console.log('Error ==> ', error);
-        }
+        console.log('updatedData-->', JSON.stringify(this.data));
     }
 
     /**
@@ -930,16 +814,16 @@ export default class ImagesAndMedia extends LightningElement {
             let AWS = window.AWS;
 
             AWS.config.update({
-                accessKeyId: confData.AWS_Access_Key__c,
-                secretAccessKey: confData.AWS_Secret_Access_Key__c
+                accessKeyId: confData.MVEX__AWS_Access_Key__c,
+                secretAccessKey: confData.MVEX__AWS_Secret_Access_Key__c
             });
 
-            AWS.config.region = confData.S3_Region_Name__c;
+            AWS.config.region = confData.MVEX__S3_Region_Name__c;
 
             this.s3 = new AWS.S3({
                 apiVersion: "2006-03-01",
                 params: {
-                    Bucket: confData.S3_Bucket_Name__c
+                    Bucket: confData.MVEX__S3_Bucket_Name__c
                 }
             });
 
@@ -1094,7 +978,7 @@ export default class ImagesAndMedia extends LightningElement {
             this.uploadProgress = 0;
             results.forEach((result) => {
                 if (result) {
-                    let bucketName = this.confData.S3_Bucket_Name__c;
+                    let bucketName = this.confData.MVEX__S3_Bucket_Name__c;
                     let objKey = result.Key;
                     this.fileURL.push(`https://${bucketName}.s3.amazonaws.com/${objKey}`);
                 }
@@ -1260,7 +1144,6 @@ export default class ImagesAndMedia extends LightningElement {
     handleDragEnter(event) {
         event.preventDefault();
         event.target.closest(".dropableimage").classList.add("highlight");
-        clearTimeout(leaveTimeout);
     }
 
     /**
@@ -1274,9 +1157,7 @@ export default class ImagesAndMedia extends LightningElement {
         event.preventDefault();
         const dropableImage = event.currentTarget.closest(".dropableimage");
         if (!dropableImage.contains(event.relatedTarget)) {
-            leaveTimeout = setTimeout(() => {
-                dropableImage.classList.remove("highlight");
-            }, 200);
+            dropableImage.classList.remove("highlight");
         }
     }
 
@@ -1331,22 +1212,16 @@ export default class ImagesAndMedia extends LightningElement {
                     this.Expose = reorderedMediaIds.map(mediaId => {
                         return this.Expose.find(item => item.Id === mediaId);
                     });
-                    this.disabledCancel = false;
-                    this.disabledSave = false;
                     break;
                 case 'Website':
                     this.Website = reorderedMediaIds.map(mediaId => {
                         return this.Website.find(item => item.Id === mediaId);
                     });
-                    this.disabledCancel = false;
-                    this.disabledSave = false;
                     break;
                 case 'Portal':
                     this.Portal = reorderedMediaIds.map(mediaId => {
                         return this.Portal.find(item => item.Id === mediaId);
                     });
-                    this.disabledCancel = false;
-                    this.disabledSave = false;
                     break;
                 default:
                     break;
@@ -1392,16 +1267,10 @@ export default class ImagesAndMedia extends LightningElement {
     * Created By: Karan Singh
     **/
     getwebsite() {
-        this.websiteRecordsToUpdate = [];
-        this.websiteRecordsToUpdateFalse = [];
-
         this.Website = this.data;
         this.data.forEach(item => {
-            item.IsOnWebsite__c = true;
-            this.websiteRecordsToUpdate.push(item.Id);
+            item.MVEX__IsOnWebsite__c = true;
         });
-        this.disabledSave = false;
-        this.disabledCancel = false;
     }
 
     /**
@@ -1411,15 +1280,10 @@ export default class ImagesAndMedia extends LightningElement {
     * Created By: Karan Singh
     **/
     clearwebsite() {
-        this.websiteRecordsToUpdate = [];
-        this.websiteRecordsToUpdateFalse = [];
         this.Website = null;
         this.data.forEach(item => {
-            item.IsOnWebsite__c = false;
-            this.websiteRecordsToUpdateFalse.push(item.Id);
+            item.MVEX__IsOnWebsite__c = false;
         });
-        this.disabledSave = false;
-        this.disabledCancel = false;
     }
 
     /**
@@ -1429,21 +1293,12 @@ export default class ImagesAndMedia extends LightningElement {
     * Created By: Karan Singh
     **/
     getexpose() {
-        this.websiteRecordsToUpdate = [];
-        this.exposeRecordsToUpdate = [];
-        this.portalRecordsToUpdate = [];
-        this.exposeRecordsToUpdateFalse = [];
-        this.websiteRecordsToUpdateFalse = [];
-        this.portalRecordsToUpdateFalse = [];
         this.Expose = this.data;
         this.data.forEach(item => {
-            item.IsOnExpose__c = true;
-            this.exposeRecordsToUpdate.push(item.Id);
+            item.MVEX__IsOnExpose__c = true;
         });
         this.getportal();
         this.getwebsite();
-        this.disabledSave = false;
-        this.disabledCancel = false;
     }
 
     /**
@@ -1453,21 +1308,12 @@ export default class ImagesAndMedia extends LightningElement {
     * Created By: Karan Singh
     **/
     clearexpose() {
-        this.websiteRecordsToUpdate = [];
-        this.exposeRecordsToUpdate = [];
-        this.portalRecordsToUpdate = [];
-        this.exposeRecordsToUpdateFalse = [];
-        this.websiteRecordsToUpdateFalse = [];
-        this.portalRecordsToUpdateFalse = [];
         this.Expose = null;
         this.data.forEach(item => {
-            item.IsOnExpose__c = false;
-            this.exposeRecordsToUpdateFalse.push(item.Id);
+            item.MVEX__IsOnExpose__c = false;
         });
         this.clearportal();
         this.clearwebsite();
-        this.disabledSave = false;
-        this.disabledCancel = false;
     }
 
     /**
@@ -1478,14 +1324,9 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     getportal() {
         this.Portal = this.data;
-        this.portalRecordsToUpdate = [];
-        this.portalRecordsToUpdateFalse = [];
         this.data.forEach(item => {
-            item.IsOnPortalFeed__c = true;
-            this.portalRecordsToUpdate.push(item.Id);
+            item.MVEX__IsOnPortalFeed__c = true;
         });
-        this.disabledSave = false;
-        this.disabledCancel = false;
     }
 
     /**
@@ -1495,15 +1336,10 @@ export default class ImagesAndMedia extends LightningElement {
     * Created By: Karan Singh
     **/
     clearportal() {
-        this.portalRecordsToUpdate = [];
-        this.portalRecordsToUpdateFalse = [];
         this.Portal = null;
         this.data.forEach(item => {
-            item.IsOnPortalFeed__c = false;
-            this.portalRecordsToUpdateFalse.push(item.Id);
+            item.MVEX__IsOnPortalFeed__c = false;
         });
-        this.disabledSave = false;
-        this.disabledCancel = false;
     }
 
     /**
@@ -1723,6 +1559,35 @@ export default class ImagesAndMedia extends LightningElement {
             variant: variant,
         });
         this.dispatchEvent(event);
+    }
+
+    get disableEnableBtn() {
+        let recordMap = new Map();
+        let combinedMediaListToSave = this.saveOrder();
+        this.data.forEach(record => {
+            let existingRecord = { Id: record.Id };
+            for (let key in record) {
+                existingRecord[key] = record[key];
+            }
+            recordMap.set(record.Id, existingRecord);
+        });
+
+        combinedMediaListToSave.forEach(media => {
+            if (!recordMap.has(media.Id)) {
+                recordMap.set(media.Id, { Id: media.Id });
+            }
+            let existingRecord = recordMap.get(media.Id);
+            for (let key in media) {
+                if (media.hasOwnProperty(key) && key !== 'Id') {
+                    existingRecord[key] = media[key];
+                }
+            }
+        });
+
+        let finalListToUpdate = Array.from(recordMap.values());
+        const fetchedDataString = JSON.stringify(this.fetchedData);
+        const dataString = JSON.stringify(finalListToUpdate);
+        return fetchedDataString === dataString;
     }
 
 }

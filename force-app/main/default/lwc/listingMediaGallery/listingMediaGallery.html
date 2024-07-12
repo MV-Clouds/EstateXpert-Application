@@ -1,0 +1,91 @@
+<template>
+    <div class="slds-box slds-theme_default">
+        <div class="cmp-name">
+            Listing Media Gallery
+        </div>
+        <template if:true={isdata}>
+            <div class="button-bar">
+                <div class="left-container">
+                    <p>{currentImageName}</p>
+                </div>
+                <div class="right-container">
+                    <button onclick={reloadComponent} class="reload-button">
+                        <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
+                    </button>
+                    <button onclick={openImagePreview} class="preview-button">
+                        <lightning-icon icon-name="utility:internal_share" size="x-small"></lightning-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="image_details">
+            <template for:each={currentImageTag} for:item="tag">
+                <lightning-badge label={tag} key={tag} class="badge_css"></lightning-badge>
+                </template>
+            </div>
+            <div class="image-container">
+                <div class="image-wrapper" onclick={openImageModel}>
+                    <template if:true={showSpinner}>
+                        <lightning-spinner size="medium"> </lightning-spinner>
+                    </template>
+                    <img src={currentImageUrl} alt="Current Image" />
+                </div>
+                <div class="arrow-container">
+                    <lightning-button-icon
+                        icon-name="utility:left"
+                        variant="bare"
+                        onclick={showPreviousImage}
+                        class="arrow left-arrow"
+                    ></lightning-button-icon>
+                    <lightning-button-icon
+                        icon-name="utility:right"
+                        variant="bare"
+                        onclick={showNextImage}
+                        class="arrow right-arrow"
+                    ></lightning-button-icon>
+                </div>
+            </div>
+        </template>
+        <template if:false={isdata}>
+            <div class="button-bar">
+                <div class="left-container">
+                </div>
+                <div class="right-container">
+                    <button onclick={reloadComponent} class="reload-button">
+                        <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="image-container">
+                <div class="image-wrapper">
+                    <p class="noimage">No Image Found</p>
+                </div>
+            </div>
+            <div></div>
+        </template>
+    </div>
+
+    <template if:true={isModalOpen}>
+        <div class="main_img_container">
+            <div class="modal-backdrop slds-modal-backdrop slds-fade-in-open slds-backdrop_open"></div>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container img_popup imageviewer">
+                    <header class="slds-modal__header title">
+                        <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate title_text">Image Viewer</h2>
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="Close" variant="inverse"
+                                size="small"></lightning-icon>
+                        </button>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <img src={modalImageUrl} alt="Image Preview" class="slds-align_absolute-center" />
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_brand" onclick={closeModal}>Close</button>
+                    </footer>
+                </div>
+            </section>
+        </div>
+    </template>
+</template>

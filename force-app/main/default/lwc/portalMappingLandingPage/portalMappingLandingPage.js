@@ -20,6 +20,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     @track MainListingOptions = [];
     @track isDataChanged = false;
     @track isRecordAvailable = true;
+    @track isSpinner = true;
 
     /**
     * Method Name: connectedCallback
@@ -88,6 +89,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     * Created By: Karan Singh
     **/
     getListingFields() {
+        this.isSpinner = true;
         try {
             getObjectFields({ portalName: this.portalGen })
                 .then(data => {
@@ -97,13 +99,16 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
                         this.processFieldWrapperData(data);
                     } else {
                         this.isRecordAvailable = false;
+                        this.isSpinner = false;
                     }
 
                 })
                 .catch(error => {
+                    this.isSpinner = false;
                     console.error('Error fetching Listing field data', error);
                 });
         } catch (error) {
+            this.isSpinner = false;
             console.log('error--> ',error);
         }
         
@@ -126,7 +131,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
             );
 
             const filteredFields = filteredListingFields.filter(
-                field => !portalMetadataRecords.some(record => record.Listing_Field_API_Name__c === field.apiName)
+                field => !portalMetadataRecords.some(record => record.MVEX__Listing_Field_API_Name__c === field.apiName)
             );
 
             const additionalOptions = filteredFields.map(field => ({
@@ -137,13 +142,13 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
             const finalList = portalMetadataRecords.map(record => ({
                 id: record.Id,
                 portalLabel: record.Name,
-                description: record.Portal_Field_Description__c,
-                example: record.Portal_Field_Example__c,
-                listingFieldAPIName: record.Listing_Field_API_Name__c ? record.Listing_Field_API_Name__c : '',
-                isRequired: record.Required__c,
+                description: record.MVEX__Portal_Field_Description__c,
+                example: record.MVEX__Portal_Field_Example__c,
+                listingFieldAPIName: record.MVEX__Listing_Field_API_Name__c ? record.MVEX__Listing_Field_API_Name__c : '',
+                isRequired: record.MVEX__Required__c,
                 listingFields: [
                     { label: 'None', value: '' },
-                    ...(record.Listing_Field_API_Name__c ? [{ label: this.getListingLabel(record.Listing_Field_API_Name__c), value: record.Listing_Field_API_Name__c }] : []),
+                    ...(record.MVEX__Listing_Field_API_Name__c ? [{ label: this.getListingLabel(record.MVEX__Listing_Field_API_Name__c), value: record.MVEX__Listing_Field_API_Name__c }] : []),
                     ...additionalOptions
                 ]
 
@@ -155,6 +160,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
         });
 
         this.originalMappingData = this.finalList;
+        this.isSpinner = false;
     }
 
     /**
@@ -188,7 +194,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
         try {
             event.preventDefault();
             let componentDef = {
-                componentDef: "c:portalMappingComponent",
+                componentDef: "MVEX:portalMappingComponent",
             };
             let encodedComponentDef = btoa(JSON.stringify(componentDef));
             this[NavigationMixin.Navigate]({
@@ -213,6 +219,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     **/
     handleSave() {
         try {
+            this.isSpinner = true;
             if (this.isDataChanged) {
                 let isValid = true;
                 let errorMessage = 'Please fill all required fields:';
@@ -226,6 +233,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     
                 if (!isValid) {
                     this.showToast('Error', errorMessage.slice(0, -1), 'error');
+                    this.isSpinner = false;
                     return;
                 }
     
@@ -233,11 +241,20 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
                     return record.listingFieldAPIName !== this.originalMappingData[index].listingFieldAPIName;
                 }).map(record => ({
                     Id: record.id,
-                    Listing_Field_API_Name__c: record.listingFieldAPIName
+                    MVEX__Listing_Field_API_Name__c: record.listingFieldAPIName
                 }));
+
+                const jsonList = {};
+                this.finalList.forEach(record => {
+                    if (record.listingFieldAPIName) {
+                        jsonList[record.listingFieldAPIName] = record.portalLabel;
+                    }
+                });
     
+                console.log('jsonList-->', JSON.stringify(jsonList));
+                
                 if (changedFields.length > 0) {
-                    saveChangedFields({ changedFields })
+                    saveChangedFields({ changedFields, jsonList: JSON.stringify(jsonList), portalName: this.portalGen })
                         .then(() => {
                             console.log('Changes saved successfully');
                             this.showToast('Success', 'Record saved successfully', 'success');
@@ -245,12 +262,16 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
                             this.getListingFields();
                         })
                         .catch(error => {
+                            this.isSpinner = false;
                             console.error('Error saving changes:', error);
                             this.showToast('Error', 'Failed to save record', 'error');
                         });
                 }
+            } else {
+                this.isSpinner = false;
             }
         } catch (error) {
+            this.isSpinner = false;
             console.log('error--> ',error);
         }
     }
@@ -360,18 +381,22 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     **/
     currentPortalAction(event) {
         try {
+            this.isSpinner = true;
             var btnName = event.target.dataset.name;
             portalAction({ portalId: this.portalId, actionName: btnName })
                 .then(result => {
+                    this.isSpinner = false;
                     console.log('Result--> ', result);
-                    this.showToast('Success', 'Changes has been saved successfully', 'success');
                     if (result == 'deactivated') {
+                        this.showToast('Success', 'The portal has been successfully deactivated.', 'success');
                         this.portalStatus = 'false';
                     } else if (result == 'activated') {
+                        this.showToast('Success', 'The portal has been successfully activated.', 'success');
                         this.portalStatus = 'true';
                     } else if (result == 'deleted') {
+                        this.showToast('Success', 'The portal has been successfully deleted.', 'success');
                         let componentDef = {
-                            componentDef: "c:portalMappingComponent",
+                            componentDef: "MVEX:portalMappingComponent",
                         };
                         let encodedComponentDef = btoa(JSON.stringify(componentDef));
                         this[NavigationMixin.Navigate]({
@@ -385,10 +410,12 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
                     }
                 })
                 .catch(error => {
+                    this.isSpinner = false;
                     console.error('Error saving changes:', error);
                     this.showToast('Error', 'Failed to save record', 'error');
                 });
         } catch (error) {
+            this.isSpinner = false;
             console.log('error-->', error);
         }
     }

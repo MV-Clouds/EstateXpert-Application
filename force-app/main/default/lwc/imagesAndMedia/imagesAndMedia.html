@@ -10,9 +10,9 @@
         <div class="groupbtn">
           <lightning-button-group>
             <lightning-button label="Save Changes" onclick={saveChanges} variant="brand"
-              disabled={disabledSave}></lightning-button>
+              disabled={disableEnableBtn}></lightning-button>
             <lightning-button label="Cancel" onclick={cancelChanges} variant="brand-outline"
-              disabled={disabledCancel}></lightning-button>
+              disabled={disableEnableBtn}></lightning-button>
           </lightning-button-group>
         </div>
 
@@ -82,7 +82,7 @@
             <template for:each={Expose} for:item="imageUrl" for:index="index">
               <div key={imageUrl.Id} data-index={index} style={imageUrl.displayStyle} class="dropableimage"
                 ondragenter={handleDragEnter} ondragleave={handleDragLeave}>
-                <img key={imageUrl.Id} src={imageUrl.BaseUrl__c} alt="Image" draggable="true"
+                <img key={imageUrl.Id} src={imageUrl.MVEX__BaseUrl__c} alt="Image" draggable="true"
                   ondragstart={handleDragStart} data-index={index}></img>
               </div>
             </template>
@@ -109,7 +109,7 @@
             <template for:each={Website} for:item="imageUrl" for:index="index">
               <div key={imageUrl.Id} data-index={index} style={imageUrl.displayStyle} class="dropableimage"
                 ondragenter={handleDragEnter} ondragleave={handleDragLeave}>
-                <img key={imageUrl.Id} src={imageUrl.BaseUrl__c} alt="Image" draggable="true"
+                <img key={imageUrl.Id} src={imageUrl.MVEX__BaseUrl__c} alt="Image" draggable="true"
                   ondragstart={handleDragStart} data-index={index}></img>
               </div>
             </template>
@@ -136,7 +136,7 @@
             <template for:each={Portal} for:item="imageUrl" for:index="index">
               <div key={imageUrl.Id} data-index={index} style={imageUrl.displayStyle} class="dropableimage"
                 ondragenter={handleDragEnter} ondragleave={handleDragLeave}>
-                <img key={imageUrl.Id} src={imageUrl.BaseUrl__c} alt="Image" draggable="true"
+                <img key={imageUrl.Id} src={imageUrl.MVEX__BaseUrl__c} alt="Image" draggable="true"
                   ondragstart={handleDragStart} data-index={index}></img>
               </div>
             </template>
@@ -189,7 +189,7 @@
             <template for:each={data} for:item="item">
               <tr class="slds-hint-parent" key={item.Id}>
                 <td data-label="Thumbnail">
-                  <div class="slds-truncate" title="Thumbnail"><img src={item.BaseUrl__c}
+                  <div class="slds-truncate" title="Thumbnail"><img src={item.MVEX__BaseUrl__c}
                       class="slds-avatar slds-avatar_rectangle slds-avatar_large customimg" alt="Thumbnail" />
                   </div>
                 </td>
@@ -197,11 +197,11 @@
                   <div class="slds-truncate" title="Title" style="width: 150px;">{item.Name}</div>
                 </td>
                 <td data-label="Size">
-                  <div class="slds-truncate" title="Size">{item.Size__c}</div>
+                  <div class="slds-truncate" title="Size">{item.MVEX__Size__c}</div>
                 </td>
                 <td data-label="badges">
-                  <template for:each={item.Tags__c} for:item="tag">
-                    <template if:true={item.Tags__c}>
+                  <template for:each={item.MVEX__Tags__c} for:item="tag">
+                    <template if:true={item.MVEX__Tags__c}>
                       <lightning-badge label={tag} key={tag} style="margin-bottom: 4px;"></lightning-badge><br
                         key={tag} />
                     </template>
@@ -211,31 +211,31 @@
                   <div class="slds-truncate padding_css" title="Status">
 
                     <lightning-input class="checkbox-expose" type="checkbox" label="Is On Expose" name="expose"
-                      value={item.IsOnExpose__c} data-key={item.Id} onchange={storeCheckedValue}
-                      checked={item.IsOnExpose__c}></lightning-input>
+                      value={item.MVEX__IsOnExpose__c} data-field="MVEX__IsOnExpose__c" data-key={item.Id} onchange={handleCheckboxChange}
+                      checked={item.MVEX__IsOnExpose__c}></lightning-input>
 
                     <lightning-input class="checkbox-website statusbox" type="checkbox" label="Is On Website"
-                      name="website" value={item.IsOnWebsite__c} data-key={item.Id} onchange={storeCheckedValue}
-                      checked={item.IsOnWebsite__c}></lightning-input>
+                      name="website" value={item.MVEX__IsOnWebsite__c} data-field="MVEX__IsOnWebsite__c" data-key={item.Id} onchange={handleCheckboxChange}
+                      checked={item.MVEX__IsOnWebsite__c}></lightning-input>
 
                     <lightning-input class="checkbox-portal statusbox" type="checkbox" label="Is On Portal Feed"
-                      name="portal" value={item.IsOnPortalFeed__c} data-key={item.Id} onchange={storeCheckedValue}
-                      checked={item.IsOnPortalFeed__c}></lightning-input>
+                      name="portal" value={item.MVEX__IsOnPortalFeed__c} data-field="MVEX__IsOnPortalFeed__c" data-key={item.Id} onchange={handleCheckboxChange}
+                      checked={item.MVEX__IsOnPortalFeed__c}></lightning-input>
                   </div>
                 </td>
                 <td data-label="actions">
                   <div class="slds-truncate" title="actions">
                     <lightning-button-icon icon-name="utility:preview" alternative-text="Preview"
-                      class="slds-m-left_xx-small" title="Preview" data-key={item.Id} data-url={item.BaseUrl__c}
-                      data-exturl={item.ExternalLink__c} onclick={handlePreview}></lightning-button-icon>
+                      class="slds-m-left_xx-small" title="Preview" data-key={item.Id} data-url={item.MVEX__BaseUrl__c}
+                      data-exturl={item.MVEX__ExternalLink__c} onclick={handlePreview}></lightning-button-icon>
                     <lightning-button-icon icon-name="utility:download" alternative-text="download"
-                      class="slds-m-left_xx-small" title="download" data-key={item.Id} data-url={item.BaseUrl__c}
+                      class="slds-m-left_xx-small" title="download" data-key={item.Id} data-url={item.MVEX__BaseUrl__c}
                       data-name={item.Name} onclick={downloadRowImage}></lightning-button-icon>
                     <lightning-button-icon icon-name="utility:edit" alternative-text="edit" class="slds-m-left_xx-small"
-                      title="edit" data-key={item.Id} data-url={item.BaseUrl__c} data-tags={item.Tags__c}
+                      title="edit" data-key={item.Id} data-url={item.MVEX__BaseUrl__c} data-tags={item.MVEX__Tags__c}
                       data-name={item.Name} onclick={editImageNameToStore}></lightning-button-icon>
                     <lightning-button-icon icon-name="utility:delete" alternative-text="Preview"
-                      class="slds-m-left_xx-small" title="delete" data-key={item.Id} data-url={item.BaseUrl__c}
+                      class="slds-m-left_xx-small" title="delete" data-key={item.Id} data-url={item.MVEX__BaseUrl__c}
                       onclick={deleteRow}></lightning-button-icon>
                   </div>
                 </td>
@@ -286,7 +286,7 @@
           </header>
           <div class="slds-modal__content slds-p-around_medium">
             <label for="title" class="slds-m-bottom_small label"><b>Name:</b></label>
-            <lightning-input onchange={store_img_name} value={currentImgName} label="Name"
+            <lightning-input onchange={storeImgName} value={currentImgName} label="Name"
               variant="label-hidden"></lightning-input>
             <br />
             <label for="title" class="slds-m-bottom_small label"><b>Tags</b></label>
@@ -333,14 +333,14 @@
             </button>
           </header>
           <div class="slds-modal__content slds-p-around_medium modalbody">
-            <label for="title" class="slds-m-bottom_small label"><b>Title:</b></label>
+            <label for="title" class="slds-m-bottom_small label"><b class="astrick_css">*</b><b>Title:</b></label>
             <lightning-input onchange={storeUrl} label="Title" variant="label-hidden" required></lightning-input>
             <br />
-            <label for="link" class="slds-m-bottom_small label"><b>External Link (URL):</b></label>
+            <label for="link" class="slds-m-bottom_small label"><b class="astrick_css">*</b><b>External Link (URL):</b></label>
             <lightning-input variant="label-hidden" label="External Link (URL)" onchange={storeUrl}
               required></lightning-input>
             <br />
-            <label for="type" class="slds-m-bottom_small label" style="margin-bottom: 4px;"><b>Type:</b></label>
+            <label for="type" class="slds-m-bottom_small label" style="margin-bottom: 4px;"><b class="astrick_css">*</b><b>Type:</b></label>
             <lightning-combobox name="Type" variant="label-hidden" value={selectedUrlType} options={options}
               onchange={handleLinkType} required></lightning-combobox>
 
@@ -348,7 +348,7 @@
 
           <footer class="slds-modal__footer footerlink">
             <div class="popup-btn">
-              <button class="slds-button slds-button_brand" onclick={upload_image}
+              <button class="slds-button slds-button_brand" onclick={uploadImage}
                 disabled={disabledUpload}>Upload</button>
               <button class="slds-button slds-button_brand buttons_close" onclick={closepopup}>Close</button>
             </div>
