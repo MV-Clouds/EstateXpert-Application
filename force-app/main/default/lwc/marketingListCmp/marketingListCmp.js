@@ -12,7 +12,6 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @track spinnerShow=true;
     @track showList = true
     @track showTile =false;
-    @track unchangedContactData = [];
     @track contactData =[];
     @track fields =[];
     @track processedContactData = [];    
@@ -32,7 +31,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : checkAll
     * @description : handle the checkAll checkbox in list view.
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
      get checkAll() {
@@ -42,7 +41,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : showSection
     * @description : getter for the show no result found text when shownProcessedContactData.length === 0.
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     get showSection() {
@@ -52,7 +51,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
       /**
     * Method Name : connectedCallback
     * @description : retrieve fields name from the field-set and retrieve Contact records.
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     connectedCallback(){
@@ -64,7 +63,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
       /**
     * Method Name : getContactData
     * @description : retrieve the data Contact data from the salesforce
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     getContactData(){
@@ -73,10 +72,8 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             .then(result => {
                 this.contactData = result.contacts;
                 this.contactData.forEach((con)=>{
-                    con.media_url = '/resource/blankImage';
                     con.isChecked = false;
                 })
-                this.unchangedContactData = this.contactData;
                 this.processContacts();
             })
             .catch(error => {
@@ -87,7 +84,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
       /**
     * Method Name : processContacts
     * @description : set the contact data inorder of the fields data
-   * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     processContacts() {
@@ -104,7 +101,6 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
                 Email: con.Email,
                 Phone: con.Phone,
                 LeadSource : con.LeadSource,
-                media_url : con.media_url,
                 isChecked: con.isChecked,
                 orderedFields
             };
@@ -119,7 +115,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : loadFormData
     * @description : retrieve the fields data from the salesforce
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     loadFormData() {
@@ -137,14 +133,12 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : handleFilteredContacts
     * @description : set the data comming from the filter cmp
-    *  Date: 22/07/2024
+    *  Date: 22/06/2024
     * Created By:Vyom Soni
     */
     handleFilteredContacts(event){
         const filteredContact = event.detail.filtercontacts;
         this.selectedFieldsString =event.detail.fields;
-        console.log('contacts'+filteredContact);
-        console.log('fields'+typeof fields);
         this.processedContactData = this.unchangedProcessContact;
         this.processedContactData = this.processedContactData.filter(processCon =>
             filteredContact.some(filtered => filtered.Id === processCon.Id)
@@ -166,7 +160,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : handleContactSelect
     * @description : handle data from the tile cmp
-    *  Date: 22/07/2024
+    *  Date: 22/06/2024
     * Created By:Vyom Soni
     */
     handleContactSelect(event){
@@ -178,7 +172,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : handleMenuTabClick
     * @description : handle the menu clicks in the header
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     handleMenuTabClick(evt){
@@ -203,7 +197,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : redirectToRecord
     * @description : redirect to contact record recordPage
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     redirectToRecord(event){
@@ -221,7 +215,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : checkBoxValueChange
     * @description : handle the checkbox change
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     checkBoxValueChange(event){
@@ -258,7 +252,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
       /**
     * Method Name : selectAllCheckbox
     * @description : select the all checkbox
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     selectAllCheckbox(event){
@@ -280,7 +274,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
       /**
     * Method Name : goTONewContact
     * @description : Redirect the new contact page
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     goTOContactPage(){
@@ -299,7 +293,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : updateSelectedProperties
     * @description : update the properties as selected
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     updateSelectedProperties() {
@@ -310,7 +304,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : sortClick
     * @description : this methods apply the sorting on the all fields
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     sortClick(event) {
@@ -328,7 +322,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : sortData
     * @description : this methods apply the sorting on the all fields
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     sortData() {
@@ -363,7 +357,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : updateSortIcons
     * @description : this method update the sort icons in the wrapbutton
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     updateSortIcons() {
@@ -383,7 +377,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : updateProcessedContactData
     * @description : this method update shown contacts in pagination
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     updateProcessedContactData() {
@@ -395,7 +389,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : updatePaginationButtons
     * @description : update the pagination buttons
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     updatePaginationButtons() {
@@ -406,7 +400,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : goToPrevFeaturedProperty
     * @description : handle the back button click in the  pagination
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     goToPrevFeaturedProperty() {
@@ -423,7 +417,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
      /**
     * Method Name : goToNextFeaturedProperty
     * @description : handle the next button click in the  pagination
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     goToNextFeaturedProperty() {
@@ -440,7 +434,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     /**
     * Method Name : scrollToTop
     * @description : scroll to top in list
-    * Date: 22/07/2024
+    * Date: 22/06/2024
     * Created By:Vyom Soni
     */
     scrollToTop() {

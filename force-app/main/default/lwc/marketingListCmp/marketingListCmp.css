@@ -61,6 +61,7 @@
      /* padding: 0.7rem; */
     overflow: hidden;
 }
+
 .main .body .innerDiv1 .filterCmp-cover{
     height: 100%;
     width: 100%;
@@ -152,7 +153,6 @@
     background-color: rgb(220, 235, 249);
 }
 
-
 .noresult{
     overflow: auto;
     height: 81%;
@@ -162,7 +162,7 @@
 }
 
 .noresult .tag1{
-    font-family: "Sans-Serif",Montserrat;
+    font-family: Sans-Serif;
     font-size: 1.1rem;
     font-weight: 600;
     line-height: 25px;
@@ -171,7 +171,7 @@
 }
 
 .noresult .tag2{
-    font-family: "Sans-Serif",Montserrat;
+    font-family: Sans-Serif;
     font-size: 0.9rem;
     font-weight: 400;
     line-height: 25px;
@@ -179,31 +179,37 @@
 
 }
 
-
 .main .body .innerDiv2 .slds-cell_action-mode .slds-icon_container{
     display:none
 }
+
 .main .body .innerDiv2 .colume1{
     width:3.25rem
 }
+
 .main .body .innerDiv2 .imageColume{
     width:5.25rem
 }
+
 .main .body .innerDiv2 .property-image{
     width: 4rem;
     height: 3rem;
 }
+
 .main .body .innerDiv2 .colume1:hover .slds-icon_container{
    display:block;
    /* transform: rotate(180deg); */
 }
+
 .main .body .innerDiv2 .colume2:hover .slds-icon_container{
    display:block;
 }
+
 .main .body .innerDiv2 .slds-icon-utility-arrowdown svg{
     height: 0.8rem;
     fill: #0176d3;
 }
+
 .rotate-asc {
     transform: rotate(0deg);
     transition: transform 0.3s;

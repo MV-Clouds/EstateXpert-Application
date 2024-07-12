@@ -130,8 +130,11 @@ public with sharing class MarketingListFilterController {
         public Individual individual { get; set; }
         public User createdby { get; set; }
         public User lastmodifyby { get; set; }
+        public MVEX__Listing__c purchaselisting { get; set; }
+        public Account company { get; set; }
         
-        public ContactWrapper(Contact contact, Contact masterRecord , Contact reportTo,Account account,Individual individual,User createdby,User lastmodifyby ) {
+        
+        public ContactWrapper(Contact contact, Contact masterRecord , Contact reportTo,Account account,Individual individual,User createdby,User lastmodifyby,MVEX__Listing__c purchaselisting, Account company) {
             this.contact = contact;
             this.masterRecord = masterRecord;
             this.reportTo = reportTo;
@@ -139,6 +142,8 @@ public with sharing class MarketingListFilterController {
             this.individual = individual;
             this.createdby = createdby;
             this.lastmodifyby = lastmodifyby;
+            this.purchaselisting = purchaselisting;
+            this.company = company;
         }
 
         /**
@@ -153,10 +158,12 @@ public with sharing class MarketingListFilterController {
             result.put('Contact', getAllFieldsWithValues(contact));
             result.put('MasterRecordId', getAllFieldsWithValues(masterRecord));
             result.put('ReportsToId', getAllFieldsWithValues(reportTo));
-            result.put('Account__r', getAllFieldsWithValues(account));
+            result.put('AccountId', getAllFieldsWithValues(account));
             result.put('IndividualId', getAllFieldsWithValues(individual));
             result.put('CreatedById', getAllFieldsWithValues(createdby));
             result.put('LastModifiedById', getAllFieldsWithValues(lastmodifyby));
+            result.put('MVEX__Purchasing_Listing__r', getAllFieldsWithValues(purchaselisting));
+            result.put('MVEX__AccountId__r', getAllFieldsWithValues(company));
             return JSON.serialize(result);
         }
 
@@ -195,6 +202,8 @@ public with sharing class MarketingListFilterController {
         String individualFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Individual', 'Individual'));
         String createdbyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('User', 'CreatedBy'));
         String lastmodifybyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('User', 'LastModifiedBy'));
+        String purchaselistingFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('MVEX__Listing__c', 'MVEX__Purchasing_Listing__r'));
+        String companyFields =  String.escapeSingleQuotes(getAllFieldsWithPrefix('Account', 'MVEX__AccountId__r'));
 
         // Constructing the SOQL query
         String query = 'SELECT ' + 
@@ -204,7 +213,9 @@ public with sharing class MarketingListFilterController {
                        reportToFields +', '+
                        individualFields +', '+
                        createdbyFields + ', '+
-                       lastmodifybyFields + ' '+
+                       lastmodifybyFields + ', '+
+                       purchaselistingFields + ', '+
+                       companyFields + ' '+
                        'FROM Contact';
 
         // Debug the constructed query
@@ -221,7 +232,9 @@ public with sharing class MarketingListFilterController {
             Individual relatedIndividual= contact.Individual;
             User relatedCreatedBy= contact.CreatedBy;
             User relatedLastModifiedBy= contact.LastModifiedBy;
-            ContactWrapper lw = new ContactWrapper(contact,relatedMasterRecord,relatedReportsToId,relatedAccount,relatedIndividual,relatedCreatedBy,relatedLastModifiedBy);
+            MVEX__Listing__c relatedPurchaseListing= contact.MVEX__Purchasing_Listing__r;
+            Account relatedCompany= contact.MVEX__AccountId__r;
+            ContactWrapper lw = new ContactWrapper(contact,relatedMasterRecord,relatedReportsToId,relatedAccount,relatedIndividual,relatedCreatedBy,relatedLastModifiedBy,relatedPurchaseListing,relatedCompany);
             contactJsons.add(lw.toJson());
         }
 

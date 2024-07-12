@@ -186,9 +186,7 @@ export default class MarketingListFilterCmp extends LightningElement {
             const hasFieldChecked = field.fieldChecked != null;
     
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
-                console.log(field.label);
                 this.selectedFieldsString.push(field.label);
-                console.log(this.selectedFieldsString);
                 if (field.objectApiName !== 'Contact' && field.objectApiName !== 'MVEX__Inquiry__c') {
                     // Filter for related record in another object (Contact, Property)
                         this.filteredContacts = this.filteredContacts.filter(wrapper => {
@@ -220,8 +218,6 @@ export default class MarketingListFilterCmp extends LightningElement {
     
                         return relatedOffers.some(relatedOffer => {
                             if (field.picklist || field.string || field.id ) {
-                                console.log('relatedOffers ->'+relatedOffer);
-                                console.log('field ->'+field);
                                 const values = field.selectedOptions.map(option => option.value);
                                 return this.applyOperatorFilter(relatedOffer, field, values);
                             }
@@ -360,7 +356,6 @@ export default class MarketingListFilterCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     setFilteredContacts(){
-        console.log('selectyedFilelds'+JSON.stringify(this.selectedFieldsString));
         const filtercontacts =  this.filteredContacts;
         const fields = this.selectedFieldsString;
         const customEvent = new CustomEvent('valueselected', {
@@ -392,7 +387,6 @@ export default class MarketingListFilterCmp extends LightningElement {
             if (event.key === 'Enter') { // Check if Enter key was pressed
                 let fields = this.filterFields; // Assuming this is where 'fields' should be declared
                 const value = this.filterFields[index].picklistValue[0].value;
-                console.log('value'+value);
                 const field = fields[index]; // Access 'fields' instead of 'this.filterFields'
                 if (field != null) {
                     if (field.selectedOptions == null) {
@@ -651,7 +645,7 @@ export default class MarketingListFilterCmp extends LightningElement {
             this.applyFilters();
             this.filterFields[index].message = null;
         } else{
-            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
         }
     }
 
@@ -673,7 +667,7 @@ export default class MarketingListFilterCmp extends LightningElement {
                 this.applyFilters();
                 this.filterFields[index].message = '';
             }else{
-                this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+                this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
             }
         }catch(e){
             console.log('errro ->'+e);
@@ -697,7 +691,7 @@ export default class MarketingListFilterCmp extends LightningElement {
             this.applyFilters();
             this.filterFields[index].message = null;
         }else{
-            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
         }
     
     }
@@ -721,7 +715,7 @@ export default class MarketingListFilterCmp extends LightningElement {
             this.applyFilters();
             this.filterFields[index].message = null;
         } else{
-            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
         }
     }
 
@@ -742,7 +736,7 @@ export default class MarketingListFilterCmp extends LightningElement {
             this.applyFilters();
             this.filterFields[index].message = null;
         } else{
-            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
         }
     }
 
@@ -758,7 +752,7 @@ export default class MarketingListFilterCmp extends LightningElement {
         if (isNaN(currentValue) || currentValue <= this.filterFields[index].minValue) {
             //alert('Max value cannot be less than min value.');
             currentValue = null;
-            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
         } else {
             currentValue--;
         }
@@ -792,14 +786,15 @@ export default class MarketingListFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;
         this.filterFields[index].minDate = newValue;
-       
         // Perform validation
         const minDate = new Date(this.filterFields[index].minDate);
         const maxDate = new Date(this.filterFields[index].maxDate);
         
-        if (minDate <= maxDate || !this.filterFields[index].maxDate) {
+        if (minDate <= maxDate || this.filterFields[index].isDateMin == true) {
             this.applyFilters();
+            this.filterFields[index].message = null;
         } else {
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
             console.warn(`Min date should be less than or equal to max date for field ${this.filterFields[index].apiName}`);
         }
     }
@@ -814,14 +809,15 @@ export default class MarketingListFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;
         this.filterFields[index].maxDate = newValue;
-       
         // Perform validation
         const minDate = new Date(this.filterFields[index].minDate);
         const maxDate = new Date(this.filterFields[index].maxDate);
     
-        if (minDate <= maxDate || !this.filterFields[index].minDate) {
-            this.applyFilters();
+        if (minDate <= maxDate || this.filterFields[index].isDateMax == true) {
+            this.applyFilters(); 
+            this.filterFields[index].message = null;
         } else {
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
             console.warn(`Max date should be greater than or equal to min date for field ${this.filterFields[index].apiName}`);
         }
     }

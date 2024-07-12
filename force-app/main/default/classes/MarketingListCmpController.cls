@@ -75,7 +75,7 @@ public with sharing class MarketingListCmpController {
     * @param recordId Id value.
     * @param objectName String Object Name value.
     * @param fieldSetName String field-set name value.
-    * @return String of fields Name.
+    * @return FieldSetForm wrapper class.
     */
     @AuraEnabled
     public static FieldSetForm getForm(Id recordId, String objectName, String fieldSetName) {
@@ -149,7 +149,7 @@ public with sharing class MarketingListCmpController {
     }
 
      /**
-    * Class Name : FieldSetForm
+    * Class Name : FormField
     * @description : Inner class representing a field from the field set.
     */
     public class FormField {

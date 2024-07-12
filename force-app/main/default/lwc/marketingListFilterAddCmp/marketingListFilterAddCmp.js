@@ -40,7 +40,7 @@ export default class MarketingListFilterAddCmp extends LightningElement {
         this.isDisabled = true;
         getContactFields({ objectApiName })
             .then(fields => {
-                var filteredFields = fields.filter(field => field.fieldAPIName !== 'OwnerId');
+                let filteredFields = fields.filter(field => field.fieldAPIName !== 'OwnerId');
                 if(this.breadcrumbs.length >0){
                     filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
                 }
@@ -78,7 +78,7 @@ export default class MarketingListFilterAddCmp extends LightningElement {
         this.isDisabled = true;
         getContactFields({ objectApiName })
             .then(fields => {
-                var filteredFields = fields;
+                let filteredFields = fields;
                 if(this.breadcrumbs.length >0){
                     filteredFields = fields.filter(field => field.fieldType != 'REFERENCE');
                 }
@@ -297,7 +297,7 @@ export default class MarketingListFilterAddCmp extends LightningElement {
             this.handleAddButtonDisable();
 
             if (this.selectedValues.length > 0) {   
-                var lastSelectedField = this.selectedFields[this.selectedFields.length - 1].objectApiName;
+                let lastSelectedField = this.selectedFields[this.selectedFields.length - 1].objectApiName;
                 if(lastSelectedField == null){
                     lastSelectedField='Contact'
                 }

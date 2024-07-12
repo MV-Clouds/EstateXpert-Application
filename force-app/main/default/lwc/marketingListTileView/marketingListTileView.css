@@ -90,7 +90,7 @@
 }
 
 .noresult .tag1{
-    font-family: "Sans-Serif",Montserrat;
+    font-family: Sans-Serif;
     font-size: 1.1rem;
     font-weight: 600;
     line-height: 25px;
@@ -99,7 +99,7 @@
 }
 
 .noresult .tag2{
-    font-family: "Sans-Serif",Montserrat;
+    font-family: Sans-Serif;
     font-size: 0.9rem;
     font-weight: 400;
     line-height: 25px;
