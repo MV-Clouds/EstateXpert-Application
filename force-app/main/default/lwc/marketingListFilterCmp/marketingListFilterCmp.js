@@ -382,6 +382,10 @@ export default class MarketingListFilterCmp extends LightningElement {
     handleSearchChange1(event) {
         const index = event.currentTarget.dataset.id;
         this.filterFields[index].searchTerm = event.target.value;
+        if (this.filterFields[index].searchTerm.length > 50) {
+            this.filterFields[index].message = 'The character length should not greater then 50 characters.';
+        } else {
+            this.filterFields[index].message = null; // Clear the message if the input length is valid
             this.filterFields[index].picklistValue =this.filterFields[index].unchangePicklistValue.filter(option =>
                 option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase())
             );
@@ -419,6 +423,7 @@ export default class MarketingListFilterCmp extends LightningElement {
                     }
                 }
             }
+        }
     }
 
     /**
@@ -586,8 +591,14 @@ export default class MarketingListFilterCmp extends LightningElement {
     handleSearchChangeString(event) {
         const index = event.currentTarget.dataset.id;
         this.filterFields[index].searchTerm = event.target.value;
-        if (event.key === 'Enter') { // Check if Enter key was pressed
-            this.addTheString(event);
+        // this.filterFields[index].message = 'The character length execceded 50 characters.';
+        if (this.filterFields[index].searchTerm.length > 50) {
+            this.filterFields[index].message = 'The character length should not greater then 50 characters.';
+        } else {
+            this.filterFields[index].message = null; // Clear the message if the input length is valid
+            if (event.key === 'Enter') { // Check if Enter key was pressed
+                this.addTheString(event);
+            }
         }
     }
 
@@ -638,7 +649,10 @@ export default class MarketingListFilterCmp extends LightningElement {
         this.filterFields[index].minValue = value;
         if ( this.filterFields[index].isMin == true|| value <= this.filterFields[index].maxValue|| value === 0) {
             this.applyFilters();
-        } 
+            this.filterFields[index].message = null;
+        } else{
+            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+        }
     }
 
     /**
@@ -653,9 +667,16 @@ export default class MarketingListFilterCmp extends LightningElement {
         if(isNaN(value)){
             value = null;
         }
-        this.filterFields[index].maxValue = value;
-        if ((this.filterFields[index].isMax ==true ||value === 0 || value >= this.filterFields[index].minValue)) {
-            this.applyFilters();
+        try{
+            this.filterFields[index].maxValue = value;
+            if ((this.filterFields[index].isMax ==true ||value === 0 || value >= this.filterFields[index].minValue)) {
+                this.applyFilters();
+                this.filterFields[index].message = '';
+            }else{
+                this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+            }
+        }catch(e){
+            console.log('errro ->'+e);
         }
     }
 
@@ -674,7 +695,10 @@ export default class MarketingListFilterCmp extends LightningElement {
         this.filterFields[index].minValue = currentValue + 1;
         if (this.filterFields[index].isMin == true||currentValue + 1 <= this.filterFields[index].maxValue) {
             this.applyFilters();
-        } 
+            this.filterFields[index].message = null;
+        }else{
+            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+        }
     
     }
 
@@ -695,7 +719,10 @@ export default class MarketingListFilterCmp extends LightningElement {
         this.filterFields[index].minValue = currentValue;
         if (this.filterFields[index].isMin == true||currentValue - 1 <= this.filterFields[index].maxValue) {
             this.applyFilters();
-        } 
+            this.filterFields[index].message = null;
+        } else{
+            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+        }
     }
 
     /**
@@ -713,7 +740,10 @@ export default class MarketingListFilterCmp extends LightningElement {
         this.filterFields[index].maxValue = currentValue + 1;
         if (this.filterFields[index].isMax == true||currentValue + 1 >= this.filterFields[index].minValue) {
             this.applyFilters();
-        } 
+            this.filterFields[index].message = null;
+        } else{
+            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
+        }
     }
 
     /**
@@ -728,12 +758,14 @@ export default class MarketingListFilterCmp extends LightningElement {
         if (isNaN(currentValue) || currentValue <= this.filterFields[index].minValue) {
             //alert('Max value cannot be less than min value.');
             currentValue = null;
+            this.filterFields[index].message = 'Min Price can not be Greater than the Max Price';
         } else {
             currentValue--;
         }
         this.filterFields[index].maxValue = currentValue;
         if (this.filterFields[index].isMax == true||currentValue - 1 >= this.filterFields[index].minValue) {
             this.applyFilters();
+            this.filterFields[index].message = null;
         } 
     }
 
