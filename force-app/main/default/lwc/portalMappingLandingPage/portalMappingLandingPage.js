@@ -179,7 +179,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     
                 this.finalList = [...this.finalList, finalList];
             });
-    
+   
             console.log('this.finalList-->', JSON.stringify(this.finalList));
         });
 

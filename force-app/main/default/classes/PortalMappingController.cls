@@ -102,6 +102,7 @@ public with sharing class PortalMappingController {
                 metadataMap.put('MVEX__Portal_Field_Example__c', (String)record.get('MVEX__Portal_Field_Example__c'));
                 metadataMap.put('MVEX__Allowed_Field_Datatype__c', (String)record.get('MVEX__Allowed_Field_Datatype__c'));
 
+
                 Boolean requiredField = (Boolean)record.get('MVEX__Required__c');
                 metadataMap.put('MVEX__Required__c', requiredField == true ? String.valueOf(requiredField) : '');
 
