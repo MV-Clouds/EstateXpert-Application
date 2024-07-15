@@ -218,4 +218,15 @@ export default class CheckListStatus extends LightningElement {
         })
         this.dispatchEvent(toastEvent)
     }
+
+    /**
+    * Method Name: refreshTable
+    * @description: Used to refresh table.
+    * Date: 15/07/2024
+    * Created By: Karan Singh
+    **/
+    refreshTable(){
+        this.checklistItems = [];
+        this.checklistValues();
+    }
 }

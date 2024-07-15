@@ -2,7 +2,7 @@
 * Class Name : PortalMappingController
 * Test Class : PortalMappingControllerTest
 * Created By : Karan Singh
-* Last Modified Date : 24/06/2024
+* Last Modified Date : 10/07/2024
 * Last Modified By : Karan Singh
 * @description : Used in portalMappingComponent and portalMappingLandingPage LWC components
 */
@@ -62,7 +62,7 @@ public with sharing class PortalMappingController {
 
             List<Portal_Listing_Mapping__c> portalListingMap ;
             if (portalName != null) {
-                portalListingMap = [SELECT Id, Name, Listing_Field_API_Name__c, Portal_Field_Description__c, Portal_Field_Example__c, Required__c FROM Portal_Listing_Mapping__c WHERE Portal_Name__c =: portalName WITH SECURITY_ENFORCED ORDER BY Required__c DESC, Name ASC];
+                portalListingMap = [SELECT Id, Name, Listing_Field_API_Name__c, Portal_Field_Description__c, Portal_Field_Example__c, Required__c, Allowed_Field_Datatype__c FROM Portal_Listing_Mapping__c WHERE Portal_Name__c =: portalName WITH SECURITY_ENFORCED ORDER BY Required__c DESC, Name ASC];
             }
 
             sObject blockFields = getBlockedFields(portalName);
@@ -79,7 +79,7 @@ public with sharing class PortalMappingController {
             
             for (Schema.SObjectField field : allFieldsMap.values()) {
                 Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
-                fieldsInfoList.add(new FieldInfo(fieldDescribe.getLabel(), fieldDescribe.getName()));
+                fieldsInfoList.add(new FieldInfo(fieldDescribe.getLabel(), fieldDescribe.getName(), fieldDescribe.getType())); // Pass field data type here
             }
             
             fieldsInfoList.sort();
@@ -88,6 +88,7 @@ public with sharing class PortalMappingController {
                 Map<String, String> fieldMap = new Map<String, String>();
                 fieldMap.put('label', fieldInfo.label);
                 fieldMap.put('apiName', fieldInfo.apiName);
+                fieldMap.put('dataType', String.valueOf(fieldInfo.dataType));
                 fieldDetails.add(fieldMap);
             }
 
@@ -99,6 +100,7 @@ public with sharing class PortalMappingController {
                 metadataMap.put('MVEX__Listing_Field_API_Name__c', (String)record.get('MVEX__Listing_Field_API_Name__c'));
                 metadataMap.put('MVEX__Portal_Field_Description__c', (String)record.get('MVEX__Portal_Field_Description__c'));
                 metadataMap.put('MVEX__Portal_Field_Example__c', (String)record.get('MVEX__Portal_Field_Example__c'));
+                metadataMap.put('MVEX__Allowed_Field_Datatype__c', (String)record.get('MVEX__Allowed_Field_Datatype__c'));
 
                 Boolean requiredField = (Boolean)record.get('MVEX__Required__c');
                 metadataMap.put('MVEX__Required__c', requiredField == true ? String.valueOf(requiredField) : '');
@@ -145,10 +147,12 @@ public with sharing class PortalMappingController {
     public class FieldInfo implements Comparable {
         public String label;
         public String apiName;
+        public Schema.DisplayType dataType; // Change dataType variable type
         
-        public FieldInfo(String label, String apiName) {
+        public FieldInfo(String label, String apiName, Schema.DisplayType dataType) { // Update constructor to include dataType of type Schema.DisplayType
             this.label = label;
             this.apiName = apiName;
+            this.dataType = dataType;
         }
         
         public Integer compareTo(Object other) {
@@ -311,16 +315,26 @@ public with sharing class PortalMappingController {
     * @param portalName String value.
     */
     @AuraEnabled
-    public static void savePropertyPortalRecord(String portalWrapper, String portalName) {
+    public static String savePropertyPortalRecord(String portalWrapper, String portalName) {
         try {
+            if(portalName == null || portalName == '') {
+                return 'Portal name is missing.';
+            }
+
             PropertyPortalWrapper wrapper = (PropertyPortalWrapper)JSON.deserialize(portalWrapper, PropertyPortalWrapper.class);
             List<Portal_Listing_Mapping__c> portalListingMaps = [SELECT Id, Listing_Field_API_Name__c, Name FROM Portal_Listing_Mapping__c WHERE Portal_Name__c =: portalName AND Listing_Field_API_Name__c != null];
             Map<String, String> jsonBodyMap = new Map<String, String>();
-
-            for (Portal_Listing_Mapping__c mapping : portalListingMaps) {
-                jsonBodyMap.put(mapping.Listing_Field_API_Name__c, mapping.Name);
+            String jsonBody = '';
+            if(!portalListingMaps.isEmpty()) {
+                for (Portal_Listing_Mapping__c mapping : portalListingMaps) {
+                    jsonBodyMap.put(mapping.Listing_Field_API_Name__c, mapping.Name);
+                }
+                jsonBody = JSON.serialize(jsonBodyMap);
+            } else {
+                jsonBody = CreatePortalListingMappingRecords.createPortalRecords(portalName);
             }
-            String jsonBody = JSON.serialize(jsonBodyMap);
+
+            System.debug('jsonBody: ' + jsonBody);
             
             String portalId;
             if (Portal__c.SObjectType.getDescribe().isAccessible() && Portal__c.SObjectType.getDescribe().isCreateable()) {
@@ -340,8 +354,11 @@ public with sharing class PortalMappingController {
             if (wrapper.portalname == 'Zoopla') {
                 ZooplaIntegration.zooplaCreateAndUpdateBranch(portalWrapper, portalId);
             }
+
+            return 'success';
         } catch (Exception e) {
             ErrorHandler.insert_errordata(e, 'PortalMappingController', 'savePropertyPortalRecord', 'Error while saving Portal__c record.');
+            return e.getMessage();
         }
     }
 
@@ -391,5 +408,4 @@ public with sharing class PortalMappingController {
         return customFields;
     }
     
-
 }

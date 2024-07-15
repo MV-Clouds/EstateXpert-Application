@@ -207,7 +207,7 @@ public class PropertyInfoBuilder {
     * Method Name : urlType
     * @param type - String
     * @return String
-    * @description : Used to get url type for Zoopla.
+    * @description : Used to get url type for Rightmove.
     */
     public static Integer urlType(String type) {
         switch on type {

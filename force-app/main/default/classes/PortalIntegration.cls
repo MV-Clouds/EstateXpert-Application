@@ -61,7 +61,7 @@ public with sharing class PortalIntegration {
     * @return String
     * @description : Used to process value for Zoopla.
     */
-    private static void processValue(Map<String, Object> parentMap, String key, Object value) {
+    public static void processValue(Map<String, Object> parentMap, String key, Object value) {
         try {
             if (key.contains('.')) {
                 String[] fieldNames = key.split('\\.');
@@ -145,8 +145,13 @@ public with sharing class PortalIntegration {
     */
     public static Object conditionallyChangeValue(String dataType, Object value, String valueMapping) {
         try {
+            if (value == null) {
+                return null;
+            }
+            
             Map<String, String> valueMap = new Map<String, String>();
             if (valueMapping != null && valueMapping != '') {
+                valueMapping = valueMapping.replaceAll('\\r\\n|\\r|\\n', '');
                 for (String mapping : valueMapping.split(',')) {
                     List<String> keyValue = mapping.split('=>');
                     if (keyValue.size() == 2) {
@@ -155,7 +160,7 @@ public with sharing class PortalIntegration {
                 }
             }
 
-            if (valueMap.containsKey((String) value)) {
+            if (value instanceof String && valueMap.containsKey((String) value)) {
                 value = valueMap.get((String) value);
             }
 
@@ -164,6 +169,10 @@ public with sharing class PortalIntegration {
                     return Integer.valueOf((String) value);
                 } else if (dataType.equalsIgnoreCase('boolean')) {
                     return Boolean.valueOf((String) value);
+                } else if (dataType.equalsIgnoreCase('datetime')) {
+                    return Datetime.valueOfGmt((String) value).format('dd-MM-yyyy HH:mm:ss');
+                } else if (dataType.equalsIgnoreCase('date')) {
+                    return ((Date) value).format();
                 } else {
                     return String.valueOf(value);
                 }
@@ -171,7 +180,7 @@ public with sharing class PortalIntegration {
                 return value;
             }
         } catch (Exception e) {
-            ErrorHandler.insert_errordata(e, 'PortalIntegration', 'conditionallyChangeValue', 'Error while conditionally changing value for Zoopla.');
+            ErrorHandler.insert_errordata(e, 'PortalIntegration', 'conditionallyChangeValue', 'Error while conditionally changing value for Zoopla and Rightmove.');
             return value;
         }
     }

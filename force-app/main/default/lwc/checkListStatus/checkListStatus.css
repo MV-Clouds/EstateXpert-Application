@@ -155,6 +155,32 @@
     font-family: verdana;
 }
 
+.checklist-user-selected {
+    font-size: 14px;
+    width: 8rem;
+    padding: 4px;
+    border: none;
+    background: #007BFF1F;
+    border-radius: 14px;
+    text-align: center;
+    border: none;
+    color: #007BFF;
+    margin-left: 10px;
+}
+
+.checklist-auto-selected {
+    font-size: 14px;
+    width: 8rem;
+    padding: 4px;
+    border: none;
+    background: #FFC1071F;
+    border-radius: 14px;
+    text-align: center;
+    border: none;
+    color: #FFC107;
+    margin-left: 10px;
+}
+
 /* Spinner css */
 
 .loader {

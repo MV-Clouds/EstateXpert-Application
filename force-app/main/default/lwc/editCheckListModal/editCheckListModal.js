@@ -175,7 +175,8 @@ export default class EditCheckListModal extends LightningElement {
                 Name: '',
                 MVEX__Field_Name__c: '',
                 MVEX__Operator__c: '',
-                MVEX__Value__c: ''
+                MVEX__Value__c: '',
+                MVEX__Description__c: ''
             };
             this.checklistItems = [...this.checklistItems, newItem];
             this.setScroll = true;
@@ -322,6 +323,7 @@ export default class EditCheckListModal extends LightningElement {
                         item.MVEX__Field_Name__c !== originalItem.MVEX__Field_Name__c ||
                         item.MVEX__Operator__c !== originalItem.MVEX__Operator__c ||
                         item.MVEX__Value__c !== originalItem.MVEX__Value__c ||
+                        item.MVEX__Description__c !== originalItem.MVEX__Description__c ||
                         // (this.isOrderChanged && item.MVEX__Sequence__c !== originalItem.MVEX__Sequence__c)
                         item.MVEX__Sequence__c !== originalItem.MVEX__Sequence__c
                     )) {

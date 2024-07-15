@@ -3,6 +3,12 @@
         <div class="header">
             <h1>Checklist Progress</h1>
             <div class="buttons">
+                <button class="edit-btn" onclick={refreshTable}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000">
+                        <path d="M21 3V8M21 8H16M21 8L18 5.29168C16.4077 3.86656 14.3051 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.2832 21 19.8675 18.008 20.777 14"
+                            stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </button>
                 <button class="edit-btn" onclick={handleShowEditModal}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0 12.6671V16H3.33288L13.1627 6.17022L9.82978 2.83734L0 12.6671ZM15.7401 3.5928C15.8225 3.51057 15.8878 3.41291 15.9324 3.30539C15.977 3.19787 16 3.08261 16 2.96621C16 2.84981 15.977 2.73456 15.9324 2.62704C15.8878 2.51952 15.8225 2.42186 15.7401 2.33963L13.6604 0.259915C13.5781 0.177523 13.4805 0.112156 13.373 0.0675565C13.2654 0.0229568 13.1502 0 13.0338 0C12.9174 0 12.8021 0.0229568 12.6946 0.0675565C12.5871 0.112156 12.4894 0.177523 12.4072 0.259915L10.7808 1.88636L14.1136 5.21924L15.7401 3.5928Z" fill="white"/>
@@ -22,9 +28,11 @@
                 <div key={item.id} class="checklist-item">
                     <label class={item.statusClass}>{item.statusText}</label>
                     <template if:true={item.fieldName}>
+                        <label class="checklist-auto-selected">Auto-Selected</label>
                         <input type="checkbox" class="custom-checkbox" checked={item.completed} />
                     </template>
                     <template if:false={item.fieldName}>
+                        <label class="checklist-user-selected">User-Selected</label>
                         <input type="checkbox" data-id={item.id} data-fieldname={item.fieldName} checked={item.completed} onchange={handleCheckboxChange} />
                     </template>
                     <label class="checklist-name">{item.name}</label>
@@ -33,10 +41,20 @@
                 <template if:true={item.showDropdown}>
                     <div class="dropdown-content" key={item.id}>
                         <template if:true={item.fieldName}>
-                            <p>To complete this checklist item, {item.fieldLabel} should {item.operator} to {item.value}</p>
+                            <template if:false={item.isDescription}>
+                                <p>To complete this checklist item, {item.fieldLabel} should {item.operator} to {item.value}</p>
+                            </template>
+                            <template if:true={item.isDescription}>
+                                <p>{item.description}</p>
+                            </template>
                         </template>
                         <template if:false={item.fieldName}>
-                            <p>No condition has been defined to mark the current checklist item as complete.</p>
+                            <template if:false={item.isDescription}>
+                                <p>No condition has been defined to mark the current checklist item as complete.</p>
+                            </template>
+                            <template if:true={item.isDescription}>
+                                <p>{item.description}</p>
+                            </template>
                         </template>
                     </div>
                 </template>

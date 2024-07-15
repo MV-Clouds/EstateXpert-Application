@@ -40,6 +40,9 @@
                                 <p class="header-text">Value</p>
                             </div>
                             <div class="slds-col">
+                                <p class="header-text">Description</p>
+                            </div>
+                            <div class="slds-col">
                                 <p class="header-text padding_css">Order</p>
                             </div>
                             <div class="slds-col">
@@ -60,6 +63,9 @@
                                     </div>
                                     <div class="slds-col wrap_css">
                                         <lightning-input type="text" value={item.MVEX__Value__c} data-index={index} data-field="MVEX__Value__c" onchange={handleInputChange} variant="label-hidden"></lightning-input>
+                                    </div>
+                                    <div class="slds-col wrap_css">
+                                        <lightning-input type="text" value={item.MVEX__Description__c} data-index={index} data-field="MVEX__Description__c" onchange={handleInputChange} variant="label-hidden"></lightning-input>
                                     </div>
                                     <div class="slds-col wrap_css">
                                         <div class="slds-button-group order_btn_grp" role="group">
