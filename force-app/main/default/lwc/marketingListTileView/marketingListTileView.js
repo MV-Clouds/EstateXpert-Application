@@ -30,11 +30,16 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
     set contactsdata(value) {
             if (value && Array.isArray(value)) {
                  this.contacts = value;
+                 this.pageNumber = 1;
                  this.totalPages = Math.ceil(this.contacts.length / this.pageSize);
+                 if(this.totalPages == 0){
+                    this.totalPages = 1;
+                }
                  this.updateProcessedContactData();
                  this.updatePaginationButtons();
             } else {
                  this.contacts = [];
+                 this.pageNumber = 1;
                  this.totalPages = 1;
                  this.shownProcessedContactData = [];
                  this.updatePaginationButtons();

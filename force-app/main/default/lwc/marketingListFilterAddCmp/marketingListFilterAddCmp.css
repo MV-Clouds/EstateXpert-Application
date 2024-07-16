@@ -17,6 +17,9 @@
     margin-right: 0.5rem;
     font-weight: 500;
 }
+.add-modal-cover .combo-box-cover{
+    margin-top: -0.3rem;
+}
 .bread-crumb-cover svg{
     fill: black;
     width: 0.8rem;

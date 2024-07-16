@@ -139,8 +139,8 @@ export default class MarketingListFilterCmp extends LightningElement {
                 picklistValue: field.picklistValues||[], // Set operatorName based on type
                 unchangePicklistValue: field.picklistValues||[], // Set operatorName based on type
                 prevApiName : field.prevApiName,
-                minValue:0,
-                maxValue:0,
+                minValue:null,
+                maxValue:null,
                 minDate:null,
                 maxDate:null,
                 isNot: field.isNot,
@@ -435,7 +435,7 @@ export default class MarketingListFilterCmp extends LightningElement {
      /**
     * Method Name: handleBlur1
     * @description: Handle the blur event in picklist fiedls.
-   * Date: 25/06/2024
+    * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
     handleBlur1(event) {
@@ -845,8 +845,19 @@ export default class MarketingListFilterCmp extends LightningElement {
     * Created By: Vyom Soni
     **/
     handleReset(){
-        // this.filterFields = this.staticFields
-        this.staticFields[0].picklistValue[0].showRightIcon = false;
+        this.staticFields.forEach(field => {
+            if (field.picklistValue) {
+              field.picklistValue.forEach(picklist => {
+                picklist.showRightIcon = false;
+              });
+            }
+            if (field.unchangePicklistValue) {
+              field.unchangePicklistValue.forEach(picklist => {
+                picklist.showRightIcon = false;
+              });
+            }
+          });
+        
         this.filterFields = this.staticFields;
         this.filterFields = this.staticFields.map(field => {
             return {

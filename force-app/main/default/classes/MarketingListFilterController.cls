@@ -18,6 +18,14 @@ public with sharing class MarketingListFilterController {
     public static List<FieldDetails> getContactFields(String objectApiName) {
         List<FieldDetails> fieldDetailsList = new List<FieldDetails>();
 
+        MarketingListFilterConfig__mdt filterConfig = [SELECT BlockedFields__c FROM MarketingListFilterConfig__mdt WITH SECURITY_ENFORCED  LIMIT 1];
+
+        // Parse the blocked fields
+        Set<String> blockedFields = new Set<String>();
+        if (filterConfig != null && filterConfig.BlockedFields__c != null) {
+            blockedFields.addAll(filterConfig.BlockedFields__c.split(';'));
+        }
+
         // Get the Describe result for the given object
         Schema.DescribeSObjectResult objDescribe = Schema.getGlobalDescribe().get(objectApiName).getDescribe();
 
@@ -26,6 +34,9 @@ public with sharing class MarketingListFilterController {
 
         // Iterate through each field
         for (String fieldName : fieldsMap.keySet()) {
+            if (blockedFields.contains(fieldName)) {
+                continue;
+            }
             Schema.SObjectField field = fieldsMap.get(fieldName);
             Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
 
