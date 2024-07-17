@@ -3,6 +3,7 @@ import getStaticFields from '@salesforce/apex/MarketingListFilterController.getS
 import getPicklistValues from '@salesforce/apex/MarketingListFilterController.getPicklistValues';
 import getContactsWithRelatedRecords from '@salesforce/apex/MarketingListFilterController.getContactsWithRelatedRecords';
 import getTheInquiryRecords from '@salesforce/apex/MarketingListFilterController.getTheInquiryRecords';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class MarketingListFilterCmp extends LightningElement {
     @track addModal = false;
@@ -14,7 +15,6 @@ export default class MarketingListFilterCmp extends LightningElement {
     @track InquiryRecords = [];
     @track filteredContacts =[];
     @track staticFields=[];
-    @track selectedFieldsString = [];
 
      /**
     * Method Name: connectedCallback
@@ -125,9 +125,10 @@ export default class MarketingListFilterCmp extends LightningElement {
     * Date: 25/06/2024
     * Created By: Vyom Soni
     **/
-    handleValueSelected(event) {
+      handleValueSelected(event) {
         // Get the value from the event detail and store it in a property
         this.valueFromChild = event.detail;
+        console.log('this.valueFromChild'+JSON.stringify(this.valueFromChild));
         this.valueFromChild = this.valueFromChild.map(field => {
             return {
                 label: field.label,
@@ -163,7 +164,27 @@ export default class MarketingListFilterCmp extends LightningElement {
                 message:''
             };
         });
-        this.filterFields = [...this.filterFields, ...this.valueFromChild];
+        console.log('this.valueFromChild'+JSON.stringify(this.valueFromChild));
+        this.valueFromChild.forEach(newField => {
+            const isFieldPresent = this.filterFields.some(field => 
+                (field.apiName === newField.apiName ||field.value === newField.apiName)&&
+                field.label === newField.label &&
+                field.objectApiName === newField.objectApiName &&
+                field.type === newField.type &&
+                field.prevApiName === newField.prevApiName
+            );
+            if (!isFieldPresent) {
+                this.filterFields = [...this.filterFields, newField];
+            }else{
+                const evt = new ShowToastEvent({
+                    title: 'Field is not added',
+                    message: `${newField.label} is already added in filter fields`,
+                    variant: 'error',
+                });
+                this.dispatchEvent(evt);
+            }
+        });
+    
     }
 
     /**
@@ -175,7 +196,6 @@ export default class MarketingListFilterCmp extends LightningElement {
     applyFilters() {
         
         this.filteredContacts = [...this.contacts];
-        this.selectedFieldsString = [];
         this.filterFields.forEach(field => {
             // Check if field has selectedOptions or has valid min/max values for filtering
             const hasSelectedOptions = field.selectedOptions && field.selectedOptions.length > 0;
@@ -186,7 +206,6 @@ export default class MarketingListFilterCmp extends LightningElement {
             const hasFieldChecked = field.fieldChecked != null;
     
             if (hasSelectedOptions || hasMinValue || hasMaxValue || hasMinDate || hasMaxDate || hasFieldChecked) {
-                this.selectedFieldsString.push(field.label);
                 if (field.objectApiName !== 'Contact' && field.objectApiName !== 'MVEX__Inquiry__c') {
                     // Filter for related record in another object (Contact, Property)
                         this.filteredContacts = this.filteredContacts.filter(wrapper => {
@@ -357,9 +376,8 @@ export default class MarketingListFilterCmp extends LightningElement {
     **/
     setFilteredContacts(){
         const filtercontacts =  this.filteredContacts;
-        const fields = this.selectedFieldsString;
         const customEvent = new CustomEvent('valueselected', {
-            detail:  {filtercontacts,fields}
+            detail:  {filtercontacts}
         });
         
         // Dispatch the custom event

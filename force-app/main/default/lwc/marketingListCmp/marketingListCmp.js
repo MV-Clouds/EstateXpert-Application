@@ -26,7 +26,6 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @track pageSize = 30;
     @track totalPages;
     @track shownProcessedContactData = [];
-    @track selectedFieldsString = null;
 
      /**
     * Method Name : checkAll
@@ -46,6 +45,77 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     */
     get showSection() {
         return this.shownProcessedContactData.length === 0;
+    }
+
+    /**
+    * Method Name : sortDescription
+    * @description : set the header sort description.
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get sortDescription() {
+        if(this.sortField != '' && this.showTile == false){
+            const orderDisplayName = this.sortOrder === 'asc' ? 'Ascending' : 'Descending';
+            
+            let field = null;
+            // Assuming `listings` is an array of objects where each object has a `value` and a `label` property
+            if(this.sortField != 'Name'){
+                field = this.fields.find(item => item.fieldName === this.sortField);
+            }else{
+                field = {fieldName:'Name',fieldLabel:'Contact Name'};
+            }
+            console.log('fields'+JSON.stringify(this.fields));
+            if (!field) {
+                return '';
+            }
+        
+            const fieldDisplayName = field.fieldLabel;
+            
+            return `Sorted by ${fieldDisplayName} (${orderDisplayName})`;
+        }else{
+            return '';
+        }
+    }
+
+    /**
+    * Method Name : totalContacts
+    * @description : set the total filtered contacts.
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get totalContacts(){
+        return this.processedContactData.length;
+    }
+
+    /**
+    * Method Name : isSelected
+    * @description : set value true if any option is true.
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get isSelected(){
+        return this.totalSelected>0;
+    }
+
+    /**
+    * Method Name : items
+    * @description : set 'Items' string when the user select more then 1 options.
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get items(){
+        return this.totalSelected > 1 ? 'Items' : 'Item';
+    }
+    
+    /**
+    * Method Name : contactItems
+    * @description : set 'Items' when the filtered items is more then the 1  .
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get contactItems(){
+        return this.processedContactData.length>1 ? 'Items' :'Item';
+
     }
 
       /**
@@ -137,11 +207,13 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     * Created By:Vyom Soni
     */
     handleFilteredContacts(event){
+        this.sortField = '';
+        this.sortOrder = 'asc';
+        const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown svg');
+        allHeaders.forEach(icon => {
+            icon.classList.remove('rotate-asc', 'rotate-desc');
+        });
         const filteredContact = event.detail.filtercontacts;
-        this.selectedFieldsString =event.detail.fields;
-        if(this.selectedFieldsString.length == 0){
-            this.selectedFieldsString = null;
-        }
         this.processedContactData = this.unchangedProcessContact;
         this.processedContactData = this.processedContactData.filter(processCon =>
             filteredContact.some(filtered => filtered.Id === processCon.Id)

@@ -31,7 +31,12 @@
                         </div>
                         <div class="slds-page-header__row second-row">
                             <div class="slds-page-header__col-meta">
-                                <p class="slds-page-header__meta-text">{totalSelected} Items <template if:true={selectedFieldsString}>Sorted by {selectedFieldsString}</template> </p>
+                                <template if:false={isSelected}>
+                                    <p class="slds-page-header__meta-text">{totalContacts} {contactItems} {sortDescription}</p>
+                                </template>
+                                <template if:true={isSelected}>
+                                    <p class="slds-page-header__meta-text">{totalSelected} {items} Selected</p>
+                                </template>
                             </div>
                             <div class="slds-page-header__col-controls">
                                 <div class="slds-page-header__controls">

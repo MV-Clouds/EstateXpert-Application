@@ -41,6 +41,7 @@
     border: 1px solid var(--slds-g-color-border-base-4, rgb(229, 229, 229));
     border-radius: 0.2rem;
     background-color: white;
+    width: 94%;
 }
 
 .combobox .options-box ul li {
