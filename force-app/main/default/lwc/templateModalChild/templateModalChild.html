@@ -20,6 +20,14 @@
                             <div class="max-width"><strong>Object:</strong></div>
                             <div class="max-width">{selectedObject}</div>
                         </div>
+
+                        <template if:true={isEmailTemplate}>
+                        <div class="template-data">
+                            <div class="max-width"><strong>Subject:</strong></div>
+                            <div class="max-width">{subject}</div>
+                        </div>
+                        </template>
+                    
                     </div>
 
                     <div class="edit-btn">
@@ -58,7 +66,8 @@
 
         <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={templateLabel}
             object-select={selectedObject} type-select={selectedType} description={description} name="Edit"
-            body-of-template={bodyOfTemplate} is-edit={editValue} current-record-id={currentRecordId}>
+            body-of-template={bodyOfTemplate} is-edit={editValue} current-record-id={currentRecordId}
+            template-type-select={templateTypeSelect} is-quick-template={isQuickTemplate} subject={subject}>
         </c-custom-modal>
 
 

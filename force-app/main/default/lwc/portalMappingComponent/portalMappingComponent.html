@@ -12,7 +12,7 @@
                 </div>
 
                 <button class="back_button" onclick={backToControlCenter}>
-                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
                         <path fill-rule="evenodd" clip-rule="evenodd"
                             d="M0.30542 6.24365C0.10986 6.44084 0 6.70825 0 6.98708C0 7.2659 0.10986 7.53332 0.30542 7.73051L6.20652 13.679C6.30275 13.7794 6.41786 13.8595 6.54513 13.9146C6.67239 13.9697 6.80928 13.9987 6.94778 14C7.08629 14.0012 7.22365 13.9746 7.35185 13.9217C7.48005 13.8688 7.59652 13.7907 7.69447 13.692C7.79241 13.5933 7.86987 13.4759 7.92232 13.3467C7.97477 13.2174 8.00116 13.079 7.99996 12.9393C7.99876 12.7997 7.96998 12.6617 7.91531 12.5334C7.86064 12.4052 7.78117 12.2891 7.68154 12.1921L2.51794 6.98708L7.68154 1.78203C7.87156 1.58371 7.9767 1.31809 7.97432 1.04239C7.97195 0.766681 7.86224 0.502945 7.66883 0.307984C7.47542 0.113023 7.21379 0.00243378 6.94028 3.8147e-05C6.66677 -0.00235748 6.40326 0.10363 6.20652 0.295174L0.30542 6.24365Z"
                             fill="black" />
@@ -138,10 +138,7 @@
     </lightning-layout>
 
     <template if:true={isSpinner}>
-        <div class="spinner_class">
-            <span class="loader"></span>
-            <span class="loadertext">L &nbsp; ading</span>
-        </div>
+        <c-spinner-component></c-spinner-component>
     </template>
 
 </template>

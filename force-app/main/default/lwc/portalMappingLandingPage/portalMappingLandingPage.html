@@ -51,7 +51,7 @@
                             <div key={val.id} class="portalMapping_data-row">
                                 <div class="slds-col position_css">
                                     <div if:true={val.isRequired} class="red_css">*</div>
-                                    <lightning-combobox label="" options={val.listingFields} data-index={index}
+                                    <lightning-combobox label="" options={val.listingFields} data-index={index} data-datatype={val.dataType}
                                         value={val.listingFieldAPIName} onchange={handleComboboxChange}>
                                     </lightning-combobox>
                                 </div>
@@ -82,18 +82,8 @@
         </div>
     </div>
 
-
-    <lightning-layout>
-        <template if:true={showModal}>
-            <c-setting-pop-up onhidepopup={handleHidePopup}></c-setting-pop-up>
-        </template>
-    </lightning-layout>
-
     <template if:true={isSpinner}>
-        <div class="spinner_class">
-            <span class="loader"></span>
-            <span class="loadertext">L &nbsp; ading</span>
-        </div>
+        <c-spinner-component></c-spinner-component>
     </template>
 
 

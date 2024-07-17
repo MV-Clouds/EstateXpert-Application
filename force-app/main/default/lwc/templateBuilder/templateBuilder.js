@@ -41,9 +41,8 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     setCurrentPageReference(currentPageReference) {
         this.currentPageReference = currentPageReference;
         if (currentPageReference.state) {
-            if (currentPageReference.attributes.apiName == 'template_builder') {
+            if (currentPageReference.attributes.apiName == 'MVEX__template_builder') {
                 this.newPageNumber = currentPageReference.attributes.pageNumber;
-                console.log(this.newPageNumber);
                 this.fetchTemplates();
             }
         }
@@ -59,7 +58,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         Promise.all([
             loadStyle(this, externalCss)
         ])
-        .then(res => {
+        .then(() => {
             console.log('External Css Loaded');
         })
         .catch(error => {
@@ -78,24 +77,23 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.isLoading = true;
         getTemplates()
             .then(data => {
-                // console.log('data ==> ' , data);
                 this.totalRecodslength = data.length;
-                console.log('length ==> ' , this.totalRecodslength);
-            data.sort((a, b) => {
-                const labelA = a.Label__c.toLowerCase();
-                const labelB = b.Label__c.toLowerCase();
+                data.sort((a, b) => {
+                    const labelA = a.MVEX__Label__c.toLowerCase();
+                    const labelB = b.MVEX__Label__c.toLowerCase();
 
-                if (labelA < labelB) return -1;
-                if (labelA > labelB) return 1;
-                return 0;
-            });
+                    if (labelA < labelB) return -1;
+                    if (labelA > labelB) return 1;
+                    return 0;
+                });
     
-            this.processTemplates(data);
-            this.isLoading = false; 
+                this.processTemplates(data);
+                this.isLoading = false; 
             
             })
             .catch(error => {
                 this.isLoading = false;
+                console.log('Error occuring during fetching templates', error);
             });
     }
 
@@ -106,23 +104,19 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     processTemplates(data) {
-        // console.log('processtemplate:- ',JSON.stringify(data));
         // this.templates = data
         this.templates = data.map((template, index) => ({
             ...template,
             rowIndex: index + 1,
-            isActive: template.Status__c,
+            isActive: template.MVEX__Status__c,
             CreatedDateformatted: this.formatDate(template.CreatedDate)
         }));
         
         this.filteredTemplates = this.templates;
-        // console.log('filteredTemplates ==> ' , this.filteredTemplates);
         this.calculateTotalPages();
 
-        console.log(this.newPageNumber);
         if(this.newPageNumber != undefined){
             this.currentPage = this.newPageNumber;
-            console.log(this.currentPage);
         }
 
         this.displayTemplates();
@@ -167,13 +161,16 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     displayTemplates() {
         // Ensure currentPage is within valid range
-        console.log(this.currentPage);
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
         }
-        const startIndex = (this.currentPage - 1) * PAGE_SIZE;
+        var startIndex = (this.currentPage - 1) * PAGE_SIZE;
+
+        if(startIndex < 0){
+            startIndex = 0;
+        }
+
         this.visibleTemplates = this.filteredTemplates.slice(startIndex, startIndex + PAGE_SIZE);
-        // console.log('visibleTemplates ==> ', this.visibleTemplates);
         this.updatePaginationButtons();
     }
 
@@ -220,13 +217,11 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         const searchTerm = event.target.value.toLowerCase();
         
         this.filteredTemplates = this.templates.filter(template =>
-            template.Label__c.toLowerCase().includes(searchTerm)
+            template.MVEX__Label__c.toLowerCase().includes(searchTerm)
             );
             this.filteredTemplates = this.filteredTemplates.map((template, index) => ({
                 ...template,
                 rowIndex: index + 1,
-                isActive: template.Status__c,
-                CreatedDateformatted: this.formatDate(template.CreatedDate)
             }));
         this.calculateTotalPages();
         this.currentPage = 1;
@@ -248,11 +243,10 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 const template = this.templates.find(tmpl => tmpl.Id === templateId);
                 if (template) {
                     template.isActive = isActive;
-                    template.Status__c = isActive ? 'Active' : 'Inactive';
+                    template.MVEX__Status__c = isActive ? 'Active' : 'Inactive';
                     this.filteredTemplates = [...this.templates];
-                    console.log('filteredTemplates ==> ' , this.filteredTemplates);
                     this.displayTemplates();
-                    this.showToast('Status Change', `Template status changed to: ${template.Status__c}`, 'success');
+                    this.showToast('Status Change', `Template status changed to: ${template.MVEX__Status__c}`, 'success');
                 }
             })
             .catch(error => {
@@ -279,8 +273,8 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     handlePreview(event) {
         const templateId = event.target.dataset.id;
         const template = this.templates.find(tmpl => tmpl.Id === templateId);
-        this.selectedobject = template.Object_Name__c;
-        this.selectedTemplateBody = template.Template_Body__c;
+        this.selectedobject = template.MVEX__Object_Name__c;
+        this.selectedTemplateBody = template.MVEX__Template_Body__c;
         this.isPreviewModal = true;
     }
 
@@ -297,30 +291,32 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
 
         if (template) {    
             const navigationState = {
-                selectedObject: template.Object_Name__c ? template.Object_Name__c : '',
-                label: template.Label__c ? template.Label__c : '',
-                description: template.Description__c ? template.Description__c  : '',
-                type : template.Template_Type__c ? template.Template_Type__c : '',
+                selectedObject: template.MVEX__Object_Name__c ? template.MVEX__Object_Name__c : '',
+                label: template.MVEX__Label__c ? template.MVEX__Label__c : '',
+                description: template.MVEX__Description__c ? template.MVEX__Description__c  : '',
+                type : template.MVEX__Template_Type__c ? template.MVEX__Template_Type__c : '',
+                templateTypeSelect : template.MVEX__Template_pattern__c ? template.MVEX__Template_pattern__c : '',
+                subject : template.MVEX__Subject__c ? template.MVEX__Subject__c : '',
                 myrecordId : templateId,
+                isQuickTemplate : template.MVEX__Template_pattern__c == 'quickTemplate' ?  true : false,
+                isEmailTemplate : template.MVEX__Template_Type__c == 'Email' ?  true : false,
                 bodyOfTemplate : '',
                 isFirstTimeLoaded : true,
                 templateTypeForCreation : 'Edit'
             };
     
             const serializedState = JSON.stringify(navigationState);
-            // console.log('serializedState:', serializedState);
             
             var cmpDef;                
             cmpDef = {
-                componentDef: 'c:templateModalChild',
+                componentDef: 'MVEX:templateModalChild',
                 attributes: {                    
-                    c__navigationState: serializedState,
-                    c__recordId : templateId
+                    MVEX__navigationState: serializedState,
+                    MVEX__recordId : templateId
                 }                
                 };
 
             let encodedDef = btoa(JSON.stringify(cmpDef));
-                console.log('encodedDef : ', encodedDef);
                 this[NavigationMixin.Navigate]({
                 type: "standard__webPage",
                 attributes: {
@@ -365,7 +361,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                     
                     this.displayTemplates();
                     this.isLoading = false;
-                    this.showToast('Success', `Template '${template.Label__c}' deleted successfully.`, 'success');
+                    this.showToast('Success', `Template '${template.MVEX__Label__c}' deleted successfully.`, 'success');
                 })
                 .catch(error => {
                     this.isLoading = false;
@@ -382,14 +378,10 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     updatePaginationButtons() {
         this.isPreviousDisabled = (this.currentPage == 1);
-        console.log('here1==>' , this.currentPage) ;
-        console.log(this.isPreviousDisabled);
 
         if(this.newPageNumber != undefined){
             if(this.newPageNumber != 1 && (this.newPageNumber == this.totalPages)){
                 this.isPreviousDisabled = false;
-                console.log('here2 ==>',this.newPageNumber);
-                console.log(this.isPreviousDisabled);
             }
             this.isNextDisabled = true;
         }
@@ -405,7 +397,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     handleAdd() {
-        // console.log('Clicked');
         this.nameForTemplate = 'New';
         this.isModalOpen = true;
     }

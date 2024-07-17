@@ -253,7 +253,7 @@ export default class ImagesAndMedia extends LightningElement {
                 }
                 let existingRecord = recordMap.get(media.Id);
                 for (let key in media) {
-                    if (media.hasOwnProperty(key) && key !== 'Id') {
+                    if (Object.prototype.hasOwnProperty.call(media, key) && key !== 'Id') {
                         existingRecord[key] = media[key];
                     }
                 }
@@ -1578,7 +1578,7 @@ export default class ImagesAndMedia extends LightningElement {
             }
             let existingRecord = recordMap.get(media.Id);
             for (let key in media) {
-                if (media.hasOwnProperty(key) && key !== 'Id') {
+                if (Object.prototype.hasOwnProperty.call(media, key) && key !== 'Id') {
                     existingRecord[key] = media[key];
                 }
             }

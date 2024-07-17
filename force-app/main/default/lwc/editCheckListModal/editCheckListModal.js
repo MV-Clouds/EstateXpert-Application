@@ -244,8 +244,9 @@ export default class EditCheckListModal extends LightningElement {
                 return;
             }
 
-            // Validate each checklist item
-            for (let [index, item] of this.checklistItems.entries()) {
+            // Validate each checklist item using a traditional for loop instead of for-of
+            for (let index = 0; index < this.checklistItems.length; index++) {
+                const item = this.checklistItems[index];
                 if (!item.Name || !item.Name.trim()) {
                     this.toast('Error', `Checklist Name field is required.`, 'error');
                     var fieldName = 'Name';

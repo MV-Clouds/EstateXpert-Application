@@ -13,7 +13,6 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     @api portalIconUrl;
     @api portalStatus;
     @track isInitalRender = true;
-    @track showModal = false;
     @track originalMappingData = [];
     @track fieldWrapperList = [];
     @track finalList = [];
@@ -133,35 +132,60 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
             const filteredFields = filteredListingFields.filter(
                 field => !portalMetadataRecords.some(record => record.MVEX__Listing_Field_API_Name__c === field.apiName)
             );
+    
+            portalMetadataRecords.forEach(record => {
 
-            const additionalOptions = filteredFields.map(field => ({
-                label: field.label,
-                value: field.apiName
-            }));
-
-            const finalList = portalMetadataRecords.map(record => ({
-                id: record.Id,
-                portalLabel: record.Name,
-                description: record.MVEX__Portal_Field_Description__c,
-                example: record.MVEX__Portal_Field_Example__c,
-                listingFieldAPIName: record.MVEX__Listing_Field_API_Name__c ? record.MVEX__Listing_Field_API_Name__c : '',
-                isRequired: record.MVEX__Required__c,
-                listingFields: [
-                    { label: 'None', value: '' },
-                    ...(record.MVEX__Listing_Field_API_Name__c ? [{ label: this.getListingLabel(record.MVEX__Listing_Field_API_Name__c), value: record.MVEX__Listing_Field_API_Name__c }] : []),
-                    ...additionalOptions
-                ]
-
-            }));
-
-            this.finalList = [...this.finalList, ...finalList];
-
+                const finalFilteredFields = filteredFields.filter(field => {
+                    switch (record.MVEX__Allowed_Field_Datatype__c) {
+                        case 'String':
+                            return ['REFERENCE', 'TEXTAREA', 'STRING', 'URL', 'MULTIPICKLIST', 'PICKLIST'].includes(field.dataType);
+                        case 'Integer':
+                            return ['INTEGER', 'DOUBLE'].includes(field.dataType);
+                        case 'Date':
+                            return ['DATE', 'DATETIME', 'TIME'].includes(field.dataType);
+                        case 'Boolean':
+                            return field.dataType === 'BOOLEAN';
+                        case 'Email':
+                            return field.dataType === 'EMAIL';
+                        case 'Phone':
+                            return field.dataType === 'PHONE';
+                        case 'Currency':
+                            return field.dataType === 'CURRENCY';
+                        default:
+                            return true;
+                    }
+                });
+    
+                const additionalOptions = finalFilteredFields.map(field => ({
+                    label: field.label,
+                    value: field.apiName
+                }));
+    
+                const finalList = {
+                    id: record.Id,
+                    portalLabel: record.Name,
+                    description: record.MVEX__Portal_Field_Description__c,
+                    example: record.MVEX__Portal_Field_Example__c,
+                    listingFieldAPIName: record.MVEX__Listing_Field_API_Name__c ? record.MVEX__Listing_Field_API_Name__c : '',
+                    isRequired: record.MVEX__Required__c,
+                    dataType: record.MVEX__Allowed_Field_Datatype__c,
+                    listingFields: [
+                        { label: 'None', value: '' },
+                        ...(record.MVEX__Listing_Field_API_Name__c ? [{ label: this.getListingLabel(record.MVEX__Listing_Field_API_Name__c), value: record.MVEX__Listing_Field_API_Name__c }] : []),
+                        ...additionalOptions
+                    ]
+                };
+    
+                this.finalList = [...this.finalList, finalList];
+            });
+    
             console.log('this.finalList-->', JSON.stringify(this.finalList));
         });
 
         this.originalMappingData = this.finalList;
         this.isSpinner = false;
     }
+    
 
     /**
     * Method Name: getListingLabel
@@ -172,16 +196,6 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     getListingLabel(listingFieldValue) {
         const listingOption = this.MainListingOptions.find(option => option.apiName === listingFieldValue);
         return listingOption ? listingOption.label : '';
-    }
-
-    /**
-    * Method Name: handleHidePopup
-    * @description: Used to close the settingPopUp modal.
-    * Date: 04/06/2024
-    * Created By: Karan Singh
-    **/
-    handleHidePopup(event) {
-        this.showModal = event.details;
     }
 
     /**
@@ -295,16 +309,6 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     }
 
     /**
-    * Method Name: handleHidePopup
-    * @description: Used to open the settingPopUp modal.
-    * Date: 04/06/2024
-    * Created By: Karan Singh
-    **/
-    handleSetting() {
-        this.showModal = true;
-    }
-
-    /**
     * Method Name: handleComboboxChange
     * @description: Used to update the combobox list of each mapping.
     * Date: 04/06/2024
@@ -312,10 +316,12 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     **/
     handleComboboxChange(event) {
         try {
-            const selectedIndex = event.target.dataset.index;
+            const selectedIndex = event.currentTarget.dataset.index;
             const selectedValue = event.detail.value;
+            const dataType = event.currentTarget.dataset.datatype;
             this.isDataChanged = true;
             console.log('selectedValue-->', selectedValue);
+            console.log('dataType-->', dataType);
             if (selectedValue == '') {
                 let previousValue;
                 this.finalList = this.finalList.map((pair, index) => {
@@ -345,7 +351,7 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
                     return pair;
                 });
                 this.finalList.forEach((pair, index) => {
-                    if (index !== parseInt(selectedIndex, 10)) {
+                    if (index !== parseInt(selectedIndex, 10) && pair.dataType === dataType) {
                         var customOptions = pair.listingFields.filter(option => option.value !== selectedValue);
                         if (previousValue != '') {
                             customOptions = customOptions.concat({ label: this.getListingLabel(previousValue), value: previousValue });
