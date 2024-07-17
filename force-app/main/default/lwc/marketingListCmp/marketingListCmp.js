@@ -71,7 +71,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
         
             const fieldDisplayName = field.fieldLabel;
             
-            return `Sorted by ${fieldDisplayName} (${orderDisplayName})`;
+            return `- Sorted by ${fieldDisplayName} (${orderDisplayName})`;
         }else{
             return '';
         }
@@ -127,16 +127,16 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     connectedCallback(){
         loadStyle(this, designcss);
         this.loadFormData();
-        this.getContactData();
+        this.getContactDataMethod();
     }
     
       /**
-    * Method Name : getContactData
+    * Method Name : getContactDataMethod
     * @description : retrieve the data Contact data from the salesforce
     * Date: 22/06/2024
     * Created By:Vyom Soni
     */
-    getContactData(){
+    getContactDataMethod(){
         this.spinnerShow = true;
         getContactData()
             .then(result => {
@@ -210,16 +210,19 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
         this.sortField = '';
         this.sortOrder = 'asc';
         const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown svg');
+        const filteredContact = event.detail.filtercontacts;
         allHeaders.forEach(icon => {
             icon.classList.remove('rotate-asc', 'rotate-desc');
         });
-        const filteredContact = event.detail.filtercontacts;
+        this.processedContactData = this.processedContactData.map(item => {
+            return { ...item, isChecked: false };
+        });
+        this.unchangedProcessContact = this.unchangedProcessContact.map(item => {
+            return { ...item, isChecked: false };
+        });
         this.processedContactData = this.unchangedProcessContact;
         this.processedContactData = this.processedContactData.filter(processCon =>
             filteredContact.some(filtered => filtered.Id === processCon.Id)
-        );
-        this.contactData = this.contactData.filter(processCon => 
-            filteredContact.some(filter =>filter.Id === processCon.Id)
         );
         this.totalPages = Math.ceil(this.processedContactData.length / this.pageSize);
         if(this.totalPages == 0){
@@ -311,13 +314,6 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
                     }
                 })
                })
-            this.contactData.forEach(item1=>{
-                this.shownProcessedContactData.forEach(item2=>{
-                    if(item1.Id == item2.Id){
-                        item1.isChecked = item2.isChecked;
-                    }
-                })
-               })
         }catch (e){
             console.log('error ->'+e);
         }
@@ -332,8 +328,11 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     */
     selectAllCheckbox(event){
         const isChecked = event.target.checked;
-        this.contactData = this.contactData.map(item => {
-            return { ...item, isChecked: isChecked };
+        this.sortField = '';
+        this.sortOrder = 'asc';
+        const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown svg');
+        allHeaders.forEach(icon => {
+            icon.classList.remove('rotate-asc', 'rotate-desc');
         });
         this.processedContactData = this.processedContactData.map(item => {
             return { ...item, isChecked: isChecked };

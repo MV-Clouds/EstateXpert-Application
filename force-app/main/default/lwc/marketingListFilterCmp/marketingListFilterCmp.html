@@ -17,12 +17,12 @@
                         <div class="slds-form-element__control">
                             <div class="slds-combobox_container slds-has-selection">
                                 <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click combobox-cover">
-                                    <div class="input-delete-cover">
+                                    <div class="input-delete-cover picklist-search">
                                         <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div"
                                             role="none">
                                             <input type="text" class="slds-input slds-combobox__input"
                                                 placeholder={option.label} data-id={index} value={option.searchTerm}
-                                                onkeyup={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1} />
+                                                onkeyup={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1}/>
                                             <span
                                                 class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
                                                 <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520"
@@ -31,6 +31,36 @@
                                                         d="M496 453 362 320a189 189 0 1 0-340-92 190 190 0 0 0 298 135l133 133a14 14 0 0 0 21 0l21-21a17 17 0 0 0 1-22ZM210 338a129 129 0 1 1 130-130 129 129 0 0 1-130 130Z" />
                                                 </svg>
                                             </span>
+
+                                            <template if:true={option.isFocused}>
+                                                <div class="options-box">
+                                                    <ul class="options-cover">
+                                                        <template for:each={option.picklistValue} for:item="option1">
+                                                            <template if:false={option1.showRightIcon}>
+                                                                <li key={option1.value} data-index={index} data-id={option1.value} onclick={selectOption1}
+                                                                    class="options-value">
+                                                                    <span class="slds-media__body">
+                                                                        <span class="_entity">{option1.label}</span>
+                                                                    </span>
+                                                                </li>
+                                                            </template>
+                                                            <template if:true={option1.showRightIcon}>
+                                                                <li  data-index={index} key={option1.value} data-id={option1.value} onclick={selectOption1} class="slds-listbox__item">
+                                                                    <div class="slds-listbox__option slds-listbox__option_plain slds-media slds-media_small slds-media_center picklist-option">
+                                                                        <span class="slds-media__body">
+                                                                            <span class="slds-truncate" title={option1.label}>{option1.label}</span>
+                                                                        </span>
+                                                                        <span class="slds-media__figure slds-media__figure_reverse">
+                                                                            <lightning-icon icon-name="utility:check" alternative-text="Lookup Field" size="x-small"></lightning-icon>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                            </template>
+                                                            
+                                                        </template>
+                                                    </ul>
+                                                </div>
+                                            </template>
                                         </div>
                                         <div class="delete-icon-cover" >
                                             <svg  data-id={index} onclick={clearSearch} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 52 52"
@@ -40,35 +70,7 @@
                                             </svg>
                                         </div>
                                     </div>
-                                    <template if:true={option.isFocused}>
-                                        <div class="options-box">
-                                            <ul class="options-cover">
-                                                <template for:each={option.picklistValue} for:item="option1">
-                                                    <template if:false={option1.showRightIcon}>
-                                                        <li key={option1.value} data-index={index} data-id={option1.value} onclick={selectOption1}
-                                                            class="options-value">
-                                                            <span class="slds-media__body">
-                                                                <span class="_entity">{option1.label}</span>
-                                                            </span>
-                                                        </li>
-                                                    </template>
-                                                    <template if:true={option1.showRightIcon}>
-                                                        <li  data-index={index} key={option1.value} data-id={option1.value} onclick={selectOption1} class="slds-listbox__item">
-                                                            <div class="slds-listbox__option slds-listbox__option_plain slds-media slds-media_small slds-media_center picklist-option">
-                                                                <span class="slds-media__body">
-                                                                    <span class="slds-truncate" title={option1.label}>{option1.label}</span>
-                                                                </span>
-                                                                <span class="slds-media__figure slds-media__figure_reverse">
-                                                                    <lightning-icon icon-name="utility:check" alternative-text="Lookup Field" size="x-small"></lightning-icon>
-                                                                </span>
-                                                            </div>
-                                                        </li>
-                                                    </template>
-                                                    
-                                                </template>
-                                            </ul>
-                                        </div>
-                                    </template>
+                                    
             
                                 </div>
                             </div>
