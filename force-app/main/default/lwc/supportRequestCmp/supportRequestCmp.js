@@ -4,15 +4,10 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class SupportRequestCmp extends LightningElement {
 
-    error_toast = true;
-    pdfUrl;
-    img;
-    // Cross = Cross;
-    descriptionValue;
-    supportname;
-    email;
-    subject;
-    message;
+    @track supportname = '';
+    email ='';
+    subject = '';
+    message = '';
     name_msg = true;
     email_msg = true;
     Message_msg = true;

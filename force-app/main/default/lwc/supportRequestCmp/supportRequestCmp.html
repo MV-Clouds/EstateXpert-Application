@@ -1,51 +1,71 @@
 <template>
-    <div class="slds-p-top_medium slds-p-left_large slds-p-bottom_large slds-p-right_large">
+    <div class="slds-p-top_medium slds-p-left_large slds-p-bottom_large slds-p-right_large main-div">
         <div class="supportcls">
             <div class="Wel_message">
-                <lightning-input type="text" placeholder="Enter Your Name" label="Name"
-                    value={supportname} onchange={Support_name}
-                    class="input selectDropValues1" required></lightning-input>
-                <div class="email_error_msg" if:false={name_msg}>Please Enter Valid Name
-                    Details..!</div>
-            <lightning-input type="text" label="Email" placeholder="Enter Your Email"
-                    value={email} onchange={Support_email}
-                    class="input selectDropValues1" required></lightning-input>
-            <div class="email_error_msg" if:false={email_msg}>Please Enter Valid Email
-                Details..!</div>
+                <div class="content-div">
+                    <div class="head-div">
+                        <label class="heading1">Contact us</label>
+                        <label class="heading2">We are here for you! How can we help?</label>    
+                    </div>
 
-            <lightning-input type="text" label="Subject" placeholder="Enter Your Subject"
-                value={subject} onchange={Support_subject}
-                    class="input selectDropValues1" required="true"></lightning-input>
-                <div class="email_error_msg" if:false={subject_msg}>Please Enter Valid Subject
-                    Details..!</div>
-                <lightning-textarea label="Message" placeholder="Enter your Message"
-                    value={message} onchange={Support_message}
-                    class="message selectDropValues1" required="true"></lightning-textarea>
-                <div class="email_error_msg" if:false={Message_msg}>Please Enter Valid Message
-                    Details..!</div>
-                    <lightning-input label="Add Attachment" onchange={handleUploadFinished} type="file"
-                        name="file" accept=".png , .jpeg , .jpg" class="quick_message" multiple></lightning-input>
-                    <template if:true={filesData}>
-                            <ul class="image-list">
-                        <template for:each={filesData} for:item="imgName" for:index="index">
-                            <li key={imgName.id}>
-                                <div class="container">
-                                    <div class="box box1">
-                                        <p>{imgName.fileName}</p>
-                                    </div>
-                                    <div class="box removeImage" key={imgName.fileName} data-id={index} onclick={removeReceiptImage}>
-                                        <img src={Cross} class="cross_img_file">
-                                    </div>
-                                </div>
-                            </li>     
-                        </template>
-                            </ul>
-                    </template>
-            <div class="button">
-            <div class="savebutton" onclick={onClear}><span>Clear</span></div>
-            <div class="savebutton" onclick={onSubmit}><span>Submit</span></div>
-        </div>
-        </div>
+                    <div class="name-field">
+                        <label for="myInput">Name</label>
+                        <input type="text" placeholder="Enter Your Name" 
+                        value={supportname} onchange={Support_name}
+                        class="input selectDropValues1" />
+                        <div class="email_error_msg" if:false={Message_msg}>Please Enter Valid Message
+                            Details..!</div>
+                    </div>
+                    <div class="name-field">
+                        <label for="myInput">Email</label>
+                        <input type="text" placeholder="Enter Your Email"
+                        value={email} onchange={Support_email}
+                        class="input selectDropValues1" />
+                        <div class="email_error_msg" if:false={Message_msg}>Please Enter Valid Message
+                            Details..!</div>
+                    </div>
+                    <div class="name-field">
+                        <label for="myInput">Subject</label>
+                        <input type="text" placeholder="Enter Your Subject"
+                        value={subject} onchange={Support_subject}
+                        class="input selectDropValues1" />
+                        <div class="email_error_msg" if:false={Message_msg}>Please Enter Valid Message
+                            Details..!</div>
+                    </div>
+                    <div class="name-field">
+                        <label for="myInput">Message</label>
+                        <input type="text" placeholder="Enter your Message"
+                        value={message} onchange={Support_message}
+                        class="message selectDropValues1" required/>
+                        <div class="email_error_msg" if:false={Message_msg}>Please Enter Valid Message
+                            Details..!</div>
+                    </div>
+                            <lightning-input label="Add Attachment" onchange={handleUploadFinished} type="file"
+                                name="file" accept=".png , .jpeg , .jpg" class="quick_message" multiple></lightning-input>
+                            <template if:true={filesData}>
+                                    <ul class="image-list">
+                                <template for:each={filesData} for:item="imgName" for:index="index">
+                                    <li key={imgName.id}>
+                                        <div class="container">
+                                            <div class="box box1">
+                                                <p>{imgName.fileName}</p>
+                                            </div>
+                                            <div class="box removeImage" key={imgName.fileName} data-id={index} onclick={removeReceiptImage}>
+                                                <img src={Cross} class="cross_img_file">
+                                            </div>
+                                        </div>
+                                    </li>     
+                                </template>
+                                    </ul>
+                            </template>
+                            <div class="button">
+                                <lightning-button variant="brand-outline" label="Back" title="Primary action with lighter look" onclick={onClear} class="slds-m-left_x-small"></lightning-button>
+                                <lightning-button variant="brand" label="Submit" title="Primary action" onclick={onSubmit} class="slds-m-left_x-small"></lightning-button>
+
+                            </div>
+                </div>    
+                <div class="image-div"></div>
+            </div>
         </div>
     </div>
 </template>
