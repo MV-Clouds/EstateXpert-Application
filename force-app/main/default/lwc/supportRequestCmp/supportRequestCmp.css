@@ -5,20 +5,20 @@
 .head-div{
     display: flex;
     flex-direction: column;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 .head-div .heading1{
     font-family: "Poppins", sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 600;
-    line-height: 42px;  
+    line-height: 1.6rem;  
     text-align: left;
 }
 .head-div .heading2{
     font-family:   "Poppins", sans-serif;
-    font-size: 18px;
+    font-size: 1rem;
     font-weight: 400;
-    line-height: 27px;
+    line-height: 1.1rem;
     text-align: left;
     color: #00000080;
 }
@@ -26,33 +26,53 @@
 .name-field{
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    position: relative;
 }
+
 .name-field label{
     font-family:"Poppins", sans-serif;
-    font-size: 12px;
+    font-size: 0.7rem;
     font-weight: 500;
-    margin-bottom: -.2rem;
-
+    margin-bottom: 0rem;
 }
-.name-field input{
+
+.name-field input,textarea{
     line-height: normal;
     border: none;
-    height: 2rem;
+    height: 1.8rem;
     background: transparent;
     border-bottom: 2px solid #c0c1c3;
 }
+
+.name-field input,textarea:focus{
+    outline: none;
+}
+
+.name-field .error-message{
+    font-size: 0.7rem;
+    color: red;
+    position: absolute;
+    bottom: -1rem;
+}
+
 .content-div{
-    width: 47%;
+    width: 46%;
     height: 100%;
-    padding-left: 2rem;
+    padding-left: 1rem;
     position: relative;
-    padding-top: 2rem;
+    padding-top: 1rem;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
 }
 
 .image-div{
     width: 53%;
+    background: url(/resource/contactPageSideImg);
+    background-size: cover;
 }
 
 .main {
@@ -84,17 +104,27 @@
     background-color: rgba(37, 150, 190, 0.1);
     border-radius: 16px 16px 16px 16px;
     padding: 10px;
-    width: 60%;
-    height: 100%;
-    /* margin-top: 15px; */
+    width: 67%;
+    height: 36rem;
     overflow: auto;
+    display: flex;
 }
+
 .Wel_message::-webkit-scrollbar {
     display: none;
 }
 
-.Wel_message p {
-    font-weight: 500;
+.input-cover{
+    height: 90%;
+    overflow: auto;
+}
+
+.attachment-div{
+    height: fit-content;
+}
+
+.attachment-div::-webkit-scrollbar {
+    width: 0.3rem;
 }
 
 @media screen and (max-width:1400px) {
@@ -106,7 +136,6 @@
 }
 .supportcls{
     display: flex;
-    /* justify-content: center; */
     height: 100%;
     justify-content: center;
     align-items: center;
@@ -117,11 +146,30 @@
 }
 .button{
     display: flex;
-    gap: 2rem;
-    position: absolute;
-    bottom: 2rem;
+    /* position: absolute; */
+    height: 8%;
+    bottom: 0.5rem;
+    /* width: 95%; */
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
 }
-@media (max-width: 1400px) {
+.btn-div{
+    min-width: 9rem;
+    height: 2.5rem;
+    background-color: #0176D3;
+    color: white;
+    border-radius: 0.3rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-div:hover{
+    background-color: rgb(88, 176, 248);
+}
+@media (max-width: 1450px) {
     .UserConfigDetails{
         height: 75%;
     }
@@ -144,18 +192,27 @@
 }
 
 .box1 p{
-    width: 100%;
-    white-space: normal;
+    white-space: nowrap;
+    width: 9rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .removeImage {
-    border-radius: 50%;
-    height: 0%;
-    width: 1rem;
-    padding: 0px 4px;
+   border-radius: 50%;
+    height: 1.2rem;
+    width: 1.2rem;
+    display: flex;
     margin: 8px 2px 8px 8px;
     color: #fff;
     background-color: rgb(37 97 238);
     cursor: pointer;
+    justify-content: center;
+    align-items: center;
+}
+.removeImage svg {
+    fill: white;
+    height: 1rem;
+    width: 1rem;
 }
 
 .removeImage p{
@@ -171,8 +228,28 @@
 
 .image-list{
     list-style: none;
-    width: 14.6rem;
+    width: 60%;
 }
 
+@media screen and (max-width:900px) {
+    .image-div{
+        display: none;
+    }
+    .content-div{
+        width: 100%;
+        padding-right: 1rem;
+    }
+    .Wel_message{
+        width: 100%;
+    }
+    .supportcls{
+        padding: 0rem;
+    }
+}
 
-
+@media screen and (min-width:1400px) {
+    .Wel_message{
+        height: 102%;
+    }
+   
+}

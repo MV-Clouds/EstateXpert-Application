@@ -1,5 +1,24 @@
+/**
+* Class Name : SupportRequestController
+* Test Class : Pending
+* Date : 22/07/2024
+* Created By : Vyom Soni
+* Last Modified Date : 22-07-2024
+* Last Modified By : Vyom Soni
+* @description : Used in MarektingListFilterCmp and MarketingListFilterAddCmp LWC components.
+*/
 public with sharing class SupportRequestController {
-
+    /**
+    * Method Name : sendemail
+    * @description : this method send email with attachment using the single email message service.
+    * @param name String value
+    * @param email String value
+    * @param subject String value
+    * @param body String value
+    * @param fname list of String value
+    * @param fbase64 list of String value
+    * @return string string message.
+    */
     @AuraEnabled
     public static String sendemail(String name, String email, String subject, String body, List<String> fname, List<String> fbase64){
         try{
