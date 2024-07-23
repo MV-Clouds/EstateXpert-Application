@@ -1,12 +1,13 @@
 import { LightningElement, track, api } from 'lwc';
 import getRecordsByObject from '@salesforce/apex/TemplateBuilderController.getRecordsByObject';
+import summerNote_Editor from '@salesforce/resourceUrl/summerNote_Editor';
+import { loadStyle } from 'lightning/platformResourceLoader';
 
 export default class TemplatePreviewModal extends LightningElement {
     @api objectName;
     @api templateBody;
     @track isRecordSelectOpen = false;
     @track selectedRecord = '';
-    @track recordOptions = [];
     @track recordName = 'Message Body';
     @track updatedBody = '';
     @track recordOptions = [{ label: 'None', value: 'none' }];
@@ -30,7 +31,24 @@ export default class TemplatePreviewModal extends LightningElement {
     * Created By: Rachit Shah
     */
     connectedCallback() {
+        this.updatedBody = this.templateBody;
         this.fetchRecords();
+    }
+
+    renderedCallback(){
+
+        Promise.all([
+            loadStyle(this, summerNote_Editor + '/summernote-lite-pdf.css'),
+        ]).then(() => {
+            console.log('Success 112');
+            const richText = this.template.querySelector('.richText');
+            richText && (richText.innerHTML = this.setTempValue(this.updatedBody));
+    
+        })
+        .catch(error => {
+            console.log('Error ==> ' , error);
+        });        
+
     }
 
     /**
@@ -108,7 +126,7 @@ export default class TemplatePreviewModal extends LightningElement {
         let regex = new RegExp(`{!${this.objectName}\\.(\\w+)}`, 'g');
 
         tempUpdatedBody = tempUpdatedBody.replace(regex, (match, fieldName) => {
-            if (record.hasOwnProperty(fieldName)) {
+            if (Object.prototype.hasOwnProperty.call(record, fieldName)) {
                 return record[fieldName] != null ? record[fieldName] : `{${fieldName} data is empty}`;
             } else {
                 return `{${fieldName} data is empty}`;
@@ -116,5 +134,15 @@ export default class TemplatePreviewModal extends LightningElement {
         });
         
         this.updatedBody = tempUpdatedBody;
+    }
+
+    setTempValue(value){
+        return `<div class=" note-editor2 note-frame2">
+                    <div class="note-editing-area2">
+                        <div aria-multiline="true" role="textbox" class="note-editable2">
+                            ${value}
+                        </div>
+                    </div> 
+                </div>`
     }
 }

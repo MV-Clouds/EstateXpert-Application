@@ -13,7 +13,6 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     @api portalIconUrl;
     @api portalStatus;
     @track isInitalRender = true;
-    @track showModal = false;
     @track originalMappingData = [];
     @track fieldWrapperList = [];
     @track finalList = [];
@@ -179,7 +178,6 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     
                 this.finalList = [...this.finalList, finalList];
             });
-   
             console.log('this.finalList-->', JSON.stringify(this.finalList));
         });
 
@@ -197,16 +195,6 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
     getListingLabel(listingFieldValue) {
         const listingOption = this.MainListingOptions.find(option => option.apiName === listingFieldValue);
         return listingOption ? listingOption.label : '';
-    }
-
-    /**
-    * Method Name: handleHidePopup
-    * @description: Used to close the settingPopUp modal.
-    * Date: 04/06/2024
-    * Created By: Karan Singh
-    **/
-    handleHidePopup(event) {
-        this.showModal = event.details;
     }
 
     /**
@@ -317,16 +305,6 @@ export default class PortalMappingLandingPage extends NavigationMixin(LightningE
             variant: variant,
         });
         this.dispatchEvent(event);
-    }
-
-    /**
-    * Method Name: handleHidePopup
-    * @description: Used to open the settingPopUp modal.
-    * Date: 04/06/2024
-    * Created By: Karan Singh
-    **/
-    handleSetting() {
-        this.showModal = true;
     }
 
     /**

@@ -9,6 +9,7 @@ import { CurrentPageReference } from 'lightning/navigation';
 import { NavigationMixin } from 'lightning/navigation';
 
 
+
 export default class TemplateModalChild extends NavigationMixin(LightningElement) {
     @api selectedObject;
     @api currentRecordId = null;
@@ -32,6 +33,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track currentPage;
     @track totalRecodslength;
     @track newPageNumber;
+    @track subject = '';
+    @track isEmailTemplate = false;
+
+    @track isQuickTemplate = false;
+    @track templateTypeSelect = '';
+
 
     get recordId(){
         return this.currentRecordId ? this.currentRecordId : 'tempId';
@@ -45,19 +52,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
-        console.log('OUTPUT : ',currentPageReference);                               
         let decodedJson = currentPageReference;
-        console.log('OUTPUT 11: ',decodedJson);
         if (decodedJson ) {
-            console.log('OUTPUT 2 : ',decodedJson);
-            console.log('OUTPUT 3 : ',decodedJson.attributes);
-            console.log('OUTPUT 4 : ',decodedJson.attributes.attributes);
-            const navigationStateString = decodedJson.attributes.attributes.c__navigationState;
-            console.log('navigationStateString ==>' , navigationStateString);
+            const navigationStateString = decodedJson.attributes.attributes.MVEX__navigationState;
             if (navigationStateString) {
                 try {
                     const parseObject = JSON.parse(navigationStateString);
-                    console.log('navigationState2 ==>', parseObject);
 
                     this.selectedObject = parseObject.selectedObject;
                     this.currentRecordId = parseObject.myrecordId;
@@ -71,7 +71,10 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     this.templateTypeForCreation = parseObject.templateTypeForCreation;
                     this.currentPage = parseObject.pageNumber;
                     this.totalRecodslength = parseObject.totalRecodslength;
-
+                    this.templateTypeSelect = parseObject.templateTypeSelect;
+                    this.isQuickTemplate = parseObject.isQuickTemplate;
+                    this.subject  = parseObject.subject;
+                    this.isEmailTemplate = parseObject.isEmailTemplate;
                     this.fetchFields();
                 } catch (error) {
                     console.error('Error parsing navigation state:', error);
@@ -104,7 +107,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 .then(() => {
                     this.isInitialRender = false;
                     setTimeout(() => {
-                        this.initializeSummerNote(this, 'editor');
+                        this.initializeSummerNote();
                     }, 100);
                     this.isLoading = false;
                 })
@@ -127,16 +130,25 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             console.error('No selected object found.');
             return;
         }
-
+    
         getFieldsForObject({ objectName: this.selectedObject })
             .then(data => {
                 this.fieldOptions = data.map(field => ({ label: field, value: field }));
-
-                if(this.isObjectChanged){
-                    const errorPopup = this.template.querySelector('c-error_-pop-up');
-                    console.log('errorPopup ==> ' , errorPopup);
-                    if(errorPopup){
-                        errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
+                if (this.isObjectChanged) {
+                    const content = $(this.editor).summernote('code');
+    
+                    // Regular expression to match merge field syntax {!objectName.fieldName}
+                    const mergeFieldRegex = /\{\![^\}]+\}/g;
+                    const hasMergeFields = mergeFieldRegex.test(content);
+    
+                    if (hasMergeFields) {
+                        const errorPopup = this.template.querySelector('c-error_-pop-up');
+                        if (errorPopup) {
+                            errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
+                        }
+                    }
+                    else{
+                        this.isObjectChanged = false;
                     }
                 }
             })
@@ -144,6 +156,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 console.error('Error fetching fields:', error);
             });
     }
+    
 
     /**
     * Method Name: initializeSummerNote
@@ -151,9 +164,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
-    async initializeSummerNote(self, editorSelector) {
+    async initializeSummerNote() {
         try {
-            console.log('self : ', self.activeTabName);
 
 
             const selector = this.currentRecordId ? this.currentRecordId : 'tempId';
@@ -266,8 +278,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     onBeforeCommand: null,
                     onBlur: null,
                     onBlurCodeview: null,
-                    onChange: function (contents, context, $editable) {
-                    },
                     onChangeCodeview: null,
                     onDialogShown: null,
                     onEnter: null,
@@ -275,15 +285,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     onImageLinkInsert: null,
                     onImageUpload: null,
                     onImageUploadError: null,
-                    onInit: function () {
-                    },
                     onKeydown: null,
                     onKeyup: null,
                     onMousedown: null,
-                    onMouseup: function (e) {
-                    },
-                    onPaste: function (event) {
-                    },
                     onScroll: null,
                 },
             });
@@ -299,7 +303,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 }
             }
             else{
-                console.log('templateTypeForCreation ==> ' ,this.templateTypeForCreation);
+
                 this.setEmailBody();
             }
 
@@ -321,9 +325,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         if(this.isFirstTimeLoaded){
             getTemplateContent({ templateId: this.currentRecordId })
             .then(result => {
-                console.log('result : ', result);
-                this.description = result.Description__c;
-                this.bodyOfTemplate = result.Template_Body__c;
+                this.description = result.MVEX__Description__c;
+                this.bodyOfTemplate = result.MVEX__Template_Body__c;
                 $(this.editor).summernote('code', this.bodyOfTemplate);
 
                 this.isLoading = false;
@@ -388,8 +391,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     setEmailBody(){
-        console.log('In setEmailbody method');
-        console.log('bodyOfTemplate ==> ' , this.bodyOfTemplate);
         if(this.bodyOfTemplate != '' || this.bodyOfTemplate != null && this.templateTypeForCreation != 'New'){
             $(this.editor).summernote('code', this.bodyOfTemplate);
         }
@@ -403,19 +404,29 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     handleSave() {
         const content = $(this.editor).summernote('code');
+        var regex = /(<([^>]+)>)/ig;
+
+        const editorContentWithoutHtml = content.replace(regex, "").replace(/&nbsp;/g, ' ').trim();
+
+        if(editorContentWithoutHtml == ''){
+            this.showToast('Error' , 'You cannot Save Empty Template Body' , 'error');
+            return;
+        }
+
         this.isLoading = true;
 
         const template = {
-            Object_Name__c: this.selectedObject,
-            Label__c: this.templateLabel,
-            Template_Body__c: content,
-            Description__c : this.description,
-            Template_Type__c : this.selectedType
+            MVEX__Object_Name__c: this.selectedObject,
+            MVEX__Label__c: this.templateLabel,
+            MVEX__Template_Body__c: content,
+            MVEX__Description__c : this.description,
+            MVEX__Template_Type__c : this.selectedType,
+            MVEX__Template_pattern__c : this.templateTypeSelect,
+            MVEX__Subject__c	: this.subject
         };
-        console.log('recId ==> ' , this.currentRecordId);
 
         saveTemplate({ template : template , recId : this.currentRecordId })
-            .then((res) => {
+            .then(() => {
                 this.showToast('Success', 'Template saved successfully', 'success');
                 this.isLoading = false;
                 this.navigationToTemplatePageWithPage();
@@ -456,28 +467,23 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
-    async handleCancel() {
-        console.log('In handlecancel');
+    handleCancel() {
         var regex = /(<([^>]+)>)/ig;
 
         const editorContent = $(this.editor).summernote('code');
-        const editorContentWithoutHtml = editorContent.replace(regex, "");
-        console.log('editorContentWithoutHtml ==> ' , editorContentWithoutHtml);
+        const editorContentWithoutHtml = editorContent.replace(regex, "").replace(/&nbsp;/g, ' ').trim();
 
         if(editorContentWithoutHtml != ''){
 
-            const normalizedEditorContent = editorContent.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
-            const normalizedBodyOfTemplate = this.bodyOfTemplate.replace(/\s+/g, ' ').trim();    
+            const normalizedEditorContent = editorContent.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').replace(/ (colspan|rowspan)="\d+"/g, '').trim();
+            const normalizedBodyOfTemplate = this.bodyOfTemplate.replace(/\s+/g, ' ').trim().replace(/ (colspan|rowspan)="\d+"/g, '');    
     
-            if (normalizedEditorContent !== normalizedBodyOfTemplate) {
-                console.log('editorContent ==> ' , normalizedEditorContent);
-                console.log('bodyOfTemplate ==> ' , normalizedBodyOfTemplate);
+            if (normalizedEditorContent != normalizedBodyOfTemplate) {
                 this.isObjectChanged =  true;
                 this.cancelBtn = true;
         
                 setTimeout(async () => {
                     const errorPopup = this.template.querySelector('c-error_-pop-up');
-                    console.log('errorPopup ==> ', errorPopup);
         
                     if (errorPopup) {
                         errorPopup.showToast('warning', 'You will lose all changed data here', 'Warning');
@@ -491,9 +497,26 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 this.navigationToTemplatePage();
             }
         }
-
         else{
-            this.navigationToTemplatePage();
+            if(this.bodyOfTemplate == ''){
+                this.isObjectChanged =  true;
+                this.cancelBtn = true;
+                setTimeout(async () => {
+    
+                    const errorPopup2 = this.template.querySelector('c-error_-pop-up');
+                    if (errorPopup2) {
+                        errorPopup2.showToast('warning', 'You will not able to use this template as template body is empty', 'Warning');
+                    } else {
+                        console.error('Error popup component not found');
+                    }
+                }, 100);
+            }
+
+            else{
+                this.navigationToTemplatePage();
+
+            }
+
         }
 
     
@@ -509,7 +532,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             this[NavigationMixin.Navigate]({
                 type: 'standard__navItemPage',
                 attributes: {
-                    apiName: 'template_builder',
+                    apiName: 'MVEX__template_builder',
                     pageNumber: this.newPageNumber
                 },
             });
@@ -531,7 +554,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         this[NavigationMixin.Navigate]({
             type: 'standard__navItemPage',
             attributes: {
-                apiName: 'template_builder',
+                apiName: 'MVEX__template_builder',
                 pageNumber: this.newPageNumber
             },
         });
@@ -560,14 +583,12 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     handlePopUpCancel(){
         this.isObjectChanged  = false;
-        console.log('oldobject ==> ' , this.oldObject);
         
         if(this.oldObject){
             this.selectedObject = this.oldObject;
         }
         this.cancelBtn = false;
         // $(this.editor).summernote('destroy');
-        console.log(this.selectedObject , 'SelectedObject');
     }
 
     /**

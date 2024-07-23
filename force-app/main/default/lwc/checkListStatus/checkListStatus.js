@@ -1,4 +1,4 @@
-import { LightningElement, track, api, wire } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import getCheckList from '@salesforce/apex/CheckListItemController.getCheckList';
 import createCheckListItem from '@salesforce/apex/CheckListItemController.createCheckListItem';
