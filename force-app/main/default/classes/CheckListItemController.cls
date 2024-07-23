@@ -39,7 +39,7 @@ public with sharing class CheckListItemController {
         result.fields = new List<FieldWrapper>();
         result.checklist = new List<Checklist__c>();
         try {
-            result.checklist = [SELECT Id, Name, Field_Name__c, Object_Name__c, Operator__c, Sequence__c, Value__c FROM Checklist__c WHERE Object_Name__c = :objectName WITH SECURITY_ENFORCED ORDER BY Sequence__c NULLS LAST, Name];
+            result.checklist = [SELECT Id, Name, Field_Name__c, Object_Name__c, Operator__c, Sequence__c, Value__c, Description__c FROM Checklist__c WHERE Object_Name__c = :objectName WITH SECURITY_ENFORCED ORDER BY Sequence__c NULLS LAST, Name];
             
             // Get the object's label
             Schema.DescribeSObjectResult describeSObjectResult = Schema.getGlobalDescribe().get(objectName).getDescribe();
@@ -68,12 +68,14 @@ public with sharing class CheckListItemController {
         @AuraEnabled public String id;
         @AuraEnabled public String name;
         @AuraEnabled public String fieldName;
+        @AuraEnabled public String description;
         @AuraEnabled public String fieldLabel;
         @AuraEnabled public String objectName;
         @AuraEnabled public String operator;
         @AuraEnabled public String value;
         @AuraEnabled public Boolean completed;
         @AuraEnabled public Boolean showDropdown;
+        @AuraEnabled public Boolean isDescription;
     }
 
     /**
@@ -87,7 +89,7 @@ public with sharing class CheckListItemController {
     public static List<ChecklistWrapper> getCheckList(String objectName, String recordId) {
         try {
             List<Checklist__c> checkList = [
-                SELECT Id, Name, Field_Name__c, Object_Name__c, Operator__c, Sequence__c, Value__c 
+                SELECT Id, Name, Field_Name__c, Object_Name__c, Operator__c, Sequence__c, Value__c ,Description__c 
                 FROM Checklist__c 
                 WHERE Object_Name__c = :objectName 
                 WITH SECURITY_ENFORCED 
@@ -120,12 +122,14 @@ public with sharing class CheckListItemController {
                 ChecklistWrapper wrapper = new ChecklistWrapper();
                 wrapper.id = item.Id;
                 wrapper.name = item.Name;
+                wrapper.description = item.Description__c;
                 wrapper.fieldName = item.Field_Name__c;
                 wrapper.objectName = item.Object_Name__c;
                 wrapper.operator = item.Operator__c;
                 wrapper.value = item.Value__c;
                 wrapper.completed = false;
                 wrapper.showDropdown = false;
+                wrapper.isDescription = item.Description__c != null && item.Description__c != '' ? true : false;
 
                 // Set the field label
                 if (item.Field_Name__c != null && fieldMap.containsKey(item.Field_Name__c)) {

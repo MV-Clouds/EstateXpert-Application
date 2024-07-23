@@ -11,10 +11,22 @@ export default class NewPopUp extends LightningElement {
     @track pickListOptionsFields = [];
     @track fields = [];
 
+    /**
+    * Method Name: connectedCallback
+    * @description: Used to call the setFieldsInHTMLView method.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     connectedCallback() {
         this.setFieldsInHTMLView();
     }
 
+    /**
+    * Method Name: renderedCallback
+    * @description: Used to render the component.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     renderedCallback() {
         if (this.isInitalRender) {
             const body = document.querySelector("body");
@@ -44,6 +56,12 @@ export default class NewPopUp extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: setFieldsInHTMLView
+    * @description: Used to set the fields in the HTML view.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     setFieldsInHTMLView() {
         getAllCustomFields()
             .then(result => {
@@ -56,6 +74,12 @@ export default class NewPopUp extends LightningElement {
             });
     }
 
+    /**
+    * Method Name: updateFields
+    * @description: Used to update the fields.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     updateFields() {
         const commonFields = [
             { id: 1, fieldName: 'Selected Portal', fieldAPIName: 'portal_key', datatype: 'none', value: this.getPortalName, isRequired: false, placeHolder: this.getPortalName, helpText: '', isFirst: true, isPicklist: false },
@@ -127,6 +151,12 @@ export default class NewPopUp extends LightningElement {
         
     }
 
+    /**
+    * Method Name: validateFields
+    * @description: Used to validate the fields.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     validateFields() {
         let allRequiredFieldsFilled = true;
         this.fields.forEach(field => {
@@ -137,6 +167,14 @@ export default class NewPopUp extends LightningElement {
         this.isSaveBtn = !allRequiredFieldsFilled;
     }
 
+    /**
+    * Method Name: savePortalRecord
+    * @description: Used to save the portal record.
+    * Created Date: 04/06/2024
+    * Last Modified Date: 15/07/2024
+    * Created By: Karan Singh
+    * Last Modified By: Karan Singh
+    **/
     savePortalRecord() {
         let validationError = false;
         let fieldValues = {};
@@ -161,11 +199,15 @@ export default class NewPopUp extends LightningElement {
             savePropertyPortalRecord({ portalWrapper: JSON.stringify(portalWrapper), portalName: this.getPortalName })
                 .then(result => {
                     console.log('result-->', result);
-                    this.showToast('Success', 'Record is created successfully.', 'success');
-                    let custEvent = new CustomEvent('refreshpageonhide', {
-                        details: false
-                    });
-                    this.dispatchEvent(custEvent);
+                    if(result === 'success') {
+                        this.showToast('Success', 'Record is created successfully.', 'success');
+                        let custEvent = new CustomEvent('refreshpageonhide', {
+                            details: false
+                        });
+                        this.dispatchEvent(custEvent);
+                    } else {
+                        this.showToast('Error', result, 'error');
+                    }
                 })
                 .catch(error => {
                     console.log('error ==> ', error);
@@ -205,6 +247,13 @@ export default class NewPopUp extends LightningElement {
         this.dispatchEvent(event);
     }
 
+    /**
+    * Method Name: handleChange
+    * @description: Used to handle the change in the picklist.
+    * @param: event - event object.
+    * Date: 04/06/2024
+    * Created By: Karan Singh
+    **/
     handleChange(event) {
         const fieldIndex = event.target.dataset.index;
         const selectedValue = event.detail.value;

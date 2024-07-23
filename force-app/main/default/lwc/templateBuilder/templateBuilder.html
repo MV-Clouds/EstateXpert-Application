@@ -39,6 +39,18 @@
                             <th scope="col" class="object-name">
                                 <div title="Description">Object Name</div>
                             </th>
+                            <th scope="col">
+                                <div title="Template Type">Template Type</div>
+                            </th>
+
+                            <th scope="col">
+                                <div title="Type">Type</div>
+                            </th>
+                            
+                            <th scope="col">
+                                <div title="Subject">Subject</div>
+                            </th>
+
                             <th scope="col" class="description">
                                 <div title="description">Description</div>
                             </th>
@@ -58,18 +70,44 @@
                                         <div>{template.rowIndex}</div>
                                     </td>
                                     <td data-label="Template Name">
-                                        <div title={template.Label__c}>{template.Label__c}</div>
+                                        <div title={template.MVEX__Label__c}>{template.MVEX__Label__c}</div>
                                     </td>
                                     <td data-label="Status">
-                                        <lightning-input type="toggle" checked={template.isActive}
+                                        <!-- <lightning-input type="toggle" checked={template.isActive}
                                             onchange={handleStatusChange} data-id={template.Id}>
-                                        </lightning-input>
+                                        </lightning-input> -->
+                                        <div class="tableStatusCol">
+                                            <div class="slds-truncate">
+                                                <div class="container">
+                                                    <div class="content">
+                                                        <label class="switch">
+                                                            <input type="checkbox" checked={template.isActive}
+                                                            onchange={handleStatusChange} data-id={template.Id}/>
+                                                            <small></small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td data-label="Object Name">
-                                        <div title={template.Object_Name__c}>{template.Object_Name__c}</div>
+                                        <div title={template.MVEX__Object_Name__c}>{template.MVEX__Object_Name__c}</div>
                                     </td>
-                                    <td>
-                                        <div title={template.Description__c}>{template.Description__c}</div>
+
+                                    <td data-label="Template Type">
+                                        <div title={template.MVEX__Template_pattern__c}>{template.MVEX__Template_pattern__c}</div>
+                                    </td>
+
+                                    <td data-label="Type">
+                                        <div title={template.MVEX__Template_Type__c}>{template.MVEX__Template_Type__c}</div>
+                                    </td>
+
+                                    <td data-label="Subject">
+                                        <div title={template.MVEX__Subject__c}>{template.MVEX__Subject__c}</div>
+                                    </td>
+
+                                    <td data-label="Description">
+                                        <div title={template.MVEX__Description__c}>{template.MVEX__Description__c}</div>
                                     </td>
                                     <td data-label="Created Date">
                                         <div title={template.CreatedDate}>{template.CreatedDateformatted}</div>

@@ -102,7 +102,6 @@ public with sharing class PortalMappingController {
                 metadataMap.put('MVEX__Portal_Field_Example__c', (String)record.get('MVEX__Portal_Field_Example__c'));
                 metadataMap.put('MVEX__Allowed_Field_Datatype__c', (String)record.get('MVEX__Allowed_Field_Datatype__c'));
 
-
                 Boolean requiredField = (Boolean)record.get('MVEX__Required__c');
                 metadataMap.put('MVEX__Required__c', requiredField == true ? String.valueOf(requiredField) : '');
 
@@ -316,16 +315,26 @@ public with sharing class PortalMappingController {
     * @param portalName String value.
     */
     @AuraEnabled
-    public static void savePropertyPortalRecord(String portalWrapper, String portalName) {
+    public static String savePropertyPortalRecord(String portalWrapper, String portalName) {
         try {
+            if(portalName == null || portalName == '') {
+                return 'Portal name is missing.';
+            }
+
             PropertyPortalWrapper wrapper = (PropertyPortalWrapper)JSON.deserialize(portalWrapper, PropertyPortalWrapper.class);
             List<Portal_Listing_Mapping__c> portalListingMaps = [SELECT Id, Listing_Field_API_Name__c, Name FROM Portal_Listing_Mapping__c WHERE Portal_Name__c =: portalName AND Listing_Field_API_Name__c != null];
             Map<String, String> jsonBodyMap = new Map<String, String>();
-
-            for (Portal_Listing_Mapping__c mapping : portalListingMaps) {
-                jsonBodyMap.put(mapping.Listing_Field_API_Name__c, mapping.Name);
+            String jsonBody = '';
+            if(!portalListingMaps.isEmpty()) {
+                for (Portal_Listing_Mapping__c mapping : portalListingMaps) {
+                    jsonBodyMap.put(mapping.Listing_Field_API_Name__c, mapping.Name);
+                }
+                jsonBody = JSON.serialize(jsonBodyMap);
+            } else {
+                jsonBody = CreatePortalListingMappingRecords.createPortalRecords(portalName);
             }
-            String jsonBody = JSON.serialize(jsonBodyMap);
+
+            System.debug('jsonBody: ' + jsonBody);
             
             String portalId;
             if (Portal__c.SObjectType.getDescribe().isAccessible() && Portal__c.SObjectType.getDescribe().isCreateable()) {
@@ -345,8 +354,11 @@ public with sharing class PortalMappingController {
             if (wrapper.portalname == 'Zoopla') {
                 ZooplaIntegration.zooplaCreateAndUpdateBranch(portalWrapper, portalId);
             }
+
+            return 'success';
         } catch (Exception e) {
             ErrorHandler.insert_errordata(e, 'PortalMappingController', 'savePropertyPortalRecord', 'Error while saving Portal__c record.');
+            return e.getMessage();
         }
     }
 
@@ -396,5 +408,4 @@ public with sharing class PortalMappingController {
         return customFields;
     }
     
-
 }

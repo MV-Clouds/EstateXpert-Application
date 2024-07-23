@@ -1,4 +1,4 @@
-import { LightningElement, track, api, wire } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import getCheckList from '@salesforce/apex/CheckListItemController.getCheckList';
 import createCheckListItem from '@salesforce/apex/CheckListItemController.createCheckListItem';
@@ -217,5 +217,16 @@ export default class CheckListStatus extends LightningElement {
             variant
         })
         this.dispatchEvent(toastEvent)
+    }
+
+    /**
+    * Method Name: refreshTable
+    * @description: Used to refresh table.
+    * Date: 15/07/2024
+    * Created By: Karan Singh
+    **/
+    refreshTable(){
+        this.checklistItems = [];
+        this.checklistValues();
     }
 }

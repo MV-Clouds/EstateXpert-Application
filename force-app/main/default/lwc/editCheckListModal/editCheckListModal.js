@@ -175,7 +175,8 @@ export default class EditCheckListModal extends LightningElement {
                 Name: '',
                 MVEX__Field_Name__c: '',
                 MVEX__Operator__c: '',
-                MVEX__Value__c: ''
+                MVEX__Value__c: '',
+                MVEX__Description__c: ''
             };
             this.checklistItems = [...this.checklistItems, newItem];
             this.setScroll = true;
@@ -243,8 +244,9 @@ export default class EditCheckListModal extends LightningElement {
                 return;
             }
 
-            // Validate each checklist item
-            for (let [index, item] of this.checklistItems.entries()) {
+            // Validate each checklist item using a traditional for loop instead of for-of
+            for (let index = 0; index < this.checklistItems.length; index++) {
+                const item = this.checklistItems[index];
                 if (!item.Name || !item.Name.trim()) {
                     this.toast('Error', `Checklist Name field is required.`, 'error');
                     var fieldName = 'Name';
@@ -322,6 +324,7 @@ export default class EditCheckListModal extends LightningElement {
                         item.MVEX__Field_Name__c !== originalItem.MVEX__Field_Name__c ||
                         item.MVEX__Operator__c !== originalItem.MVEX__Operator__c ||
                         item.MVEX__Value__c !== originalItem.MVEX__Value__c ||
+                        item.MVEX__Description__c !== originalItem.MVEX__Description__c ||
                         // (this.isOrderChanged && item.MVEX__Sequence__c !== originalItem.MVEX__Sequence__c)
                         item.MVEX__Sequence__c !== originalItem.MVEX__Sequence__c
                     )) {
