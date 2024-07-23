@@ -2,8 +2,7 @@
     <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open custom-modal">
         <div class="slds-modal__container custom-modal-container">
             <header class="slds-modal__header custom-modal-header">
-                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
-                    onclick={closeModal}>
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
                     <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
                     <span class="slds-assistive-text">Close</span>
                 </button>
@@ -13,15 +12,18 @@
                 <div class="custom-modal-body">
                     <div class={collapsibleSectionClass}>
                         <div class="record-select-section" if:true={isRecordSelectOpen}>
-                            <lightning-combobox name="recordSelect" label="Record Select:"
-                                placeholder="Please select the record" options={recordOptions} value={selectedRecord}
+                            <lightning-combobox
+                                name="recordSelect"
+                                label="Record Select:"
+                                placeholder="Please select the record"
+                                options={recordOptions}
+                                value={selectedRecord}
                                 onchange={handleRecordChange}>
                             </lightning-combobox>
                         </div>
                     </div>
                     <div class="chevron-btn" onclick={toggleRecordSelectSection}>
-                        <lightning-icon icon-name={toggleIconName} alternative-text="Toggle Record Select"
-                            size="small"></lightning-icon>
+                        <lightning-icon icon-name={toggleIconName} alternative-text="Toggle Record Select" size="small"></lightning-icon>
                     </div>
                     <div class={contentClass}>
                         <template if:true={selectedRecord}>
@@ -29,13 +31,19 @@
                                 <h1>{recordName}</h1>
                             </div>
                             <div class="scrollable-content">
+                                <div class="richText"></div>
                                 <!-- <div>{updatedBody}</div> -->
-                                <lightning-formatted-rich-text value={updatedBody}></lightning-formatted-rich-text>
+                                <!-- <lightning-formatted-rich-text
+                                value={updatedBody}
+                            ></lightning-formatted-rich-text>                         -->
                             </div>
                         </template>
                         <template if:false={selectedRecord}>
                             <div class="no-record-selected">
-                                <lightning-formatted-rich-text value={templateBody}></lightning-formatted-rich-text>
+                                <div class="richText"></div>
+                                <!-- <lightning-formatted-rich-text
+                                    value={templateBody}
+                                ></lightning-formatted-rich-text>   -->
                             </div>
                         </template>
                     </div>

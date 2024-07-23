@@ -129,15 +129,29 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             console.error('No selected object found.');
             return;
         }
-
+    
         getFieldsForObject({ objectName: this.selectedObject })
             .then(data => {
                 this.fieldOptions = data.map(field => ({ label: field, value: field }));
-
-                if(this.isObjectChanged){
-                    const errorPopup = this.template.querySelector('c-error_-pop-up');
-                    if(errorPopup){
-                        errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
+                console.log('isObjectChanged ==> ' , this.isObjectChanged);
+                console.log(this.oldObject);
+                console.log(this.selectedObject);
+                if (this.isObjectChanged) {
+                    const content = $(this.editor).summernote('code');
+                    console.log('content ==>  ', content);
+    
+                    // Regular expression to match merge field syntax {!objectName.fieldName}
+                    const mergeFieldRegex = /\{\![^\}]+\}/g;
+                    const hasMergeFields = mergeFieldRegex.test(content);
+    
+                    if (hasMergeFields) {
+                        const errorPopup = this.template.querySelector('c-error_-pop-up');
+                        if (errorPopup) {
+                            errorPopup.showToast('warning', 'Object change will remove all merge fields', 'Warning');
+                        }
+                    }
+                    else{
+                        this.isObjectChanged = false;
                     }
                 }
             })
@@ -145,6 +159,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 console.error('Error fetching fields:', error);
             });
     }
+    
 
     /**
     * Method Name: initializeSummerNote
@@ -401,6 +416,16 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     handleSave() {
         const content = $(this.editor).summernote('code');
+        var regex = /(<([^>]+)>)/ig;
+
+        const editorContentWithoutHtml = content.replace(regex, "").replace(/&nbsp;/g, ' ').trim();
+        console.log('editorContentWithoutHtml ==> ' + editorContentWithoutHtml);
+
+        if(editorContentWithoutHtml == ''){
+            this.showToast('Error' , 'You cannot Save Empty Template Body' , 'error');
+            return;
+        }
+
         this.isLoading = true;
 
         const template = {
@@ -455,18 +480,22 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
-    async handleCancel() {
+    handleCancel() {
         var regex = /(<([^>]+)>)/ig;
 
         const editorContent = $(this.editor).summernote('code');
-        const editorContentWithoutHtml = editorContent.replace(regex, "");
+        console.log('editorContent ==> ' + editorContent);
+        const editorContentWithoutHtml = editorContent.replace(regex, "").replace(/&nbsp;/g, ' ').trim();
+        console.log('editorContentWithoutHtml ==> ' + editorContentWithoutHtml);
 
         if(editorContentWithoutHtml != ''){
 
-            const normalizedEditorContent = editorContent.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
-            const normalizedBodyOfTemplate = this.bodyOfTemplate.replace(/\s+/g, ' ').trim();    
+            const normalizedEditorContent = editorContent.replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').replace(/ (colspan|rowspan)="\d+"/g, '').trim();
+            console.log('normalizedEditorContent ==> ' ,normalizedEditorContent);
+            const normalizedBodyOfTemplate = this.bodyOfTemplate.replace(/\s+/g, ' ').trim().replace(/ (colspan|rowspan)="\d+"/g, '');    
+            console.log('normalizedBodyOfTemplate ==> ' , normalizedBodyOfTemplate);
     
-            if (normalizedEditorContent !== normalizedBodyOfTemplate) {
+            if (normalizedEditorContent != normalizedBodyOfTemplate) {
                 this.isObjectChanged =  true;
                 this.cancelBtn = true;
         
@@ -485,9 +514,29 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 this.navigationToTemplatePage();
             }
         }
-
         else{
-            this.navigationToTemplatePage();
+            if(this.bodyOfTemplate == ''){
+                this.isObjectChanged =  true;
+                this.cancelBtn = true;
+                console.log('in else-->');
+                setTimeout(async () => {
+    
+                    const errorPopup2 = this.template.querySelector('c-error_-pop-up');
+                    console.log('in errorPopup2-->',errorPopup2);
+                    if (errorPopup2) {
+                        errorPopup2.showToast('warning', 'You will not able to use this template as template body is empty', 'Warning');
+                    } else {
+                        console.error('Error popup component not found');
+                    }
+                }, 100);
+                console.log('after in else-->');
+            }
+
+            else{
+                this.navigationToTemplatePage();
+
+            }
+
         }
 
     
@@ -519,6 +568,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         const pageSize = 10;
         this.newPageNumber = 1;
         if(this.totalRecodslength){
+            console.log('totalRecodslength ==> ' , this.totalRecodslength);
             this.newPageNumber = Math.ceil((this.totalRecodslength + 1) / pageSize);
         }
     
@@ -570,6 +620,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     handleContinue() {
         if (this.isObjectChanged && !this.cancelBtn) {
+            console.log('in the if');
             const editorContent = $(this.editor).summernote('code');
             
             const mergeFieldRegex = /\{\![^\}]+\}/g;
@@ -582,6 +633,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         }
 
         else{
+            console.log('in the else');
             $(this.editor).summernote('code', this.bodyOfTemplate);
             this.navigationToTemplatePage();
         }

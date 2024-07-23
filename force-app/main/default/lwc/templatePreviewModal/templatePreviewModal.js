@@ -1,5 +1,7 @@
 import { LightningElement, track, api } from 'lwc';
 import getRecordsByObject from '@salesforce/apex/TemplateBuilderController.getRecordsByObject';
+import summerNote_Editor from '@salesforce/resourceUrl/summerNote_Editor';
+import { loadStyle, loadScript } from 'lightning/platformResourceLoader';
 
 export default class TemplatePreviewModal extends LightningElement {
     @api objectName;
@@ -30,7 +32,29 @@ export default class TemplatePreviewModal extends LightningElement {
     * Created By: Rachit Shah
     */
     connectedCallback() {
+        this.updatedBody = this.templateBody;
         this.fetchRecords();
+    }
+
+    /**
+    * Method Name: renderedCallback
+    * @description: Method to load external library
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    renderedCallback(){
+
+        Promise.all([
+            loadStyle(this, summerNote_Editor + '/summernote-lite-pdf.css'),
+        ]).then(() => {
+            const richText = this.template.querySelector('.richText');
+            richText && (richText.innerHTML = this.setTempValue(this.updatedBody));
+    
+        })
+        .catch(error => {
+            console.log('Error ==> ' , error);
+        });        
+
     }
 
     /**
@@ -116,5 +140,21 @@ export default class TemplatePreviewModal extends LightningElement {
         });
         
         this.updatedBody = tempUpdatedBody;
+    }
+
+    /**
+    * Method Name: setTempValue
+    * @description: Method to set template body for appling css
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    setTempValue(value){
+        return `<div class=" note-editor2 note-frame2">
+                    <div class="note-editing-area2">
+                        <div aria-multiline="true" role="textbox" class="note-editable2">
+                            ${value}
+                        </div>
+                    </div> 
+                </div>`
     }
 }

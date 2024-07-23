@@ -77,6 +77,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.isLoading = true;
         getTemplates()
             .then(data => {
+                console.log('OUTPUT : ',data);
                 this.totalRecodslength = data.length;
                 data.sort((a, b) => {
                     const labelA = a.Label__c.toLowerCase();
@@ -104,6 +105,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     processTemplates(data) {
         // this.templates = data
+        console.log('data ==> ', data);
         this.templates = data.map((template, index) => ({
             ...template,
             rowIndex: index + 1,
@@ -163,8 +165,16 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
         }
-        const startIndex = (this.currentPage - 1) * PAGE_SIZE;
+        var startIndex = (this.currentPage - 1) * PAGE_SIZE;
+        console.log('startIndex ==> ' , startIndex);
+
+        if(startIndex < 0){
+            startIndex = 0;
+        }
+        console.log('startIndex2 ==> ' , startIndex);
+
         this.visibleTemplates = this.filteredTemplates.slice(startIndex, startIndex + PAGE_SIZE);
+        console.log('this.visibleTemplates ==> ' ,JSON.stringify(this.visibleTemplates));
         this.updatePaginationButtons();
     }
 
@@ -289,7 +299,11 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 label: template.Label__c ? template.Label__c : '',
                 description: template.Description__c ? template.Description__c  : '',
                 type : template.Template_Type__c ? template.Template_Type__c : '',
+                templateTypeSelect : template.Template_pattern__c ? template.Template_pattern__c : '',
+                subject : template.Subject__c ? template.Subject__c : '',
                 myrecordId : templateId,
+                isQuickTemplate : template.Template_pattern__c == 'quickTemplate' ?  true : false,
+                isEmailTemplate : template.Template_Type__c == 'Email' ?  true : false,
                 bodyOfTemplate : '',
                 isFirstTimeLoaded : true,
                 templateTypeForCreation : 'Edit'

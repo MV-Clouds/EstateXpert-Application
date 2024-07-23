@@ -105,29 +105,6 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     async handleSave() {
-
-        if(this.name === 'New'){
-
-            const template = {
-                Object_Name__c: this.objectSelect,
-                Label__c: this.templateName,
-                Template_Body__c: this.bodyOfTemplate,
-                Description__c : this.description,
-                Template_Type__c : this.typeSelect,
-                Template_pattern__c : this.templateTypeSelect,
-                Subject__c	: this.subject
-            };
-
-            await insertTemplate({ template : template})
-            .then((res) => {
-                this.showToast('Success', 'Template saved successfully', 'success');
-                this.currentRecordId = res;
-            })
-            .catch(error => {
-                console.error('Error saving template:', error);
-            });
-
-        }
         
         if (this.templateName && this.objectSelect && this.typeSelect && this.templateTypeSelect) {
 
@@ -135,6 +112,35 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 this.showToast('Error', 'Please fill in all required fields', 'error');
                 return;
             }
+
+            if(this.name === 'New'){
+
+                const template = {
+                    Object_Name__c: this.objectSelect,
+                    Label__c: this.templateName,
+                    Template_Body__c: this.bodyOfTemplate,
+                    Description__c : this.description,
+                    Template_Type__c : this.typeSelect,
+                    Template_pattern__c : this.templateTypeSelect,
+                    Subject__c	: this.subject
+                };
+    
+                await insertTemplate({ template : template})
+                .then((res) => {
+                    this.showToast('Success', 'Template saved successfully', 'success');
+                    this.currentRecordId = res;
+                })
+                .catch(error => {
+                    console.error('Error saving template:', error);
+                });
+    
+            }
+
+            if(this.oldObject !== this.objectSelect) {
+                // this.bodyOfTemplate = this.bodyOfTemplate.replace(/{![^}]+}/g, '{!merge text}');
+                this.isObjectChanged = true;
+            }
+            
             const navigationState = {
                 selectedObject: this.objectSelect,
                 myrecordId: this.currentRecordId,
@@ -205,14 +211,14 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         }else if (field === 'templateType') {
             this.templateTypeSelect = value;
             if (value === 'quickTemplate' && this.name != 'Edit') {
-                this.objectSelect = 'Contact'; 
                 this.oldObject = this.objectSelect; 
+                this.objectSelect = 'Contact'; 
                 this.isQuickTemplate = true;
                 this.isObjectChanged = false;
             }
             else if(value === 'quickTemplate' && this.name == 'Edit'){
-                this.objectSelect = 'Contact'; 
                 this.oldObject = this.objectSelect; 
+                this.objectSelect = 'Contact'; 
                 this.isQuickTemplate = true;
                 this.isObjectChanged = false;
             }

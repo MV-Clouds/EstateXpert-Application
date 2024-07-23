@@ -19,11 +19,6 @@
     src: url(font/summernote.eot?#iefix) format("embedded-opentype"), url(font/summernote.woff2) format("woff2"), url(font/summernote.woff) format("woff"), url(font/summernote.ttf) format("truetype")
 }
 
-img{
-    width: 200px;
-    height: 200px;
-}
-
 [class^=note-icon]:before,
 [class*=" note-icon"]:before {
     display: inline-block;
@@ -1293,7 +1288,7 @@ a.note-dropdown-item:hover {
     margin-top: 5px;
     margin-left: 0;
     width : max-content;
-    margin-right: 5px
+    margin-right: 5px;
 }
 
 .note-popover .popover-content .note-btn-group .note-table,
@@ -1705,8 +1700,83 @@ a.note-dropdown-item:hover {
             :root{
                 --tabSection_Height : 2rem;
                 --toolbar_height : 4rem;
-            }
 
+                --pageWidth : 792px;
+                --pageHeight : 1120px;
+                --pageMarginTop: 70px;
+                --pageMarginBottom: 48px;
+                --pageMarginLeft: 67px;
+                --pageMarginRight: 67px;
+
+                --headerMarginsTop: 0px;
+                --footerMarginsBottom: 0px;
+
+                --keyMappingWidth : 35rem;
+                --editingAreaWidth : calc(100% - var(--keyMappingWidth) - 1.25rem);
+            }
+            .note-editor.note-frame h1{
+                font-size: 34px;
+                font-weight: 600;
+                line-height: 34px;
+                display: block;
+            }
+            .note-editor.note-frame h2{
+                font-size: 30px;
+                font-weight: 600;
+                line-height: 32px;
+                display: block;
+            }
+            .note-editor.note-frame h3{
+                font-size: 24px;
+                font-weight: 600;
+                line-height: 26px;
+                display: block;
+            }
+            .note-editor.note-frame h4{
+                font-size: 20px;
+                font-weight: 600;
+                line-height: 22px;
+                display: block;
+            }
+            .note-editor.note-frame h5{
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 20px;
+                display: block;
+            }
+            .note-editor.note-frame h6{
+                font-size: 16px;
+                font-weight: 600;
+                line-height: 18px;
+                display: block;
+            }
+            .note-editor.note-frame hr{
+                page-break-after: always;
+                margin-top: var(--pageMarginTop);
+                margin-bottom: var(--pageMarginBottom);
+                border-top: 1px solid rgb(184 184 184);
+                border-bottom: 1px solid rgb(184 184 184);
+                height: 1rem;
+                background: #f3f3f3;
+                clear: both;
+            }
+            .note-editor.note-frame hr:after {
+                content: 'Page Break';
+                text-transform: uppercase;
+                position: absolute;
+                left: 50%;
+                transform: translate(-50%, -2px);
+                /* background: white; */
+                padding-inline: 0.5rem;
+                color: rgb(184 184 184);
+            }
+            input[type=number]::-webkit-inner-spin-button, 
+            input[type=number]::-webkit-outer-spin-button { 
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                margin: 0; 
+            }
                 /* full editor container css */
             .note-editor.note-frame,
             .note-editor.note-airframe {
@@ -1717,85 +1787,95 @@ a.note-dropdown-item:hover {
                 overflow: hidden;
                 display: flex;
             }
-            .headerFooterSection .note-editor.note-frame,
+            /* .headerFooterSection .note-editor.note-frame,
             .headerFooterSection .note-editor.note-airframe{
                 height: fit-content !important;
                 padding-bottom: 0.5rem;
-            }
+            } */
 
                     /* editing area outer div  */
             .note-editor .note-editing-area {
+                /* max-width: calc(100% - 35rem - 1.25rem); */
+                /* max-width: var(--editingAreaWidth); */
                 /* margin-right: calc(30% + 1.5rem); */
                 height: calc(100% - 0.5rem );
-                flex-grow: 1;
+                /* flex-grow: 1; */
                 max-height: max-content;
                 min-height: 80%;
                 overflow: auto !important;
                 overflow-y: scroll !important;
                 scrollbar-width: thin;
                 scrollbar-color: #00a4f1 #ff000000;
+                /* margin-bottom: 1rem; */
                 /* margin-top: .5rem; */
             }
-                    /* placeHolder --> set placehonder postion as per editable area */
+                    /* placeHolder --> set placeholder position as per editable area */
             .note-editor.note-frame .note-placeholder,
             .note-editor.note-airframe .note-placeholder {
                 left: 50%;
                 transform: translateX(-50%);
-                padding: 70px 67px 48px;
-                width: 792px;
+                /* padding: 70px 67px 48px; */
+                padding-top: var(--pageMarginTop);
+                /* padding-bottom: var(--pageMarginBottom); */
+                padding-left: var(--pageMarginLeft);
+                padding-right: var(--pageMarginRight);
+                width: var(--pageWidth);
                 margin-inline: auto;
+            }
+            .headerEditor.note-editor.note-frame .note-placeholder{
+                padding-top: var(--headerMarginsTop);
+            }
+            .footerEditor.note-editor.note-frame .note-placeholder{
+                padding-top: var(--headerMarginsTop);
+                padding-bottom: var(--footerMarginsBottom);
+                height: var(--pageMarginBottom);
+                align-content: flex-end;
             }
             /* Main Editable area */
             .note-editor.note-frame .note-editing-area .note-editable,
             .note-editor.note-airframe .note-editing-area .note-editable {
-                min-height: 66vh;
+                height: max-content;
+                height: 44vh;
+                width: 93vw;
                 background-color: white;
                 /* padding: 70px 67px 48px; */
-                /* margin-inline: auto;
+                padding-top: var(--pageMarginTop);
+                padding-bottom: var(--pageMarginBottom);
+                padding-left: var(--pageMarginLeft);
+                padding-right: var(--pageMarginRight);
+                min-width: var(--pageWidth);
+                /* margin-inline: auto; */
                 margin-bottom: 0.5rem;
-                box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+                box-shadow: rgba(50, 50, 93, 0.25) 0px 0px 12px -2px, rgba(0, 0, 0, 0.3) 0px 2px 7px -3px;
                 border: 1px solid #D1D1D1;
                 border-radius: 6px;
-                margin-bottom: 0.5rem; */
+                margin-bottom: 0.5rem;
+                margin-right: 12px;
             }
-            .headerFooterSection .note-editor.note-frame .note-editing-area .note-editable,
-            .headerFooterSection .note-editor.note-airframe .note-editing-area .note-editable{
-                min-height: 10rem !important;
-                height: 10rem !important;
+            .headerEditor.note-editor.note-frame .note-editing-area .note-editable,
+            .footerEditor.note-editor.note-frame .note-editing-area .note-editable{
+                padding-block: 0px;
+                height: max-content;
+                max-height: calc(var(--pageHeight) * 0.4);
+                margin-bottom: 0.5rem;
+                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 0px;
+                overflow: hidden;
             }
-            .note-editor.note-frame .note-status-output, .note-editor.note-airframe .note-status-output{
-                display: none !important;
+            .headerEditor.note-editor.note-frame .note-editing-area .note-editable{
+                min-height: max(var(--pageMarginTop), 2rem);
+                padding-top: var(--headerMarginsTop);
+            }
+            .footerEditor.note-editor.note-frame .note-editing-area .note-editable{                
+                min-height: max(var(--pageMarginBottom), 2rem);
+                padding-bottom: var(--footerMarginsBottom);
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
             }
 
-            .note-editor.note-frame h1{
-                font-size: 34px;
-                font-weight: 600;
-                line-height: 34px;
-            }
-            .note-editor.note-frame h2{
-                font-size: 30px;
-                font-weight: 600;
-                line-height: 32px;
-            }
-            .note-editor.note-frame h3{
-                font-size: 24px;
-                font-weight: 600;
-                line-height: 26px;
-            }
-            .note-editor.note-frame h4{
-                font-size: 20px;
-                font-weight: 600;
-                line-height: 22px;
-            }
-            .note-editor.note-frame h5{
-                font-size: 18px;
-                font-weight: 600;
-                line-height: 20px;
-            }
-            .note-editor.note-frame h6{
-                font-size: 16px;
-                font-weight: 600;
-                line-height: 18px;
+            .note-editor.note-frame .note-status-output, .note-editor.note-airframe .note-status-output{
+                display: none !important;
             }
 
             /* Toolbar Container */
@@ -1826,14 +1906,9 @@ a.note-dropdown-item:hover {
             /* Toolbar button group div  */
             .note-editor .note-toolbar>.note-btn-group{
                 margin-top: 0px;
-                margin-right: 8px;
+                margin-right: 20px;
                 height: 100%;
                 min-width: max-content;
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                align-items: center;
             }
             .note-popover .popover-content>.note-btn-group{
                 margin-top: 0px;
@@ -1850,8 +1925,8 @@ a.note-dropdown-item:hover {
                 width: 1px;
                 height: 95%;
                 background: rgb(200, 198, 196);
-                
             } */
+
             .note-popover .popover-content>.note-btn-group:after{
                 right: -4px !important;
             }
@@ -1870,8 +1945,8 @@ a.note-dropdown-item:hover {
             .note-custom_backup{
                 width: 2rem;
             }
-            /* .note-custom_pageSetup::before{
-                content: 'Setup';
+            .note-custom_pageSetup::before{
+                content: 'Page';
             }
             .note-custom_fontFormattings::before{
                 content: 'Font';
@@ -1890,7 +1965,7 @@ a.note-dropdown-item:hover {
             }
             .note-custom_view::before{
                 content: 'View';
-            } */
+            }
             /* toolbar buttons */
             .note-btn{
                 background: transparent;
@@ -1994,8 +2069,6 @@ a.note-dropdown-item:hover {
             .note-handle .note-control-selection .note-control-holder {
                 border: 3px solid #3ca9ff;
             }
-
-
             
             .note-editor .note-editing-area .note-editable table td,
             .note-editor .note-editing-area .note-editable table th {
@@ -2008,6 +2081,20 @@ a.note-dropdown-item:hover {
 
             .note-table-popover{
                 max-width: 19rem !important;
+            }
+
+            .note-editor.note-frame .note-editing-area .note-codable,
+            .note-editor.note-airframe .note-editing-area .note-codable {
+                height: 98% !important;
+                background-color: rgb(53, 53, 53);
+                padding: 70px 67px 48px;
+                width: 792px;
+                margin-inline: auto;
+                margin-bottom: 0.5rem;
+                box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+                border: 1px solid #D1D1D1;
+                border-radius: 6px;
+                margin-bottom: 0.5rem;
             }
 
             .row-color .note-dropdown-menu{
@@ -2037,7 +2124,40 @@ a.note-dropdown-item:hover {
                 padding-top: 1px;
                 padding-bottom: 9px;
             }
-            
+
+            /* Insert Image URL Input  */
+            .note-group-image-url{
+                display: none;
+            }
+
+            .note-editable .page-break {
+                position: relative;
+                display: block;
+                width: 100%;
+                height: 1px;
+                background-color: #ddd;
+                margin: 15px 0;
+            }
+
+            .note-editable .page-break:after {
+                content: "Page-Break";
+                position: absolute;
+                width: 100%;
+                height: 20px;
+                top: -10px;
+                color: #ddd;
+                -webkit-text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff;
+                -moz-text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff;
+                text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff;
+                text-align: center;
+            }
+
+            @media print {
+                .note-editable .page-break {
+                    display: block;
+                    page-break-before: always;
+                }
+            }
 
 
 
@@ -2248,157 +2368,44 @@ a.note-dropdown-item:hover {
             }
 
 
-            /* ========================= page Setup popup css ================================= */
-            /* .pageSetupBackdrop{
-                width: 100%;
-                height: 100%;
-                position: absolute;
-                top: 0%;
-                bottom: 0%;
-                display: none;
-                justify-content: center;
-                align-items: center;
-                background: rgba(0, 0, 0, 0.175);
-            }
-            .setupContainer{
-                min-width: max-content;
-                height: max-content;
-            }
-            .setupContainer_sub{
-                min-width: max-content;
-                height: max-content;
-                background: white;
-                border-radius: 6px;
-            }
-            .setUpTitleSection{
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            .setUpTitle{
-                flex-grow: 1;
-                padding: 0.5rem 0.5rem;
-                font-size: 16px;
-                font-family: Verdana, Geneva, Tahoma, sans-serif;
-                letter-spacing: 1px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .setupCloseBtn{
-                height: 100;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding-inline: 0.75rem;
-                cursor: pointer;
-            }
-            .setupCloseBtn svg{
-                width: 20px;
-                height: 20px;
-                fill: currentColor;
-            }
-            .setUpOptions{
-                padding-bottom: 1rem;
-                display: flex;
-                justify-content: center;
-                align-items: flex-start;
-            }
-            .setupOption{
-                width: fit-content;
-                height: fit-content;
-            }
-            .setupOption:not(:last-child){
-                border-right: 1px solid rgba(0, 0, 0, 0.26);
-            }
-            .optionTitle{
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: #767676;
-                font-size: 14px;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            }
-            .setUpinputs{
-                width: 8rem;
-                min-width: max-content;
-                height: 6.75rem;
-                padding-inline: 0.75rem;
-            }
-            .setUpIcon{
-                display: flex;
-                justify-content: center;
-                padding-block: 0.5rem;
-            }
-            .msIcon{
-                width: 40px;
-                height: 40px;
-                margin-inline: auto;
-            }
-            .msIcon svg > path.OfficeIconColors_HighContrast:not([class*="OfficeIconColors_m"]) {
-                fill: transparent;
-            }
-            svg>path.OfficeIconColors_m20 {
-                fill: #FAFAFAFF;
-            }
-            svg>path.OfficeIconColors_m22 {
-                fill: #3A3A38FF;
-            }
-            svg>path.OfficeIconColors_m24 {
-                fill: #1E8BCDFF;
-            }
-
-            .inputContainer{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 0.25rem;
-                margin-block: 0.25rem;
-                position: relative;
-            }
-            .oriantationInputs .inputContainer{
-                justify-content: flex-start;
-            }
-            .sizeInputs .inputContainer{
-                justify-content: flex-start;
-            }
-            .inputLabel{
-                font-size: 14px;
-                font-family: 'Courier New', Courier, monospace;
-            }
-            .pageMarginInput{
-                border-radius: 6px;
-                min-width: 1rem;
-                width: 2.5rem;
-                border: 0.5px solid #a6a6a6;
-                padding: 0.2rem;
-                position: relative;
-            }
-            .pageMarginInput:focus-visible{
-                outline: none;
-            }
-            .subLabel{
-                font-size: 12px;
-                color: rgb(150 150 150);
-                letter-spacing: 0px;
-                font-family: math;
-                margin-left: 0.5rem;
-            } */
-            /* ========================= page Setup popup css - END - ================================= */
-
-
-
-
-
 /* ========= =======  ========= ============ Media Query ======= ======== ========= ========= ============ */
+@media only screen and (max-width: 1440px){
+:root{
+        --keyMappingWidth : 30rem;
+    } 
+}
 
 @media only screen and (max-width: 1350px){
-    .note-editor .note-editing-area {
+    /* :root{
+        --editingAreaWidth : calc(100% - 2rem);
+    } */
+    /* .note-editor .note-editing-area {
         margin-right: 0%;
         margin-inline: auto;
-        max-width: 100%;
-    }
+        max-width: calc(100% - 2rem);
+    } */
     .note-custom_title{
         display: none !important;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .note-custom_fontFormattings::before{
+        display: none;
+    }
+    .note-custom_paragraphFormatting::before{
+        display: none;
+    }
+    /* .note-custom_style::before{
+        display: none;
+    } */
+    .note-custom_insert::before{
+        display: none;
+    }
+    .note-custom_clearFormatting::before{
+        display: none;
+    }
+    .note-custom_view::before{
+        display: none;
     }
 }
