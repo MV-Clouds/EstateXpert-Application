@@ -333,7 +333,7 @@ public with sharing class MarketingListFilterController {
         }
         
         // Perform the SOQL query
-        MVEX__MarketingListFilterConfig__mdt filterConfig = [SELECT MVEX__StaticFields__c FROM MVEX__MarketingListFilterConfig__mdt LIMIT 1];
+        MVEX__MarketingListFilterConfig__mdt filterConfig = [SELECT MVEX__StaticFields__c FROM MVEX__MarketingListFilterConfig__mdt WITH SECURITY_ENFORCED LIMIT 1];
         
         
         return filterConfig.MVEX__StaticFields__c;

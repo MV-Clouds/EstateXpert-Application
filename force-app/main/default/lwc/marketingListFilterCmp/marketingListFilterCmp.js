@@ -469,7 +469,7 @@ export default class MarketingListFilterCmp extends LightningElement {
      /**
     * Method Name: handlePreventDefault
     * @description: prevent default events when the options div clicked.
-    * Date: 25/06/2024
+    * Date: 23/07/2024
     * Created By: Vyom Soni
     **/
     handlePreventDefault(event){
