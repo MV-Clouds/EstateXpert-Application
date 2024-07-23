@@ -33,7 +33,7 @@
                                             </span>
 
                                             <template if:true={option.isFocused}>
-                                                <div class="options-box">
+                                                <div class="options-box" onmousedown={handlePreventDefault}>
                                                     <ul class="options-cover">
                                                         <template for:each={option.picklistValue} for:item="option1">
                                                             <template if:false={option1.showRightIcon}>

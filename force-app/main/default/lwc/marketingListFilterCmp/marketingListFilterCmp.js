@@ -460,10 +460,20 @@ export default class MarketingListFilterCmp extends LightningElement {
         // Delay the blur action to allow click event to be registered
 
         const index = event.currentTarget.dataset.id;
-        setTimeout(()=>{
+        // setTimeout(()=>{
             this.filterFields[index].isFocused = false;
-        },300);
+        // },300);
         
+    }
+
+     /**
+    * Method Name: handlePreventDefault
+    * @description: prevent default events when the options div clicked.
+    * Date: 25/06/2024
+    * Created By: Vyom Soni
+    **/
+    handlePreventDefault(event){
+        event.preventDefault();
     }
 
     /**
@@ -503,9 +513,11 @@ export default class MarketingListFilterCmp extends LightningElement {
                 field.unchangePicklistValue = newPicklistValue;
                 fields[index] = field;
                 this.filterFields = fields;
+                this.filterFields[index].isFocused = false;
              
             } else {
                console.log('Value already exists in selectedOptions');
+               this.filterFields[index].isFocused = false;
             }
         }
     }
@@ -518,9 +530,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     **/
     removeOptionMethod(event){
         this.removeOption1(event);
-        setTimeout(()=>{
-            this.applyFilters();
-        },1000);
+        this.applyFilters();
     }
 
      /**
@@ -570,9 +580,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     **/
     removeOptionMethodString(event){
         this.removeOptionString(event);
-        setTimeout(()=>{
-            this.applyFilters();
-        },1000);
+        this.applyFilters();
     }
 
      /**

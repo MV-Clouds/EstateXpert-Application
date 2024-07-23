@@ -33,7 +33,7 @@
                             </div>
                         </div>
                         <template if:true={showOptions1}>
-                            <div class="slds-dropdown slds-dropdown_length-5">
+                            <div class="slds-dropdown slds-dropdown_length-5" onmousedown={handlePreventDefault}>
                                 <ul class="slds-listbox slds-listbox_vertical ul-div">
                                     <template for:each={filteredOptions1} for:item="option">
                                             <template if:false={option.showRightIcon}>

@@ -9,6 +9,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @api objectName = 'Contact';
     @api recordId;
     @api fieldSet = 'MVEX__MarketingListFieldSet';
+    @track addModal = false;
     @track spinnerShow=true;
     @track showList = true
     @track showTile =false;
@@ -26,6 +27,9 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @track pageSize = 30;
     @track totalPages;
     @track shownProcessedContactData = [];
+    @track isModalOpen = false;
+    @track selectedContactList = [];
+    @track isContactSelected = true;
 
      /**
     * Method Name : checkAll
@@ -64,13 +68,12 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             }else{
                 field = {fieldName:'Name',fieldLabel:'Contact Name'};
             }
-            console.log('fields'+JSON.stringify(this.fields));
             if (!field) {
                 return '';
             }
         
             const fieldDisplayName = field.fieldLabel;
-            
+
             return `- Sorted by ${fieldDisplayName} (${orderDisplayName})`;
         }else{
             return '';
@@ -307,6 +310,12 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
                     }
                 })
                })
+
+            this.selectedContactList = this.processedContactData.filter(item => item.isChecked == true);
+
+            this.isContactSelected = this.selectedContactList.length <= 0;
+            console.log('isContactSelected ==> ' , this.isContactSelected);
+            
             this.unchangedProcessContact.forEach(item1=>{
                 this.shownProcessedContactData.forEach(item2=>{
                     if(item1.Id == item2.Id){
@@ -337,6 +346,16 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
         this.processedContactData = this.processedContactData.map(item => {
             return { ...item, isChecked: isChecked };
         });
+
+        if(isChecked){
+            this.selectedContactList = this.processedContactData;
+            this.isContactSelected = false;
+        }
+        else{
+            this.selectedContactList = [];
+            this.isContactSelected = true;
+        }
+
         this.unchangedProcessContact = this.unchangedProcessContact.map(item => {
             return { ...item, isChecked: isChecked };
         });
@@ -346,22 +365,44 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
 
     
       /**
-    * Method Name : goTONewContact
-    * @description : Redirect the new contact page
-    * Date: 22/06/2024
+    * Method Name : goTOContactPage
+    * @description : Open Modal for new contact form
+    * Date: 18/07/2024
     * Created By:Vyom Soni
     */
     goTOContactPage(){
-        this[NavigationMixin.Navigate]({
-            type: 'standard__objectPage',
+        this.addModal = true;
+    }
+
+     /**
+    * Method Name : newContactHandle
+    * @description : Redirect the marketing list component after contact is created
+    * Date: 18/07/2024
+    * Created By:Vyom Soni
+    */
+    newContactHandle(){
+        var cmpDef;                
+        cmpDef = {
+            componentDef: 'MVEX:marketingListCmp',               
+            };
+
+        let encodedDef = btoa(JSON.stringify(cmpDef));
+            this[NavigationMixin.Navigate]({
+            type: "standard__webPage",
             attributes: {
-                objectApiName: 'Contact',
-                actionName: 'new'
-            },
-            state: {
-                useRecordTypeCheck: 1
+                url:  "/one/one.app#" + encodedDef                                                         
             }
         });
+    }
+
+      /**
+    * Method Name : handleClose
+    * @description : close Modal for new contact form
+    * Date: 18/07/2024
+    * Created By:Vyom Soni
+    */
+    handleClose(){
+        this.addModal = false;
     }
 
      /**
@@ -428,6 +469,14 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
 
     }
 
+    handleAdd() {
+        this.isModalOpen = true;
+    }
+
+    handleModalClose() {
+        this.isModalOpen = false;
+    }
+
     /**
     * Method Name : updateSortIcons
     * @description : this method update the sort icons in the wrapbutton
@@ -482,9 +531,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             this.pageNumber--;
             this.updateProcessedContactData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 
@@ -499,9 +546,7 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             this.pageNumber++;
             this.updateProcessedContactData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 

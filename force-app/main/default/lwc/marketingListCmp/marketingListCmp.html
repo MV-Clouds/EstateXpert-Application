@@ -2,7 +2,7 @@
     <div class="slds-grid slds-wrap slds-align_absolute-center full-page-container">
         <div class="main">  
             <templete if:true={spinnerShow}>
-                <c-spinner-component></c-spinner-component>
+                <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
             </templete>
             <div class="header-part">
                 <!-- <lightning-card hide-header="true" variant="narrow" class="slds-size_full full-page-card"> -->
@@ -23,6 +23,11 @@
                             </div>
                             <div class="slds-page-header__col-actions">
                                 <div class="slds-page-header__controls">
+
+                                    <div class="add-btn-continer">
+                                        <lightning-button variant="brand" label="Send Email Using Camapign" title="Primary action" class="slds-m-left_x-small addbtn" onclick={handleAdd} disabled={isContactSelected}></lightning-button>
+                                    </div>
+
                                     <div class="slds-page-header__control action-button">
                                         <lightning-button label="New Contact" onclick={goTOContactPage} class="slds-var-m-left_x-small"></lightning-button>
                                     </div>
@@ -94,7 +99,7 @@
                                             <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
                                         </th> -->
                                         <th key={contact.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
-                                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                        <div class="slds-th__action slds-text-link_reset" role="button" tabindex="0">
                                             <span class="slds-assistive-text">Sort by: </span>
                                             <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
                                             <span class="slds-truncate" title="Title">Contact Name</span>
@@ -102,11 +107,11 @@
                                                 <svg data-index="Name" xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
                                             </span>
                                             </div>
-                                        </a>
+                                        </div>
                                         </th>
                                         <template for:each={fields} for:item="contact" for:index="index">
                                         <th key={contact.fieldName} data-id={contact.fieldName} onclick={sortClick} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
-                                            <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                            <div class="slds-th__action slds-text-link_reset" role="button" tabindex="0">
                                             <span class="slds-assistive-text">Sort by: </span>
                                             <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
                                                 <span class="slds-truncate" title="Title">{contact.fieldLabel}</span>
@@ -114,7 +119,7 @@
                                                 <svg data-index={contact.fieldName} xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="M414 210c8-8 8-19 0-27L264 36a20 20 0 0 0-28 0L86 183c-8 8-8 19 0 27l28 27c8 8 20 8 28 0l47-46c8-8 22-2 22 9v270c0 10 9 20 20 20h40c11 0 20-11 20-20V200c0-12 14-17 22-9l47 46c8 8 20 8 28 0z"/></svg>
                                                 </span>
                                             </div> 
-                                            </a>
+                                            </div>
                                         </th>
                                         </template>
                                     </tr>
@@ -138,7 +143,7 @@
                                             </td> -->
                                             <th class="slds-cell_action-mode" scope="row">
                                                 <div class="slds-truncate">
-                                                    <a href="#" data-id={contact.Id} onclick={redirectToRecord} tabindex="0">{contact.Name}</a>
+                                                    <div data-id={contact.Id} onclick={redirectToRecord} tabindex="0">{contact.Name}</div>
                                                 </div>
                                             </th>
                                             <template for:each={contact.orderedFields} for:item="field" for:index="index2">
@@ -193,4 +198,45 @@
             </div>
         </div>
     </div>
+    <template if:true={addModal}>
+        <div>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Header -->
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleClose}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-text-heading_medium">New Contact</h2>
+                    </header>
+                    <!-- Modal/Popup Body -->
+                    <div class="slds-modal__content slds-p-around_medium modal-body">
+                        <slot>
+                            <lightning-card title="Contact Details" icon-name="standard:contact">
+                                <lightning-record-form 
+                                    record-id={recordId} 
+                                    object-api-name="Contact" 
+                                    layout-type="Full" 
+                                    mode="edit"
+                                    columns="2"
+                                    onsubmit={newContactHandle}
+                                    >
+                                </lightning-record-form>
+                            </lightning-card>
+                        </slot>
+                    </div>
+                    <!-- Modal/Popup Footer -->
+                    <!-- <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick={handleClose}>Cancel</button>
+                        <button class="slds-button slds-button_brand"  disabled={isAddButtonDisabled} onclick={handleSave}>Add</button>
+                    </footer> -->
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>   
+        </div>
+    </template>  
+
+    <c-email-campaign-modal if:true={isModalOpen} onclose={handleModalClose} selected-contacts={selectedContactList}> </c-email-campaign-modal>
+
 </template>

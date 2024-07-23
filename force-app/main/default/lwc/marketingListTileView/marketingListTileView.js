@@ -174,10 +174,9 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
             this.pageNumber--;
             this.updateProcessedContactData();
             this.updatePaginationButtons();
-        }
-        setTimeout(() => {
             this.scrollToTop();
-        }, 0);
+        }
+
     }
 
   /**
@@ -191,9 +190,7 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
             this.pageNumber++;
             this.updateProcessedContactData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 

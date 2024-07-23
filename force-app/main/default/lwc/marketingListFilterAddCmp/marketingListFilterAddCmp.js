@@ -10,7 +10,6 @@ export default class MarketingListFilterAddCmp extends LightningElement {
     @track showCombobox = true;
     // Custom combobox properties
     @track searchTerm1 = '';
-    @track selectedOptions1 = [];
     @track isFocused1 = false;
     @track valueIsField = false;
     @track notCheckboxValue = false;
@@ -341,9 +340,7 @@ export default class MarketingListFilterAddCmp extends LightningElement {
     **/
     handleBlur1() {
         // Delay the blur action to allow click event to be registered
-        setTimeout(() => {
-            this.isFocused1 = false;
-        }, 700);
+        this.isFocused1 = false;
     }
 
     /**
@@ -367,8 +364,7 @@ export default class MarketingListFilterAddCmp extends LightningElement {
             return [];
         }
         return this.options1.filter(option =>
-            option.label.toLowerCase().includes(this.searchTerm1.toLowerCase()) &&
-            !this.selectedOptions1.some(selectedOption => selectedOption.value === option.value)
+            option.label.toLowerCase().includes(this.searchTerm1.toLowerCase()) 
         ).map(option => ({
             ...option,
             showRightIcon: this.isLookupField(option.type) // Check if it's a lookup field
@@ -448,5 +444,14 @@ export default class MarketingListFilterAddCmp extends LightningElement {
         this.dispatchEvent(customEvent);
     }
 
+     /**
+    * Method Name: handlePreventDefault
+    * @description: prevent default events when the options div clicked.
+    * Date: 23/07/2024
+    * Created By: Vyom Soni
+    **/
+    handlePreventDefault(event){
+        event.preventDefault();
+    }
 
 }
