@@ -661,7 +661,7 @@ export default class EmailCampaignTemplateForm extends LightningElement {
 
         // console.log('hasRecipients ==> ' ,hasRecipients);
 
-        const isDateSelected = ((this.specificDate && this.specificDate.trim() != '') || this.selectedContactDateField != '');
+        const isDateSelected = ((this.specificDate && this.specificDate.trim() != '' && this.specificDate >= this.today) || this.selectedContactDateField != '');
         // console.log('isDateSelected ==> ' ,isDateSelected);
 
         // console.log('emailsWithTemplate ==> ' , JSON.stringify(this.emailsWithTemplate));
