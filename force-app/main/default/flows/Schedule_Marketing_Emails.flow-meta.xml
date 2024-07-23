@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
-        <name>Sending_Mail_Using_Apex</name>
-        <label>Sending Mail Using Apex</label>
-        <locationX>550</locationX>
-        <locationY>1092</locationY>
+        <name>Send_Emails_Action_1</name>
+        <label>Send Emails Action 1</label>
+        <locationX>314</locationX>
+        <locationY>1392</locationY>
         <actionName>EmailCampaignController</actionName>
         <actionType>apex</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
-            <name>bccAddresses</name>
+            <name>bccContacts</name>
             <value>
-                <elementReference>BccConatctEmails</elementReference>
+                <elementReference>BccContacts</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -21,9 +21,15 @@
             </value>
         </inputParameters>
         <inputParameters>
+            <name>campaignId</name>
+            <value>
+                <elementReference>$Record.Marketing_Campaign__r.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
             <name>ccAddresses</name>
             <value>
-                <elementReference>CcContactEmails</elementReference>
+                <elementReference>CcContacts</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -43,41 +49,41 @@
     </actionCalls>
     <apiVersion>61.0</apiVersion>
     <assignments>
-        <name>Collect_all_Bcc_contact_s_email</name>
-        <label>Collect all Bcc contact&apos;s email</label>
-        <locationX>1166</locationX>
-        <locationY>816</locationY>
+        <name>Assign_Bcc_Contacts</name>
+        <label>Assign Bcc Contacts</label>
+        <locationX>314</locationX>
+        <locationY>1200</locationY>
         <assignmentItems>
-            <assignToReference>BccConatctEmails</assignToReference>
-            <operator>Add</operator>
+            <assignToReference>BccContacts</assignToReference>
+            <operator>Assign</operator>
             <value>
-                <elementReference>Loop_through_all_the_campaign_member_to_get_records.Contact__r.Email</elementReference>
+                <elementReference>$Record.Marketing_Campaign__r.BCC_Contacts__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Loop_through_all_the_campaign_member_to_get_records</targetReference>
+            <targetReference>Send_Emails_Action_1</targetReference>
         </connector>
     </assignments>
     <assignments>
-        <name>Collect_all_CC_contact_s_email</name>
-        <label>Collect all CC contact&apos;s email</label>
-        <locationX>902</locationX>
-        <locationY>816</locationY>
+        <name>Assign_CC_Contacts_to_Variable</name>
+        <label>Assign CC Contacts to Variable</label>
+        <locationX>50</locationX>
+        <locationY>1200</locationY>
         <assignmentItems>
-            <assignToReference>CcContactEmails</assignToReference>
-            <operator>Add</operator>
+            <assignToReference>CcContacts</assignToReference>
+            <operator>Assign</operator>
             <value>
-                <elementReference>Loop_through_all_the_campaign_member_to_get_records.Contact__r.Email</elementReference>
+                <elementReference>$Record.Marketing_Campaign__r.CC_Contacts__c</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Loop_through_all_the_campaign_member_to_get_records</targetReference>
+            <targetReference>Send_Emails_Action_1</targetReference>
         </connector>
     </assignments>
     <assignments>
         <name>Collect_all_primary_contact_s_email</name>
         <label>Collect all primary contact&apos;s email</label>
-        <locationX>638</locationX>
+        <locationX>402</locationX>
         <locationY>816</locationY>
         <assignmentItems>
             <assignToReference>PrimaryContactEmails</assignToReference>
@@ -91,9 +97,49 @@
         </connector>
     </assignments>
     <decisions>
-        <name>Condtion_for_sepetation_primary_cc_and_bcc_contacts</name>
-        <label>Condtion for sepetation primary , cc and bcc contacts</label>
-        <locationX>1034</locationX>
+        <name>Check_For_CC_and_BCC_Contacts</name>
+        <label>Check For CC and BCC Contacts</label>
+        <locationX>314</locationX>
+        <locationY>1092</locationY>
+        <defaultConnector>
+            <targetReference>Send_Emails_Action_1</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Check_For_CC_Contact</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Marketing_Campaign__r.CC_Contacts__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_CC_Contacts_to_Variable</targetReference>
+            </connector>
+            <label>Check For CC Contact</label>
+        </rules>
+        <rules>
+            <name>Check_For_Bcc_Contacts</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Marketing_Campaign__r.BCC_Contacts__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Bcc_Contacts</targetReference>
+            </connector>
+            <label>Check For Bcc Contacts</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Condition_For_Primary_Contacts</name>
+        <label>Condition For Primary Contacts</label>
+        <locationX>534</locationX>
         <locationY>708</locationY>
         <defaultConnector>
             <targetReference>Loop_through_all_the_campaign_member_to_get_records</targetReference>
@@ -114,41 +160,11 @@
             </connector>
             <label>Primary contact Emails</label>
         </rules>
-        <rules>
-            <name>CC_contact_s_email</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Loop_through_all_the_campaign_member_to_get_records.Contact_Type__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>CC</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Collect_all_CC_contact_s_email</targetReference>
-            </connector>
-            <label>CC contact&apos;s email</label>
-        </rules>
-        <rules>
-            <name>BCC_contact_s_email</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Loop_through_all_the_campaign_member_to_get_records.Contact_Type__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>BCC</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Collect_all_Bcc_contact_s_email</targetReference>
-            </connector>
-            <label>BCC contact&apos;s email</label>
-        </rules>
     </decisions>
     <decisions>
         <name>Selected_Date_is_null_or_not</name>
         <label>Selected Date is null or not</label>
-        <locationX>946</locationX>
+        <locationX>798</locationX>
         <locationY>276</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -173,15 +189,15 @@
     <loops>
         <name>Loop_through_all_the_campaign_member_to_get_records</name>
         <label>Loop through all the campaign member to get records</label>
-        <locationX>550</locationX>
+        <locationX>314</locationX>
         <locationY>600</locationY>
         <collectionReference>Get_Campaign_Member_Records</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
-            <targetReference>Condtion_for_sepetation_primary_cc_and_bcc_contacts</targetReference>
+            <targetReference>Condition_For_Primary_Contacts</targetReference>
         </nextValueConnector>
         <noMoreValuesConnector>
-            <targetReference>Sending_Mail_Using_Apex</targetReference>
+            <targetReference>Check_For_CC_and_BCC_Contacts</targetReference>
         </noMoreValuesConnector>
     </loops>
     <processMetadataValues>
@@ -206,7 +222,7 @@
     <recordCreates>
         <name>Create_Error_Records</name>
         <label>Create Error Records</label>
-        <locationX>1078</locationX>
+        <locationX>1018</locationX>
         <locationY>492</locationY>
         <inputAssignments>
             <field>Error_Message__c</field>
@@ -232,7 +248,7 @@
     <recordCreates>
         <name>Create_Error_Records_2</name>
         <label>Create Error Records</label>
-        <locationX>814</locationX>
+        <locationX>754</locationX>
         <locationY>600</locationY>
         <inputAssignments>
             <field>Error_Message__c</field>
@@ -258,7 +274,7 @@
     <recordLookups>
         <name>Get_All_Template_Records</name>
         <label>Get All Template Records</label>
-        <locationX>550</locationX>
+        <locationX>314</locationX>
         <locationY>384</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -282,7 +298,7 @@
     <recordLookups>
         <name>Get_Campaign_Member_Records</name>
         <label>Get Campaign Member Records</label>
-        <locationX>550</locationX>
+        <locationX>314</locationX>
         <locationY>492</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -304,7 +320,7 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>50</locationX>
+        <locationX>122</locationX>
         <locationY>0</locationY>
         <object>Marketing_Email__c</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
@@ -323,18 +339,18 @@
     </start>
     <status>Active</status>
     <variables>
-        <name>BccConatctEmails</name>
+        <name>BccContacts</name>
         <dataType>String</dataType>
-        <isCollection>true</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
     </variables>
     <variables>
-        <name>CcContactEmails</name>
+        <name>CcContacts</name>
         <dataType>String</dataType>
-        <isCollection>true</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
     </variables>
     <variables>
         <name>MarketingCampaignMemberRecords</name>

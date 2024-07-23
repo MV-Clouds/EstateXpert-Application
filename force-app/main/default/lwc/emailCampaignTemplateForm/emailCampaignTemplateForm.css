@@ -86,6 +86,15 @@
     margin-bottom: 1rem;
 }
 
+.input-date-container{
+    width: 100%;
+}
+
+.input-date{
+    width: 30%;
+}
+
+
 .footer {
     display: flex;
     justify-content: center;
@@ -129,10 +138,6 @@
 
 .container-pill-label{
     margin-left: 6px;
-}
-
-.input-date{
-    width: 30%;
 }
 
 .input-date-combobox{

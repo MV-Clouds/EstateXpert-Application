@@ -4,17 +4,16 @@ import { NavigationMixin } from 'lightning/navigation';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import getEmailCampaignTemplates from '@salesforce/apex/EmailCampaignController.getEmailCampaignTemplates';
 import getMarketingEmails from '@salesforce/apex/EmailCampaignController.getMarketingEmails';
-import getQuickTemplates from '@salesforce/apex/EmailCampaignController.getQuickTemplates';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
 
 export default class EmailCampaignModal extends NavigationMixin(LightningElement) {
     @track templateOptions = [];
     @track marketingEmails = [];
-    @track quickTemplates = null;
     @track templates = null;
-    @track quickTemplateOptions = [];
     @api selectedTemplateId = '';
+    @api isEdit = false; 
 
+    @api selectedContacts = [];
     @api formData = {
         selectedTemplate: '',
         campaignName: '',
@@ -23,47 +22,8 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         fromName: '',
         saveForFuture: false
     };
-
-    @wire(getEmailCampaignTemplates)
-    wiredTemplates({ error, data }) {
-        if (data) {
-            this.templates = data;
-            this.templateOptions = data.map(template => {
-                return { label: template.Label__c, value: template.Id };
-            });
-        } else if (error) {
-            this.showToast('Error', 'Failed to fetch template options', 'error');
-            console.error(error);
-        }
-    }
     
-
-    connectedCallback() {
-        Promise.all([
-            loadStyle(this, externalCss)
-        ])
-        .then(res => {
-            console.log('External Css Loaded');
-            this.fetchQuickTemplates();
-        })
-        .catch(error => {
-            console.log('Error occurring during loading external css', error);
-        });
-    }
-
-    fetchQuickTemplates() {
-        getQuickTemplates()
-            .then(result => {
-                this.quickTemplates = result;
-                this.quickTemplateOptions = result.map(template => ({
-                    label: template.Label__c,
-                    value: template.Id
-                }));
-            })
-            .catch(error => {
-                console.error('Error fetching templates:', error);
-            });
-    }
+    @track isLoading = false;
 
     get senderModeOptions() {
         return [
@@ -76,12 +36,67 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         return !this.isFormValid();
     }
 
+    /**
+    * Method Name: getEmailCampaignTemplates
+    * @description: method to get template options
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
+    @wire(getEmailCampaignTemplates)
+    wiredTemplates({ error, data }) {
+        if (data) {
+            this.templates = data;
+            this.templateOptions = [{ label: 'None', value: '' }, ...data.map(template => {
+                return { label: template.Label__c, value: template.Id };
+            })];
+        } else if (error) {
+            this.showToast('Error', 'Failed to fetch template options', 'error');
+            console.error(error);
+        }
+    }
+    
+
+    /**
+    * Method Name: connectedCallback
+    * @description: method to load style using statuc resource
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
+    connectedCallback() {
+        console.log('selectedContacts ==> ' + JSON.stringify(this.selectedContacts));
+        this.isLoading = true;
+        Promise.all([
+            loadStyle(this, externalCss)
+        ])
+        .then(res => {
+            console.log('External Css Loaded');
+            console.log(this.isEdit);
+            this.isLoading = false;
+        })
+        .catch(error => {
+            console.log('Error occurring during loading external css', error);
+            this.isLoading = false;
+        });
+    }
+
+    /**
+    * Method Name: handleCloseModal
+    * @description: method to close the modal
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
     handleCloseModal() {
         this.resetFormData();
         const closeEvent = new CustomEvent('close');
         this.dispatchEvent(closeEvent);
     }
 
+    /**
+    * Method Name: resetFormData
+    * @description: method to reset form
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
     resetFormData() {
         this.formData = {
             selectedTemplate: '',
@@ -91,36 +106,49 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
             fromName: '',
             saveForFuture: false
         };
+        this.selectedTemplateId = '';
     }
 
+
+    /**
+    * Method Name: handleChange
+    * @description: method to handle changes
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
     handleChange(event) {
         const { name, value, checked } = event.target;
         if (name === 'saveForFuture') {
             this.formData = { ...this.formData, [name]: checked };
         } else if (name === 'selectedTemplate') {
             this.selectedTemplateId = value;
-            const selectedOption = this.templateOptions.find(option => option.value === value);
-            console.log('selectedOption ==>' , selectedOption);
-            
-            if (selectedOption) {
-                const selectedTemplate = this.templates.find(template => template.Id === value);
-                console.log('selectedTemplate ==> ' ,selectedTemplate);
-                if (selectedTemplate) {
-                    this.formData = {
-                        ...this.formData,
-                        selectedTemplate: selectedOption.label,
-                        fromAddress: selectedTemplate.From_Address__c,
-                        fromName: selectedTemplate.From_Name__c,
-                        senderMode: selectedTemplate.Sender_Mode__c
-                    };
-    
-                    getMarketingEmails({ templateId: selectedOption.value })
-                        .then(result => {
-                            this.marketingEmails = result;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching marketing emails', error);
-                        });
+            if (value === '') {
+                this.resetFormData();
+                this.marketingEmails = [];
+            } else {
+                const selectedOption = this.templateOptions.find(option => option.value === value);
+                console.log('selectedOption ==>' , selectedOption);
+                
+                if (selectedOption) {
+                    const selectedTemplate = this.templates.find(template => template.Id === value);
+                    console.log('selectedTemplate ==> ' ,selectedTemplate);
+                    if (selectedTemplate) {
+                        this.formData = {
+                            ...this.formData,
+                            selectedTemplate: selectedOption.label,
+                            fromAddress: selectedTemplate.From_Address__c,
+                            fromName: selectedTemplate.From_Name__c,
+                            senderMode: selectedTemplate.Sender_Mode__c
+                        };
+
+                        getMarketingEmails({ templateId: selectedOption.value })
+                            .then(result => {
+                                this.marketingEmails = result;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching marketing emails', error);
+                            });
+                    }
                 }
             }
         } else {
@@ -129,14 +157,24 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     }
     
 
+    /**
+    * Method Name: handleSave
+    * @description: method to handle save
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
     handleSave() {
+
+        if (!this.isValidEmail(this.formData.fromAddress)) {
+            this.showToast('Error', 'Please enter a valid email address', 'error');
+            return;
+        }
+        
         if (this.isFormValid()) {
             const navigationState = {
                 ...this.formData,
                 marketingEmails: this.marketingEmails,
-                quickTemplates: this.quickTemplates,
-                quickTemplateOptions: this.quickTemplateOptions,
-                selectedTemplateId: this.selectedTemplateId
+                selectedTemplateId: this.selectedTemplateId,
             };
 
             const event = new CustomEvent('handledatachange', {
@@ -150,15 +188,27 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         }
     }
 
+    /**
+    * Method Name: handleNext
+    * @description: method to next functionality
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
     handleNext() {
+
+        if (!this.isValidEmail(this.formData.fromAddress)) {
+            this.showToast('Error', 'Please enter a valid email address', 'error');
+            return;
+        }
+
         if (this.isFormValid()) {
             console.log('marketingEmails ==> ', JSON.stringify(this.marketingEmails));
             const navigationState = {
                 ...this.formData,
                 marketingEmails: this.marketingEmails,
-                quickTemplates: this.quickTemplates,
-                quickTemplateOptions: this.quickTemplateOptions,
-                selectedTemplateId: this.selectedTemplateId
+                selectedTemplateId: this.selectedTemplateId,
+                selectedContacts: this.selectedContacts
+
             };
 
             var cmpDef = {
@@ -185,11 +235,35 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         }
     }
 
+    /**
+    * Method Name: isFormValid
+    * @description: method check require fields
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
     isFormValid() {
         const requiredFields = ['campaignName', 'fromAddress', 'fromName'];
         return requiredFields.every(field => this.formData[field]);
     }
 
+
+    /**
+    * Method Name: isValidEmail
+    * @description: method check email field
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
+    isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    /**
+    * Method Name: showToast
+    * @description: method to show toast message
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
     showToast(title, message, variant) {
         const event = new ShowToastEvent({
             title,

@@ -1,0 +1,194 @@
+<template>
+    <div class="wrapper">
+        
+        <template if:true={isLoading}>
+            <c-spinner-component></c-spinner-component>
+        </template>
+
+        <div class="slds-m-around_medium navbar">
+            <div class="input-data">
+                <div class="search-input">
+                    <lightning-input type="search" onchange={handleSearch} placeholder="Search Campaign" class="input-campaign"></lightning-input>
+                </div>
+                <div class="filter-btn-container">
+                    <button class="filter-btn" onclick={handleFilterClick}>
+                        <img src={filterIconUrl} />
+                    </button>
+                </div>
+            </div>
+            <div class="add-btn-continer">
+                <lightning-button variant="brand" label="+ Add New" class="slds-m-left_x-small addbtn" onclick={handleAdd}></lightning-button>
+            </div>
+        </div>
+
+        <div class="slds-m-around_medium">
+            <div class="table-content">
+                <table class="slds-table slds-table_bordered slds-table_col-bordered">
+                    <thead>
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="sno">
+                                <div class="center">No.</div>
+                            </th>
+                            <th scope="col" class="marketing-campaign-name">
+                                <div>Marketing Campaign Name</div>
+                            </th>
+                            <th scope="col" class="marketing-camapign-template">
+                                <div class="center">Campaign Template</div>
+                            </th>
+                            <th scope="col" class="status" style="width: 15%;">
+                                <div class="center">Status</div>
+                            </th>
+                            <th scope="col" class="total-emails">
+                                <div class="center">Total Emails</div>
+                            </th>
+                            <th scope="col" class="remaining-emails">
+                                <div class="center">Remaning Emails</div>
+                            </th>
+                            <th scope="col" class="progress" style="width: 15%;">
+                                <div class="center">Progress</div>
+                            </th>
+                            <th scope="col" class="start-date">
+                                <div class="center">Start Date</div>
+                            </th>
+                            <th scope="col" class="created-date">
+                                <div class="center">Created Date</div>
+                            </th>
+                            <th scope="col" class="actions">
+                                <div class="center">Action</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template if:true={visibleCampaigns.length}>
+                            <template for:each={visibleCampaigns} for:item="campaign" for:index="index">
+                                <tr key={campaign.Id}>
+                                    <td data-label="S.No.">
+                                        <div class="center">{campaign.rowIndex}</div>
+                                    </td>
+                                    <td data-label="Campaign Name">
+                                        <div>{campaign.Label__c}</div>
+                                    </td>
+                                    <td data-label="Campaign Template">
+                                        <div class="center">{campaign.IsCampaignTemplate}</div>
+                                    </td>
+                                    <td data-label="Status">
+                                        <div class={campaign.statusClass}>
+                                            {campaign.Status__c}
+                                        </div>
+                                    </td>
+                                    <td data-label="total emails">
+                                        <div class="center">
+                                            {campaign.Total_Emails__c}
+                                        </div>
+                                    </td>
+                                    <td data-label="total emails">
+                                        <div class="center">
+                                            {campaign.Remaining_Emails__c}
+                                        </div>
+                                    </td>
+                                    <td data-label="Progress bar" class="progress-container">
+                                        <lightning-progress-bar value={campaign.progressPercentage} size="large" variant="circular"></lightning-progress-bar>
+                                    </td>
+                                    <td data-label="Start Date">
+                                        <div class="center">{campaign.StartDateformatted}</div>
+                                    </td>
+                                    <td data-label="Created Date">
+                                        <div class="center">{campaign.CreatedDateformatted}</div>
+                                    </td>
+                                    <td data-label="Actions">
+                                        <div class="action-btn">
+                                            <div class="edit-btn">
+                                                <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" title="Edit" onclick={handleEdit} data-id={campaign.Id} disabled={campaign.canEdit}></lightning-button-icon>
+                                            </div>
+                                            <div class="delete-btn">
+                                                <lightning-button-icon icon-name="utility:delete" alternative-text="Delete" title="Delete" onclick={handleDelete} data-id={campaign.Id} disabled={campaign.canDelete}></lightning-button-icon>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                        <template if:false={visibleCampaigns.length}>
+                            <div class="no-data-container">
+                                <div class="no-data-message">
+                                    No data to display here
+                                </div>
+                            </div>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <template if:true={visibleCampaigns.length}>
+            <div class="pagination-container">
+                <lightning-button class="previous" label="Previous" onclick={previousPage} disabled={isPreviousDisabled}></lightning-button>
+                <div class="page-info"> Page {currentPage} Of {totalPages}</div>
+                <lightning-button class="next" label="Next" onclick={nextPage} disabled={isNextDisabled}></lightning-button>
+            </div>
+        </template>
+    
+    </div>
+
+
+    <c-email-campaign-modal if:true={isModalOpen} onclose={handleModalClose}> </c-email-campaign-modal>
+
+
+    <template if:true={isFilterModalOpen}>
+        <div class="filter-modal">
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Header -->
+                    <header class="slds-modal__header">
+                        <div class="filter-modal-close">
+                            <button title="Close" onclick={closeFilterModal}>
+                                <lightning-icon icon-name="utility:close"
+                                   alternative-text="close"
+                                   variant="inverse"
+                                   size="small" ></lightning-icon>
+                                <span class="slds-assistive-text">Close</span>
+                             </button>
+    
+                        </div>
+                        <h2 class="slds-text-heading_medium">Filter Campaigns</h2>
+                    </header>
+                    <!-- Modal/Popup Body -->
+                    <div class="slds-modal__content slds-p-around_medium filter-body">
+                        <lightning-combobox label="Status" placeholder="Select a status" options={statusOptions} onchange={handleFilterChange} data-id="statusFilter" value={statusFilter}></lightning-combobox>
+
+                        <div class="slds-p-top_small">
+                            <template for:each={statusFilterList} for:item="status">
+                                <lightning-pill 
+                                key = {status}
+                                label = {status}
+                                name = {status}
+                                onremove = {handleRemove}>
+                                <lightning-icon icon-name="standard:account" alternative-text="Account"></lightning-icon>
+                            </lightning-pill>
+                            </template>
+                        </div>
+                        <div class="filter-dates">
+                            <div class="filter-created-date">
+                                <lightning-input type="date" label="Created Date Start" onchange={handleFilterChange} value={createdDateStart} data-id="createdDateStart"></lightning-input>
+                            </div>
+                            <div class="filter-end-date">
+                                <lightning-input type="date" label="Created Date End" onchange={handleFilterChange} value={createdDateEnd} data-id="createdDateEnd"></lightning-input>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Modal/Popup Footer -->
+                    <footer class="slds-modal__footer">
+                        <div class="filter-modal-footer">
+                            <lightning-button variant="brand" label="Apply Filter" onclick={applyFilter}></lightning-button>
+                            <lightning-button variant="neutral" label="Clear" onclick={clearFilterModal}></lightning-button>
+    
+                        </div>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+
+    </template>
+
+</template>

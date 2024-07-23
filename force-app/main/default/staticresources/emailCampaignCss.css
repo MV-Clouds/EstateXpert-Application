@@ -19,6 +19,7 @@
 .input-date-container .slds-form-element__label{
   font-size: 14px;  
   font-weight: bold;
+  display: block;
 }
 
 button[disabled] {
@@ -117,10 +118,10 @@ button[disabled] {
   position: absolute;
 }
 
-.days-after-input .slds-has-error .slds-input{
+.timeCmp .slds-has-error .slds-input{
   border: 2px solid red;
 }
 
-.time-to-send .slds-has-error .slds-form-element__help{
+.timeCmp .slds-has-error .slds-form-element__help{
   position: absolute;
 }
