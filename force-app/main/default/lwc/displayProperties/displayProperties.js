@@ -1,7 +1,7 @@
 import { LightningElement, api, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import GetProperties from '@salesforce/apex/PropertySearchController.GetProperties';
-import NoImageFound from '@salesforce/resourceUrl/NoImageFound';
+import NoImageFound from '@salesforce/resourceUrl/blankImage';
 import propertyIcons from '@salesforce/resourceUrl/PropertyIcons';
 import location_icon from '@salesforce/resourceUrl/location_icon';
 import mapCss_V1 from '@salesforce/resourceUrl/mapCss_V1';
@@ -28,15 +28,15 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         bedrooms: 0,
         bathrooms: 0,
         city: '',
-        zipcode: ''
+        zip: ''
     };
     @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
     @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
     @track area_icon = propertyIcons + '/PropertyIcons/Area.png';
     @track location_icon = location_icon;
-    @track FilteredListingData = [];
+    @track filteredListingData = [];
     @track pagedFilteredListingData = [];
-    @track ListingData = [];
+    @track listingData = [];
     @track propertyMediaUrls;
     @track isPropertyAvailable = true;
     @track isInitalRender = true;
@@ -47,6 +47,17 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         { label: 'List', value: 'List' },
         { label: 'Map View', value: 'map' }
     ];
+
+    get columnClass() {
+        const screenWidth = window.innerWidth;
+        if (screenWidth >= 992) {
+            return 'slds-col slds-size--1-of-4'; // 4 columns for large screens
+        } else if (screenWidth >= 768) {
+            return 'slds-col slds-size--1-of-3'; // 3 columns for medium screens
+        } else {
+            return 'slds-col slds-size--1-of-2'; // 2 columns for small screens
+        }
+    }
 
     get isListView() {
         return this.selectedView === 'List';
@@ -90,7 +101,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         this.fetchProperties();
         loadStyle(this, mapCss_V1)
             .then(() => {
-                console.log('CSS loaded');
+                console.log('CSS loaded2');
             })
             .catch(error => {
                 console.error('Error loading CSS:', error);
@@ -106,23 +117,23 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     fetchProperties() {
         GetProperties({ RecordId: this.recordId, object_name: this.objectApiName })
             .then(result => {
-                this.FilteredListingData = result.Listings;
-                this.ListingData = result.Listings;
+                this.filteredListingData = result.Listings;
+                this.listingData = result.Listings;
                 this.propertyMediaUrls = result.Medias;
-                this.ListingData.forEach(row => {
+                this.listingData.forEach(row => {
                     const prop_id = row.Property__c;
                     row.media_url = this.propertyMediaUrls[prop_id];
                     console.log(row.media_url);
                 });
-                this.FilteredListingData.forEach(row => {
+                this.filteredListingData.forEach(row => {
                     const prop_id = row.Property__c;
-                    row.media_url = row.Primary_Image_URL__c ? row.Primary_Image_URL__c : (this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : NoImageFound);
+                    row.media_url = row.rimary_Image_URL__c ? row.Primary_Image_URL__c : (this.propertyMediaUrls[prop_id] ? this.propertyMediaUrls[prop_id] : NoImageFound);
                     row.Listing_Price__c = row.Listing_Price__c ? row.Listing_Price__c : 'TBD';
                     row.Listing_Type__c = row.Listing_Type__c ? row.Listing_Type__c : 'Sale';
                     row.Bedrooms__c = row.Bedrooms__c ? row.Bedrooms__c : 0;
-                    row.FullBathrooms__c = row.FullBathrooms__c ? row.FullBathrooms__c : 0;
+                    row.Bathrooms__c = row.Bathrooms__c ? row.Bathrooms__c : 0;
                 });
-                this.pagedFilteredListingData = this.FilteredListingData;
+                this.pagedFilteredListingData = this.filteredListingData;
                 this.totalRecords = this.pagedFilteredListingData.length;
                 console.log(this.totalRecords);
                 this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
@@ -140,11 +151,13 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Created By: Mitrajsinh Gohil
     */
     updateMapMarkers() {
+        try{
         const startIndex = (this.currentPage - 1) * PAGE_SIZE;
         const endIndex = startIndex + PAGE_SIZE;
         const currentPageData = this.pagedFilteredListingData.slice(startIndex, endIndex);
 
         this.mapMarkers = currentPageData.map(listing => {
+            console.log('listing.City__c:-> ',listing.City__c,' listing.Name:-> ',listing.Name);
             return {
                 id: listing.Id,
                 location: {
@@ -159,6 +172,10 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
                 media_url: listing.media_url // Set media URL for the image
             };
         });
+    }catch(error){
+        console.log('error--->',error);
+    }
+        // this.pagedFilteredListingData = this.listingData;
     }
 
     /**
@@ -180,18 +197,18 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Created By: Mitrajsinh Gohil
     */
     filterProperties() {
-        const { propertyType, minPrice, maxPrice, bedrooms, bathrooms, city, zipCode } = this.filterData;
 
+        const { propertyType, minPrice, maxPrice, bedrooms, bathrooms, city, zip } = this.filterData;
 
-        this.pagedFilteredListingData = this.ListingData.filter(property => {
+        this.pagedFilteredListingData = this.listingData.filter(property => {
             const searchProperty = property.Name.toLowerCase().includes(this.searchTerm)
             const matchesPropertyType = !propertyType || property.Listing_Type__c == propertyType;
             const matchesPrice = (minPrice != 0 ? property.Listing_Price__c >= minPrice ? true : false : true) &&
-                                 (maxPrice != 0 ? property.Listing_Price__c <= maxPrice ? true : false : true)
-            const matchesBedrooms = bedrooms != 0  ? property.Bedrooms__c == bedrooms ? true : false : true;
-            const matchesBathrooms = bathrooms!= 0 ? property.FullBathrooms__c == bathrooms ? true : false : true;
-            const matchesCity = !city || property.City__c.toLowerCase() == city.toLowerCase();
-            const matchesZipCode = !zipCode || property.Zipcode__c == zipCode;
+                (maxPrice != 0 ? property.Listing_Price__c <= maxPrice ? true : false : true)
+            const matchesBedrooms = bedrooms != 0 ? property.Bedrooms__c == bedrooms ? true : false : true;
+            const matchesBathrooms = bathrooms != 0 ? property.Bathrooms__c == bathrooms ? true : false : true;
+            const matchesCity = city != '' ? (property.City__c != undefined && property.City__c != '') ? property.City__c.toLowerCase() == city.toLowerCase() ? true : false : false : true;
+            const matchesZipCode = zip != '' ? property.Zip_Postal_Code__c != '' ? property.Zip_Postal_Code__c == zip ? true : false : false : true;
 
             return searchProperty && matchesPropertyType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipCode;
         });
@@ -219,10 +236,11 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Created By: Mitrajsinh Gohil
     */
     clearFilter(event) {
+        this.isPropertyAvailable = true;
         this.filterData = event.detail;
-        this.pagedFilteredListingData = this.ListingData
+        this.pagedFilteredListingData = this.listingData;
         this.searchTerm = ''
-        this.filterProperties();
+        this.updateMapMarkers();
         this.isModalOpen = false;
     }
 
@@ -232,7 +250,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Date: 17/06/2024
     * Created By: Mitrajsinh Gohil
     */
-    closeFilter(event){
+    closeFilter() {
         this.isModalOpen = false;
     }
 
@@ -243,7 +261,6 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Created By: Mitrajsinh Gohil
     */
     handleSearch(event) {
-        console.log('OUTPUT : search:- ',event.target.value);
         this.searchTerm = event.target.value.toLowerCase();
         this.filterProperties();
         this.currentPage = 1; // Reset to first page on search
@@ -265,7 +282,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         }
     }
 
-        /**
+    /**
     * Method Name: fetchProperties
     * @description: this method is used to navigate to listing record page on click of view more
     * Date: 17/06/2024
@@ -291,6 +308,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     */
     goToFirst() {
         this.currentPage = 1;
+        this.scrollToTop();
         this.updateMapMarkers();
     }
 
@@ -303,6 +321,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     goToPrevious() {
         if (this.currentPage > 1) {
             this.currentPage -= 1;
+            this.scrollToTop();
             this.updateMapMarkers();
         }
     }
@@ -316,6 +335,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     goToNext() {
         if (this.currentPage < this.totalPages) {
             this.currentPage += 1;
+            this.scrollToTop();
             this.updateMapMarkers();
         }
     }
@@ -328,6 +348,22 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     */
     goToLast() {
         this.currentPage = this.totalPages;
+        this.scrollToTop();
         this.updateMapMarkers();
+    }
+
+    /**
+    * Method Name: scrollToTop
+    * @description: this method is used to scroll the page automatically to the top on click of any pagination buttons
+    * Date: 26/06/2024
+    * Created By: Mitrajsinh Gohil
+    */
+    scrollToTop() {
+        const scrollOptions = {
+            left: 0,
+            top: 0,
+            behavior: 'smooth'
+        }
+        window.scrollTo(scrollOptions);
     }
 }

@@ -43,11 +43,6 @@ public with sharing class PropertySearchController{
             return wc;
 
         } catch (Exception e){
-            System.debug('Exception type: ' + e.getTypeName());
-            System.debug('Message: ' + e.getMessage());
-            System.debug('Cause: ' + e.getCause()); 
-            System.debug('Line number: ' + e.getLineNumber());
-            System.debug('Stack trace: ' + e.getStackTraceString()); 
             throw new AuraHandledException(e.getMessage());
         }
     }

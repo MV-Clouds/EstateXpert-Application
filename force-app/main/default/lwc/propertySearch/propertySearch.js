@@ -1,17 +1,19 @@
 import { LightningElement, api, track } from 'lwc';
 import GetListingTypes from '@salesforce/apex/PropertySearchController.GetListingTypes';
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
 export default class PropertySearch extends LightningElement {
-    @api filterValue;
+    @api filtervalue;
     @track propertyType = '';
     @track propertyTypes = []; 
     @track minPrice = '';
-    @track minPriceRange = 0;
     @track maxPrice = '';
-    @track maxPriceRange = 1000000;
     @track bedrooms = 0;
     @track bathrooms = 0;
     @track city = '';
-    @track zipCode = '';
+    @track zip = '';
+    @track showMinError = false;
+    @track showMaxError = false;
+    @track showValidationError = false;
 
     /**
     * Method Name: ConnectedCallback
@@ -20,19 +22,29 @@ export default class PropertySearch extends LightningElement {
     * Created By: Mitrajsinh Gohil
     */
     connectedCallback(){
+        if(this.filtervalue){
+            this.propertyType = this.filtervalue.propertyType || '';
+            this.minPrice = this.filtervalue.minPrice || '';
+            this.maxPrice = this.filtervalue.maxPrice || '';
+            this.bedrooms = this.filtervalue.bedrooms || 0;
+            this.bathrooms = this.filtervalue.bathrooms || 0;
+            this.city = this.filtervalue.city || '';
+            this.zip = this.filtervalue.zip || '';
+        }
         GetListingTypes().then(result => {
-            this.propertyTypes = result;
+            console.log('result ==> ' , result);
+            let propertyTypesList = [];
+            result.forEach(element => {
+                let property = {
+                    label: element,
+                    isSelected: element == this.propertyType ? true : false
+                }
+                propertyTypesList.push(property);
+            });
+
+            this.propertyTypes = propertyTypesList;
         });
 
-        if(this.filterValue){
-            this.propertyType = this.filterValue.propertyType || '';
-            this.minPrice = this.filterValue.minPrice || '';
-            this.maxPrice = this.filterValue.maxPrice || '';
-            this.bedrooms = this.filterValue.bedrooms || 0;
-            this.bathrooms = this.filterValue.bathrooms || 0;
-            this.city = this.filterValue.city || '';
-            this.zipCode = this.filterValue.zipcode || '';
-        }
     }
 
     /**
@@ -53,8 +65,14 @@ export default class PropertySearch extends LightningElement {
     */
     handleMinPriceChange(event) {
         this.minPrice = event.target.value;
-        if(this.minPrice > this.maxPrice) {
-            this.maxPrice = this.minPrice;
+        console.log('OUTPUT in min function: ');
+        if(Number(this.minPrice) > Number(this.maxPrice) && (this.maxPrice != 0 || this.maxPrice != '')) {
+            console.log('OUTPUT in min condition: ');
+            this.showMinError = true;
+            this.showMaxError = false;
+        } else {
+            console.log('OUTPUT in min else: ');
+            this.showMinError = false;
         }
     }
 
@@ -66,8 +84,14 @@ export default class PropertySearch extends LightningElement {
     */
     handleMaxPriceChange(event) {
         this.maxPrice = event.target.value;
-        if(this.maxPrice < this.minPrice) {
-            this.minPrice = this.maxPrice;
+        console.log('OUTPUT in max function: ');
+        if(Number(this.maxPrice) < Number(this.minPrice) && (this.maxPrice != 0 || this.maxPrice != '')) {
+            console.log('OUTPUT in max condition: ');
+            this.showMaxError = true;
+            this.showMinError = false;
+        } else {
+            console.log('OUTPUT in max else: ');
+            this.showMaxError = false;
         }
     }
 
@@ -108,7 +132,7 @@ export default class PropertySearch extends LightningElement {
     * Created By: Mitrajsinh Gohil
     */
     handleZipCodeChange(event) {
-        this.zipCode = event.target.value;
+        this.zip = event.target.value.toString();
     }
 
     /**
@@ -139,11 +163,21 @@ export default class PropertySearch extends LightningElement {
                 bedrooms: this.bedrooms,
                 bathrooms: this.bathrooms,
                 city: this.city,
-                zipcode: this.zipCode
+                zip: this.zip
             };
 
             console.log('Applying Filters:', filterValues.propertyType);
-            this.dispatchEvent(new CustomEvent('changefilter', { detail: filterValues }));
+            if (this.showMinError || this.showMaxError) {
+                const evt = new ShowToastEvent({
+                    title: 'Filters Can Not be Applied',
+                    message: 'All the Errors need to be solved before applying Filter',
+                    variant: 'error',
+                  });
+                  this.dispatchEvent(evt);
+              
+            } else {
+                this.dispatchEvent(new CustomEvent('changefilter', { detail: filterValues }));
+            }
         } catch (error) {
             console.error('Error applying filters:', error);
         }
@@ -210,7 +244,7 @@ export default class PropertySearch extends LightningElement {
         this.bedrooms = 0;
         this.bathrooms = 0;
         this.city = '';
-        this.zipCode = '';
+        this.zip = '';
         const filterValues = {
                 propertyType: this.propertyType,
                 minPrice: this.minPrice,
@@ -218,7 +252,7 @@ export default class PropertySearch extends LightningElement {
                 bedrooms: this.bedrooms,
                 bathrooms: this.bathrooms,
                 city: this.city,
-                zipcode: this.zipCode
+                zip: this.zip
             };
         this.dispatchEvent(new CustomEvent('filterclear', { detail: filterValues }));
     }

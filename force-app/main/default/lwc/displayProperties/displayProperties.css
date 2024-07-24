@@ -13,25 +13,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.filter-button lightning-button {
-    border-radius: 5px;
-    font-size: 14px;
-    background-color: #4CAF50;
-    color: #ffffff;
-}
-
-.mainFilter{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.child_Prop_Search {
-    display: flex;
-    justify-content: end;
-    padding-right: 1rem;
-}
-
 .search-bar lightning-input {
     width: 300px;
 }
@@ -45,44 +26,20 @@
     align-items: center;
 }
 
-/* .view-dropdown{
-    margin-right: 1rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-} */
-
-.Scrollview {
-    width: 30%;
-    z-index: 100;
-}
-
 .property-container {
-       align-items: center;
-    display: grid;
+    align-items: center;
+    display: flex;
+    /* flex-wrap: wrap; */
     grid-template-columns: repeat(auto-fill, minmax(24%, 1fr));
     justify-items: center;
 
 }
 
-/* .property-item {
-    background-color: #ffffff;
-    position: relative;
-    width: 100%;
-    height: auto;
-    border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    margin: 0.5%;
-    align-items: center;
-    overflow: hidden;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    transition: box-shadow 0.3s ease;
-} */
-
 .property-item {
+    /* flex-grow: 1;
+    flex-basis: 200; */
     background-color: #ffffff;
     position: relative;
-    width: 90%;
     height: auto;
     border: 1px solid #d8d8d8;
     border-radius: 8px;
@@ -90,8 +47,12 @@
     transition: box-shadow 0.3s ease;
 }
 
+.card{
+    padding: 0 1% 1% 1%;
+}
+
 .property-item:hover {
-    box-shadow: 3px 1px 19px 2px #0176D3;
+    box-shadow: 1px 1px 10px 1px #509fdaa2;
 }
 
 .property-container-list {
@@ -290,10 +251,10 @@
     font-size: 14px;
 }
 
-.pagination-buttons lightning-button[disabled] {
+/* .pagination-buttons lightning-button[disabled] {
     background-color: #f5f5f5;
     color: #999999;
-}
+} */
 
 .no_prop {
     font-size: 20px;

@@ -5,7 +5,9 @@
   last modified by  : Harsh Vora
 -->
 <template>
-    <div class="slds-theme_default filter-container">
+    <!-- <div class="slds-theme_default filter-container"> -->
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
         <div class="filter-header">
             <h1>Property Filter Options</h1>
             <lightning-button-icon icon-name="utility:close" alternative-text="Close"
@@ -13,31 +15,37 @@
         </div>
         <div class="filters filter-body">
             <label for="property-type">Property Type:</label>
-            <select name="propertyType" class="slds-input slds-select" onchange={handlePropertyTypeChange}>
+            <select name="propertyType" id="propertyType" class="slds-input slds-select" onchange={handlePropertyTypeChange}>
                 <option class="slds-input" value="">None</option>
                 <template for:each={propertyTypes} for:item="value">
-                    <option class="slds-input" value={value} key={value}>{value}</option>
+                    <option class="slds-input" value={value.label} key={value.label} selected={value.isSelected}>{value.label}</option>
                 </template>
             </select>
             <div class="price-range">
                 <br/>
                 <label for="min-price">Min Price:</label>
                 <div class="Value_increment_box">
-                    <input type="number" class="box1_min_price" min={minPriceRange} max={maxPriceRange} value={minPrice}
-                        onchange={handleMinPriceChange} placeholder="0"></input>
+                    <input type="number" class="box1_min_price" value={minPrice}
+                        oninput={handleMinPriceChange} placeholder="0"></input>
                     <div class="box2_min_price slds-m-left_x-small">
                         <p style="color: #0176D3;">$</p>
                     </div>
                 </div>
+                <template if:true={showMinError}>
+                    <p style="color: #ff0000;">Min Price can not be Greater than the Max Price</p>
+                </template>
                 <br />
                 <label for="max-price">Max Price:</label>
                 <div class="Value_increment_box">
-                    <input type="number" class="box1_min_price" min={minPriceRange} max={maxPriceRange} value={maxPrice}
-                        onchange={handleMaxPriceChange} placeholder="1000000"></input>
+                    <input type="number" class="box1_min_price"  value={maxPrice}
+                    oninput={handleMaxPriceChange} placeholder="1000000"></input>
                     <div class="box2_min_price slds-m-left_x-small">
                         <p style="color: #0176D3;">$</p>
                     </div>
                 </div>
+                <template if:true={showMaxError}>
+                    <p style="color: #ff0000;">Min Price can not be Greater than the Max Price</p>
+                </template>
             </div>
             <div class="bed-bath">
                 <br />
@@ -65,16 +73,17 @@
             </div>
             <br />
             <label for="square-footage">City:</label>
-            <input class="Value_increment_box fields" type="text" onchange={handleCityChange} value={city}></input>
+            <input class="Value_increment_box fields" type="text" onkeyup={handleCityChange} value={city}></input>
             <br />
             <label for="zipcode">Zipcode:</label>
-            <input class="Value_increment_box fields" type="text" onchange={handleZipCodeChange}
-                value={zipCode}></input>
+            <input class="Value_increment_box fields" type="text" onkeyup={handleZipCodeChange}
+                value={zip}></input>
         </div>
         <div class="filter-footer">
             <lightning-button variant="brand" label="Apply" onclick={applyFilters}></lightning-button>
             <lightning-button variant="brand" class="slds-m-left_x-small" label="Clear"
                 onclick={handleClearFilter}></lightning-button>
         </div>
-    </div>
+    </section>
+    <!-- </div> -->
 </template>
