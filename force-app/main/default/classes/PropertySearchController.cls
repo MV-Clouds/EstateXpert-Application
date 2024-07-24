@@ -15,30 +15,27 @@ public with sharing class PropertySearchController{
     }
 
     @AuraEnabled
-    public static WrapperClass GetProperties(String RecordId, String object_name){
+    public static WrapperClass getProperties(String recordId){
         try{
             WrapperClass wc = new WrapperClass();
-            if(object_name=='Property__c'){
-            }else{
-                List<Listing__c> listing = [SELECT Id, Name, Description__c, City__c, Bedrooms__c, State__c, Zip_Postal_Code__c, Bathrooms__c, Sq_Ft__c, Property__c,
-                                               Listing_Price__c, Listing_Type__c, Availability_Date__c FROM Listing__c ORDER BY Name ASC LIMIT 50000];
+            List<Listing__c> listing = [SELECT Id, Name, Description__c, City__c, Bedrooms__c, State__c, Zip_Postal_Code__c, Bathrooms__c, Sq_Ft__c, Property__c,
+                                            Listing_Price__c, Listing_Type__c, Availability_Date__c FROM Listing__c ORDER BY Name ASC LIMIT 50000];
 
-                Set<Id> propertyIds = new Set<Id>();     
+            Set<Id> propertyIds = new Set<Id>();     
 
-                for(Listing__c listing_rec :listing) {
-                    propertyIds.add(listing_rec.Property__c);
-                }      
+            for(Listing__c listing_rec :listing) {
+                propertyIds.add(listing_rec.Property__c);
+            }      
 
-                List<Property_File__c> medias = [SELECT Id,BaseUrl__c,Property__c FROM Property_File__c WHERE Property__c IN:propertyIds];
+            List<Property_File__c> medias = [SELECT Id,BaseUrl__c,Property__c FROM Property_File__c WHERE Property__c IN:propertyIds];
 
-                Map<Id, String> propertyMediaUrlsMap = new Map<Id, String>();
-                for (Property_File__c media : medias) {
-                        propertyMediaUrlsMap.put(media.Property__c,media.BaseUrl__c);
-                }
-
-                wc.Listings = listing;
-                wc.Medias = propertyMediaUrlsMap;          
+            Map<Id, String> propertyMediaUrlsMap = new Map<Id, String>();
+            for (Property_File__c media : medias) {
+                    propertyMediaUrlsMap.put(media.Property__c,media.BaseUrl__c);
             }
+
+            wc.Listings = listing;
+            wc.Medias = propertyMediaUrlsMap;          
             
             return wc;
 

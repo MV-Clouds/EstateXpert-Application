@@ -1,17 +1,17 @@
 import { LightningElement, api, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import GetProperties from '@salesforce/apex/PropertySearchController.GetProperties';
+import getProperties from '@salesforce/apex/PropertySearchController.getProperties';
 import NoImageFound from '@salesforce/resourceUrl/blankImage';
 import propertyIcons from '@salesforce/resourceUrl/PropertyIcons';
 import location_icon from '@salesforce/resourceUrl/location_icon';
 import mapCss_V1 from '@salesforce/resourceUrl/mapCss_V1';
 import { loadStyle } from 'lightning/platformResourceLoader';
+import getListingTypes from '@salesforce/apex/PropertySearchController.GetListingTypes';
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 6;
 
 export default class DisplayProperties extends NavigationMixin(LightningElement) {
     @api recordId;
-    @api objectApiName;
     @track mapMarkers = [];
     @track pageNumber = 1;
     @track pageSize = 5;
@@ -22,25 +22,30 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     @track searchTerm = '';
     @track isModalOpen = false;
     @track filterData = {
-        propertyType: '',
-        minPrice: 0,
-        maxPrice: 0,
-        bedrooms: 0,
-        bathrooms: 0,
-        city: '',
-        zip: ''
+        city :'',
+        minBedrooms : '',
+        maxBedrooms : '',
+        minPrice : '',
+        maxPrice : '',
+        zipcode : '',
+        listingType : ''
     };
+
+
+
+
     @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
     @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
     @track area_icon = propertyIcons + '/PropertyIcons/Area.png';
     @track location_icon = location_icon;
     @track filteredListingData = [];
     @track pagedFilteredListingData = [];
-    @track listingData = [];
+    @track ListingData = [];
     @track propertyMediaUrls;
     @track isPropertyAvailable = true;
     @track isInitalRender = true;
     @track selectedView = 'Grid'; // Default view is Grid
+    @track listingTypeOptions = [];
 
     viewOptions = [
         { label: 'Grid', value: 'Grid' },
@@ -99,6 +104,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     */
     connectedCallback() {
         this.fetchProperties();
+        this.fetchListingTypes();
         loadStyle(this, mapCss_V1)
             .then(() => {
                 console.log('CSS loaded2');
@@ -115,12 +121,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     * Created By: Mitrajsinh Gohil
     */
     fetchProperties() {
-        GetProperties({ RecordId: this.recordId, object_name: this.objectApiName })
+        getProperties({ recordId: this.recordId})
             .then(result => {
                 this.filteredListingData = result.Listings;
-                this.listingData = result.Listings;
+                this.ListingData = result.Listings;
                 this.propertyMediaUrls = result.Medias;
-                this.listingData.forEach(row => {
+                this.ListingData.forEach(row => {
                     const prop_id = row.Property__c;
                     row.media_url = this.propertyMediaUrls[prop_id];
                     console.log(row.media_url);
@@ -143,6 +149,17 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
                 console.error('Error getting properties from apex:', error);
             });
     }
+
+    fetchListingTypes() {
+        getListingTypes()
+            .then(result => {
+                this.listingTypeOptions = result.map(type => ({ label: type, value: type }));
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
 
     /**
     * Method Name: updateMapMarkers
@@ -175,42 +192,41 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }catch(error){
         console.log('error--->',error);
     }
-        // this.pagedFilteredListingData = this.listingData;
+        // this.pagedFilteredListingData = this.ListingData;
     }
 
-    /**
-    * Method Name: doApplyFilters
-    * @description: this is an event method which is called from an custom event and it sets the filter data and calls filter method
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    */
-    doApplyFilters(event) {
-        this.filterData = event.detail;
-        this.filterProperties();
-        this.isModalOpen = false;
+    handleInputChange(event) {
+        const field = event.target.dataset.field;
+        this.filterData[field] = event.target.value;
+        console.log('filterdata ==> ' , JSON.stringify(this.filterData));
     }
-
+    
     /**
     * Method Name: filterProperties
     * @description: this method is used to filter the original list of properties and store the filtered properties in the pagedFilteredListingData
     * Date: 17/06/2024
     * Created By: Mitrajsinh Gohil
     */
+
     filterProperties() {
 
-        const { propertyType, minPrice, maxPrice, bedrooms, bathrooms, city, zip } = this.filterData;
+        const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zip } = this.filterData;
+        // console.log('const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zip }  ==>' , { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zip } );
+        console.log('listingType ==> ' , listingType);
 
-        this.pagedFilteredListingData = this.listingData.filter(property => {
-            const searchProperty = property.Name.toLowerCase().includes(this.searchTerm)
-            const matchesPropertyType = !propertyType || property.Listing_Type__c == propertyType;
-            const matchesPrice = (minPrice != 0 ? property.Listing_Price__c >= minPrice ? true : false : true) &&
-                (maxPrice != 0 ? property.Listing_Price__c <= maxPrice ? true : false : true)
-            const matchesBedrooms = bedrooms != 0 ? property.Bedrooms__c == bedrooms ? true : false : true;
-            const matchesBathrooms = bathrooms != 0 ? property.Bathrooms__c == bathrooms ? true : false : true;
-            const matchesCity = city != '' ? (property.City__c != undefined && property.City__c != '') ? property.City__c.toLowerCase() == city.toLowerCase() ? true : false : false : true;
-            const matchesZipCode = zip != '' ? property.Zip_Postal_Code__c != '' ? property.Zip_Postal_Code__c == zip ? true : false : false : true;
+        this.pagedFilteredListingData = this.ListingData.filter(property => {
+            // const searchProperty = property.Name.toLowerCase().includes(this.searchTerm)
+            const matcheslistingType = !listingType || property.Listing_Type__c == listingType;
+            // const matchesPrice = (minPrice != 0 ? property.Listing_Price__c >= minPrice ? true : false : true) &&
+            //     (maxPrice != 0 ? property.Listing_Price__c <= maxPrice ? true : false : true)
+            // const matchesBedrooms = bedrooms != 0 ? property.Bedrooms__c == bedrooms ? true : false : true;
+            // const matchesBathrooms = bathrooms != 0 ? property.Bathrooms__c == bathrooms ? true : false : true;
+            // const matchesCity = city != '' ? (property.City__c != undefined && property.City__c != '') ? property.City__c.toLowerCase() == city.toLowerCase() ? true : false : false : true;
+            // const matchesZipCode = zip != '' ? property.Zip_Postal_Code__c != '' ? property.Zip_Postal_Code__c == zip ? true : false : false : true;
 
-            return searchProperty && matchesPropertyType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipCode;
+            // return searchProperty && matcheslistingType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipCode;
+            return matcheslistingType;
+
         });
 
         this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
@@ -238,7 +254,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     clearFilter(event) {
         this.isPropertyAvailable = true;
         this.filterData = event.detail;
-        this.pagedFilteredListingData = this.listingData;
+        this.pagedFilteredListingData = this.ListingData;
         this.searchTerm = ''
         this.updateMapMarkers();
         this.isModalOpen = false;

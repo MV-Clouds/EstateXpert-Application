@@ -1,5 +1,6 @@
 .main-card {
     min-height: 100%;
+    padding : 1rem;
 }
 
 .filter-search-container {
@@ -24,6 +25,19 @@
 .filter-section{
     display: flex;
     align-items: center;
+}
+
+.filter-input{
+    margin-bottom: 1rem;
+}
+
+.filter-btns{
+    display: flex;
+    gap: 4%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
 }
 
 .property-container {
