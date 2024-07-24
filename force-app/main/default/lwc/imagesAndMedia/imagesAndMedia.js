@@ -596,20 +596,24 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     confirmEdit() {
         try {
-            this.removeDuplicates(this.picklistValues);
-            if (this.picklistValues !== this.finalPicklistValues) {
-                this.finalPicklistValues.push(this.picklistValues);
+            if (this.eventImgName != '' && this.eventImgName != undefined) {
+                this.removeDuplicates(this.picklistValues);
+                if (this.picklistValues !== this.finalPicklistValues) {
+                    this.finalPicklistValues.push(this.picklistValues);
+                }
+                let rec_id = this.recIdToUpdate[this.recIdToUpdate.length - 1];
+                let index_of_record = this.data.findIndex(item => item.Id === rec_id);
+                this.data[index_of_record].MVEX__Tags__c = this.picklistValues;
+                if (this.eventImgName != undefined) {
+                    this.data[index_of_record].Name = this.eventImgName;
+                }
+                this.eventImgName = undefined;
+                this.picklistValues = [];
+                this.isEdit = false;
+                this.saveEditbtnDisabled = true;
+            } else {
+                this.showToast('Error', 'Name field should not be empty.', 'error');
             }
-            let rec_id = this.recIdToUpdate[this.recIdToUpdate.length - 1];
-            let index_of_record = this.data.findIndex(item => item.Id === rec_id);
-            this.data[index_of_record].MVEX__Tags__c = this.picklistValues;
-            if (this.eventImgName != undefined) {
-                this.data[index_of_record].Name = this.eventImgName;
-            }
-            this.eventImgName = undefined;
-            this.picklistValues = [];
-            this.isEdit = false;
-            this.saveEditbtnDisabled = true;
 
         } catch (error) {
             console.log('error in confirmEdit -> ', error);

@@ -285,12 +285,13 @@
             </button>
           </header>
           <div class="slds-modal__content slds-p-around_medium">
+            <abbr title="required" class="slds-required">*</abbr>
             <label for="title" class="slds-m-bottom_small label"><b>Name:</b></label>
             <lightning-input onchange={storeImgName} value={currentImgName} label="Name"
               variant="label-hidden"></lightning-input>
             <br />
-            <label for="title" class="slds-m-bottom_small label"><b>Tags</b></label>
-            <div class="slds-truncate">
+            <label for="title" class="slds-m-bottom_small slds-p-left_xx-small label"><b>Tags</b></label>
+            <div class="slds-truncate slds-p-around_xx-small">
 
               <lightning-input type="checkbox" label="Floorplan" name="Floorplan" onchange={tagsChecked}
                 value={floorplanChecked} checked={floorplanChecked}></lightning-input>
