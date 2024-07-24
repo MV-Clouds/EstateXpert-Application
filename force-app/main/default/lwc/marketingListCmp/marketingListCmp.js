@@ -469,10 +469,22 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
 
     }
 
+    /**
+    * Method Name : handleAdd
+    * @description : this method open the modal
+    * Date: 20/07/2024
+    * Created By:Vyom Soni
+    */
     handleAdd() {
         this.isModalOpen = true;
     }
 
+    /**
+    * Method Name : handleModalClose
+    * @description : this method close the modal
+    * Date: 20/07/2024
+    * Created By:Vyom Soni
+    */
     handleModalClose() {
         this.isModalOpen = false;
     }

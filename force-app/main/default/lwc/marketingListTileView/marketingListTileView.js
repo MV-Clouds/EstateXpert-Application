@@ -29,8 +29,10 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
     */
     set contactsdata(value) {
             if (value && Array.isArray(value)) {
+                if(this.contacts.length != value.length){
+                    this.pageNumber = 1;
+                }
                  this.contacts = value;
-                 this.pageNumber = 1;
                  this.totalPages = Math.ceil(this.contacts.length / this.pageSize);
                  if(this.totalPages == 0){
                     this.totalPages = 1;
@@ -176,7 +178,6 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
             this.updatePaginationButtons();
             this.scrollToTop();
         }
-
     }
 
   /**

@@ -429,6 +429,9 @@ export default class MarketingListFilterCmp extends LightningElement {
                         field.unchangePicklistValue = newPicklistValue;
                         fields[index] = field;
                         this.filterFields = fields;
+                        const inputs = this.template.querySelectorAll('.picklist-input');
+                        // Loop through each input and call the blur method
+                        inputs.forEach(input => input.blur());
                         this.handleBlur1(event);
                     } else {
                        console.log('Value already exists in selectedOptions');
@@ -458,12 +461,8 @@ export default class MarketingListFilterCmp extends LightningElement {
     **/
     handleBlur1(event) {
         // Delay the blur action to allow click event to be registered
-
         const index = event.currentTarget.dataset.id;
-        // setTimeout(()=>{
-            this.filterFields[index].isFocused = false;
-        // },300);
-        
+        this.filterFields[index].isFocused = false;
     }
 
      /**
@@ -488,6 +487,9 @@ export default class MarketingListFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
 
         let fields = this.filterFields; // Assuming this is where 'fields' should be declared
+        const inputs = this.template.querySelectorAll('.picklist-input');
+        // Loop through each input and call the blur method
+        inputs.forEach(input => input.blur());
 
         const field = fields[index]; // Access 'fields' instead of 'this.filterFields'
         if (field != null) {
