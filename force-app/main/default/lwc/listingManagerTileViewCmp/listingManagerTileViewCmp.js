@@ -35,6 +35,9 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             if (value && Array.isArray(value)) {
                 this.listings = value;
                 this.totalPages = Math.ceil(this.listings.length / this.pageSize);
+                if(this.totalPages == 0){
+                    this.totalPages = 1;
+                }
                 this.updateProcessedListingData();
                 this.updatePaginationButtons();
             } else {
@@ -186,6 +189,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
         const start = (this.pageNumber - 1) * this.pageSize;
         const end = start + this.pageSize;
         this.shownProcessedListingData = this.listings.slice(start, end);
+        this.updateScreenWidth();
     }
 
     /**

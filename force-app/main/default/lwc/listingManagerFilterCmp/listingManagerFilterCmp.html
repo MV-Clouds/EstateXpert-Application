@@ -26,15 +26,45 @@
                                                 placeholder={option.label} data-id={index} value={option.searchTerm}
                                                 onkeyup={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1} />
                                             <span
-                                                class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                                class="picklist-search slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
                                                 <img class="listing-manager-icon" src={searchIcon} />
                                             </span>
+                                            <template if:true={option.isFocused}>
+                                                <div class="options-box">
+                                                    <ul class="options-cover">
+                                                        <template for:each={option.picklistValue} for:item="option1">
+                                                            <template if:false={option1.showRightIcon}>
+                                                                <li key={option1.value} data-index={index} data-id={option1.value} onclick={selectOption1}
+                                                                    class="options-value">
+                                                                    <span class="slds-media__body">
+                                                                        <span class="_entity">{option1.label}</span>
+                                                                    </span>
+                                                                </li>
+                                                            </template>
+                                                            <template if:true={option1.showRightIcon}>
+                                                                <li  data-index={index} key={option1.value} data-id={option1.value} onclick={selectOption1} class="slds-listbox__item">
+                                                                    <div class="slds-listbox__option slds-listbox__option_plain slds-media slds-media_small slds-media_center picklist-option">
+                                                                        <span class="slds-media__body">
+                                                                            <span class="slds-truncate" title={option1.label}>{option1.label}</span>
+                                                                        </span>
+                                                                        <span class="slds-media__figure slds-media__figure_reverse">
+                                                                            <lightning-icon icon-name="utility:check" alternative-text="Lookup Field" size="x-small"></lightning-icon>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                            </template>
+                                                            
+                                                        </template>
+                                                    </ul>
+                                                </div>
+                                            </template>
+                    
                                         </div>
                                         <div class="delete-icon-cover" >
                                             <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                                         </div>
                                     </div>
-                                    <template if:true={option.isFocused}>
+                                    <!-- <template if:true={option.isFocused}>
                                         <div class="options-box">
                                             <ul class="options-cover">
                                                 <template for:each={option.picklistValue} for:item="option1">
@@ -63,7 +93,7 @@
                                             </ul>
                                         </div>
                                     </template>
-            
+             -->
                                 </div>
                             </div>
                             <template if:true={option.selectedOptions}>
@@ -113,10 +143,10 @@
                                                 <input type="text" class="slds-input slds-combobox__input"
                                                     placeholder={option.label}  data-id={index} value={option.searchTerm}
                                                     onkeyup={handleSearchChangeString}/>
-                                                <span
+                                                <!-- <span
                                                     class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
                                                     <img class="listing-manager-icon" src={searchIcon} />
-                                                </span>
+                                                </span> -->
                                             </div>
                                             <div class="plus" data-id={index} onclick={addTheString}>
                                                 <img class="listing-manager-icon" src={addIcon} />
@@ -526,19 +556,18 @@
             </template>
         </template>
 
-        <div class="field-add-btn plus">
-            <div class="add-btn-cover" onclick={openModal}>
-                <img class="listing-manager-icon" src={addIcon} />
+        <div class="filter-footer">
+            <div class="add-field-btn" onclick={openModal}>
+                Add More Fields
             </div>
-        </div>
-
-        <!--refresh button and search button-->
-
-        <div class="field-reset-btn plus">
-            <div class="add-btn-cover refreshBtn">
-                <img class="listing-manager-icon" onclick={handleReset} src={resetIcon} />
+    
+            <!--refresh button and search button-->
+    
+            <div class="field-reset-btn plus">
+                <div class="add-btn-cover refreshBtn" onclick={handleReset}>
+                    <img class="listing-manager-icon" src={resetIcon} />
+                </div>
             </div>
-            <lightning-button label="Search" onclick={applyFilters} class="slds-var-m-left_x-small"></lightning-button>
         </div>
 
         <!--modal code-->

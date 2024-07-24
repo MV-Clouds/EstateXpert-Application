@@ -4,6 +4,9 @@
 .add-modal-cover{
     display: flex;
 }
+.add-modal-cover .combox-div{
+    margin-top: -0.3rem;
+}
 .ul-div{
     width: 12rem;
 }

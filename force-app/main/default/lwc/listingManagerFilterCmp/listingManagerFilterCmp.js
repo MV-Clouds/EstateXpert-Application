@@ -470,9 +470,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     **/
     removeOptionMethod(event){
         this.removeOption1(event);
-        setTimeout(()=>{
-            this.applyFilters();
-        },1000);
+        this.applyFilters();
     }
 
      /**
@@ -523,9 +521,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     **/
     removeOptionMethodString(event){
         this.removeOptionString(event);
-        setTimeout(()=>{
-            this.applyFilters();
-        },1000);
+        this.applyFilters();
     }
 
      /**

@@ -1,6 +1,7 @@
 .mainDiv{
     overflow: auto;
     height: 83%;
+    width: 101%;
 }
 
 .outerCover{

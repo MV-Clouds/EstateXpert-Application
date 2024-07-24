@@ -2,7 +2,7 @@
     <div class="slds-grid slds-wrap slds-align_absolute-center full-page-container">
         <div class="main">
             <templete if:true={spinnerShow}>
-                <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+                <c-spinner-component></c-spinner-component>
             </templete>
             <lightning-card hide-header="true" variant="narrow" class="slds-size_full full-page-card">
                 <div class="slds-page-header slds-page-header_related-list">
@@ -31,7 +31,12 @@
                     </div>
                     <div class="slds-page-header__row second-row">
                         <div class="slds-page-header__col-meta">
-                            <p class="slds-page-header__meta-text">{totalSelected} Items Selected</p>
+                            <template if:false={isSelected}>
+                                <p class="slds-page-header__meta-text">{totalListings} {lisitngItems} {sortDescription}</p>
+                            </template>
+                            <template if:true={isSelected}>
+                                <p class="slds-page-header__meta-text">{totalSelected} {items} Selected {sortDescription}</p>
+                            </template>
                         </div>
                         <div class="slds-page-header__col-controls">
                             <div class="slds-page-header__controls">
