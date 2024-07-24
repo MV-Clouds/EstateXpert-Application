@@ -191,12 +191,10 @@ public with sharing class XMLFeedGeneratorForBayut {
         Map<String, Map<String, String>> fieldApiNameToLabelMap = new Map<String, Map<String, String>>();
         try {
             String picklistValue;
-            if (isForBayut == true && isForDubizzle == true) {
+            if ((isForBayut == true && isForDubizzle == true) || isForBayut == true) {
                 picklistValue = 'Bayut';
             } else if (isForDubizzle == true) {
                 picklistValue = 'Dubizzle';
-            } else if (isForBayut == true) {
-                picklistValue = 'Bayut';
             }
             List<Portal_Listing_Mapping__c> getPortalRecordLabels = [SELECT Name, Listing_Field_API_Name__c, MVEX__Value_Mapping__c FROM Portal_Listing_Mapping__c WHERE Portal_Name__c =: picklistValue AND Listing_Field_API_Name__c != null WITH SECURITY_ENFORCED];
             
@@ -220,15 +218,20 @@ public with sharing class XMLFeedGeneratorForBayut {
     * @return Query String.
     */
     public String generateDynamicQuery(List<String> fieldNames, Set<Id> listingIds) {
-        String query = 'SELECT Id, MVEX__Property__c, LastModifiedDate';
+        try {
+            String query = 'SELECT Id, MVEX__Property__c, LastModifiedDate';
 
-        for (String fieldName : fieldNames) {
-            query += ', ' + fieldName;
+            for (String fieldName : fieldNames) {
+                query += ', ' + fieldName;
+            }
+
+            query += ' FROM MVEX__Listing__c WHERE Id IN :listingIds';
+
+            return query;
+        } catch (Exception e) {
+            System.debug('Exception: ' + e.getMessage());
+            return 'SELECT Id, MVEX__Property__c, LastModifiedDate FROM MVEX__Listing__c WHERE Id IN :listingIds';
         }
-
-        query += ' FROM MVEX__Listing__c WHERE Id IN :listingIds';
-
-        return query;
     }
     
     /**
@@ -238,31 +241,34 @@ public with sharing class XMLFeedGeneratorForBayut {
     * @return List of Map of String and Object.
     */
     private List<Map<String, Object>> replaceFieldApiNamesWithMapping(List<SObject> records, Map<String, Map<String, String>> fieldApiNameToLabelMap) {
-
         List<Map<String, Object>> modifiedRecords = new List<Map<String, Object>>();
-        for (SObject record : records) {
-            Map<String, Object> recordMap = record.getPopulatedFieldsAsMap();
-            Map<String, Object> modifiedRecordMap = new Map<String, Object>();
-    
-            for (String fieldApiName : recordMap.keySet()) {
-                if (fieldApiNameToLabelMap.containsKey(fieldApiName)) {
-                    String mappedLabel = fieldApiNameToLabelMap.get(fieldApiName).get('Label');
-                    String valueMapping = fieldApiNameToLabelMap.get(fieldApiName).get('ValueMapping');
-                    Object fieldValue = recordMap.get(fieldApiName);
-    
-                    if (valueMapping != null && valueMapping != '') {
-                        fieldValue = applyValueMapping(fieldValue, valueMapping);
+        try {
+            for (SObject record : records) {
+                Map<String, Object> recordMap = record.getPopulatedFieldsAsMap();
+                Map<String, Object> modifiedRecordMap = new Map<String, Object>();
+        
+                for (String fieldApiName : recordMap.keySet()) {
+                    if (fieldApiNameToLabelMap.containsKey(fieldApiName)) {
+                        String mappedLabel = fieldApiNameToLabelMap.get(fieldApiName).get('Label');
+                        String valueMapping = fieldApiNameToLabelMap.get(fieldApiName).get('ValueMapping');
+                        Object fieldValue = recordMap.get(fieldApiName);
+        
+                        if (String.isNotBlank(valueMapping)) {
+                            fieldValue = applyValueMapping(fieldValue, valueMapping);
+                        }
+        
+                        modifiedRecordMap.put(mappedLabel, fieldValue);
+                    } else {
+                        modifiedRecordMap.put(fieldApiName, recordMap.get(fieldApiName));
                     }
-    
-                    modifiedRecordMap.put(mappedLabel, fieldValue);
-                } else {
-                    modifiedRecordMap.put(fieldApiName, recordMap.get(fieldApiName));
                 }
+        
+                modifiedRecords.add(modifiedRecordMap);
             }
-    
-            modifiedRecords.add(modifiedRecordMap);
+        } catch (Exception e) {
+            System.debug('Exception: ' + e.getMessage());
         }
-    
+
         return modifiedRecords;
     }
     
@@ -274,29 +280,35 @@ public with sharing class XMLFeedGeneratorForBayut {
     * @return Object.
     */
     private Object applyValueMapping(Object fieldValue, String valueMapping) {
-        Map<String, String> valueMap = new Map<String, String>();
-        if (valueMapping != null && valueMapping != '') {
-            for (String mapping : valueMapping.split(',')) {
-                List<String> keyValue = mapping.split('=>');
-                if (keyValue.size() == 2) {
-                    valueMap.put(keyValue[0].trim(), keyValue[1].trim());
+        try {
+            Map<String, String> valueMap = new Map<String, String>();
+            if (String.isNotBlank(valueMapping)) {
+                valueMapping = valueMapping.replaceAll('\\r\\n|\\r|\\n', '');
+                for (String mapping : valueMapping.split(',')) {
+                    List<String> keyValue = mapping.split('=>');
+                    if (keyValue.size() == 2) {
+                        valueMap.put(keyValue[0].trim(), keyValue[1].trim());
+                    }
                 }
             }
-        }
-    
-        if (fieldValue != null) {
-            List<String> values = String.valueOf(fieldValue).split(';');
-            List<String> mappedValues = new List<String>();
-            for (String value : values) {
-                if (valueMap.containsKey(value.trim())) {
-                    mappedValues.add(valueMap.get(value.trim()));
-                } else {
-                    mappedValues.add(value.trim());
+        
+            if (fieldValue != null) {
+                List<String> values = String.valueOf(fieldValue).split(';');
+                List<String> mappedValues = new List<String>();
+                for (String value : values) {
+                    if (valueMap.containsKey(value.trim())) {
+                        mappedValues.add(valueMap.get(value.trim()));
+                    } else {
+                        mappedValues.add(value.trim());
+                    }
                 }
+                return String.join(mappedValues, ',');
             }
-            return String.join(mappedValues, ',');
+        
+            return fieldValue;
+        } catch (Exception e) {
+            System.debug('Exception: ' + e.getMessage());
+            return fieldValue;
         }
-    
-        return fieldValue;
     }
 }
