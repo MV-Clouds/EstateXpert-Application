@@ -7,11 +7,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
     padding: 15px;
     background-color: #E1F1FE;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-container{
+    margin-bottom: 1rem;
+    background-color: #E1F1FE;
+    padding: 15px;
 }
 
 .search-bar lightning-input {
@@ -29,7 +34,17 @@
 
 .filter-input{
     margin-bottom: 1rem;
-    gap: 4%;
+    display: flex;
+    gap: 1%;
+}
+
+.filter-heading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 .custom-height{
@@ -42,11 +57,14 @@
     width: 100%;
     justify-content: center;
     align-items: center;
+    margin-top: 1rem;
 
 }
 
-.image-container{
-    width: 75%;
+.dotted-border{
+    border: 1px dashed black;
+    width: 100%;
+    margin-bottom: 1rem;
 }
 
 .property-container {
@@ -259,9 +277,6 @@
     transition: background-color 0.3s ease;
 }
 
-.item-2 button:hover {
-    background-color: #45a049;
-}
 
 .pagination-container {
     display: flex;
@@ -307,16 +322,7 @@
 }
 
 .propertyImage{
-    min-width: 36%;
-    max-width: 36%;
+    min-width: 12rem;
+    max-width: 20rem;
     margin: 0 2% 0 0;
 }
-
-
-@media (min-width: 1024px) and (max-width: 1440px) {
-    .filter-btns{
-        gap: 1rem;
-        flex-direction: column;
-    }
-}
-  
