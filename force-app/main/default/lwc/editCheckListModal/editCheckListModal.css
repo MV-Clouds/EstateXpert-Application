@@ -149,3 +149,8 @@
     border: 2px solid red;
     border-radius: 7px;
 }
+
+.display_css {
+    display: flex;
+    flex-direction: row;
+}
