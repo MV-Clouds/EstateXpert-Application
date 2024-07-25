@@ -5,6 +5,11 @@
   last modified by  : Mitrajsinh Gohil
 -->
 <template>
+
+    <template if:true={isLoading}>
+        <c-spinner-component></c-spinner-component>
+    </template>
+
     <div class="main-card">
         <lightning-card title="Properties List" icon-name="standard:account">
 			<div>
@@ -32,12 +37,12 @@
 				<div class="dotted-border"></div>
 
 				<div class="filter-input">
-					<lightning-input label="City" value={filterData.city} onchange={handleInputChange} data-field="city"></lightning-input>
-					<lightning-input label="Bedrooms" value={filterData.bedrooms} type="number" onchange={handleInputChange} data-field="bedrooms"></lightning-input>
-					<lightning-input label="Bathrooms" value={filterData.bathrooms} type="number" onchange={handleInputChange} data-field="bathrooms"></lightning-input>
-					<lightning-input label="Zipcode" value={filterData.zipcode} onchange={handleInputChange} data-field="zipcode"></lightning-input>
-					<lightning-input label="Min Price" value={filterData.minPrice} type="number" onchange={handleInputChange} data-field="minPrice"></lightning-input>
-					<lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice"></lightning-input>
+					<lightning-input label="City" value={filterData.city} onchange={handleInputChange} data-field="city" maxlength="15"></lightning-input>
+					<lightning-input label="Bedrooms" value={filterData.bedrooms} type="number" onchange={handleInputChange} data-field="bedrooms" maxlength="5"></lightning-input>
+					<lightning-input label="Bathrooms" value={filterData.bathrooms} type="number" onchange={handleInputChange} data-field="bathrooms" max-length="5"></lightning-input>
+					<lightning-input label="Zipcode" value={filterData.zipcode} onchange={handleInputChange} data-field="zipcode" max-length="6"></lightning-input>
+					<lightning-input label="Min Price" value={filterData.minPrice} type="number" onchange={handleInputChange} data-field="minPrice" max-length="15"></lightning-input>
+					<lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice" max-length="15"></lightning-input>
 					<!-- <lightning-combobox label="Listing Type" options={listingTypeOptions} value={filterData.listingType} onchange={handleInputChange} data-field="listingType"></lightning-combobox> -->
 					<div class="listing-buttons">
                         <button class={rentButtonClass} onclick={setRentFilter}>Rent</button>
@@ -67,58 +72,47 @@
                 </div>
             </div> -->
 
-            <div class="slds-col custom-height slds-box slds-theme_default">
+            <div class="slds-col slds-box slds-theme_default">
                 <template if:true={isPropertyAvailable}>
                     <template if:true={isListView}>
-                        <div class="property-container-list">
-                            <template for:each={pagedProperties} for:item="property">
-                                <div class="property-item-list card slds-border_bottom" key={property.id}>
-                                    <div class="property_type_list">
-                                        <span>For {property.Listing_Type__c}</span>
-                                    </div>
-                                    <div class="propertyImage">
-                                        <img class="property-image card-img-top" src={property.media_url} alt="Property image"></img>
-                                    </div>
-                                    <div class="card-body details_list">
-                                        <div class="room-details">
-                                            <h3 class="card-title"><b>{property.Name}</b></h3>
-                                            <div class="card-text">
-                                                <img src={location_icon} height="16px" width="16px"/>
-                                                <p class="slds-m-left_xx-small">{property.City__c}, {property.State__c}, {property.PostalCode__c}</p>
-                                            </div>
-                                        </div>
-                                        <div class="room-details">
-                                            <lightning-layout-item class="bedroom">
-                                                <img src={bedroom_icon} height="24px" width="20px" />
-                                                <h1 class="slds-m-left_xx-small">{property.Bedrooms__c} Bedrooms</h1>
-                                            </lightning-layout-item>
-                                            <lightning-layout-item class="bathroom" alignment-bump="left">
-                                                <img src={bathroom_icon} class="bathroom_icon" />
-                                                <h1 class="slds-m-left_xx-small">{property.Bathrooms__c} Bathrooms</h1>
-                                            </lightning-layout-item>
-                                            <lightning-layout-item class="bedroom" alignment-bump="left">
-                                                <img src={area_icon} height="24px" width="20px" />
-                                                <h1 class="slds-m-left_xx-small">{property.Sq_Ft__c} sqft</h1>
-                                            </lightning-layout-item>
-                                        </div>
-                                        <div class="card-body">
-                                            <lightning-layout-item class="item-1">
-                                                <p class="card-link"><b>$ {property.Listing_Price__c}</b></p>
-                                            </lightning-layout-item>
-                                            <lightning-layout-item class="item-2" alignment-bump="left">
-                                                <button data-id={property.Id} onclick={navigateToRecord}>View More</button>
-                                            </lightning-layout-item>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
+                        <table class="custom-data-table">
+                            <thead>
+                                <tr>
+                                    <th class="header-cell">Image</th>
+                                    <th class="header-cell">Name</th>
+                                    <th class="header-cell">Listing Type</th>
+                                    <th class="header-cell">City</th>
+                                    <th class="header-cell">Bedrooms</th>
+                                    <th class="header-cell">Bathrooms</th>
+                                    <th class="header-cell">Price</th>
+                                    <th class="header-cell">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={pagedProperties} for:item="property">
+                                    <tr key={property.id}>
+                                        <td class="image-data">
+                                            <img src={property.media_url} alt="Property image" />
+                                        </td>
+                                        <td>{property.Name}</td>
+                                        <td>{property.Listing_Type__c}</td>
+                                        <td>{property.City__c}</td>
+                                        <td>{property.Bedrooms__c}</td>
+                                        <td>{property.Bathrooms__c}</td>
+                                        <td>${property.Listing_Price__c}</td>
+                                        <td>
+                                            <button class="view-more-button" data-id={property.Id} onclick={navigateToRecord}>View More</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
                     </template>
 
                     <template if:true={isGridView}>
                         <div class="slds-grid slds-wrap property-container">
                             <template for:each={pagedProperties} for:item="property">
-                                <div class="card slds-col slds-small-size_6-of-12 slds-medium-size_4-of-12 slds-large-size_3-of-12"
+                                <div class="card slds-col slds-small-size_2-of-12 slds-medium-size_3-of-12 slds-large-size_4-of-12"
                                     key={property.id}>
                                     <div class="property-item">
                                         <img class="property-image card-img-top" src={property.media_url} alt="Property image"></img>
@@ -158,15 +152,15 @@
 
                     <template if:true={isMapView}>
                         <div class="main">
-                            <lightning-map class="mapmarker slds-size_5-of-6" map-markers={mapMarkers} list-view="visible">
+                            <lightning-map class="mapmarker slds-size_6-of-6" map-markers={mapMarkers} list-view="visible">
                             </lightning-map>
-                            <div class="marker-details slds-size_1-of-6">
+                            <!-- <div class="marker-details">
                                 <template for:each={mapMarkers} for:item="marker">
                                     <div key={marker.id} class="link">
                                         <a data-id={marker.id} onclick={navigateToRecord}>more details</a>
                                     </div>
                                 </template>
-                            </div>
+                            </div> -->
                         </div>
                     </template>
                 </template>

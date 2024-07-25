@@ -50,10 +50,6 @@
     font-weight: bold;
 }
 
-.custom-height{
-    height: 45rem;
-}
-
 .filter-btns{
     display: flex;
     gap: 4%;
@@ -119,7 +115,7 @@
     transition: box-shadow 0.3s ease;
     overflow: hidden;
     padding: 1rem;
-    width: 75%;
+    width: 100%;
 }
 
 .property-item-list:hover {
@@ -210,10 +206,11 @@
 .bedroom, .bathroom {
     display: flex;
     margin: 0 20px 0 0;
+    align-items: end;
 }
 
 .bathroom_icon {
-    height: 17px;
+    /* height: 17px; */
     width: 20px;
 }
 
@@ -228,16 +225,6 @@
     background-color: white;
     display: flex;
     width: 100%;
-}
-
-.link {
-    display: block;
-    margin-top: 35px;
-}
-
-.slds-size_1-of-6 {
-    margin-left: 10px;
-    margin-top: 50px;
 }
 
 .slds-size_5-of-6 {
@@ -334,4 +321,65 @@
     display: flex;
     gap: 10px;
     height: fit-content;
+}
+
+.custom-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.header-cell {
+    padding: 10px;
+    /* padding-left: 0px; */
+    background-color: #f4f6f9;
+    font-weight: bold;
+    text-align: left;
+    background: #0176D3;
+    color: white;
+    text-align: center;
+}
+
+.property-image img {
+    width: 100px;
+    height: auto;
+    border-radius: 4px;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #dcdcdc;
+    text-align: center;
+}
+
+td img {
+    width: 100px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.slds-table tr:nth-child(odd) {
+    background-color: aliceblue;
+  }
+
+.property-action {
+    text-align: center;
+}
+
+.view-more-button {
+    background-color: #0070d2;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.view-more-button:hover {
+    background-color: #005fb2;
+}
+
+.custom-data-table tr:last-child td {
+    border-bottom: none; /* Ensures cells in the last row also have no bottom border */
 }

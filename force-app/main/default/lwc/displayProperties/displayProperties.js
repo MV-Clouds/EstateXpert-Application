@@ -7,8 +7,9 @@ import location_icon from '@salesforce/resourceUrl/location_icon';
 import mapCss_V1 from '@salesforce/resourceUrl/mapCss_V1';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import getListingTypes from '@salesforce/apex/PropertySearchController.getListingTypes';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-const PAGE_SIZE = 8;
+// const PAGE_SIZE = 6;
 
 export default class DisplayProperties extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -28,6 +29,9 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         zipcode: '',
         listingType: ''
     };
+    @track isLoading = false;
+
+    @track pageSize = 6;
     @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
     @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
     @track area_icon = propertyIcons + '/PropertyIcons/Area.png';
@@ -70,7 +74,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     get totalPages() {
-        return Math.ceil(this.totalProperties / PAGE_SIZE);
+        return Math.ceil(this.totalProperties / this.pageSize);
     }
 
     get isFirstPage() {
@@ -82,8 +86,8 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     get pagedProperties() {
-        const startIndex = (this.currentPage - 1) * PAGE_SIZE;
-        return this.pagedFilteredListingData.slice(startIndex, startIndex + PAGE_SIZE);
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        return this.pagedFilteredListingData.slice(startIndex, startIndex + this.pageSize);
     }
 
     get rentButtonClass() {
@@ -95,11 +99,18 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     connectedCallback() {
+        this.isLoading = true;
         this.fetchProperties();
         this.fetchListingTypes();
         loadStyle(this, mapCss_V1)
-            .then(() => console.log('CSS loaded'))
-            .catch(error => console.error('Error loading CSS:', error));
+            .then(() =>{
+                console.log('CSS loaded');
+                this.isLoading = false;
+            })
+            .catch(error => {
+                console.error('Error loading CSS:', error);
+                this.isLoading = false;
+            });
     }
 
     fetchProperties() {
@@ -140,8 +151,9 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     updateMapMarkers() {
-        const startIndex = (this.currentPage - 1) * PAGE_SIZE;
-        const currentPageData = this.pagedFilteredListingData.slice(startIndex, startIndex + PAGE_SIZE);
+
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const currentPageData = this.pagedFilteredListingData.slice(startIndex, startIndex + this.pageSize);
 
         this.mapMarkers = currentPageData.map(listing => ({
             id: listing.Id,
@@ -156,6 +168,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             icon: 'custom:custom26',
             media_url: listing.media_url
         }));
+
     }
 
     handleInputChange(event) {
@@ -165,6 +178,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
 
     applyFilters() {
         const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zipcode } = this.filterData;
+
+        if (minPrice && maxPrice && parseFloat(maxPrice) < parseFloat(minPrice)) {
+            this.showToast('Error', 'Max price cannot be less than Min price.', 'error');
+            return;
+        }
+
         this.pagedFilteredListingData = this.listingData.filter(property => {
             const searchProperty = property.Name.toLowerCase().includes(this.searchTerm);
             const matchesListingType = !listingType || property.Listing_Type__c === listingType;
@@ -211,14 +230,18 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
 
     setGridView() {
         this.selectedView = 'Grid';
+        this.currentPage = 1;
     }
 
     setListView() {
         this.selectedView = 'List';
+        this.currentPage = 1;
     }
 
     setMapView() {
         this.selectedView = 'map';
+        this.currentPage = 1;
+        this.updateMapMarkers();
     }
 
     setRentFilter() {
@@ -234,13 +257,17 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     navigateToRecord(event) {
-        const recordId = event.currentTarget.dataset.id;
-        this[NavigationMixin.Navigate]({
+        const propertyId = event.target.dataset.id;
+        this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
-                recordId: recordId,
+                recordId: propertyId,
                 actionName: 'view'
             }
+        }).then(url => {
+            window.open(url, '_blank');
+        }).catch(error => {
+            console.error('Error generating URL: ', error);
         });
     }
 
@@ -278,4 +305,13 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             behavior: 'smooth'
         });
     }
+
+    showToast(title, message, variant) {
+        this.dispatchEvent(new ShowToastEvent({
+            title,
+            message,
+            variant
+        }));
+    }
+
 }
