@@ -9,12 +9,6 @@
 
 	<div class="main-card">
 
-		<!-- <template if:true={isModalOpen}>
-			<c-property-search filtervalue={filterData} onfilterclear={clearFilter} onfilterclose={closeFilter}
-				onchangefilter={doApplyFilters}>
-			</c-property-search>
-		</template> -->
-
 		<lightning-card title="Properties List" icon-name="standard:account">
 
 			<div class="filter-search-container">
@@ -23,10 +17,6 @@
 						<lightning-input variant="label-hidden" type="search" placeholder="Enter property name"
 							value={searchTerm} onchange={handleSearch}></lightning-input>
 					</div>
-					<!-- <div class="filter-button">
-						<lightning-button label="Filter" variant="Brand" onclick={handleFilter}>
-						</lightning-button>
-					</div> -->
 				</div>
 				<div class="view-dropdown">
 					<lightning-combobox name="viewOptions" variant="label-hidden" dropdown-alignment="right"
@@ -36,39 +26,29 @@
 			</div>
 
 			<div class="slds-grid slds-wrap">
-				<div class="slds-col slds-size_1-of-4">
-					<div class="slds-box slds-theme_default">
-						<div class="filter-input">
-							<lightning-input label="City" value={filterData.city} onchange={handleInputChange} data-field="city"></lightning-input>
-						</div>
-						<div class="filter-input">
-							<lightning-input label="Min Bedrooms" value={filterData.minBedrooms} type="number" onchange={handleInputChange} data-field="minBedrooms"></lightning-input>
-						</div>
-						<div class="filter-input">
-							<lightning-input label="Max Bedrooms" value={filterData.maxBedrooms} type="number" onchange={handleInputChange} data-field="maxBedrooms"></lightning-input>
-						</div>
-						<div class="filter-input">
-							<lightning-input label="Min Price" value={filterData.minPrice} type="number" onchange={handleInputChange} data-field="minPrice"></lightning-input>
-						</div>
-						<div class="filter-input">
-							<lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice"></lightning-input>
-						</div>
-						<div class="filter-input">
-							<lightning-input label="Zipcode" value={filterData.zipcode} onchange={handleInputChange} data-field="zipcode"></lightning-input>
-						</div>
-						<div class="filter-input">
-							<lightning-combobox label="Listing Type" options={listingTypeOptions} value={filterData.listingType} onchange={handleInputChange} data-field="listingType"></lightning-combobox>
-						</div>
-						<div class="filter-input">
-							<div class="filter-btns">
-								<lightning-button label="Apply Filters" onclick={filterProperties} variant="brand"></lightning-button>
-								<lightning-button label="Clear Filters" onclick={clearFilter} variant="neutral"></lightning-button>
-							</div>
+
+
+			<div class="slds-col slds-size_1-of-4">
+				<div class="slds-box slds-theme_default custom-height">
+					<div class="filter-input">
+						<lightning-input label="City" value={filterData.city} onchange={handleInputChange} data-field="city"></lightning-input>
+						<lightning-input label="Bedrooms" value={filterData.bedrooms} type="number" onchange={handleInputChange} data-field="bedrooms"></lightning-input>
+						<lightning-input label="Bathrooms" value={filterData.bathrooms} type="number" onchange={handleInputChange} data-field="bathrooms"></lightning-input>
+						<lightning-input label="Zipcode" value={filterData.zipcode} onchange={handleInputChange} data-field="zipcode"></lightning-input>
+						<lightning-input label="Min Price" value={filterData.minPrice} type="number" onchange={handleInputChange} data-field="minPrice"></lightning-input>
+						<lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice"></lightning-input>
+						<lightning-combobox label="Listing Type" options={listingTypeOptions} value={filterData.listingType} onchange={handleInputChange} data-field="listingType"></lightning-combobox>
+					</div>
+					<div class="filter-input">
+						<div class="filter-btns">
+							<lightning-button label="Apply Filters" onclick={applyFilters} variant="brand"></lightning-button>
+							<lightning-button label="Clear Filters" onclick={clearFilter} variant="neutral"></lightning-button>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="slds-col slds-size_3-of-4">
+				<div class="slds-col custom-height slds-box slds-theme_default image-container">
 					<template if:true={isPropertyAvailable}>
 						<template if:true={isListView}>
 							<div class="property-container-list">

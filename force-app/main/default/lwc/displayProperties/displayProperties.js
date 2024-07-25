@@ -6,7 +6,7 @@ import propertyIcons from '@salesforce/resourceUrl/PropertyIcons';
 import location_icon from '@salesforce/resourceUrl/location_icon';
 import mapCss_V1 from '@salesforce/resourceUrl/mapCss_V1';
 import { loadStyle } from 'lightning/platformResourceLoader';
-import getListingTypes from '@salesforce/apex/PropertySearchController.GetListingTypes';
+import getListingTypes from '@salesforce/apex/PropertySearchController.getListingTypes';
 
 const PAGE_SIZE = 6;
 
@@ -14,25 +14,19 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     @api recordId;
     @track mapMarkers = [];
     @track pageNumber = 1;
-    @track pageSize = 5;
-    @track searchKey = '';
     @track totalRecords = 0;
     @track properties = [];
     @track currentPage = 1;
     @track searchTerm = '';
-    @track isModalOpen = false;
     @track filterData = {
         city :'',
-        minBedrooms : '',
-        maxBedrooms : '',
+        bedrooms : '',
+        bathrooms : '',
         minPrice : '',
         maxPrice : '',
         zipcode : '',
         listingType : ''
     };
-
-
-
 
     @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
     @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
@@ -40,11 +34,10 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     @track location_icon = location_icon;
     @track filteredListingData = [];
     @track pagedFilteredListingData = [];
-    @track ListingData = [];
+    @track listingData = [];
     @track propertyMediaUrls;
     @track isPropertyAvailable = true;
-    @track isInitalRender = true;
-    @track selectedView = 'Grid'; // Default view is Grid
+    @track selectedView = 'Grid'; 
     @track listingTypeOptions = [];
 
     viewOptions = [
@@ -123,10 +116,10 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     fetchProperties() {
         getProperties({ recordId: this.recordId})
             .then(result => {
-                this.filteredListingData = result.Listings;
-                this.ListingData = result.Listings;
-                this.propertyMediaUrls = result.Medias;
-                this.ListingData.forEach(row => {
+                this.filteredListingData = result.listings;
+                this.listingData = result.listings;
+                this.propertyMediaUrls = result.medias;
+                this.listingData.forEach(row => {
                     const prop_id = row.Property__c;
                     row.media_url = this.propertyMediaUrls[prop_id];
                     console.log(row.media_url);
@@ -192,7 +185,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }catch(error){
         console.log('error--->',error);
     }
-        // this.pagedFilteredListingData = this.ListingData;
+        // this.pagedFilteredListingData = this.listingData;
     }
 
     handleInputChange(event) {
@@ -202,30 +195,31 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
     
     /**
-    * Method Name: filterProperties
+    * Method Name: applyFilters
     * @description: this method is used to filter the original list of properties and store the filtered properties in the pagedFilteredListingData
     * Date: 17/06/2024
     * Created By: Mitrajsinh Gohil
     */
 
-    filterProperties() {
+    applyFilters() {
 
-        const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zip } = this.filterData;
+        const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zipcode } = this.filterData;
         // console.log('const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zip }  ==>' , { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zip } );
         console.log('listingType ==> ' , listingType);
 
-        this.pagedFilteredListingData = this.ListingData.filter(property => {
-            // const searchProperty = property.Name.toLowerCase().includes(this.searchTerm)
+        this.pagedFilteredListingData = this.listingData.filter(property => {
+            const searchProperty = property.Name.toLowerCase().includes(this.searchTerm)
             const matcheslistingType = !listingType || property.Listing_Type__c == listingType;
-            // const matchesPrice = (minPrice != 0 ? property.Listing_Price__c >= minPrice ? true : false : true) &&
-            //     (maxPrice != 0 ? property.Listing_Price__c <= maxPrice ? true : false : true)
-            // const matchesBedrooms = bedrooms != 0 ? property.Bedrooms__c == bedrooms ? true : false : true;
-            // const matchesBathrooms = bathrooms != 0 ? property.Bathrooms__c == bathrooms ? true : false : true;
-            // const matchesCity = city != '' ? (property.City__c != undefined && property.City__c != '') ? property.City__c.toLowerCase() == city.toLowerCase() ? true : false : false : true;
-            // const matchesZipCode = zip != '' ? property.Zip_Postal_Code__c != '' ? property.Zip_Postal_Code__c == zip ? true : false : false : true;
+            const matchesPrice = (minPrice != 0 ? property.Listing_Price__c >= minPrice ? true : false : true) &&
+                (maxPrice != 0 ? property.Listing_Price__c <= maxPrice ? true : false : true)
+            const matchesBedrooms = bedrooms != 0 ? property.Bedrooms__c == bedrooms ? true : false : true;
+            console.log('matchesBedrooms ==> ' , matchesBedrooms);
+            const matchesBathrooms = bathrooms != 0 ? property.Bathrooms__c == bathrooms ? true : false : true;
+            console.log('matchesBathrooms ==> ' , matchesBathrooms);
+            const matchesCity = city != '' ? (property.City__c != undefined && property.City__c != '') ? property.City__c.toLowerCase() == city.toLowerCase() ? true : false : false : true;
+            const matchesZipCode = zipcode != '' ? property.Zip_Postal_Code__c != '' ? property.Zip_Postal_Code__c == zip ? true : false : false : true;
 
-            // return searchProperty && matcheslistingType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipCode;
-            return matcheslistingType;
+            return searchProperty && matcheslistingType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipCode;
 
         });
 
@@ -236,16 +230,6 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     /**
-    * Method Name: handleFilter
-    * @description: this method is used to open and close the filter pop up dialog on click of the filter button
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    */
-    handleFilter() {
-        this.isModalOpen = !this.isModalOpen;
-    }
-
-    /**
     * Method Name: clearFilter
     * @description: this method is used to clear out all the filters and show the original list of properties
     * Date: 17/06/2024
@@ -253,21 +237,19 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     */
     clearFilter(event) {
         this.isPropertyAvailable = true;
-        this.filterData = event.detail;
-        this.pagedFilteredListingData = this.ListingData;
+        const filterDataToClear = {
+            city :'',
+            bedrooms : '',
+            bathrooms : '',
+            minPrice : '',
+            maxPrice : '',
+            zipcode : '',
+            listingType : ''
+        };
+        this.filterData = filterDataToClear;
+        this.pagedFilteredListingData = this.listingData;
         this.searchTerm = ''
         this.updateMapMarkers();
-        this.isModalOpen = false;
-    }
-
-    /**
-    * Method Name: fetchProperties
-    * @description: this method is used to close the filter pop up dialog when cross icon of pop up modal is clicked
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    */
-    closeFilter() {
-        this.isModalOpen = false;
     }
 
     /**
@@ -278,7 +260,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     */
     handleSearch(event) {
         this.searchTerm = event.target.value.toLowerCase();
-        this.filterProperties();
+        this.applyFilters();
         this.currentPage = 1; // Reset to first page on search
         this.totalRecords = this.pagedFilteredListingData.length;
         this.isPropertyAvailable = this.totalRecords > 0;

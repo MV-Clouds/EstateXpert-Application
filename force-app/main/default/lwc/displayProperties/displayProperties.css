@@ -29,6 +29,11 @@
 
 .filter-input{
     margin-bottom: 1rem;
+    gap: 4%;
+}
+
+.custom-height{
+    height: 45rem;
 }
 
 .filter-btns{
@@ -40,12 +45,17 @@
 
 }
 
+.image-container{
+    width: 75%;
+}
+
 .property-container {
     align-items: center;
     display: flex;
     /* flex-wrap: wrap; */
     grid-template-columns: repeat(auto-fill, minmax(24%, 1fr));
     justify-items: center;
+    /* margin-bottom: 1rem; */
 
 }
 
@@ -63,6 +73,7 @@
 
 .card{
     padding: 0 1% 1% 1%;
+    /* margin-bottom : 0.5rem; */
 }
 
 .property-item:hover {
@@ -130,7 +141,7 @@
 .property-image {
     margin-right: 15px;
     border-radius: 5px;
-    height: 13rem;
+    height: 10rem;
     width: 100%;
     object-fit: cover;
 }
@@ -300,3 +311,12 @@
     max-width: 36%;
     margin: 0 2% 0 0;
 }
+
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+    .filter-btns{
+        gap: 1rem;
+        flex-direction: column;
+    }
+}
+  
