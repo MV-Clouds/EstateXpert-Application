@@ -8,7 +8,7 @@ import mapCss_V1 from '@salesforce/resourceUrl/mapCss_V1';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import getListingTypes from '@salesforce/apex/PropertySearchController.getListingTypes';
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 8;
 
 export default class DisplayProperties extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -18,6 +18,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     @track properties = [];
     @track currentPage = 1;
     @track searchTerm = '';
+    @track listingType = '';
     @track filterData = {
         city: '',
         bedrooms: '',
@@ -39,11 +40,18 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     @track selectedView = 'Grid'; 
     @track listingTypeOptions = [];
 
-    viewOptions = [
-        { label: 'Grid', value: 'Grid' },
-        { label: 'List', value: 'List' },
-        { label: 'Map View', value: 'map' }
-    ];
+    get gridButtonClass() {
+        return this.isGridView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+    }
+
+    get listButtonClass() {
+        return this.isListView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+    }
+
+    get mapButtonClass() {
+        return this.isMapView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+    }
+
     
     get isListView() {
         return this.selectedView === 'List';
@@ -76,6 +84,14 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     get pagedProperties() {
         const startIndex = (this.currentPage - 1) * PAGE_SIZE;
         return this.pagedFilteredListingData.slice(startIndex, startIndex + PAGE_SIZE);
+    }
+
+    get rentButtonClass() {
+        return this.listingType === 'Rent' ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+    }
+
+    get saleButtonClass() {
+        return this.listingType === 'Sale' ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
     }
 
     connectedCallback() {
@@ -154,8 +170,8 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             const matchesListingType = !listingType || property.Listing_Type__c === listingType;
             const matchesPrice = (!minPrice || property.Listing_Price__c >= minPrice) &&
                                  (!maxPrice || property.Listing_Price__c <= maxPrice);
-            const matchesBedrooms = !bedrooms || property.Bedrooms__c === bedrooms;
-            const matchesBathrooms = !bathrooms || property.Bathrooms__c === bathrooms;
+            const matchesBedrooms = !bedrooms || property.Bedrooms__c == bedrooms;
+            const matchesBathrooms = !bathrooms || property.Bathrooms__c == bathrooms;
             const matchesCity = !city || (property.City__c && property.City__c.toLowerCase() === city.toLowerCase());
             const matchesZipcode = !zipcode || property.Zip_Postal_Code__c === zipcode;
 
@@ -180,6 +196,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         };
         this.pagedFilteredListingData = this.listingData;
         this.searchTerm = '';
+        this.listingType = '';
         this.updateMapMarkers();
     }
 
@@ -192,11 +209,28 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         this.updateMapMarkers();
     }
 
-    handleViewChange(event) {
-        this.selectedView = event.detail.value;
-        if (this.selectedView === 'map') {
-            this.pageNumber = 1; // Reset page number when switching to map view
-        }
+    setGridView() {
+        this.selectedView = 'Grid';
+    }
+
+    setListView() {
+        this.selectedView = 'List';
+    }
+
+    setMapView() {
+        this.selectedView = 'map';
+    }
+
+    setRentFilter() {
+        this.listingType = 'Rent';
+        this.filterData.listingType = this.listingType;
+        this.applyFilters();
+    }
+
+    setSaleFilter() {
+        this.listingType = 'Sale';
+        this.filterData.listingType = this.listingType;
+        this.applyFilters();
     }
 
     navigateToRecord(event) {

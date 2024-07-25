@@ -15,11 +15,16 @@
 								value={searchTerm} onchange={handleSearch}></lightning-input>
 						</div>
 					</div>
-					<div class="view-dropdown">
+					<!-- <div class="view-dropdown">
 						<lightning-combobox name="viewOptions" variant="label-hidden" dropdown-alignment="right"
 							value={selectedView} placeholder="Select View" options={viewOptions}
 							onchange={handleViewChange}></lightning-combobox>
-					</div>
+					</div> -->
+					<div class="view-buttons">
+                        <button class={gridButtonClass} onclick={setGridView}>Grid</button>
+                        <button class={listButtonClass} onclick={setListView}>List</button>
+                        <button class={mapButtonClass} onclick={setMapView}>Map View</button>
+                    </div>
 				</div>
 			</div>
 			
@@ -33,7 +38,11 @@
 					<lightning-input label="Zipcode" value={filterData.zipcode} onchange={handleInputChange} data-field="zipcode"></lightning-input>
 					<lightning-input label="Min Price" value={filterData.minPrice} type="number" onchange={handleInputChange} data-field="minPrice"></lightning-input>
 					<lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice"></lightning-input>
-					<lightning-combobox label="Listing Type" options={listingTypeOptions} value={filterData.listingType} onchange={handleInputChange} data-field="listingType"></lightning-combobox>
+					<!-- <lightning-combobox label="Listing Type" options={listingTypeOptions} value={filterData.listingType} onchange={handleInputChange} data-field="listingType"></lightning-combobox> -->
+					<div class="listing-buttons">
+                        <button class={rentButtonClass} onclick={setRentFilter}>Rent</button>
+                        <button class={saleButtonClass} onclick={setSaleFilter}>Sale</button>
+                    </div>
 				</div>
 				<div class="filter-input">
 					<div class="filter-btns">
@@ -109,7 +118,7 @@
                     <template if:true={isGridView}>
                         <div class="slds-grid slds-wrap property-container">
                             <template for:each={pagedProperties} for:item="property">
-                                <div class="card slds-col slds-small-size_6-of-12 slds-medium-size_4-of-12"
+                                <div class="card slds-col slds-small-size_6-of-12 slds-medium-size_4-of-12 slds-large-size_3-of-12"
                                     key={property.id}>
                                     <div class="property-item">
                                         <img class="property-image card-img-top" src={property.media_url} alt="Property image"></img>
