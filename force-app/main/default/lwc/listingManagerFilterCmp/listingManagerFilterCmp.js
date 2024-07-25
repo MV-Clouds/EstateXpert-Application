@@ -4,6 +4,7 @@ import getPicklistValues from '@salesforce/apex/ListingManagerFilterController.g
 import getListingsWithRelatedRecords from '@salesforce/apex/ListingManagerFilterController.getListingsWithRelatedRecords';
 import getTheOfferRecords from '@salesforce/apex/ListingManagerFilterController.getTheOfferRecords';
 import Icons from '@salesforce/resourceUrl/listingManagerIcons';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class ListingManagerFilterCmp extends LightningElement {
 
@@ -131,7 +132,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         });
     }
 
-      /**
+    /**
     * Method Name: handleValueSelected
     * @description: this method is set the field from the child field-add cmp .
     * Date: 07/06/2024
@@ -175,7 +176,26 @@ export default class ListingManagerFilterCmp extends LightningElement {
 
             };
         });
-        this.filterFields = [...this.filterFields, ...this.valueFromChild];
+        console.log('value from child'+JSON.stringify(this.valueFromChild));
+        // this.filterFields = [...this.filterFields, ...this.valueFromChild];
+        this.valueFromChild.forEach(newField => {
+            const isFieldPresent = this.filterFields.some(field => 
+                (field.apiName === newField.apiName ||field.value === newField.apiName)&&
+                field.label === newField.label &&
+                field.objectApiName === newField.objectApiName &&
+                field.type === newField.type
+            );
+            if (!isFieldPresent) {
+                this.filterFields = [...this.filterFields, newField];
+            }else{
+                const evt = new ShowToastEvent({
+                    title: 'Field is not added',
+                    message: `${newField.label} is already added in filter fields`,
+                    variant: 'error',
+                });
+                this.dispatchEvent(evt);
+            }
+        });
     }
 
     /**
@@ -709,7 +729,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     }
 
 
-        /**
+    /**
     * Method Name: checkboxFieldChange
     * @description:  handle th checkbox field change
     * Date: 9/06/2024
@@ -721,7 +741,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
-       /**
+    /**
     * Method Name: handleMinDate
     * @description:  handle min date field change
     * Date: 9/06/2024
@@ -779,7 +799,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     }
 
      //handel reset
-       /**
+    /**
     * Method Name: handleReset
     * @description: Remove the all except static fields.
     * Date: 14/06/2024
@@ -804,7 +824,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     }
 
     // Modal cmp 
-       /**
+    /**
     * Method Name: handleClose
     * @description: handle the close event of modal.
     * Date: 14/06/2024
@@ -814,7 +834,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.addModal = false;
     }
 
-        /**
+    /**
     * Method Name: handleSave
     * @description: handle the sae evnet in modal.
     * Date: 14/06/2024
@@ -830,7 +850,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         }
     }
  
-        /**
+    /**
     * Method Name: handleFieldChange
     * @description: fetch the custom event data and set pop-up add button disable.
     * Date: 14/06/2024
@@ -842,7 +862,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         
     }
 
-        /**
+    /**
     * Method Name: openModal
     * @description: open the moda.
     * Date: 14/06/2024

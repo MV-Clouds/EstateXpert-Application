@@ -64,36 +64,6 @@
                                             <img class="listing-manager-icon" data-id={index} onclick={clearSearch} src={deleteIcon} />
                                         </div>
                                     </div>
-                                    <!-- <template if:true={option.isFocused}>
-                                        <div class="options-box">
-                                            <ul class="options-cover">
-                                                <template for:each={option.picklistValue} for:item="option1">
-                                                    <template if:false={option1.showRightIcon}>
-                                                        <li key={option1.value} data-index={index} data-id={option1.value} onclick={selectOption1}
-                                                            class="options-value">
-                                                            <span class="slds-media__body">
-                                                                <span class="_entity">{option1.label}</span>
-                                                            </span>
-                                                        </li>
-                                                    </template>
-                                                    <template if:true={option1.showRightIcon}>
-                                                        <li  data-index={index} key={option1.value} data-id={option1.value} onclick={selectOption1} class="slds-listbox__item">
-                                                            <div class="slds-listbox__option slds-listbox__option_plain slds-media slds-media_small slds-media_center picklist-option">
-                                                                <span class="slds-media__body">
-                                                                    <span class="slds-truncate" title={option1.label}>{option1.label}</span>
-                                                                </span>
-                                                                <span class="slds-media__figure slds-media__figure_reverse">
-                                                                    <lightning-icon icon-name="utility:check" alternative-text="Lookup Field" size="x-small"></lightning-icon>
-                                                                </span>
-                                                            </div>
-                                                        </li>
-                                                    </template>
-                                                    
-                                                </template>
-                                            </ul>
-                                        </div>
-                                    </template>
-             -->
                                 </div>
                             </div>
                             <template if:true={option.selectedOptions}>
@@ -149,7 +119,12 @@
                                                 </span> -->
                                             </div>
                                             <div class="plus" data-id={index} onclick={addTheString}>
-                                                <img class="listing-manager-icon" src={addIcon} />
+                                                <!-- <img class="listing-manager-icon" src={addIcon} /> -->
+                                                <svg class="listing-manager-icon"  xmlns="http://www.w3.org/2000/svg"
+                                                height="52" width="52" viewBox="0 0 520 520" fill="#000">
+                                                <path
+                                                    d="M300 290h165c8 0 15-7 15-15v-30c0-8-7-15-15-15H300c-6 0-10-4-10-10V55c0-8-7-15-15-15h-30c-8 0-15 7-15 15v165c0 6-4 10-10 10H55c-8 0-15 7-15 15v30c0 8 7 15 15 15h165c6 0 10 4 10 10v165c0 8 7 15 15 15h30c8 0 15-7 15-15V300c0-6 4-10 10-10z" />
+                                            </svg>
                                             </div>
                                             <div class="delete-icon-cover">
                                                 <img class="listing-manager-icon" data-id={index} onclick={clearSearch}  src={deleteIcon} />
