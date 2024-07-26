@@ -242,7 +242,7 @@
 }
 
 .custom-data-table tr:last-child td {
-    border-bottom: none; /* Ensures cells in the last row also have no bottom border */
+    border-bottom: none;
 }
 
 .filter-btn,
