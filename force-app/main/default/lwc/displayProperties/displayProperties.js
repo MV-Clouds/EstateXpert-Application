@@ -27,7 +27,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         minPrice: '',
         maxPrice: '',
         zipcode: '',
-        listingType: ''
+        listingTypes: [] // Array to handle multiple listing types
     };
     @track isLoading = false;
 
@@ -90,11 +90,11 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     get rentButtonClass() {
-        return this.listingType === 'Rent' ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+        return this.filterData.listingTypes.includes('Rent') ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
     }
-
+    
     get saleButtonClass() {
-        return this.listingType === 'Sale' ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+        return this.filterData.listingTypes.includes('Sale') ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
     }
 
     connectedCallback() {
@@ -177,10 +177,9 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     applyFilters() {
-
         try {
-            const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zipcode } = this.filterData;
-
+            const { listingTypes, minPrice, maxPrice, bedrooms, bathrooms, city, zipcode } = this.filterData;
+    
             if (minPrice && maxPrice && parseFloat(maxPrice) < parseFloat(minPrice)) {
                 this.showToast('Error', 'Max price cannot be less than Min price.', 'error');
                 return;
@@ -188,7 +187,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     
             this.pagedFilteredListingData = this.listingData.filter(property => {
                 const searchProperty = property.Name.toLowerCase().includes(this.searchTerm);
-                const matchesListingType = !listingType || property.Listing_Type__c === listingType;
+                const matchesListingType = listingTypes.length === 0 || listingTypes.includes(property.Listing_Type__c);
                 const matchesPrice = (!minPrice || property.Listing_Price__c >= minPrice) &&
                                      (!maxPrice || property.Listing_Price__c <= maxPrice);
                 const matchesBedrooms = !bedrooms || property.Bedrooms__c == bedrooms;
@@ -205,10 +204,10 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             this.showToast('Success', 'Filter applied successfully', 'success');
             this.updateMapMarkers();
         } catch (error) {
-            console.log('Errror ==> ' , error);
+            console.log('Error ==> ', error);
         }
-
     }
+    
 
     clearFilter() {
         this.filterData = {
@@ -282,6 +281,26 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             console.error('Error generating URL: ', error);
         });
     }
+
+    handleRentClick() {
+        this.toggleListingType('Rent');
+    }
+    
+    handleSaleClick() {
+        this.toggleListingType('Sale');
+    }
+
+    toggleListingType(listingType) {
+        if (this.filterData.listingTypes.includes(listingType)) {
+            // Remove the listing type from the filter
+            this.filterData.listingTypes = this.filterData.listingTypes.filter(type => type !== listingType);
+        } else {
+            // Add the listing type to the filter
+            this.filterData.listingTypes.push(listingType);
+        }
+        this.applyFilters(); // Apply filters after updating the listing types
+    }
+    
 
     goToFirst() {
         this.currentPage = 1;

@@ -45,8 +45,8 @@
 					<lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice" max-length="15"></lightning-input>
 					<!-- <lightning-combobox label="Listing Type" options={listingTypeOptions} value={filterData.listingType} onchange={handleInputChange} data-field="listingType"></lightning-combobox> -->
 					<div class="listing-buttons">
-                        <button class={rentButtonClass} onclick={setRentFilter}>Rent</button>
-                        <button class={saleButtonClass} onclick={setSaleFilter}>Sale</button>
+                        <button class={rentButtonClass} onclick={handleRentClick}>Rent</button>
+                        <button class={saleButtonClass} onclick={handleSaleClick}>Sale</button>
                     </div>
 				</div>
 				<div class="filter-input">
