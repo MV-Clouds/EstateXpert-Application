@@ -20,13 +20,13 @@
     margin-right: 0.5rem;
     font-weight: 500;
 }
-.bread-crumb-cover svg{
+.bread-crumb-cover img{
     fill: black;
     width: 0.8rem;
     height: fit-content;
     display: inline;
 }
-.bread-crumb-cover:last-of-type svg{
+.bread-crumb-cover:last-of-type img{
     display: none;
 }
 .slds-combobox__option-text.lookup-field::after {
