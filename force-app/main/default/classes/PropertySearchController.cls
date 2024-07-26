@@ -1,12 +1,17 @@
 /**
- * @description       : 
- * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
- * @group             : 
- * @last modified on  : 06-19-2024
- * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @description       : This apex class is used to display property from the record page of listing and inquiry
+ * @author            : MitrajSinh Gohil
+ * @last modified on  : 25-07-2024
+ * @last modified by  : Rachit Shah
 **/
 public with sharing class PropertySearchController{
 
+    /**
+     * @description       : This wrapper class is used to send data from apex method
+     * @author            : MitrajSinh Gohil
+     * @last modified on  : 25-07-2024
+     * @last modified by  : Rachit Shah
+    **/
     public class WrapperClass{
         @AuraEnabled
         public List<Listing__c> listings;  
@@ -18,6 +23,12 @@ public with sharing class PropertySearchController{
         public Inquiry__c inquiryRec;
         }           
 
+    /**
+     * @description       : This apex class is method is used for getting listing data
+     * @author            : MitrajSinh Gohil
+     * @last modified on  : 25-07-2024
+     * @last modified by  : Rachit Shah
+    **/
     @AuraEnabled
     public static WrapperClass getListings(String recordId, String objectName){
         try{
@@ -36,7 +47,7 @@ public with sharing class PropertySearchController{
                 propertyIds.add(lsrec.Property__c);
                 }      
 
-                List<Property_File__c> medias = [SELECT Id,BaseUrl__c,Property__c FROM Property_File__c WHERE Property__c IN:propertyIds];
+                List<Property_File__c> medias = [SELECT Id,BaseUrl__c,Property__c FROM Property_File__c WHERE Property__c IN:propertyIds WITH SECURITY_ENFORCED];
 
                 Map<Id, String> propertyMediaUrlsMap = new Map<Id, String>();
                 for (Property_File__c media : medias) {
@@ -54,7 +65,7 @@ public with sharing class PropertySearchController{
                 List<Listing__c> listing = [SELECT Id, Name, Description__c, City__c, Bedrooms__c, State__c, Zip_Postal_Code__c, Bathrooms__c, Sq_Ft__c, Property__c,
                 Listing_Price__c,CurrencyIsoCode, Listing_Type__c, Availability_Date__c FROM Listing__c  WITH SECURITY_ENFORCED ORDER BY Name ASC LIMIT 50000] ;
 
-                Inquiry__c inquiry = [SELECT Id, Bathrooms_min__c , Bedrooms_min__c	FROM Inquiry__c WHERE Id =: recordId];
+                Inquiry__c inquiry = [SELECT Id, Bathrooms_min__c , Bedrooms_min__c	FROM Inquiry__c WHERE Id =: recordId WITH SECURITY_ENFORCED];
                 
 
                 Set<Id> propertyIds = new Set<Id>();     
@@ -63,7 +74,7 @@ public with sharing class PropertySearchController{
                 propertyIds.add(lsrec.Property__c);
                 }      
 
-                List<Property_File__c> medias = [SELECT Id,BaseUrl__c,Property__c FROM Property_File__c WHERE Property__c IN:propertyIds];
+                List<Property_File__c> medias = [SELECT Id,BaseUrl__c,Property__c FROM Property_File__c WHERE Property__c IN:propertyIds WITH SECURITY_ENFORCED];
 
                 Map<Id, String> propertyMediaUrlsMap = new Map<Id, String>();
                 for (Property_File__c media : medias) {
@@ -81,27 +92,6 @@ public with sharing class PropertySearchController{
 
         } catch (Exception e){
             throw new AuraHandledException(e.getMessage());
-        }
-    }
-    
-    @AuraEnabled
-    public static List<String> getListingTypes(){
-        try {
-            Schema.DescribeFieldResult fieldResult = Listing__c.Listing_Type__c.getDescribe();
-
-            List<Schema.PicklistEntry> picklistEntries = fieldResult.getPicklistValues();
-            System.debug(picklistEntries);
-            List<String> picklistValues = new List<String>();
-
-            for(Schema.PicklistEntry entry : picklistEntries) {
-                picklistValues.add(entry.getLabel());
-            }
-            System.debug(picklistValues);
-            return picklistValues;
-
-        } catch (Exception e) {
-            System.debug('An error occurred: ' + e.getMessage());
-            return null;
         }
     }
 }

@@ -2,7 +2,7 @@
   description       : Display Property component to display all the properties
   author            : Harsh Vora
   last modified on  : 06-19-2024
-  last modified by  : Mitrajsinh Gohil
+  last modified by  : Rachit Shah
 -->
 <template>
 
@@ -20,11 +20,6 @@
 								value={searchTerm} onchange={handleSearch}></lightning-input>
 						</div>
 					</div>
-					<!-- <div class="view-dropdown">
-						<lightning-combobox name="viewOptions" variant="label-hidden" dropdown-alignment="right"
-							value={selectedView} placeholder="Select View" options={viewOptions}
-							onchange={handleViewChange}></lightning-combobox>
-					</div> -->
 					<div class="view-buttons">
                         <button class={gridButtonClass} onclick={setGridView}>Grid</button>
                         <button class={listButtonClass} onclick={setListView}>List</button>
@@ -43,7 +38,6 @@
 					<lightning-input label="Zipcode" value={filterData.zipcode} onchange={handleInputChange} data-field="zipcode" max-length="6"></lightning-input>
 					<lightning-input label="Min Price" value={filterData.minPrice} type="number" onchange={handleInputChange} data-field="minPrice" max-length="15"></lightning-input>
 					<lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice" max-length="15"></lightning-input>
-					<!-- <lightning-combobox label="Listing Type" options={listingTypeOptions} value={filterData.listingType} onchange={handleInputChange} data-field="listingType"></lightning-combobox> -->
 					<div class="listing-buttons">
                         <button class={rentButtonClass} onclick={handleRentClick}>Rent</button>
                         <button class={saleButtonClass} onclick={handleSaleClick}>Sale</button>
@@ -104,7 +98,7 @@
                     <template if:true={isGridView}>
                         <div class="slds-grid slds-wrap property-container">
                             <template for:each={pagedProperties} for:item="property">
-                                <div class="card slds-col slds-small-size_2-of-12 slds-medium-size_3-of-12 slds-large-size_4-of-12"
+                                <div class="card slds-col"
                                     key={property.id}>
                                     <div class="property-item">
                                         <img class="property-image card-img-top" src={property.media_url} alt="Property image"></img>
@@ -153,13 +147,6 @@
                         <div class="main">
                             <lightning-map class="mapmarker slds-size_6-of-6" map-markers={mapMarkers} list-view="visible">
                             </lightning-map>
-                            <!-- <div class="marker-details">
-                                <template for:each={mapMarkers} for:item="marker">
-                                    <div key={marker.id} class="link">
-                                        <a data-id={marker.id} onclick={navigateToRecord}>more details</a>
-                                    </div>
-                                </template>
-                            </div> -->
                         </div>
                     </template>
                 </template>

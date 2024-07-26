@@ -55,9 +55,9 @@
 
 .property-container {
     align-items: center;
-    display: flex;
-    grid-template-columns: repeat(auto-fill, minmax(24%, 1fr));
-    justify-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* justify-items: center; */
 }
 
 .property-item {
