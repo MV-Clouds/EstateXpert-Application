@@ -6,7 +6,7 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
     @track isNextDisabled = false;
     @track pageNumber = 1;
     @track pageSize = 30;
-    @track totalPages;
+    @track totalPages=0;
     @track shownProcessedContactData = [];
 
      /**
@@ -66,6 +66,9 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
     */
     connectedCallback(){
         this.totalPages = Math.ceil(this.contacts.length / this.pageSize);
+        if(this.totalPages == 0){
+            this.totalPages = 1;
+        }
         this.updateProcessedContactData();
         this.updatePaginationButtons();
     }

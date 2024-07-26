@@ -1,6 +1,6 @@
 .mainDiv{
     overflow: auto;
-    height: 85%;
+    max-height: 85%;
     padding-top: 1rem;
 }
 
@@ -66,6 +66,9 @@
 .paginationDiv{
     height: 17%;
     border-top: 2px solid rgb(232, 232, 232);
+    position: absolute;
+    width: 100%;
+    bottom: -1rem;
 }
 
 .paginationDiv .btnCover{

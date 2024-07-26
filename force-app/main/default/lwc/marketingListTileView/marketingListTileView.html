@@ -1,44 +1,44 @@
 <template>
     <template if:false={showSection}>
         <div class="slds-grid slds-wrap slds-gutters slds-p-left_large slds-p-right_large mainDiv">
-            <template for:each={shownProcessedContactData} for:item="con" for:index="index">
-                <div key={con.Id} class="slds-col slds-size_1-of-3 slds-p-around_x-small">
-                    <div class="outerCover">
-                        <div class="content-div">
-                            <div class="content">
-                                <div class="lable">Full Name :-</div>
-                                <div class="value">{con.Name}</div>
+                <template for:each={shownProcessedContactData} for:item="con" for:index="index">
+                    <div key={con.Id} class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+                        <div class="outerCover">
+                            <div class="content-div">
+                                <div class="content">
+                                    <div class="lable">Full Name :-</div>
+                                    <div class="value">{con.Name}</div>
+                                </div>
+                                <div class="content">
+                                    <div class="lable">Business Phone :-</div>
+                                    <div class="value">{con.Phone}</div>
+                                </div>
+                                <div class="content">
+                                    <div class="lable">Email :-</div>
+                                    <div class="value">{con.Email}</div>
+                                </div>
+                                <div class="content">
+                                    <div class="lable">Lead Source :-</div>
+                                    <div class="value">{con.LeadSource}</div>
+                                </div>
                             </div>
-                            <div class="content">
-                                <div class="lable">Business Phone :-</div>
-                                <div class="value">{con.Phone}</div>
+                            <div class="input-div">
+                                <div class="checkbox">
+                                    <lightning-input
+                                       data-id={index}
+                                       type="checkbox"
+                                       checked={con.isChecked}
+                                       value={con.isChecked}
+                                       onchange={checkBoxValueChange}></lightning-input>
+                                </div>
+                                <div class="share-div">
+                                        <svg xmlns="http://www.w3.org/2000/svg" data-id={con.Id} onclick={redirectToRecord} height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path  data-id={con.Id} onclick={redirectToRecord} d="M485 300h-30c-8 0-15 7-15 15v110c0 8-7 15-15 15H95c-8 0-15-7-15-15V215c0-8 7-15 15-15h40c8 0 15-7 15-15v-30c0-8-7-15-15-15H60a40 40 0 0 0-40 40v280a40 40 0 0 0 40 40h400a40 40 0 0 0 40-40V315c0-8-7-15-15-15zM340 140c-100 0-191 89-199 194-1 8 6 16 15 16h30c8 0 14-6 15-13 7-75 71-137 149-137h16c9 0 13 11 7 17l-55 56c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l136-135c6-6 6-15 0-21L361 24c-6-6-15-6-21 0l-21 21c-6 6-7 15-1 21l56 56c6 6 2 17-7 17l-27 1z"/></svg>
+                                </div>
+        
                             </div>
-                            <div class="content">
-                                <div class="lable">Email :-</div>
-                                <div class="value">{con.Email}</div>
-                            </div>
-                            <div class="content">
-                                <div class="lable">Lead Source :-</div>
-                                <div class="value">{con.LeadSource}</div>
-                            </div>
-                        </div>
-                        <div class="input-div">
-                            <div class="checkbox">
-                                <lightning-input
-                                   data-id={index}
-                                   type="checkbox"
-                                   checked={con.isChecked}
-                                   value={con.isChecked}
-                                   onchange={checkBoxValueChange}></lightning-input>
-                            </div>
-                            <div class="share-div">
-                                    <svg xmlns="http://www.w3.org/2000/svg" data-id={con.Id} onclick={redirectToRecord} height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path  data-id={con.Id} onclick={redirectToRecord} d="M485 300h-30c-8 0-15 7-15 15v110c0 8-7 15-15 15H95c-8 0-15-7-15-15V215c0-8 7-15 15-15h40c8 0 15-7 15-15v-30c0-8-7-15-15-15H60a40 40 0 0 0-40 40v280a40 40 0 0 0 40 40h400a40 40 0 0 0 40-40V315c0-8-7-15-15-15zM340 140c-100 0-191 89-199 194-1 8 6 16 15 16h30c8 0 14-6 15-13 7-75 71-137 149-137h16c9 0 13 11 7 17l-55 56c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l136-135c6-6 6-15 0-21L361 24c-6-6-15-6-21 0l-21 21c-6 6-7 15-1 21l56 56c6 6 2 17-7 17l-27 1z"/></svg>
-                            </div>
-    
-                        </div>
-                    </div>   
-                </div>
-            </template>
+                        </div>   
+                    </div>
+                </template>
         </div>
     </template>
     <template if:true={showSection}>
