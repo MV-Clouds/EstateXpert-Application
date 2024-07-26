@@ -19,7 +19,7 @@ public with sharing class PropertySearchController{
         try{
             WrapperClass wc = new WrapperClass();
             List<Listing__c> listing = [SELECT Id, Name, Description__c, City__c, Bedrooms__c, State__c, Zip_Postal_Code__c, Bathrooms__c, Sq_Ft__c, Property__c,
-                                            Listing_Price__c, Listing_Type__c, Availability_Date__c FROM Listing__c  WITH SECURITY_ENFORCED ORDER BY Name ASC LIMIT 50000] ;
+                                            Listing_Price__c,CurrencyIsoCode, Listing_Type__c, Availability_Date__c FROM Listing__c  WITH SECURITY_ENFORCED ORDER BY Name ASC LIMIT 50000] ;
 
             Set<Id> propertyIds = new Set<Id>();     
 

@@ -23,10 +23,6 @@
     width: 300px;
 }
 
-.search-bar, .filter-button {
-    margin-right: 1rem;
-}
-
 .filter-section{
     display: flex;
     align-items: center;
@@ -39,15 +35,6 @@
     justify-content: center;
     align-items: end;
 
-}
-
-.filter-heading{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-    font-weight: bold;
 }
 
 .filter-btns{
@@ -69,16 +56,11 @@
 .property-container {
     align-items: center;
     display: flex;
-    /* flex-wrap: wrap; */
     grid-template-columns: repeat(auto-fill, minmax(24%, 1fr));
     justify-items: center;
-    /* margin-bottom: 1rem; */
-
 }
 
 .property-item {
-    /* flex-grow: 1;
-    flex-basis: 200; */
     background-color: #ffffff;
     position: relative;
     height: auto;
@@ -90,64 +72,15 @@
 
 .card{
     padding: 0 1% 1% 1%;
-    /* margin-bottom : 0.5rem; */
 }
 
 .property-item:hover {
     box-shadow: 1px 1px 10px 1px #509fdaa2;
 }
 
-.property-container-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-    align-items: center;
-}
-
-.property-item-list {
-    display: flex;
-    flex-direction: row;
-    background-color: #ffffff;
-    border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-    overflow: hidden;
-    padding: 1rem;
-    width: 100%;
-}
-
-.property-item-list:hover {
-    box-shadow: 3px 1px 19px 2px #0176D3;
-}
-
-.property_type_list {
-    background-color: #dbfaff;
-    border-radius: 4px 0 0 0;
-    position: absolute;
-    color: black;
-    padding: 3px 9px;
-    z-index: 1;
-}
-
-.details_list {
-    height: 13rem;
-    border-bottom: 0.5px solid grey;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 65%;
-}
-
-.view-more {
-    margin-top: auto;
-}
-
 .card-body {
     padding: 0.5rem;
     display: flex;
-    /* align-items:center; */
 }
 
 .room_details{
@@ -161,14 +94,6 @@
     height: 10rem;
     width: 100%;
     object-fit: cover;
-}
-
-.property-details {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    padding: 1rem;
 }
 
 .property_type {
@@ -190,14 +115,6 @@
     justify-content: space-around;
 }
 
-.room-details {
-    display: flex;
-    width: fit-content;
-    justify-content: flex-start;
-    gap: 20px;
-    color: #737D8C;
-}
-
 .card-title{
     color:black;
     font-size: 16px;
@@ -210,33 +127,13 @@
 }
 
 .bathroom_icon {
-    /* height: 17px; */
     width: 20px;
-}
-
-.property-name {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333333;
-    margin-bottom: 0.5rem;
 }
 
 .main {
     background-color: white;
     display: flex;
     width: 100%;
-}
-
-.slds-size_5-of-6 {
-    height: 33rem;
-    width: 80%;
-    overflow: hidden;
-}
-
-.property-info {
-    font-size: 16px;
-    color: #666666;
-    margin-bottom: 0.5rem;
 }
 
 .card-text {
@@ -274,17 +171,8 @@
     align-items: center;
     margin-top: 3rem;
     margin-bottom: 3rem;
+    gap: 1rem;
 }
-
-.pagination-buttons lightning-button {
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-/* .pagination-buttons lightning-button[disabled] {
-    background-color: #f5f5f5;
-    color: #999999;
-} */
 
 .no_prop {
     font-size: 20px;
@@ -293,28 +181,6 @@
     align-items: center;
     padding: 1rem;
     font-family: 'DM Sans';
-}
-
-.icon {
-    height: 18px;
-    width: 18px;
-}
-
-.room-detail-item {
-    display: flex;
-}
-
-.price-view-more {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-}
-
-.propertyImage{
-    min-width: 12rem;
-    max-width: 20rem;
-    margin: 0 2% 0 0;
 }
 
 .listing-buttons {
@@ -332,7 +198,6 @@
 
 .header-cell {
     padding: 10px;
-    /* padding-left: 0px; */
     background-color: #f4f6f9;
     font-weight: bold;
     text-align: left;
@@ -347,24 +212,20 @@
     border-radius: 4px;
 }
 
-td {
+.custom-data-table td {
     padding: 10px;
     border-bottom: 1px solid #dcdcdc;
     text-align: center;
 }
 
-td img {
+.custom-data-table td img {
     width: 100px;
     height: auto;
     border-radius: 4px;
 }
 
-.slds-table tr:nth-child(odd) {
+.custom-data-table .slds-table tr:nth-child(odd) {
     background-color: aliceblue;
-  }
-
-.property-action {
-    text-align: center;
 }
 
 .view-more-button {
@@ -382,4 +243,20 @@ td img {
 
 .custom-data-table tr:last-child td {
     border-bottom: none; /* Ensures cells in the last row also have no bottom border */
+}
+
+.edit-btn {
+    background-color: #0176D3;
+    color: white;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    padding: 5px 16px;
+}
+
+.edit-btn:disabled{
+    background-color: #737D8C;
 }

@@ -57,21 +57,6 @@
 				</div>
 			</div>
 
-
-
-			<!-- 
-            <div class="slds-box slds-theme_default filter-container">
-                <div>
-                    <div class="filter-heading">
-                        <p>Filter Section</p>
-                    </div>
-                    
-                    <div class="dotted-border"></div>
-
-
-                </div>
-            </div> -->
-
             <div class="slds-col slds-box slds-theme_default">
                 <template if:true={isPropertyAvailable}>
                     <template if:true={isListView}>
@@ -99,7 +84,14 @@
                                         <td>{property.City__c}</td>
                                         <td>{property.Bedrooms__c}</td>
                                         <td>{property.Bathrooms__c}</td>
-                                        <td>${property.Listing_Price__c}</td>
+                                        <td>
+                                            <template if:true={property.Listing_Price__c}>
+                                                {property.CurrencyIsoCode} {property.Listing_Price__c}
+                                            </template>
+                                            <template if:false={property.Listing_Price__c}>
+                                                TBD
+                                            </template>
+                                        </td>
                                         <td>
                                             <button class="view-more-button" data-id={property.Id} onclick={navigateToRecord}>View More</button>
                                         </td>
@@ -138,7 +130,14 @@
                                         </div>
                                         <div class="card-body">
                                             <lightning-layout-item class="item-1">
-                                                <p class="card-link"><b>$ {property.Listing_Price__c}</b></p>
+                                                <p class="card-link"><b>
+                                                    <template if:true={property.Listing_Price__c}>
+                                                        {property.CurrencyIsoCode} {property.Listing_Price__c}
+                                                    </template>
+                                                    <template if:false={property.Listing_Price__c}>
+                                                        TBD
+                                                    </template>
+                                                </b></p>
                                             </lightning-layout-item>
                                             <lightning-layout-item class="item-2" alignment-bump="left">
                                                 <button data-id={property.Id} onclick={navigateToRecord}>View More</button>
@@ -174,10 +173,10 @@
 
             <template if:true={isPropertyAvailable}>
                 <div class="pagination-container slds-m-top_medium">
-                    <button class="slds-button slds-button_neutral" onclick={goToFirst} disabled={isFirstPage}>First</button>
-                    <button class="slds-button slds-button_neutral" onclick={goToPrevious} disabled={isFirstPage}>Previous</button>
-                    <button class="slds-button slds-button_neutral" onclick={goToNext} disabled={isLastPage}>Next</button>
-                    <button class="slds-button slds-button_neutral" onclick={goToLast} disabled={isLastPage}>Last</button>
+                    <button class="edit-btn" onclick={goToFirst} disabled={isFirstPage}> First</button>
+                    <button class="edit-btn" onclick={goToPrevious} disabled={isFirstPage}> Previous</button>
+                    <button class="edit-btn" onclick={goToNext} disabled={isLastPage}> Next</button>
+                    <button class="edit-btn" onclick={goToLast} disabled={isLastPage}> Last</button>
                 </div>
             </template>
         </lightning-card>

@@ -13,8 +13,8 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class DisplayProperties extends NavigationMixin(LightningElement) {
     @api recordId;
+    @api objectApiName;
     @track mapMarkers = [];
-    @track pageNumber = 1;
     @track totalRecords = 0;
     @track properties = [];
     @track currentPage = 1;
@@ -34,7 +34,6 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     @track pageSize = 6;
     @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
     @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
-    @track area_icon = propertyIcons + '/PropertyIcons/Area.png';
     @track location_icon = location_icon;
     @track filteredListingData = [];
     @track pagedFilteredListingData = [];
@@ -99,6 +98,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     connectedCallback() {
+        console.log('Object Name ==> ' , this.objectApiName);
         this.isLoading = true;
         this.fetchProperties();
         this.fetchListingTypes();
@@ -128,7 +128,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
                 this.filteredListingData.forEach(row => {
                     const prop_id = row.Property__c;
                     row.media_url = row.Primary_Image_URL__c || this.propertyMediaUrls[prop_id] || NoImageFound;
-                    row.Listing_Price__c = row.Listing_Price__c || 'TBD';
+                    row.Listing_Price__c = row.Listing_Price__c;
                     row.Listing_Type__c = row.Listing_Type__c || 'Sale';
                     row.Bedrooms__c = row.Bedrooms__c || 0;
                     row.Bathrooms__c = row.Bathrooms__c || 0;
@@ -177,30 +177,37 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     applyFilters() {
-        const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zipcode } = this.filterData;
 
-        if (minPrice && maxPrice && parseFloat(maxPrice) < parseFloat(minPrice)) {
-            this.showToast('Error', 'Max price cannot be less than Min price.', 'error');
-            return;
+        try {
+            const { listingType, minPrice, maxPrice, bedrooms, bathrooms, city, zipcode } = this.filterData;
+
+            if (minPrice && maxPrice && parseFloat(maxPrice) < parseFloat(minPrice)) {
+                this.showToast('Error', 'Max price cannot be less than Min price.', 'error');
+                return;
+            }
+    
+            this.pagedFilteredListingData = this.listingData.filter(property => {
+                const searchProperty = property.Name.toLowerCase().includes(this.searchTerm);
+                const matchesListingType = !listingType || property.Listing_Type__c === listingType;
+                const matchesPrice = (!minPrice || property.Listing_Price__c >= minPrice) &&
+                                     (!maxPrice || property.Listing_Price__c <= maxPrice);
+                const matchesBedrooms = !bedrooms || property.Bedrooms__c == bedrooms;
+                const matchesBathrooms = !bathrooms || property.Bathrooms__c == bathrooms;
+                const matchesCity = !city || (property.City__c && property.City__c.toLowerCase() === city.toLowerCase());
+                const matchesZipcode = !zipcode || property.Zip_Postal_Code__c === zipcode;
+    
+                return searchProperty && matchesListingType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipcode;
+            });
+    
+            this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
+            this.currentPage = 1;
+            this.totalRecords = this.pagedFilteredListingData.length;
+            this.showToast('Success', 'Filter applied successfully', 'success');
+            this.updateMapMarkers();
+        } catch (error) {
+            console.log('Errror ==> ' , error);
         }
 
-        this.pagedFilteredListingData = this.listingData.filter(property => {
-            const searchProperty = property.Name.toLowerCase().includes(this.searchTerm);
-            const matchesListingType = !listingType || property.Listing_Type__c === listingType;
-            const matchesPrice = (!minPrice || property.Listing_Price__c >= minPrice) &&
-                                 (!maxPrice || property.Listing_Price__c <= maxPrice);
-            const matchesBedrooms = !bedrooms || property.Bedrooms__c == bedrooms;
-            const matchesBathrooms = !bathrooms || property.Bathrooms__c == bathrooms;
-            const matchesCity = !city || (property.City__c && property.City__c.toLowerCase() === city.toLowerCase());
-            const matchesZipcode = !zipcode || property.Zip_Postal_Code__c === zipcode;
-
-            return searchProperty && matchesListingType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesCity && matchesZipcode;
-        });
-
-        this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
-        this.currentPage = 1;
-        this.totalRecords = this.pagedFilteredListingData.length;
-        this.updateMapMarkers();
     }
 
     clearFilter() {
@@ -216,6 +223,11 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         this.pagedFilteredListingData = this.listingData;
         this.searchTerm = '';
         this.listingType = '';
+
+        if(this.listingData.length > 0){
+            this.isPropertyAvailable = true;
+        }
+        this.showToast('Success', 'Filter cleared successfully', 'success');
         this.updateMapMarkers();
     }
 
