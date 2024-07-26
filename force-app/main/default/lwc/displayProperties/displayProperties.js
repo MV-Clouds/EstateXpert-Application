@@ -1,6 +1,6 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, api, track ,wire} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import getProperties from '@salesforce/apex/PropertySearchController.getProperties';
+import getListings from '@salesforce/apex/PropertySearchController.getListings';
 import NoImageFound from '@salesforce/resourceUrl/blankImage';
 import propertyIcons from '@salesforce/resourceUrl/PropertyIcons';
 import location_icon from '@salesforce/resourceUrl/location_icon';
@@ -8,18 +8,16 @@ import mapCss_V1 from '@salesforce/resourceUrl/mapCss_V1';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import getListingTypes from '@salesforce/apex/PropertySearchController.getListingTypes';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-
+import { CurrentPageReference } from 'lightning/navigation';
 // const PAGE_SIZE = 6;
 
 export default class DisplayProperties extends NavigationMixin(LightningElement) {
     @api recordId;
-    @api objectApiName;
     @track mapMarkers = [];
     @track totalRecords = 0;
     @track properties = [];
     @track currentPage = 1;
     @track searchTerm = '';
-    @track listingType = '';
     @track filterData = {
         city: '',
         bedrooms: '',
@@ -27,8 +25,9 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         minPrice: '',
         maxPrice: '',
         zipcode: '',
-        listingTypes: [] // Array to handle multiple listing types
+        listingTypes: []
     };
+    
     @track isLoading = false;
 
     @track pageSize = 6;
@@ -42,6 +41,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     @track isPropertyAvailable = true;
     @track selectedView = 'Grid'; 
     @track listingTypeOptions = [];
+    @track isInitial = false;
+
+    get isFilterButtonDisabled() {
+        const { city, bedrooms, bathrooms, minPrice, maxPrice, zipcode } = this.filterData;
+        return !city && !bedrooms && !bathrooms && !minPrice && !maxPrice && !zipcode;
+    }
 
     get gridButtonClass() {
         return this.isGridView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
@@ -90,17 +95,36 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     get rentButtonClass() {
-        return this.filterData.listingTypes.includes('Rent') ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+        if(this.filterData.listingTypes){
+            return this.filterData.listingTypes.includes('Rent') ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+        }
+        else{
+            return 'slds-button slds-button_neutral';
+        }
     }
     
     get saleButtonClass() {
-        return this.filterData.listingTypes.includes('Sale') ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+        if(this.filterData.listingTypes){
+            return this.filterData.listingTypes.includes('Sale') ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
+        }
+        else{
+            return 'slds-button slds-button_neutral';
+        }
+    }
+
+    @wire(CurrentPageReference) pageRef;
+    get objectName() {
+        if (this.pageRef && this.pageRef.attributes) {
+            return this.pageRef.attributes.objectApiName;
+        }
+        return null;
     }
 
     connectedCallback() {
-        console.log('Object Name ==> ' , this.objectApiName);
+        console.log('Object Name ==> ' , this.objectName);
+        console.log('recordId => ' , this.recordId);
         this.isLoading = true;
-        this.fetchProperties();
+        this.fetchListings();
         this.fetchListingTypes();
         loadStyle(this, mapCss_V1)
             .then(() =>{
@@ -113,11 +137,15 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             });
     }
 
-    fetchProperties() {
-        getProperties({ recordId: this.recordId })
+    fetchListings() {
+        getListings({ recordId: this.recordId , objectName : this.objectName})
             .then(result => {
-                this.filteredListingData = result.listings;
-                this.listingData = result.listings;
+                this.isInitial = true;
+                console.log('result ==> ' , result);
+                const resultListing = result.listings;
+
+                this.filteredListingData = resultListing;
+                this.listingData = resultListing;
                 this.propertyMediaUrls = result.medias;
 
                 this.listingData.forEach(row => {
@@ -137,6 +165,24 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
                 this.pagedFilteredListingData = this.filteredListingData;
                 this.totalRecords = this.pagedFilteredListingData.length;
                 this.isPropertyAvailable = this.totalRecords > 0;
+
+                if(this.objectName == 'Listing__c'){
+                    const listing = result.listingRec;
+                    const listingBedroom = listing.Bedrooms__c;
+                    const listingBathroom = listing.Bathrooms__c;
+                    this.filterData.bedrooms = listingBedroom;
+                    this.filterData.bathrooms = listingBathroom;
+                    this.applyFilters();
+                }
+
+                else if(this.objectName == 'Inquiry__c'){
+                    const inquiry = result.inquiryRec;
+                    const listingBedroom = inquiry.Bathrooms_min__c;
+                    const listingBathroom = inquiry.Bedrooms_min__c;
+                    this.filterData.bedrooms = listingBedroom;
+                    this.filterData.bathrooms = listingBathroom;
+                    this.applyFilters();
+                }
                 this.updateMapMarkers();
             })
             .catch(error => console.error('Error getting properties from apex:', error));
@@ -200,11 +246,19 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     
             this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
             this.currentPage = 1;
+            if(!this.searchTerm && !this.isInitial){
+                this.showToast('Success', 'Filter applied successfully', 'success');
+            }
+
+            if(this.isInitial){
+                this.isInitial = false;
+            }
             this.totalRecords = this.pagedFilteredListingData.length;
-            this.showToast('Success', 'Filter applied successfully', 'success');
+
             this.updateMapMarkers();
         } catch (error) {
             console.log('Error ==> ', error);
+            console.log(JSON.stringify(err));
         }
     }
     
@@ -217,11 +271,10 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
             minPrice: '',
             maxPrice: '',
             zipcode: '',
-            listingType: ''
+            listingTypes: []
         };
         this.pagedFilteredListingData = this.listingData;
         this.searchTerm = '';
-        this.listingType = '';
 
         if(this.listingData.length > 0){
             this.isPropertyAvailable = true;
@@ -255,18 +308,6 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
         this.updateMapMarkers();
     }
 
-    setRentFilter() {
-        this.listingType = 'Rent';
-        this.filterData.listingType = this.listingType;
-        this.applyFilters();
-    }
-
-    setSaleFilter() {
-        this.listingType = 'Sale';
-        this.filterData.listingType = this.listingType;
-        this.applyFilters();
-    }
-
     navigateToRecord(event) {
         const propertyId = event.target.dataset.id;
         this[NavigationMixin.GenerateUrl]({
@@ -291,15 +332,20 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     }
 
     toggleListingType(listingType) {
-        if (this.filterData.listingTypes.includes(listingType)) {
-            // Remove the listing type from the filter
-            this.filterData.listingTypes = this.filterData.listingTypes.filter(type => type !== listingType);
-        } else {
-            // Add the listing type to the filter
-            this.filterData.listingTypes.push(listingType);
+        try {
+            const index = this.filterData.listingTypes.indexOf(listingType);
+            console.log(index);
+            if (index > -1) {
+                this.filterData.listingTypes.splice(index, 1);
+            } else {
+                this.filterData.listingTypes.push(listingType);
+            }
+            this.applyFilters();
+        } catch (error) {
+            console.error('Error toggling listing type:', error);
         }
-        this.applyFilters(); // Apply filters after updating the listing types
     }
+
     
 
     goToFirst() {

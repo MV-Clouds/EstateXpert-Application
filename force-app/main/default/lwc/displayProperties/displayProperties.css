@@ -245,6 +245,7 @@
     border-bottom: none; /* Ensures cells in the last row also have no bottom border */
 }
 
+.filter-btn,
 .edit-btn {
     background-color: #0176D3;
     color: white;
@@ -257,6 +258,8 @@
     padding: 5px 16px;
 }
 
-.edit-btn:disabled{
+.filter-btn:disabled,
+.edit-btn:disabled {
     background-color: #737D8C;
+    cursor: not-allowed; 
 }

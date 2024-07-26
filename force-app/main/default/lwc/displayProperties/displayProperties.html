@@ -51,7 +51,7 @@
 				</div>
 				<div class="filter-input">
 					<div class="filter-btns">
-						<lightning-button label="Apply Filters" onclick={applyFilters} variant="brand"></lightning-button>
+						<button onclick={applyFilters} disabled={isFilterButtonDisabled} class="filter-btn">Apply Filters</button>
 						<lightning-button label="Clear Filters" onclick={clearFilter} variant="neutral"></lightning-button>
 					</div>
 				</div>
