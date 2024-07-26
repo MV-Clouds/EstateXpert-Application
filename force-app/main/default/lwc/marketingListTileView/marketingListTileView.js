@@ -130,16 +130,16 @@ export default class MarketingListTileView extends NavigationMixin(LightningElem
     redirectToRecord(event){
         event.preventDefault();
         const recordId = event.target.dataset.id;
-        if(recordId != null){
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: {
-                    recordId: recordId,
-                    objectApiName: 'Contact', 
-                    actionName: 'view'
-                }
-            });
-        }
+        this[NavigationMixin.GenerateUrl]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: recordId,
+                objectApiName: 'Contact',
+                actionName: 'view'
+            }
+        }).then(url => {
+            window.open(url, '_blank');
+        });
     }
 
     /**

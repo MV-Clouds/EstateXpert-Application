@@ -283,13 +283,15 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     */
     redirectToRecord(event){
         const recordId = event.target.dataset.id;
-        this[NavigationMixin.Navigate]({
+        this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
                 recordId: recordId,
                 objectApiName: 'Contact',
                 actionName: 'view'
             }
+        }).then(url => {
+            window.open(url, '_blank');
         });
     }
 
@@ -544,6 +546,8 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             this.updateProcessedContactData();
             this.updatePaginationButtons();
             this.scrollToTop();
+            this.sortData();
+            // this.updateSortIcons();
         }
     }
 
@@ -559,6 +563,8 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             this.updateProcessedContactData();
             this.updatePaginationButtons();
             this.scrollToTop();
+            this.sortData();
+            // this.updateSortIcons();
         }
     }
 

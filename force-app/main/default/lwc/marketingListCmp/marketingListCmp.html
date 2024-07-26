@@ -2,7 +2,7 @@
     <div class="slds-grid slds-wrap slds-align_absolute-center full-page-container">
         <div class="main">  
             <templete if:true={spinnerShow}>
-                <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+                <c-spinner-component></c-spinner-component>
             </templete>
             <div class="header-part">
                 <!-- <lightning-card hide-header="true" variant="narrow" class="slds-size_full full-page-card"> -->
@@ -95,9 +95,6 @@
                                                 </lightning-input>
                                         </div>
                                         </th>
-                                        <!-- <th class="slds-cell_action-mode imageColume" scope="col">
-                                            <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
-                                        </th> -->
                                         <th key={contact.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
                                         <div class="slds-th__action slds-text-link_reset" role="button" tabindex="0">
                                             <span class="slds-assistive-text">Sort by: </span>
@@ -136,14 +133,9 @@
                                                     onchange={checkBoxValueChange}>
                                                 </lightning-input>
                                             </td>
-                                            <!-- <td class="slds-cell_action-mode" role="gridcell">
-                                                <div class="slds-truncate">
-                                                    <img class="property-image" src={contact.media_url} alt="contact Image"/>
-                                                </div>
-                                            </td> -->
                                             <th class="slds-cell_action-mode" scope="row">
                                                 <div class="slds-truncate">
-                                                    <div data-id={contact.Id} onclick={redirectToRecord} tabindex="0">{contact.Name}</div>
+                                                    <a data-id={contact.Id} onclick={redirectToRecord} tabindex="0">{contact.Name}</a>
                                                 </div>
                                             </th>
                                             <template for:each={contact.orderedFields} for:item="field" for:index="index2">

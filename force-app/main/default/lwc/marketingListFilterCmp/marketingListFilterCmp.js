@@ -144,7 +144,7 @@ export default class MarketingListFilterCmp extends LightningElement {
                 maxValue:null,
                 minDate:null,
                 maxDate:null,
-                isNot: field.isNot,
+                isNot: field.isNot || false,
                 searchTerm:'',
                 isFocused:false,
                 picklist: field.type === 'PICKLIST',
@@ -171,7 +171,8 @@ export default class MarketingListFilterCmp extends LightningElement {
                 field.label === newField.label &&
                 field.objectApiName === newField.objectApiName &&
                 field.type === newField.type &&
-                field.prevApiName === newField.prevApiName
+                field.prevApiName === newField.prevApiName &&
+                field.isNot === newField.isNot
             );
             if (!isFieldPresent) {
                 this.filterFields = [...this.filterFields, newField];
@@ -552,9 +553,7 @@ export default class MarketingListFilterCmp extends LightningElement {
             
             // Update the selectedOptions array
             field.selectedOptions = field.selectedOptions.filter(option => option.value !== optionToRemove);
-            this.applyFilters();
             if (field.selectedOptions.length === 0) {
-                this.applyFilters();
                 field.selectedOptions = null;
             }
     
@@ -599,7 +598,6 @@ export default class MarketingListFilterCmp extends LightningElement {
             if (this.filterFields[index].selectedOptions.length === 0) {
                 this.filterFields[index].selectedOptions = null;
             }
-            this.applyFilters();
         }
     
     }
