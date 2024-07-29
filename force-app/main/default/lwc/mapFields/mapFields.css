@@ -74,7 +74,7 @@
 
 .scrollable-container{
     height: 60vh;
-    overflow-y: auto;
+    overflow: scroll;
     padding-left: 3%;
 }
 
@@ -121,14 +121,11 @@
     margin-top: 1rem;
     display: flex;
     justify-content: center;
+    gap: 1rem;
 }
 
 .mapping-symbol img{
     max-width: 2.5rem;
-}
-
-.add-btn{
-    margin-top: 1rem;
 }
 
 .disabled{

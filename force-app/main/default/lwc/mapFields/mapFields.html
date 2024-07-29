@@ -62,13 +62,12 @@
                             </lightning-layout>
                         </div>
                     </template>
-                    <div class="add-btn">
-                        <!-- Add new mapping button -->
-                        <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={isAutoSyncEnabled} >Add</button>
-                    </div>
             </div>
 
             <div class="save-btn">
+                <div>
+                    <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={isAutoSyncEnabled} >Add</button>
+                </div>
                 <button class="slds-button slds-button_brand" disabled={savebutton} onclick={handleAddPairClick}>SAVE MAPPING</button>
             </div>
         </div>
