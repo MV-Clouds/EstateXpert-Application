@@ -37,6 +37,12 @@
     margin-bottom: 0rem;
 }
 
+.name-field span{
+    color: red;
+    font-size: 0.8rem;
+    
+}
+
 .name-field input,textarea{
     line-height: normal;
     border: none;

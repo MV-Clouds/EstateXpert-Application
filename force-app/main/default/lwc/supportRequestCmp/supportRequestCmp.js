@@ -43,7 +43,7 @@ export default class SupportRequestCmp extends LightningElement {
       this.email_msg = true;
     }
 
-     /**
+    /**
     * Method Name : Support_message
     * @description : set the support message value
     * date:22/07/2024
@@ -55,7 +55,7 @@ export default class SupportRequestCmp extends LightningElement {
       this.message_msg = true;
     }
 
-     /**
+    /**
     * Method Name : Support_subject
     * @description : set the support subject value
     * date:22/07/2024
@@ -67,73 +67,78 @@ export default class SupportRequestCmp extends LightningElement {
       this.subject_msg = true;
     }
       
-      /**
+    /**
     * Method Name : onSubmit
     * @description : handle the from submit button
     * date:22/07/2024
     * Created By: Vyom Soni
     */
     onSubmit() {
-      this.spinnerdatatable = true;
       var pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       var validation1 = pattern.test(this.email);
+        
         if (this.supportname == undefined || this.supportname == '') {
           this.name_msg = false;
-          this.spinnerdatatable = false;
-        } else if (validation1 == false) {
+        }
+        if (validation1 == false) {
           this.email_msg = false;
-          this.spinnerdatatable = false;
-        } else if (this.subject == undefined || this.subject == '') {
+        } 
+        if (this.subject == undefined || this.subject == '') {
           this.subject_msg = false;
-          this.spinnerdatatable = false;
-        } else if (this.message == undefined || this.message == '') {
+        } 
+        if (this.message == undefined || this.message == '') {
           this.message_msg = false;
-          this.spinnerdatatable = false;
-        } else {
+        } 
+        if(this.supportname != '' && this.validation1 != false && this.subject != '' && this.message != ''){
           this.email_msg = true;
           this.sendEmailCallMethod();
         }
     }
 
-      /**
+    /**
     * Method Name : sendEmailCallMethod
     * @description : call the apex method for the send email.
     * date:22/07/2024
     * Created By: Vyom Soni
     */
     sendEmailCallMethod(){
-      sendemail({
-          name: this.supportname,
-          email: this.email,
-          subject: this.subject,
-          body: this.message,
-          fname: this.FName,
-          fbase64: this.FBase64
-        })
-          .then(result => {
-            if (result == 'success') {
-              this.spinnerdatatable = false;
-              this.supportname = '';
-              this.email = '';
-              this.message = '';
-              this.subject = '';
-              this.filesData = [];
-              const event = new ShowToastEvent({
-                title: 'Success',
-                message: 'Email Sent Successfully.',
-                variant: 'success',
-              });
-              this.dispatchEvent(event);
-            } else {
-              this.spinnerdatatable = false;
-              const event = new ShowToastEvent({
-                title: 'Error',
-                message: 'An error occurred while sending Email.',
-                variant: 'error',
-              });
-              this.dispatchEvent(event);
-            }
-         })
+      try{
+        sendemail({
+            name: this.supportname,
+            email: this.email,
+            subject: this.subject,
+            body: this.message,
+            fname: this.FName,
+            fbase64: this.FBase64
+          })
+            .then(result => {
+              if (result == 'success') {
+                this.spinnerdatatable = false;
+                this.supportname = '';
+                this.email = '';
+                this.message = '';
+                this.subject = '';
+                this.filesData = [];
+                const event = new ShowToastEvent({
+                  title: 'Success',
+                  message: 'Email Sent Successfully.',
+                  variant: 'success',
+                });
+                this.dispatchEvent(event);
+                window.location.reload(); 
+              } else {
+                this.spinnerdatatable = false;
+                const event = new ShowToastEvent({
+                  title: 'Error',
+                  message: 'An error occurred while sending Email.',
+                  variant: 'error',
+                });
+                this.dispatchEvent(event);
+              }
+           })
+      }catch(e){
+        console.log('error->'+e);
+      }
     }
 
       /**

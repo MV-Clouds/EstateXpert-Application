@@ -9,33 +9,33 @@
                         <label class="heading2">We are here for you! How can we help?</label>    
                     </div>
                     <div class="name-field">
-                        <label for="myInput">Name</label>
+                        <label for="myInput"><span>*</span> Name</label>
                         <input type="text" placeholder="Enter Your Name" 
                         value={supportname} onchange={Support_name}
-                        class="input selectDropValues1" />
+                        class="input selectDropValues1" maxlength="50" minlength="0"/>
                         <div class="error-message" if:false={name_msg}>Please Enter Valid Name
                             Details..!</div>
                     </div>
                     <div class="name-field">
-                        <label for="myInput">Email</label>
+                        <label for="myInput"><span>*</span> Email</label>
                         <input type="text" placeholder="Enter Your Email"
                         value={email} onchange={Support_email}
-                        class="input selectDropValues1" />
+                        class="input selectDropValues1"  maxlength="255" minlength="0"/>
                         <div class="error-message" if:false={email_msg}>Please Enter Valid Email
                             Details..!</div>
                     </div>
                     <div class="name-field">
-                        <label for="myInput">Subject</label>
+                        <label for="myInput"><span>*</span> Subject</label>
                         <input type="text" placeholder="Enter Your Subject"
                         value={subject} onchange={Support_subject}
-                        class="input selectDropValues1" />
+                        class="input selectDropValues1" maxlength="100" minlength="0"/>
                         <div class="error-message" if:false={subject_msg}>Please Enter Valid Subject
                             Details..!</div>
                     </div>
                     <div class="name-field">
-                        <label for="myInput">Message</label>
+                        <label for="myInput"><span>*</span> Message</label>
                         <textarea rows="1" placeholder="Enter your Message"
-                         onchange={Support_message}
+                         onchange={Support_message} value={message}
                         class="message selectDropValues1"></textarea>
                         <div class="error-message" if:false={message_msg}>Please Enter Valid Message
                             Details..!</div>
