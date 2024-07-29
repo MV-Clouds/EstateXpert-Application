@@ -250,7 +250,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 }
 
                 if(data.CCContacts){
-                    data.CCContacts.split(',').forEach(ccContact => {
+                    console.log('cc ==> ', data.CCContacts);
+                    data.CCContacts.split('@@@').forEach(ccContact => {
                         let [id, email] = ccContact.split(':');
                         ccContacts1.push(id);
                     });
@@ -260,7 +261,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 }
 
                 if(data.BCCContacts){
-                    data.BCCContacts.split(',').forEach(bccContact => {
+                    console.log('bcc ==> ', data.BCCContacts);
+                    data.BCCContacts.split('@@@').forEach(bccContact => {
                         let [id, email] = bccContact.split(':');
                         bccContacts1.push(id);
                     });
@@ -295,7 +297,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             
         }
         else{
-            console.log('in the else');
             this.isLoading = false;
         }
 
@@ -812,7 +813,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         const selectedPrimaryIds = new Set(this.selectedPrimaryRecipients.map(recipient => recipient.value));
         const selectedCCIds = new Set(this.selectedCCRecipients.map(recipient => recipient.value));
         const selectedBCCIds = new Set(this.selectedBCCRecipients.map(recipient => recipient.value));
-        console.log('selectedBCCIds ==> ' , selectedBCCIds);
+        // console.log('selectedBCCIds ==> ' , selectedBCCIds);
     
         this.filteredPrimaryContacts = this.contacts.filter(contact =>
             !selectedPrimaryIds.has(contact.value)        
@@ -826,9 +827,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             !selectedBCCIds.has(contact.value)
         );
     
-        console.log('filteredPrimaryContacts ==> ', JSON.stringify(this.filteredPrimaryContacts));
-        console.log('filteredCCContacts ==> ', JSON.stringify(this.filteredCCContacts));
-        console.log('filteredBCCContacts ==> ', JSON.stringify(this.filteredBCCContacts));
+        // console.log('filteredPrimaryContacts ==> ', JSON.stringify(this.filteredPrimaryContacts));
+        // console.log('filteredCCContacts ==> ', JSON.stringify(this.filteredCCContacts));
+        // console.log('filteredBCCContacts ==> ', JSON.stringify(this.filteredBCCContacts));
     }
 
     /**

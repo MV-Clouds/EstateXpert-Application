@@ -133,7 +133,7 @@ public class EmailCampaignScheduler {
     private static List<String> parseEmailAddresses(String addresses) {
         try {
             List<String> emailList = new List<String>();
-            List<String> addressPairs = addresses.split('<!@>');
+            List<String> addressPairs = addresses.split('@@@');
             for (String pair : addressPairs) {
                 List<String> parts = pair.split(':');
                 if (parts.size() == 2) {

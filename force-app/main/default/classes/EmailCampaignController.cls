@@ -136,7 +136,7 @@ public with sharing class EmailCampaignController {
                     }
                 }
             }
-            String ccRecipients = String.join(selectedCCRecipients,'<!@>');
+            String ccRecipients = String.join(selectedCCRecipients,'@@@');
             System.debug('selectedCCRecipients ==> ' + ccRecipients);
 
             // Extract and process BCC recipients
@@ -150,7 +150,7 @@ public with sharing class EmailCampaignController {
                     }
                 }
             }
-            String bccRecipients = String.join(selectedBCCRecipients,'<!@>');
+            String bccRecipients = String.join(selectedBCCRecipients,'@@@');
             System.debug('selectedBCCRecipients ==> ' + bccRecipients);
 
             String selectedContactDateField = (String) campaignEmailDataMap.get('selectedContactDateField');
@@ -186,8 +186,8 @@ public with sharing class EmailCampaignController {
             campaign.From_Address__c = fromAddress;
             campaign.From_Name__c = fromName;
             campaign.Is_Marketing_Campaign_Template__c = saveForFuture;
-            campaign.BCC_Contacts__c = bccRecipients;
-            campaign.CC_Contacts__c = ccRecipients;
+            campaign.BCC_Contacts__c = String.valueOf(bccRecipients);
+            campaign.CC_Contacts__c = String.valueOf(ccRecipients);
             campaign.Total_Emails__c = emailToSend;
             campaign.Remaining_Emails__c = emailToSend;
             if(templateId != ''){
@@ -324,7 +324,7 @@ public with sharing class EmailCampaignController {
                     }
                 }
             }
-            String ccRecipients = String.join(selectedCCRecipients,'<!@>');
+            String ccRecipients = String.join(selectedCCRecipients,'@@@');
             System.debug('selectedCCRecipients ==> ' + ccRecipients);
 
             // Extract and process BCC recipients
@@ -338,7 +338,7 @@ public with sharing class EmailCampaignController {
                     }
                 }
             }
-            String bccRecipients = String.join(selectedBCCRecipients,'<!@>');
+            String bccRecipients = String.join(selectedBCCRecipients,'@@@');
             System.debug('selectedBCCRecipients ==> ' + bccRecipients); 
 
             Integer primaryContactCount = selectedPrimaryRecipients.size();
@@ -392,8 +392,8 @@ public with sharing class EmailCampaignController {
             campaign.From_Address__c = fromAddress;
             campaign.From_Name__c = fromName;
             campaign.Is_Marketing_Campaign_Template__c = saveForFuture;
-            campaign.BCC_Contacts__c = bccRecipients;
-            campaign.CC_Contacts__c = ccRecipients;
+            campaign.BCC_Contacts__c = String.valueOf(bccRecipients);
+            campaign.CC_Contacts__c = String.valueOf(ccRecipients);
             if(templateId != ''){
                 campaign.Marketing_Campaign_Template__c	= templateId;
             }
@@ -553,7 +553,8 @@ public with sharing class EmailCampaignController {
 
             Integer emailsPerContact = emailRecordsToInsert.size() + emailRecordsToUpdate.size();
             Integer totalEmailCount = primaryContactCount * emailsPerContact;
-                
+            
+            // if()
             campaign.Total_Emails__c = totalEmailCount;
             campaign.Remaining_Emails__c = totalEmailCount - sentEmailCount;
 
@@ -872,7 +873,7 @@ public with sharing class EmailCampaignController {
 
         try {
             List<String> emailList = new List<String>();
-            List<String> addressPairs = addresses.split('<!@>');
+            List<String> addressPairs = addresses.split('@@@');
             for (String pair : addressPairs) {
                 List<String> parts = pair.split(':');
                 if (parts.size() == 2) {
