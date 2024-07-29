@@ -53,13 +53,6 @@
     margin-bottom: 1rem;
 }
 
-.property-container {
-    align-items: center;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* justify-items: center; */
-}
-
 .property-item {
     background-color: #ffffff;
     position: relative;
@@ -262,4 +255,24 @@
 .edit-btn:disabled {
     background-color: #737D8C;
     cursor: not-allowed; 
+}
+
+
+@media only screen and (max-width: 1024px) {
+    .filter-input{
+        flex-wrap: wrap;
+
+    }
+
+    .listing-buttons{
+        margin-top: 1rem;
+    }
+
+    .filter-search-container{
+        flex-direction: column;
+    }
+
+    .view-buttons{
+        margin-top: 10px;
+    }
 }
