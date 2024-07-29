@@ -58,6 +58,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     @track templateBody = '';
     @track emails = [];
     @track emailsWithTemplate = [];
+    @track deletedEmailList = [];
 
     @track selectedContactDateField = '';
     @track isEdit = false;
@@ -181,7 +182,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                     value: contact.Id,
                     email: contact.Email
                 }));
-                // this.updateFilteredLists();
+                this.updateFilteredLists();
                 this.loadCamapignData();
 
             })
@@ -283,8 +284,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                     
                 }
                 
-                this.updateFilteredLists(); 
                 this.isLoading = false;
+                this.updateFilteredLists();
         
             })
             .catch(error => {
@@ -297,6 +298,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             console.log('in the else');
             this.isLoading = false;
         }
+
     }
 
     /**
@@ -953,9 +955,15 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Created By: Rachit Shah
     */
     handleDeleteEmail(event) {
-        const emailId = event.currentTarget.dataset.id;
-        this.emails = this.emails.filter(email => email.id != emailId);
-        this.emailsWithTemplate = this.emailsWithTemplate.filter(email => email.id != emailId);
+        try {
+            const emailId = event.currentTarget.dataset.id;
+            this.deletedEmailList.push(emailId);
+            this.emails = this.emails.filter(email => email.id != emailId);
+            this.emailsWithTemplate = this.emailsWithTemplate.filter(email => email.id != emailId);
+        } catch (error) {
+            console.log('error => ' , error);
+        }
+
     }
 
     /**
@@ -1252,7 +1260,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 selectedBCCRecipients: this.transformRecipients(this.selectedBCCRecipients),
                 emails: emailsWithTemplate,
                 specificDate : this.specificDate,
-                selectedContactDateField : this.selectedContactDateField
+                selectedContactDateField : this.selectedContactDateField,
+                deletedEmailList : this.deletedEmailList
             };
 
             // console.log(this.selectedCCRecipients);

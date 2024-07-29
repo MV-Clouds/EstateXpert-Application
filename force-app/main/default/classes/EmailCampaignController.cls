@@ -339,17 +339,12 @@ public with sharing class EmailCampaignController {
                 }
             }
             String bccRecipients = String.join(selectedBCCRecipients,'<!@>');
-            System.debug('selectedBCCRecipients ==> ' + bccRecipients);
+            System.debug('selectedBCCRecipients ==> ' + bccRecipients); 
 
             Integer primaryContactCount = selectedPrimaryRecipients.size();
             Integer marketingEmailCount = 0;
     
             List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
-            if (emails != null) {
-                marketingEmailCount = emails.size();
-            }
-    
-            Integer emailToSend = primaryContactCount * marketingEmailCount;
 
             String selectedContactDateField = (String) campaignEmailDataMap.get('selectedContactDateField');
 
@@ -388,6 +383,10 @@ public with sharing class EmailCampaignController {
 
             }
 
+            Integer existingRemainingEmails = Integer.valueOf(campaign.Remaining_Emails__c);
+
+            Integer sentEmailCount = Integer.valueOf(campaign.Total_Emails__c - campaign.Remaining_Emails__c);
+
             campaign.Label__c = campaignName;
             campaign.Sender_Mode__c = senderMode;
             campaign.From_Address__c = fromAddress;
@@ -415,13 +414,27 @@ public with sharing class EmailCampaignController {
             List<Marketing_Campaign_Member__c> existingMembers = [
                 SELECT Id, Contact__c, Contact_Type__c, Marketing_Campaign__c
                 FROM Marketing_Campaign_Member__c
-                WHERE Marketing_Campaign__c = :campaignId AND Contact__c IN :selectedPrimaryRecipients
+                WHERE Marketing_Campaign__c = :campaignId
                 WITH SECURITY_ENFORCED
             ];
 
             Set<Id> existingContactIds = new Set<Id>();
             for (Marketing_Campaign_Member__c member : existingMembers) {
                 existingContactIds.add(member.Contact__c);
+            }
+
+            List<Marketing_Campaign_Member__c> membersToDelete = new List<Marketing_Campaign_Member__c>();
+            for (Marketing_Campaign_Member__c member : existingMembers) {
+                System.debug('member ==> ' + member);
+                if (!selectedPrimaryRecipients.contains(member.Contact__c)) {
+                    membersToDelete.add(member);
+                }
+            }
+
+            System.debug('membersToDelete ==> ' + membersToDelete);
+
+            if (!membersToDelete.isEmpty()) {
+                delete membersToDelete;
             }
 
             List<Marketing_Campaign_Member__c> newMembers = new List<Marketing_Campaign_Member__c>();
@@ -452,7 +465,8 @@ public with sharing class EmailCampaignController {
             
             List<Marketing_Email__c> emailRecordsToInsert = new List<Marketing_Email__c>();
             List<Marketing_Email__c> emailRecordsToUpdate = new List<Marketing_Email__c>();
-            
+            // Set<String> emailIdsToKeep = new Set<String>();
+
             for (Object emailDataObj : emails) {
                 System.debug('emailDataObj ==> ' + emailDataObj);
                 Map<String, Object> emailData = (Map<String, Object>) emailDataObj;
@@ -462,6 +476,7 @@ public with sharing class EmailCampaignController {
                 String emailId = String.valueOf(emailData.get('id'));
             
                 if (emailId != null && emailId.length() >= 15 && existingEmailMap.containsKey(emailId)) {
+                    // emailIdsToKeep.add(emailId);
                     emailCampaign = existingEmailMap.get(emailId);
                     System.debug('Updating email with id ==> ' + emailId);
                 }
@@ -511,9 +526,6 @@ public with sharing class EmailCampaignController {
                 }
             }
             
-            System.debug('emailRecordsToInsert ==> ' + emailRecordsToInsert);
-            System.debug('emailRecordsToUpdate ==> ' + emailRecordsToUpdate);
-            
             if (!emailRecordsToInsert.isEmpty()) {
                 insert emailRecordsToInsert;
             }
@@ -522,9 +534,28 @@ public with sharing class EmailCampaignController {
                 update emailRecordsToUpdate;
             }
 
+            List<Object> deletedEmails = (List<Object>) campaignEmailDataMap.get('deletedEmailList');
+            System.debug('deletedEmails ==> ' + deletedEmails);
 
-            campaign.Total_Emails__c += emailRecordsToInsert.size() > 0 ? Integer.valueOf(emailRecordsToInsert.size()) : 0;
-            campaign.Remaining_Emails__c += emailRecordsToInsert.size() > 0 ? Integer.valueOf(emailRecordsToInsert.size()) : 0;
+            Set<String> emailIdsToDelete = new Set<String>();
+            for (Object emailId : deletedEmails) {
+                emailIdsToDelete.add(String.valueOf(emailId));
+            }
+
+            if(!deletedEmails.isEmpty()){
+                List<Marketing_Email__c> emailsToDelete = [SELECT Id From Marketing_Email__c WHERE Id IN :emailIdsToDelete WITH SECURITY_ENFORCED];
+
+                if(emailsToDelete.size() > 0){
+                    delete emailsToDelete;
+                }
+            }
+
+
+            Integer emailsPerContact = emailRecordsToInsert.size() + emailRecordsToUpdate.size();
+            Integer totalEmailCount = primaryContactCount * emailsPerContact;
+                
+            campaign.Total_Emails__c = totalEmailCount;
+            campaign.Remaining_Emails__c = totalEmailCount - sentEmailCount;
 
             if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
                 update campaign;
