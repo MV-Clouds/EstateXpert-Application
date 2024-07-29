@@ -551,9 +551,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }
         
         this.emailCampaignName = eventData.campaignName;
-        this.quickTemplateOptions = eventData.quickTemplateOptions;
-        this.quickTemplates = eventData.quickTemplates;
-
         this.isModalOpen = false;
 
     }
@@ -576,7 +573,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Created By: Rachit Shah
     */
     handleContactDateFieldSearchBlur() {
-        this.isDateFieldDropdownVisible = false;
+        setTimeout(() => {
+            this.isDateFieldDropdownVisible = false;
+        }, 200);
     }
 
     /**
@@ -608,9 +607,10 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Created By: Rachit Shah
     */
     handlePrimarySearchInputBlur() {
-        this.isPrimaryDropdownVisible = false;
+        setTimeout(() => {
+            this.isPrimaryDropdownVisible = false;
+        }, 100);
     }
-
     /**
     * Method Name: handleSelectPrimaryContact
     * @description: Method to handle selection for the primary contact
@@ -661,7 +661,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Created By: Rachit Shah
     */
     handleCCSearchInputBlur() {
-        this.isCCDropdownVisible = false;
+        setTimeout(() => {
+            this.isCCDropdownVisible = false;
+        }, 100);
     }
 
     /**
@@ -713,7 +715,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Created By: Rachit Shah
     */
     handleBCCSearchInputBlur() {
-        this.isBCCDropdownVisible = false;
+        setTimeout(() => {
+            this.isBCCDropdownVisible = false;
+        }, 100);
     }
 
     /**

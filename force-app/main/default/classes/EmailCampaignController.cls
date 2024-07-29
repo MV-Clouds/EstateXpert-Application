@@ -395,8 +395,8 @@ public with sharing class EmailCampaignController {
             campaign.Is_Marketing_Campaign_Template__c = saveForFuture;
             campaign.BCC_Contacts__c = bccRecipients;
             campaign.CC_Contacts__c = ccRecipients;
-            campaign.Total_Emails__c += emailToSend;
-            campaign.Remaining_Emails__c += emailToSend;
+            // campaign.Total_Emails__c += emailToSend;
+            // campaign.Remaining_Emails__c = emailToSend;
             if(templateId != ''){
                 campaign.Marketing_Campaign_Template__c	= templateId;
             }
@@ -412,9 +412,9 @@ public with sharing class EmailCampaignController {
 
             }    
             
-            if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
-                update campaign;
-            }
+            // if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
+            //     update campaign;
+            // }
 
             System.debug('campaign ==> ' + campaign);
 
@@ -516,6 +516,15 @@ public with sharing class EmailCampaignController {
             if (!emailRecordsToUpdate.isEmpty()) {
                 update emailRecordsToUpdate;
             }
+
+
+            campaign.Total_Emails__c += emailRecordsToInsert.size() > 0 ? Integer.valueOf(emailRecordsToInsert.size()) : 0;
+            campaign.Remaining_Emails__c += emailRecordsToInsert.size() > 0 ? Integer.valueOf(emailRecordsToInsert.size()) : 0;
+
+            if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
+                update campaign;
+            }
+
     
         return campaign.Id;
         
