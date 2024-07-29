@@ -332,3 +332,14 @@ hr {
 .astrick_css {
     color: red;
 }
+
+
+@media only screen and (max-width: 500px) {
+    *{
+        font-size: 0.5rem;
+        /* padding: 0.4rem; */
+    }
+    .stylebtn {
+        flex-direction: row;
+    }
+}
