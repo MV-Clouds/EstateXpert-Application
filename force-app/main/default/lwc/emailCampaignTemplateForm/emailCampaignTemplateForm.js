@@ -156,7 +156,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             console.log('External CSS Loaded');
             this.fetchDateFields();
             this.fetchQuickTemplates();
-            // console.log(this.plusIconUrl);
         })
         .catch(error => {
             console.error('Error loading external CSS', error);
@@ -176,12 +175,13 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     loadContacts() {
          getContacts()
             .then(result => {
+                // console.log('result ==> ' , JSON.stringify(result));
                 this.contacts = result.map(contact => ({
                     label: contact.Name,
                     value: contact.Id,
                     email: contact.Email
                 }));
-                this.updateFilteredLists();
+                // this.updateFilteredLists();
                 this.loadCamapignData();
 
             })
@@ -202,12 +202,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             getCamapaignAndRelatedData({campaignId : this.camapignId})
             .then(result => {
 
-                // console.log('contacts ==> ' , JSON.stringify(this.contacts));
-                // console.log('result ==> ' ,result);
                 const data = JSON.parse(result);
-                // console.log('data ==> ' , data);
                 this.emailCampaignName = data.Label;
-                // console.log('emailCampaignName ==> ' , this.emailCampaignName);
 
                 const formData = {
                     selectedTemplate: '',
@@ -220,7 +216,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 };
                 this.templateId = data.templateId;
                 this.emailCampaignTemplate = data.templateName;
-                // console.log('templateId ==> ' , this.templateId);
         
                 formData.campaignName = data.Label;
                 formData.selectedTemplate = data.templateName;
@@ -228,9 +223,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 formData.fromName = data.FromName;
                 formData.saveForFuture = data.IsMarketingCampaignTemplate;
                 this.navigationStateString = formData;
-
-                // console.log('navigationStateString ==> ' , JSON.stringify(this.navigationStateString));
-
 
                 if(data.StartDate != null){
                     this.specificDate = data.StartDate;
@@ -240,7 +232,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                     this.isFieldSelected = true;
                     this.startDateOption = 'contactDateField';
                     this.selectedContactDateField = data.SelectedContactDateField;
-                    // console.log('selectedContactDateField ==> ' , this.selectedContactDateField);
                 }
 
                 var primaryContacts1 = [];
@@ -254,6 +245,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                         }
                     });
                     this.selectedPrimaryRecipients = this.contacts.filter(contact => primaryContacts1.includes(contact.value));
+                    this.filteredPrimaryContacts = this.filteredPrimaryContacts.filter(contact => this.selectedPrimaryRecipients.includes(contact.value));
                 }
 
                 if(data.CCContacts){
@@ -262,6 +254,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                         ccContacts1.push(id);
                     });
                     this.selectedCCRecipients = this.contacts.filter(contact => ccContacts1.includes(contact.value));
+
+
                 }
 
                 if(data.BCCContacts){
@@ -286,10 +280,10 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                     }));
 
                     this.emailsWithTemplate = [...this.emails];
-                    this.updateFilteredLists();
                     
                 }
-
+                
+                this.updateFilteredLists(); 
                 this.isLoading = false;
         
             })
@@ -300,6 +294,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             
         }
         else{
+            console.log('in the else');
             this.isLoading = false;
         }
     }
@@ -344,33 +339,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             .catch(error => {
                 console.error('Error fetching templates:', error);
             });
-    }
-
-
-    /**
-    * Method Name: updateFilteredLists
-    * @description: Method to update filterlist when click on edit
-    * Date: 24/06/2024
-    * Created By: Rachit Shah
-    */
-    updateFilteredLists() {
-        const selectedIds = new Set([
-            ...this.selectedPrimaryRecipients.map(recipient => recipient.value),
-            ...this.selectedCCRecipients.map(recipient => recipient.value),
-            ...this.selectedBCCRecipients.map(recipient => recipient.value)
-        ]);
-    
-        this.filteredPrimaryContacts = this.contacts.filter(contact =>
-            !selectedIds.has(contact.value)
-        );
-    
-        this.filteredCCContacts = this.contacts.filter(contact =>
-            !selectedIds.has(contact.value)
-        );
-    
-        this.filteredBCCContacts = this.contacts.filter(contact =>
-            !selectedIds.has(contact.value)
-        );
     }
 
     /**
@@ -751,9 +719,27 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         let filteredList;
 
         if (searchTerm) {
-            filteredList = this.contacts.filter(contact =>
-                contact.label.toLowerCase().includes(searchTerm)
-            );
+            if (type === 'Primary') {
+                filteredList = this.contacts.filter(contact =>
+                    contact.label.toLowerCase().includes(searchTerm) &&
+                    !this.selectedPrimaryRecipients.some(selectedContact => selectedContact.value === contact.value)
+                );
+            } 
+            
+            else if(type === 'CC'){
+                filteredList = this.contacts.filter(contact =>
+                    contact.label.toLowerCase().includes(searchTerm) &&
+                    !this.selectedCCRecipients.some(selectedContact => selectedContact.value === contact.value)
+                );
+            }
+
+            else if(type === 'BCC'){
+                filteredList = this.contacts.filter(contact =>
+                    contact.label.toLowerCase().includes(searchTerm) &&
+                    !this.selectedBCCRecipients.some(selectedContact => selectedContact.value === contact.value)
+                );
+            }
+
         } else {
             filteredList = [...this.contacts];
         }
@@ -766,6 +752,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             this.filteredBCCContacts = filteredList;
         }
     }
+
 
     /**
     * Method Name: selectContact
@@ -819,23 +806,27 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     */
 
     updateFilteredLists() {
-        const selectedIds = new Set([
-            ...this.selectedPrimaryRecipients.map(recipient => recipient.value),
-            ...this.selectedCCRecipients.map(recipient => recipient.value),
-            ...this.selectedBCCRecipients.map(recipient => recipient.value)
-        ]);
-
+        console.log();
+        const selectedPrimaryIds = new Set(this.selectedPrimaryRecipients.map(recipient => recipient.value));
+        const selectedCCIds = new Set(this.selectedCCRecipients.map(recipient => recipient.value));
+        const selectedBCCIds = new Set(this.selectedBCCRecipients.map(recipient => recipient.value));
+        console.log('selectedBCCIds ==> ' , selectedBCCIds);
+    
         this.filteredPrimaryContacts = this.contacts.filter(contact =>
-            !selectedIds.has(contact.value)
+            !selectedPrimaryIds.has(contact.value)        
         );
-        
+    
         this.filteredCCContacts = this.contacts.filter(contact =>
-            !selectedIds.has(contact.value)
+            !selectedCCIds.has(contact.value) 
         );
-
+    
         this.filteredBCCContacts = this.contacts.filter(contact =>
-            !selectedIds.has(contact.value)
+            !selectedBCCIds.has(contact.value)
         );
+    
+        console.log('filteredPrimaryContacts ==> ', JSON.stringify(this.filteredPrimaryContacts));
+        console.log('filteredCCContacts ==> ', JSON.stringify(this.filteredCCContacts));
+        console.log('filteredBCCContacts ==> ', JSON.stringify(this.filteredBCCContacts));
     }
 
     /**

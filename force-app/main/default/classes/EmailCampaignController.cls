@@ -395,8 +395,6 @@ public with sharing class EmailCampaignController {
             campaign.Is_Marketing_Campaign_Template__c = saveForFuture;
             campaign.BCC_Contacts__c = bccRecipients;
             campaign.CC_Contacts__c = ccRecipients;
-            // campaign.Total_Emails__c += emailToSend;
-            // campaign.Remaining_Emails__c = emailToSend;
             if(templateId != ''){
                 campaign.Marketing_Campaign_Template__c	= templateId;
             }
@@ -411,29 +409,36 @@ public with sharing class EmailCampaignController {
                 campaign.Campaign_Start_Date__c = minDate;          
 
             }    
-            
-            // if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
-            //     update campaign;
-            // }
 
             System.debug('campaign ==> ' + campaign);
 
-            List<Marketing_Campaign_Member__c> marketingCampaignMembers = [SELECT Id,Contact__c,Contact_Type__c,Marketing_Campaign__c FROM Marketing_Campaign_Member__c WHERE Marketing_Campaign__c = :campaignId WITH SECURITY_ENFORCED];
+            List<Marketing_Campaign_Member__c> existingMembers = [
+                SELECT Id, Contact__c, Contact_Type__c, Marketing_Campaign__c
+                FROM Marketing_Campaign_Member__c
+                WHERE Marketing_Campaign__c = :campaignId AND Contact__c IN :selectedPrimaryRecipients
+                WITH SECURITY_ENFORCED
+            ];
 
+            Set<Id> existingContactIds = new Set<Id>();
+            for (Marketing_Campaign_Member__c member : existingMembers) {
+                existingContactIds.add(member.Contact__c);
+            }
+
+            List<Marketing_Campaign_Member__c> newMembers = new List<Marketing_Campaign_Member__c>();
             for (String contactId : selectedPrimaryRecipients) {
-                Marketing_Campaign_Member__c member = new Marketing_Campaign_Member__c();
-                member.Contact__c = contactId;
-                member.Contact_Type__c = 'Primary';
-                member.Marketing_Campaign__c = campaign.Id;
-                marketingCampaignMembers.add(member);
+                if (!existingContactIds.contains(contactId)) {
+                    Marketing_Campaign_Member__c newMember = new Marketing_Campaign_Member__c();
+                    newMember.Contact__c = contactId;
+                    newMember.Contact_Type__c = 'Primary';
+                    newMember.Marketing_Campaign__c = campaign.Id;
+                    newMembers.add(newMember);
+                }
             }
 
-            // Insert the Marketing_Campaign_Member__c records
-            if (!marketingCampaignMembers.isEmpty()) {
-                upsert marketingCampaignMembers;
+            if (!newMembers.isEmpty()) {
+                insert newMembers;
             }
 
-            // List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
             List<Marketing_Email__c> existingEmails = [
                 SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c, Days_After_Start_Date__c, TimeToSend__c, Send_Date_Time__c
                 FROM Marketing_Email__c
