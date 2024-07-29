@@ -4,6 +4,10 @@ import designcss from '@salesforce/resourceUrl/listingManagerCss';
 import getContactData from '@salesforce/apex/MarketingListCmpController.getContactData';
 import getForm from '@salesforce/apex/MarketingListCmpController.getForm';
 import { NavigationMixin } from 'lightning/navigation';
+import sendEmail from '@salesforce/apex/MarketingListCmpController.sendEmail';
+import getQuickTemplates from '@salesforce/apex/EmailCampaignController.getQuickTemplates';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import summerNote_Editor from '@salesforce/resourceUrl/summerNote_Editor';
 
 export default class MarketingListCmp extends NavigationMixin(LightningElement) {
     @api objectName = 'Contact';
@@ -30,6 +34,25 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     @track isModalOpen = false;
     @track selectedContactList = [];
     @track isContactSelected = true;
+
+    // rachit changes
+    @track isMassEmailModalOpen = false;
+    @track sendMethod = '';
+    @track selectedTemplate = '';
+    @track templateBody = '';
+    @track isTemplateBody = false;
+    @track isFirstScreen = true;
+    @track footerButtonLabel = 'Next';
+
+    @track sendMethodOptions = [
+
+        { label: 'Single Mail Service', value: 'Single Mail Service' },
+
+        { label: 'Gmail', value: 'Gmail' }
+
+    ];
+
+    @track getQuickTemplates = [];
 
      /**
     * Method Name : checkAll
@@ -131,6 +154,28 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
         loadStyle(this, designcss);
         this.loadFormData();
         this.getContactDataMethod();
+        this.loadQuickTemplates();
+    }
+
+     /**
+    * Method Name : renderedCallback
+    * @description : to display content of templte body.
+    * Date: 29/07/2024
+    * Created By:Rachit shah
+    */
+    renderedCallback() {
+
+        if (!this.isFirstScreen) {
+            Promise.all([
+                loadStyle(this, summerNote_Editor + '/summernote-lite-pdf.css'),
+            ]).then(() => {
+                const richText = this.template.querySelector('.richText');
+                richText && (richText.innerHTML = this.setTempValue(this.templateBody));
+            })
+            .catch(error => {
+                console.log('Error ==> ', error);
+            });
+        }
     }
     
       /**
@@ -151,6 +196,29 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             })
             .catch(error => {
                 console.warn('error ->'+error);
+            });
+    }
+
+     /**
+    * Method Name : handleSave
+    * @description : method to do save changes
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+     handleSave() {
+        const emailData = {
+            sendMethod: this.sendMethod,
+            templateId: this.selectedTemplate,
+            contacts: this.selectedContactList
+        };
+ 
+        sendEmail({ emailDataJson: JSON.stringify(emailData) })
+            .then(() => {
+                this.showToast('Success', 'Emails sent successfully!', 'success');
+                this.closeModal();
+            })
+            .catch(error => {
+                this.showToast('Error', 'Failed to send emails. ' + error.body.message, 'error');
             });
     }
 
@@ -242,12 +310,16 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
     * Method Name : handleContactSelect
     * @description : handle data from the tile cmp
     *  Date: 22/06/2024
-    * Created By:Vyom Soni
+    * Created By:Vyom 
+    * 
     */
     handleContactSelect(event){
         this.processedContactData = event.detail;
         this.updateProcessedContactData();
         this.updateSelectedProperties();
+        // rachit changes
+        this.selectedContactList = this.processedContactData.filter(item => item.isChecked == true);
+        this.isContactSelected = this.selectedContactList.length <= 0;
     }
 
      /**
@@ -316,7 +388,6 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
             this.selectedContactList = this.processedContactData.filter(item => item.isChecked == true);
 
             this.isContactSelected = this.selectedContactList.length <= 0;
-            console.log('isContactSelected ==> ' , this.isContactSelected);
             
             this.unchangedProcessContact.forEach(item1=>{
                 this.shownProcessedContactData.forEach(item2=>{
@@ -580,5 +651,151 @@ export default class MarketingListCmp extends NavigationMixin(LightningElement) 
                 tableDiv.scrollTop = 0; 
         }
     }
+
+    /**
+    * Method Name : cancelRecordForm
+    * @description : method to cancel the new contact modal
+    * Date: 29/07/2024
+    * Created By:Vyom Soni
+    */
+    cancelRecordForm(event){
+        this.handleClose();
+    }
+ 
+    /**
+    * Method Name : openModal
+    * @description : method to open modal
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    openModal() {
+        this.isMassEmailModalOpen = true;
+        this.isFirstScreen = true;
+        this.footerButtonLabel = 'Next';
+    }
+ 
+    /**
+    * Method Name : closeModal
+    * @description : method to close modal
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    closeModal() {
+        this.isMassEmailModalOpen = false;
+        this.templateBody = '';
+        this.sendMethod = '';
+        this.selectedTemplate = '';
+    }
+ 
+    /**
+    * Method Name : handleSendMethodChange
+    * @description : method to handle sender mode
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    handleSendMethodChange(event) {
+        this.sendMethod = event.detail.value;
+    }
+ 
+    /**
+    * Method Name : loadQuickTemplates
+    * @description : method to load contacts
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    loadQuickTemplates() {
+        getQuickTemplates()
+            .then(result => {
+                this.getQuickTemplates = [
+                    { label: 'None', value: '',body : '' },
+                    ...result.map(option => {
+                        return { label: option.MVEX__Label__c, value: option.Id, body: option.MVEX__Template_Body__c };
+                    })
+                ];
+            })
+            .catch(error => {
+                console.error('Error loading Gmail template options', error);
+            });
+    }
+ 
+    /**
+    * Method Name : handleGmailTemplateChange
+    * @description : method to handle template change
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    handleGmailTemplateChange(event) {
+        this.selectedTemplate = event.detail.value;
+        const selectedOption = this.getQuickTemplates.find(option => option.value === this.selectedTemplate);
+        if(selectedOption.label == 'None'){
+            this.isTemplateBody = false;
+        }
+        else{
+            this.isTemplateBody = true;
+            this.templateBody = selectedOption ? selectedOption.body : '';
+ 
+        }
+    }
+ 
+    /**
+    * Method Name : handleFooterButtonClick
+    * @description : method to check validation and call save method
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    handleFooterButtonClick() {
+       if (this.isFirstScreen) {
+            if (!this.sendMethod || !this.selectedTemplate) {
+              this.showToast('Error', 'Please Ensure all required fields are filled', 'error');
+                return;
+            }
+            this.isFirstScreen = false;
+            this.footerButtonLabel = 'Save';
+        } else {
+            this.handleSave();
+        }
+    }
+ 
+    /**
+    * Method Name : handleBack
+    * @description : method to go in previous sreen
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    handleBack() {
+        this.isFirstScreen = true;
+    }
+ 
+    /**
+    * Method Name : showToast
+    * @description : show the toast message
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    showToast(title, message, variant) {
+        const toastEvent = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant
+        });
+        this.dispatchEvent(toastEvent);
+    }
+ 
+    /**
+    * Method Name : setTempValue
+    * @description : method to set value for the body
+    * Date: 29/07/2024
+    * Created By:Rachit Shah
+    */
+    setTempValue(value){
+        return `<div class=" note-editor2 note-frame2">
+                    <div class="note-editing-area2">
+                        <div aria-multiline="true" role="textbox" class="note-editable2">
+                            ${value}
+                        </div>
+                    </div>
+                </div>`
+    }
+ 
     
 }

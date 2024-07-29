@@ -75,7 +75,7 @@ public with sharing class MarketingListCmpController {
     * @param recordId Id value.
     * @param objectName String Object Name value.
     * @param fieldSetName String field-set name value.
-    * @return FieldSetForm wrapper class.
+    * @return String of fields Name.
     */
     @AuraEnabled
     public static FieldSetForm getForm(Id recordId, String objectName, String fieldSetName) {
@@ -149,7 +149,7 @@ public with sharing class MarketingListCmpController {
     }
 
      /**
-    * Class Name : FormField
+    * Class Name : FieldSetForm
     * @description : Inner class representing a field from the field set.
     */
     public class FormField {
@@ -163,5 +163,106 @@ public with sharing class MarketingListCmpController {
             this.fieldLabel = fieldSetMember.getLabel();
         }
     }
+
+      /**
+    * Class Name : sendEmail
+    * @description : send to mass email
+    */
+    @AuraEnabled
+    public static void sendEmail(String emailDataJson) {
+        Map<String, Object> emailData = (Map<String, Object>) JSON.deserializeUntyped(emailDataJson);
+        
+        String sendMethod = (String) emailData.get('sendMethod');
+        String templateId = (String) emailData.get('templateId');
+        
+        // Explicitly cast the contacts to the correct type
+        List<Object> contactListRaw = (List<Object>) emailData.get('contacts');
+        List<Map<String, Object>> contacts = new List<Map<String, Object>>();
+        
+        for (Object contactRaw : contactListRaw) {
+            contacts.add((Map<String, Object>) contactRaw);
+        }
+
+        System.debug('contacts ==> ' + contacts);
+        
+        List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+        Template__c template = [SELECT Id, Name, Label__c , Object_Name__c , Status__c, Template_Body__c, Template_Type__c, Description__c, CreatedDate, Template_pattern__c, Subject__c FROM Template__c WHERE Id = :templateId WITH SECURITY_ENFORCED];
+        
+        for (Map<String, Object> contact : contacts) {
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+            String contactEmail = (String) contact.get('Email');
+            
+            if (contactEmail != null && contactEmail != '') {
+                email.setToAddresses(new List<String>{contactEmail});
+                email.setSubject(template.Subject__c);
+
+                String processedBody = template.Template_Body__c;
+                processedBody = replaceMergeFields(template.Template_Body__c, contact);
+
+                String cssStyles = '<style>' +
+                '.table.table-bordered {' +
+                'border-collapse: collapse;' +
+                'width: 100%;' +
+                '}' +
+                '.table.table-bordered td, ' +
+                '.table.table-bordered th {' +
+                'border: 1px solid black;' +
+                'padding: 8px;' +
+                'text-align: center;' +
+                '}' +
+                '</style>';
+            
+            
+                processedBody = '<html><head>' + cssStyles + '</head><body>' + processedBody + '</body></html>';
+                email.setHtmlBody(processedBody);
+   
+                System.debug('processedBody ==> ' + processedBody);
+                emails.add(email);
+            }
+        }
+
+        if (!emails.isEmpty()) {
+            Messaging.sendEmail(emails);
+        }
+    }
+
+    /**
+    * Class Name : replaceMergeFields
+    * @description : relace actual data with merge fields
+    */
+    private static String replaceMergeFields(String templateBody, Map<String, Object> contact) {
+        try {
+            Map<String, Schema.SObjectField> fieldMap = Schema.Contact.SObjectType.getDescribe().fields.getMap();
+            Map<String, String> mergeFields = new Map<String, String>();
+            
+            for (String fieldName : fieldMap.keySet()) {
+                String fieldToken = '{!Contact.' + fieldName + '}';
+                String fieldValue = contact.containsKey(fieldName) ? String.valueOf(contact.get(fieldName)) : '{' + fieldName + ' is empty}';
+                mergeFields.put(fieldToken, fieldValue != null ? fieldValue : '{' + fieldName + ' is empty}');
+            }
+    
+            // Replace merge fields in the template
+            for (String key : mergeFields.keySet()) {
+                templateBody = templateBody.replace(key, mergeFields.get(key));
+            }
+
+            System.debug('templateBody ==> ' + templateBody);
+    
+            return templateBody;
+        } catch (Exception e) {
+            System.debug('Error in replaceMergeFields ==> ' + e);
+            return templateBody;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
 }
