@@ -557,6 +557,12 @@ public with sharing class EmailCampaignController {
                 WHERE Marketing_Campaign__c = :campaignId AND Send_Date_Time__c > :System.now()
                 WITH SECURITY_ENFORCED
             ];     
+            List<Marketing_Email__c> totalEmails = [
+                SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c, Days_After_Start_Date__c, TimeToSend__c, Send_Date_Time__c
+                FROM Marketing_Email__c
+                WHERE Marketing_Campaign__c = :campaignId AND Send_Date_Time__c > :System.now()
+                WITH SECURITY_ENFORCED
+            ];     
 
             List<Marketing_Campaign_Member__c> existingTotalMembers = [
                 SELECT Id, Contact__c, Contact_Type__c, Marketing_Campaign__c
@@ -566,9 +572,11 @@ public with sharing class EmailCampaignController {
             ];
 
             Integer totalMailsCount = 0;
+            Integer totalMailsCountRemaining = 0;
             Integer previousTotalEmails = Integer.valueOf(campaign.Total_Emails__c );
             System.debug('previousTotalEmails-->'+previousTotalEmails);
-            totalMailsCount = existingTotalEmails.size() * existingTotalMembers.size();
+            totalMailsCountRemaining = existingTotalEmails.size() * existingTotalMembers.size();
+            totalMailsCount = totalEmails.size() * existingTotalMembers.size();
             // System.debug('existingTotalMembers-->' + existingTotalMembers.size());
             // System.debug('totalMailsCount-->'+totalMailsCount);
             // System.debug('existingMembers-->'+existingMembers.size());
@@ -587,7 +595,7 @@ public with sharing class EmailCampaignController {
             // System.debug('temp-->'+temp);
 
             campaign.Total_Emails__c = totalMailsCount;
-            campaign.Remaining_Emails__c = totalMailsCount;
+            campaign.Remaining_Emails__c = totalMailsCountRemaining;
 
             if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
                 update campaign;
