@@ -1,4 +1,4 @@
-import { LightningElement, track, api, wire } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
 import { loadStyle } from 'lightning/platformResourceLoader';
@@ -24,6 +24,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     };
     
     @track isLoading = false;
+    @track selectedTemplateIdValue = ''
 
     get senderModeOptions() {
         return [
@@ -36,41 +37,21 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         return !this.isFormValid();
     }
 
-    /**
-    * Method Name: getEmailCampaignTemplates
-    * @description: method to get template options
-    * Date: 24/06/2024
-    * Created By: Rachit Shah
-    */
-    @wire(getEmailCampaignTemplates)
-    wiredTemplates({ error, data }) {
-        if (data) {
-            this.templates = data;
-            this.templateOptions = [{ label: 'None', value: '' }, ...data.map(template => {
-                return { label: template.Label__c, value: template.Id };
-            })];
-        } else if (error) {
-            this.showToast('Error', 'Failed to fetch template options', 'error');
-            console.error(error);
-        }
-    }
-    
-
-    /**
+    /*
     * Method Name: connectedCallback
     * @description: method to load style using statuc resource
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
     connectedCallback() {
-        console.log('selectedContacts ==> ' + JSON.stringify(this.selectedContacts));
+        this.selectedTemplateIdValue = selectedTemplateId;
+        this.loadEmailCampaignTemplates();
         this.isLoading = true;
         Promise.all([
             loadStyle(this, externalCss)
         ])
-        .then(res => {
+        .then(() => {
             console.log('External Css Loaded');
-            console.log(this.isEdit);
             this.isLoading = false;
         })
         .catch(error => {
@@ -79,7 +60,27 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         });
     }
 
-    /**
+    /*
+    * Method Name: getEmailCampaignTemplates
+    * @description: method to get template options
+    * Date: 24/06/2024
+    * Created By: Rachit Shah
+    */
+    loadEmailCampaignTemplates() {
+        getEmailCampaignTemplates()
+            .then(data => {
+                this.templates = data;
+                this.templateOptions = [{ label: 'None', value: '' }, ...data.map(template => {
+                    return { label: template.Label__c, value: template.Id };
+                })];
+            })
+            .catch(error => {
+                this.showToast('Error', 'Failed to fetch template options', 'error');
+                console.error(error);
+            });
+    }
+
+    /*
     * Method Name: handleCloseModal
     * @description: method to close the modal
     * Date: 24/06/2024
@@ -91,7 +92,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         this.dispatchEvent(closeEvent);
     }
 
-    /**
+    /*
     * Method Name: resetFormData
     * @description: method to reset form
     * Date: 24/06/2024
@@ -106,11 +107,11 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
             fromName: '',
             saveForFuture: false
         };
-        this.selectedTemplateId = '';
+        this.selectedTemplateIdValue = '';
     }
 
 
-    /**
+    /*
     * Method Name: handleChange
     * @description: method to handle changes
     * Date: 24/06/2024
@@ -121,7 +122,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         if (name === 'saveForFuture') {
             this.formData = { ...this.formData, [name]: checked };
         } else if (name === 'selectedTemplate') {
-            this.selectedTemplateId = value;
+            this.selectedTemplateIdValue = value;
             if (value === '') {
                 this.resetFormData();
                 this.marketingEmails = [];
@@ -157,7 +158,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     }
     
 
-    /**
+    /*
     * Method Name: handleSave
     * @description: method to handle save
     * Date: 24/06/2024
@@ -174,7 +175,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
             const navigationState = {
                 ...this.formData,
                 marketingEmails: this.marketingEmails,
-                selectedTemplateId: this.selectedTemplateId,
+                selectedTemplateId: this.selectedTemplateIdValue,
             };
 
             const event = new CustomEvent('handledatachange', {
@@ -188,7 +189,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         }
     }
 
-    /**
+    /*
     * Method Name: handleNext
     * @description: method to next functionality
     * Date: 24/06/2024
@@ -206,7 +207,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
             const navigationState = {
                 ...this.formData,
                 marketingEmails: this.marketingEmails,
-                selectedTemplateId: this.selectedTemplateId,
+                selectedTemplateId: this.selectedTemplateIdValue,
                 selectedContacts: this.selectedContacts
 
             };
@@ -235,7 +236,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         }
     }
 
-    /**
+    /*
     * Method Name: isFormValid
     * @description: method check require fields
     * Date: 24/06/2024
@@ -247,7 +248,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     }
 
 
-    /**
+    /*
     * Method Name: isValidEmail
     * @description: method check email field
     * Date: 24/06/2024
@@ -258,7 +259,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         return emailRegex.test(email);
     }
 
-    /**
+    /*
     * Method Name: showToast
     * @description: method to show toast message
     * Date: 24/06/2024

@@ -1,17 +1,16 @@
-/**
-* Method Name: displayCampaigns
+/*
+*Method Name: displayCampaigns
 * @description: lwc to display component
 * Date: 23/06/2024
 * Created By: Rachit Shah
 */
-
-
-import { LightningElement, track} from 'lwc';
-import getCampaigns from '@salesforce/apex/EmailCampaignController.getCampaigns';
-import deleteCampaign from '@salesforce/apex/EmailCampaignController.deleteCampaign';
+import { LightningElement, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import FilterIcon from '@salesforce/resourceUrl/FilterIcon';
 import { NavigationMixin } from 'lightning/navigation';
+import deleteCampaign from '@salesforce/apex/EmailCampaignController.deleteCampaign';
+import getCampaigns from '@salesforce/apex/EmailCampaignController.getCampaigns';
+import filterIcon from '@salesforce/resourceUrl/FilterIcon';
+
 
 export default class DisplayCampaigns extends NavigationMixin(LightningElement) {
     @track campaigns = [];
@@ -31,7 +30,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     @track isPreviousDisabled = true;
     @track isNextDisabled = false;
     @track isFilterModalOpen = false;
-    @track filterIconUrl = FilterIcon;
+    @track filterIconUrl = filterIcon;
     @track statusFilter = '';
     @track statusFilterList = [];
     @track createdDateStart = '';
@@ -46,7 +45,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     ];
 
 
-    /**
+    /*
     * Method Name: connectedCallback
     * @description: Method to load all the data initially
     * Date: 23/06/2024
@@ -57,7 +56,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         this.loadCampaigns();
     }
 
-    /**
+    /*
     * Method Name: loadCampaigns
     * @description: Method to load data from apex and sort it based on date
     * Date: 23/06/2024
@@ -81,7 +80,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
             });
     }
 
-    /**
+    /*
     * Method Name: processTemplates
     * @description: Method to add custom column in the value
     * Date: 23/06/2024
@@ -114,7 +113,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         this.filteredCampaigns = this.campaigns;
     }
 
-    /**
+    /*
     * Method Name: getStatusClass
     * @description: Method to give dynamic class to the status
     * Date: 23/06/2024
@@ -135,7 +134,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     }
 
     
-    /**
+    /*
     * Method Name: formatDate
     * @description: Method to customize date string
     * Date: 23/06/2024
@@ -155,7 +154,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         return formattedDateStr;
     }
 
-    /**
+    /*
     * Method Name: updatePagination
     * @description: Method to update current and total page
     * Date: 23/06/2024
@@ -186,7 +185,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     }
 
 
-    /**
+    /*
     * Method Name: handleSearch
     * @description: Method to search record based on the name
     * Date: 23/06/2024
@@ -202,7 +201,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         this.updatePagination();
     }
     
-    /**
+    /*
     * Method Name: handleAdd
     * @description: Method to open popup to create camapaign
     * Date: 23/06/2024
@@ -213,7 +212,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         this.isModalOpen = true;
     }
 
-    /**
+    /*
     * Method Name: handleEdit
     * @description: Method to pass data and redirect to component
     * Date: 23/06/2024
@@ -248,7 +247,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
 
     }
 
-    /**
+    /*
     * Method Name: handleDelete
     * @description: Method to delete record and update page
     * Date: 23/06/2024
@@ -274,7 +273,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
             });
     }
 
-    /**
+    /*
     * Method Name: handleModalClose
     * @description: Method to close modal
     * Date: 23/06/2024
@@ -286,7 +285,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     }
 
 
-    /**
+    /*
     * Method Name: handleFilterClick
     * @description: Method to open filter modal
     * Date: 23/06/2024
@@ -298,7 +297,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     }
 
 
-    /**
+    /*
     * Method Name: clearFilterModal
     * @description: Method to clear filter modal
     * Date: 23/06/2024
@@ -316,7 +315,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         this.updatePagination();
     }
 
-    /**
+    /*
     * Method Name: closeFilterModal
     * @description: Method to close modal
     * Date: 23/06/2024
@@ -327,7 +326,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         this.isFilterModalOpen = false;
     }
 
-    /**
+    /*
     * Method Name: handleFilterChange
     * @description: Method to  handle changes in filter
     * Date: 23/06/2024
@@ -356,7 +355,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
 
     }
 
-    /**
+    /*
     * Method Name: handleRemove
     * @description: Method to remove filter status
     * Date: 23/06/2024
@@ -377,7 +376,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         console.log('statusFilterList ==> ' , JSON.stringify(this.statusFilterList));
     }
     
-    /**
+    /*
     * Method Name: applyFilter
     * @description: Method to apply filter
     * Date: 23/06/2024
@@ -418,7 +417,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         this.updatePagination();
     }
     
-    /**
+    /*
     * Method Name: previousPage
     * @description: Method to go previous page
     * Date: 23/06/2024
@@ -431,7 +430,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         }
     }
 
-    /**
+    /*
     * Method Name: previousPage
     * @description: Method to go next page
     * Date: 23/06/2024
@@ -444,7 +443,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         }
     }
 
-    /**
+    /*
     * Method Name: previousPage
     * @description: Method to show toast message
     * Date: 23/06/2024

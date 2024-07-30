@@ -8,7 +8,6 @@ import { loadStyle } from 'lightning/platformResourceLoader';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import externalCss from '@salesforce/resourceUrl/emailCampaignCss';
-import plusIcon from '@salesforce/resourceUrl/plusIcon';
 import previewBtn from '@salesforce/resourceUrl/previewBtn';
 import deleteBtn from '@salesforce/resourceUrl/deleteBtn';
 import { subscribe, unsubscribe, onError } from 'lightning/empApi';
@@ -51,7 +50,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     @track specificDate = '';
     @track isPreviewModal = false;
     
-    @track plusIconUrl = plusIcon; 
     @track previewBtnUrl = previewBtn;
     @track deleteBtnUrl = deleteBtn;
 
@@ -252,7 +250,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 if(data.CCContacts){
                     console.log('cc ==> ', data.CCContacts);
                     data.CCContacts.split('@@@').forEach(ccContact => {
-                        let [id, email] = ccContact.split(':');
+                        let [id] = ccContact.split(':');
                         ccContacts1.push(id);
                     });
                     this.selectedCCRecipients = this.contacts.filter(contact => ccContacts1.includes(contact.value));
@@ -263,7 +261,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 if(data.BCCContacts){
                     console.log('bcc ==> ', data.BCCContacts);
                     data.BCCContacts.split('@@@').forEach(bccContact => {
-                        let [id, email] = bccContact.split(':');
+                        let [id] = bccContact.split(':');
                         bccContacts1.push(id);
                     });
                     this.selectedBCCRecipients = this.contacts.filter(contact => bccContacts1.includes(contact.value));   
@@ -415,7 +413,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         // console.log('channel ==> ' + channel);
         subscribe(channel, -1, (response) => {
             // console.log('response ==> ' , response);
-            this.handleMessage(response);
+            this.handleMessage();
             this.subscription = response;
         })
     }
@@ -427,7 +425,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-    handleMessage(message) {
+    handleMessage() {
 
         const currentTime = new Date();
 
@@ -460,7 +458,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-    handleModalClose(event){
+    handleModalClose(){
         this.isModalOpen = false;
     }
 
@@ -898,14 +896,14 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-    handleEdit(event){
+    handleEdit(){
         // console.log('Edit button is clicked');
         this.isEdit = true;
         this.isModalOpen = true;
 
     }
 
-    handleDataFieldBlur(event){
+    handleDataFieldBlur(){
         this.isDateFieldDropdownVisible = false;
     }
 
@@ -1072,8 +1070,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             const newTimeToSend = event.target.value;
             const email = this.emails.find(email => email.id == emailId);
     
-            console.log('exactDate ==> ' , email.exactDate);
-            console.log('specific date ==> ' , this.specificDate);
             const selectedDate = new Date(email.exactDate);
             const currentTime = new Date();
     
@@ -1090,7 +1086,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             if (isPastTime) {
                 this.showToast('Error', 'Selected time cannot be before current time for today.', 'error');
     
-    
                 if (inputElement) {
                     inputElement.setCustomValidity("Select future time");
                 }
@@ -1102,16 +1097,13 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                     inputElement.setCustomValidity("");
                 }           
             }
-    
             this.emails = this.emails.map(email => {
                 if (email.id == emailId) {
                     email.timeToSend = newTimeToSend;
                 }
                 return email;
             });
-    
-            // console.log('emails ==> ', JSON.stringify(this.emails));
-    
+        
             this.emailsWithTemplate = this.emailsWithTemplate.map(email => {
                 if (email.id == emailId) {
                     email.timeToSend = newTimeToSend;
@@ -1119,12 +1111,10 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 return email;
             });
 
-            // console.log('emailsWithTemplate ==> ' , JSON.stringify(this.emailsWithTemplate));
         } catch (error) {
             console.log('error ==>', error);
         }
     }
-
 
     /**
     * Method Name: handlepreviewBtn
@@ -1323,8 +1313,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         if (this.camapignId) {
             // console.log(this.camapignId);
             updateCampaignAndEmails({ jsonCampaignEmailData })
-                .then(result => {
-                    // console.log('Campaign and emails updated successfully:', result);
+                .then(() => {
                     this.showToast('Success', 'Campaign and Emails are saved successfully', 'success');
                     this.navigateToDisplayCampaigns();
                 })
@@ -1334,8 +1323,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 });
         } else {
             createCampaignAndEmails({ jsonCampaignEmailData })
-                .then(result => {
-                    // console.log('Campaign and emails created successfully:', result);
+                .then(() => {
                     this.showToast('Success', 'Campaign and Emails are saved successfully', 'success');
                     this.navigateToDisplayCampaigns();
                 })
