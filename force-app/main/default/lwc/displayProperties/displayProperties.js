@@ -426,7 +426,6 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     */
     goToFirst() {
         this.currentPage = 1;
-        this.scrollToTop();
         this.updateMapMarkers();
     }
 
@@ -439,7 +438,6 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     goToPrevious() {
         if (this.currentPage > 1) {
             this.currentPage -= 1;
-            this.scrollToTop();
             this.updateMapMarkers();
         }
     }
@@ -453,7 +451,6 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     goToNext() {
         if (this.currentPage < this.totalPages) {
             this.currentPage += 1;
-            this.scrollToTop();
             this.updateMapMarkers();
         }
     }
@@ -466,21 +463,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     */
     goToLast() {
         this.currentPage = this.totalPages;
-        this.scrollToTop();
         this.updateMapMarkers();
-    }
-
-    /**
-    * Method Name: scrollToTop
-    * @description: this method is used to go on the top of the page
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    */
-    scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
     }
 
     /**
