@@ -30,7 +30,7 @@ public class EmailCampaignScheduler {
 
             Map<String, Marketing_Campaign__c> campaignMap = new Map<String, Marketing_Campaign__c>();
             if (!campaignIds.isEmpty()) {
-                List<Marketing_Campaign__c> campaigns = [SELECT Id, Name, Remaining_Emails__c, Status__c FROM Marketing_Campaign__c WHERE Id IN :campaignIds WITH SECURITY_ENFORCED];
+                List<Marketing_Campaign__c> campaigns = [SELECT Id, Name, Remaining_Emails__c, Status__c,Total_Sent_Mails__c FROM Marketing_Campaign__c WHERE Id IN :campaignIds WITH SECURITY_ENFORCED];
                 for (Marketing_Campaign__c campaign : campaigns) {
                     campaignMap.put(campaign.Id, campaign);
                 }

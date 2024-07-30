@@ -17,7 +17,7 @@ public with sharing class EmailCampaignController {
     @AuraEnabled(cacheable=true)
     public static List<Marketing_Campaign__c> getEmailCampaignTemplates() {
 
-        List<Marketing_Campaign__c> templates = [SELECT Id, Label__c, From_Name__c, From_Address__c, Sender_Mode__c,Is_Marketing_Campaign_Template__c,Marketing_Campaign_Template__c,Campaign_Start_Date__c	 FROM Marketing_Campaign__c WHERE Is_Marketing_Campaign_Template__c = true WITH SECURITY_ENFORCED ];
+        List<Marketing_Campaign__c> templates = [SELECT Id, Label__c, From_Name__c, From_Address__c, Sender_Mode__c,Is_Marketing_Campaign_Template__c,Marketing_Campaign_Template__c,Campaign_Start_Date__c,Total_Sent_Mails__c	 FROM Marketing_Campaign__c WHERE Is_Marketing_Campaign_Template__c = true WITH SECURITY_ENFORCED ];
 
         return templates;
     }
@@ -655,7 +655,7 @@ public with sharing class EmailCampaignController {
         Marketing_Campaign__c campaign = [
             SELECT Id, Label__c, Sender_Mode__c, From_Address__c, From_Name__c, 
                    Is_Marketing_Campaign_Template__c, BCC_Contacts__c, CC_Contacts__c, 
-                   Status__c, Start_Date__c, SelectedContactDateField__c,Marketing_Campaign_Template__c , Campaign_Start_Date__c
+                   Status__c, Start_Date__c, SelectedContactDateField__c,Marketing_Campaign_Template__c , Total_Sent_Mails__c,Campaign_Start_Date__c
             FROM Marketing_Campaign__c 
             WHERE Id = :campaignId WITH SECURITY_ENFORCED
         ];
@@ -696,7 +696,7 @@ public with sharing class EmailCampaignController {
     */
     @AuraEnabled
     public static List<Marketing_Campaign__c> getCampaigns(){
-        return [SELECT Id, Name, Label__c, Start_Date__c , CreatedDate , Status__c,Marketing_Campaign_Template__c,Is_Marketing_Campaign_Template__c,Remaining_Emails__c,Total_Emails__c,Campaign_Start_Date__c	 FROM Marketing_Campaign__c WITH SECURITY_ENFORCED];
+        return [SELECT Id, Name, Label__c, Start_Date__c , CreatedDate , Status__c,Marketing_Campaign_Template__c,Is_Marketing_Campaign_Template__c,Remaining_Emails__c,Total_Emails__c,Campaign_Start_Date__c,Total_Sent_Mails__c	 FROM Marketing_Campaign__c WITH SECURITY_ENFORCED];
     }
 
     /**
@@ -734,7 +734,7 @@ public with sharing class EmailCampaignController {
 
         Map<String, Marketing_Campaign__c> campaignMap = new Map<String, Marketing_Campaign__c>();
         if (!campaignIds.isEmpty()) {
-            List<Marketing_Campaign__c> campaigns = [SELECT Id, Name, Status__c,Remaining_Emails__c FROM Marketing_Campaign__c WHERE Id IN :campaignIds WITH SECURITY_ENFORCED];
+            List<Marketing_Campaign__c> campaigns = [SELECT Id, Name, Status__c,Remaining_Emails__c,Total_Sent_Mails__c FROM Marketing_Campaign__c WHERE Id IN :campaignIds WITH SECURITY_ENFORCED];
             for (Marketing_Campaign__c campaign : campaigns) {
                 campaignMap.put(campaign.Id, campaign);
                 remainingEmailsMap.put(campaign.Id, Integer.valueOf(campaign.Remaining_Emails__c));
