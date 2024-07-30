@@ -366,7 +366,7 @@ public with sharing class EmailCampaignController {
                 campaign = [
                     SELECT Id, Label__c, Sender_Mode__c, From_Address__c, From_Name__c, 
                            Is_Marketing_Campaign_Template__c, BCC_Contacts__c, CC_Contacts__c, 
-                           Status__c, Start_Date__c, SelectedContactDateField__c ,Marketing_Campaign_Template__c,Campaign_Start_Date__c,Remaining_Emails__c,Total_Emails__c
+                           Status__c, Start_Date__c, SelectedContactDateField__c ,Marketing_Campaign_Template__c,Campaign_Start_Date__c,Remaining_Emails__c,Total_Emails__c, Total_Sent_Mails__c
                     FROM Marketing_Campaign__c WITH SECURITY_ENFORCED
                 ];
             }
@@ -374,7 +374,7 @@ public with sharing class EmailCampaignController {
                 campaign = [
                     SELECT Id, Label__c, Sender_Mode__c, From_Address__c, From_Name__c, 
                         Is_Marketing_Campaign_Template__c, BCC_Contacts__c, CC_Contacts__c, 
-                        Status__c, Start_Date__c, SelectedContactDateField__c ,Marketing_Campaign_Template__c,Campaign_Start_Date__c,Total_Emails__c,Remaining_Emails__c
+                        Status__c, Start_Date__c, SelectedContactDateField__c ,Marketing_Campaign_Template__c,Campaign_Start_Date__c,Total_Emails__c,Remaining_Emails__c, Total_Sent_Mails__c
                     FROM Marketing_Campaign__c 
                     WHERE Id = :campaignId WITH SECURITY_ENFORCED
                 ];
@@ -767,6 +767,7 @@ public with sharing class EmailCampaignController {
             }
         }
 
+        Integer emailCount = 0;
         for (EmailRequests request : emailRequests) {
 
             Marketing_Campaign__c campaignRecord = campaignMap.get(request.campaignId);
@@ -839,6 +840,7 @@ public with sharing class EmailCampaignController {
             if (campaignToUpdate != null) {
                 Integer remainingEmails = remainingEmailsMap.get(campaignId);
                 campaignToUpdate.Remaining_Emails__c = remainingEmails;
+                // campaignToUpdate.Total_Sent_Mails__c += emails.size();
     
                 if (remainingEmails == 0) {
                     campaignToUpdate.Status__c = 'Completed';

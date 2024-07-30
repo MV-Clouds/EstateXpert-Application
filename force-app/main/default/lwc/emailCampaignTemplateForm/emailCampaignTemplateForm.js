@@ -1072,29 +1072,23 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             const newTimeToSend = event.target.value;
             const email = this.emails.find(email => email.id == emailId);
     
-            const selectedDate = new Date(this.specificDate);
+            console.log('exactDate ==> ' , email.exactDate);
+            console.log('specific date ==> ' , this.specificDate);
+            const selectedDate = new Date(email.exactDate);
             const currentTime = new Date();
     
             const isToday = selectedDate.toDateString() === currentTime.toDateString();
     
-            // console.log('newTimeToSend ==>  ', newTimeToSend);
-            // console.log('currentTime ==>  ' , currentTime);
-    
-            // Parse the newTimeToSend into a Date object with today's date
             const newTimeParts = newTimeToSend.split(':');
             const newTimeDate = new Date();
             newTimeDate.setHours(newTimeParts[0], newTimeParts[1], newTimeParts[2] || 0, 0);
     
             const isPastTime = isToday && newTimeDate < currentTime;
     
-            // console.log(newTimeDate < currentTime);
-            // console.log(isPastTime);
-            
             const inputElement = this.template.querySelector(`.timeCmp[data-id="${emailId}"]`);
 
             if (isPastTime) {
                 this.showToast('Error', 'Selected time cannot be before current time for today.', 'error');
-                // console.log('emailId 1-->', emailId);
     
     
                 if (inputElement) {

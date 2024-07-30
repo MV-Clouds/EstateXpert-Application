@@ -92,6 +92,7 @@ public class EmailCampaignScheduler {
                     System.debug('Campaign Name: ' + campaignRecord.Name);
                     if (campaignRecord.Remaining_Emails__c != null && campaignRecord.Remaining_Emails__c > 0) {
                         campaignRecord.Remaining_Emails__c -= 1;
+                        // campaignRecord.Total_Sent_Mails__c += 1;
 
                         if (campaignRecord.Remaining_Emails__c == 0) {
                             campaignRecord.Status__c = 'Completed';
