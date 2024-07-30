@@ -69,9 +69,6 @@ progress {
     font-size: 26px;
     height: 100px;
 }
-.main_content h2{
-    font-size: 0.7rem;
-}
 
 .label {
     margin-bottom: 5px;
@@ -406,7 +403,7 @@ hr {
     }
     .card-view .btn-div .icon-btn{
         /* padding: 0.3rem; */
-        border: black solid 1px;
+        border: solid 0.1rem rgb(1, 118, 211);
         border-radius: 0.2rem;
         margin: 0.2rem;
         display: flex;
@@ -461,6 +458,9 @@ hr {
         margin-bottom: 0.5rem;
         margin-top: 0.5rem;
         
+    }
+    .main_content h2{
+        font-size: 0.7rem;
     }
 
 
