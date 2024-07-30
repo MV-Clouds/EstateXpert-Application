@@ -551,7 +551,7 @@ public with sharing class EmailCampaignController {
 
 
 
-            List<Marketing_Email__c> existingTotalEmails = [
+            List<Marketing_Email__c> remainingTotalEmails = [
                 SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c, Days_After_Start_Date__c, TimeToSend__c, Send_Date_Time__c
                 FROM Marketing_Email__c
                 WHERE Marketing_Campaign__c = :campaignId AND Send_Date_Time__c > :System.now()
@@ -560,7 +560,7 @@ public with sharing class EmailCampaignController {
             List<Marketing_Email__c> totalEmails = [
                 SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c, Days_After_Start_Date__c, TimeToSend__c, Send_Date_Time__c
                 FROM Marketing_Email__c
-                WHERE Marketing_Campaign__c = :campaignId AND Send_Date_Time__c > :System.now()
+                WHERE Marketing_Campaign__c = :campaignId
                 WITH SECURITY_ENFORCED
             ];     
 
@@ -575,8 +575,9 @@ public with sharing class EmailCampaignController {
             Integer totalMailsCountRemaining = 0;
             Integer previousTotalEmails = Integer.valueOf(campaign.Total_Emails__c );
             System.debug('previousTotalEmails-->'+previousTotalEmails);
-            totalMailsCountRemaining = existingTotalEmails.size() * existingTotalMembers.size();
-            totalMailsCount = totalEmails.size() * existingTotalMembers.size();
+            totalMailsCount = ((totalEmails.size() - remainingTotalEmails.size()) * (existingTotalMembers.size() - newMembers.size() + membersToDelete.size())) + (remainingTotalEmails.size() * existingTotalMembers.size())
+            totalMailsCountRemaining = remainingTotalEmails.size() * existingTotalMembers.size();
+            // totalMailsCount = totalEmails.size() * existingTotalMembers.size();
             // System.debug('existingTotalMembers-->' + existingTotalMembers.size());
             // System.debug('totalMailsCount-->'+totalMailsCount);
             // System.debug('existingMembers-->'+existingMembers.size());
