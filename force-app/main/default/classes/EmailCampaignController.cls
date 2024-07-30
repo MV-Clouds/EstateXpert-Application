@@ -312,6 +312,7 @@ public with sharing class EmailCampaignController {
                 }
             }
             System.debug('selectedPrimaryRecipients ==> ' + selectedPrimaryRecipients);
+            // Integer primaryContactCount = selectedPrimaryRecipients.size();
     
             // Extract and process CC recipients
             List<String> selectedCCRecipients = new List<String>();
@@ -340,9 +341,6 @@ public with sharing class EmailCampaignController {
             }
             String bccRecipients = String.join(selectedBCCRecipients,'@@@');
             System.debug('selectedBCCRecipients ==> ' + bccRecipients); 
-
-            Integer primaryContactCount = selectedPrimaryRecipients.size();
-            Integer marketingEmailCount = 0;
     
             List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
 
@@ -382,11 +380,7 @@ public with sharing class EmailCampaignController {
                 ];
 
             }
-
-            Integer existingRemainingEmails = Integer.valueOf(campaign.Remaining_Emails__c);
-
-            Integer sentEmailCount = Integer.valueOf(campaign.Total_Emails__c - campaign.Remaining_Emails__c);
-
+    
             campaign.Label__c = campaignName;
             campaign.Sender_Mode__c = senderMode;
             campaign.From_Address__c = fromAddress;
@@ -451,6 +445,8 @@ public with sharing class EmailCampaignController {
             if (!newMembers.isEmpty()) {
                 insert newMembers;
             }
+
+            // Integer totalMembersCount = Integer.valueOf((existingMembers.size() + newMembers.size()) - membersToDelete.size());
 
             List<Marketing_Email__c> existingEmails = [
                 SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c, Days_After_Start_Date__c, TimeToSend__c, Send_Date_Time__c
@@ -539,11 +535,14 @@ public with sharing class EmailCampaignController {
 
             Set<String> emailIdsToDelete = new Set<String>();
             for (Object emailId : deletedEmails) {
-                emailIdsToDelete.add(String.valueOf(emailId));
+                if(String.valueOf(emailId).length() >= 15){
+                    emailIdsToDelete.add(String.valueOf(emailId));
+                }
             }
 
+            List<Marketing_Email__c> emailsToDelete = new List<Marketing_Email__c>();
             if(!deletedEmails.isEmpty()){
-                List<Marketing_Email__c> emailsToDelete = [SELECT Id From Marketing_Email__c WHERE Id IN :emailIdsToDelete WITH SECURITY_ENFORCED];
+                emailsToDelete = [SELECT Id From Marketing_Email__c WHERE Id IN :emailIdsToDelete WITH SECURITY_ENFORCED];
 
                 if(emailsToDelete.size() > 0){
                     delete emailsToDelete;
@@ -551,12 +550,44 @@ public with sharing class EmailCampaignController {
             }
 
 
-            Integer emailsPerContact = emailRecordsToInsert.size() + emailRecordsToUpdate.size();
-            Integer totalEmailCount = primaryContactCount * emailsPerContact;
-            
-            // if()
-            campaign.Total_Emails__c = totalEmailCount;
-            campaign.Remaining_Emails__c = totalEmailCount - sentEmailCount;
+
+            List<Marketing_Email__c> existingTotalEmails = [
+                SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c, Days_After_Start_Date__c, TimeToSend__c, Send_Date_Time__c
+                FROM Marketing_Email__c
+                WHERE Marketing_Campaign__c = :campaignId AND Send_Date_Time__c > :System.now()
+                WITH SECURITY_ENFORCED
+            ];     
+
+            List<Marketing_Campaign_Member__c> existingTotalMembers = [
+                SELECT Id, Contact__c, Contact_Type__c, Marketing_Campaign__c
+                FROM Marketing_Campaign_Member__c
+                WHERE Marketing_Campaign__c = :campaignId
+                WITH SECURITY_ENFORCED
+            ];
+
+            Integer totalMailsCount = 0;
+            Integer previousTotalEmails = Integer.valueOf(campaign.Total_Emails__c );
+            System.debug('previousTotalEmails-->'+previousTotalEmails);
+            totalMailsCount = existingTotalEmails.size() * existingTotalMembers.size();
+            // System.debug('existingTotalMembers-->' + existingTotalMembers.size());
+            // System.debug('totalMailsCount-->'+totalMailsCount);
+            // System.debug('existingMembers-->'+existingMembers.size());
+            // System.debug('existingEmails-->'+existingEmails.size());
+            // System.debug('existingTotalEmails-->'+existingTotalEmails.size());
+            // System.debug('currentTotalEmails-->' +currentTotalEmails.size());
+            // Integer temp = 0;
+
+            // if(existingMembers.size() != existingTotalMembers.size() || existingEmails.size() != currentTotalEmails.size()){
+            //     temp = selectedPrimaryRecipients.size() * emails.size();
+            // }
+
+            // else{
+            //     temp = previousTotalEmails;
+            // }
+            // System.debug('temp-->'+temp);
+
+            campaign.Total_Emails__c = totalMailsCount;
+            campaign.Remaining_Emails__c = totalMailsCount;
 
             if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
                 update campaign;
