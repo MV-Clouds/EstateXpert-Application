@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="input-field input-field-bold">
-                    <lightning-input name="campaignName" label="Email Campaign Name" required value={formData.campaignName}
+                    <lightning-input name="campaignName" label="Email Campaign Name" required value={formDataValue.campaignName}
                         onchange={handleChange} placeholder="Campaign name" max-length="20"></lightning-input>
                 </div>
                 <div class="input-field">
@@ -32,7 +32,7 @@
                         <legend class="slds-form-element__legend slds-form-element__label">Sender Mode</legend>
                         <div class="slds-form-element__control">
                             <lightning-radio-group name="senderMode" type="radio" label=""
-                                options={senderModeOptions} value={formData.senderMode}
+                                options={senderModeOptions} value={formDataValue.senderMode}
                                 onchange={handleChange}></lightning-radio-group>
                         </div>
                     </fieldset>
@@ -40,19 +40,19 @@
 
                 <div class="detail-container">
                     <div class="detail input-field">
-                        <lightning-input type="email" name="fromAddress" label="From Address" required value={formData.fromAddress}
+                        <lightning-input type="email" name="fromAddress" label="From Address" required value={formDataValue.fromAddress}
                             onchange={handleChange} placeholder="From address" max-length="40"></lightning-input>
                     </div>
 
                     <div class="detail input-field">
-                        <lightning-input name="fromName" label="From Name" required value={formData.fromName}
+                        <lightning-input name="fromName" label="From Name" required value={formDataValue.fromName}
                             onchange={handleChange} placeholder="From name" max-length="20"></lightning-input>
                     </div>
                 </div>
 
                 <div class="input-field">
                     <lightning-input type="checkbox" name="saveForFuture" label="If you want to save marketing campaign for future"
-                        checked={formData.saveForFuture} onchange={handleChange}></lightning-input>
+                        checked={formDataValue.saveForFuture} onchange={handleChange}></lightning-input>
                 </div>
             </div>
 

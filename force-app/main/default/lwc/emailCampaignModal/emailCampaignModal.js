@@ -25,6 +25,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     
     @track isLoading = false;
     @track selectedTemplateIdValue = ''
+    @track formDataValue = {};
 
     get senderModeOptions() {
         return [
@@ -44,7 +45,8 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     connectedCallback() {
-        this.selectedTemplateIdValue = selectedTemplateId;
+        this.selectedTemplateIdValue = this.selectedTemplateId;
+        this.formDataValue = {...this.formData};
         this.loadEmailCampaignTemplates();
         this.isLoading = true;
         Promise.all([
@@ -99,7 +101,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     resetFormData() {
-        this.formData = {
+        this.formDataValue = {
             selectedTemplate: '',
             campaignName: '',
             senderMode: 'myself',
@@ -120,7 +122,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     handleChange(event) {
         const { name, value, checked } = event.target;
         if (name === 'saveForFuture') {
-            this.formData = { ...this.formData, [name]: checked };
+            this.formDataValue = { ...this.formDataValue, [name]: checked };
         } else if (name === 'selectedTemplate') {
             this.selectedTemplateIdValue = value;
             if (value === '') {
@@ -134,8 +136,8 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
                     const selectedTemplate = this.templates.find(template => template.Id === value);
                     console.log('selectedTemplate ==> ' ,selectedTemplate);
                     if (selectedTemplate) {
-                        this.formData = {
-                            ...this.formData,
+                        this.formDataValue = {
+                            ...this.formDataValue,
                             selectedTemplate: selectedOption.label,
                             fromAddress: selectedTemplate.From_Address__c,
                             fromName: selectedTemplate.From_Name__c,
@@ -153,7 +155,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
                 }
             }
         } else {
-            this.formData = { ...this.formData, [name]: value };
+            this.formDataValue = { ...this.formDataValue, [name]: value };
         }
     }
     
@@ -166,14 +168,14 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     */
     handleSave() {
 
-        if (!this.isValidEmail(this.formData.fromAddress)) {
+        if (!this.isValidEmail(this.formDataValue.fromAddress)) {
             this.showToast('Error', 'Please enter a valid email address', 'error');
             return;
         }
         
         if (this.isFormValid()) {
             const navigationState = {
-                ...this.formData,
+                ...this.formDataValue,
                 marketingEmails: this.marketingEmails,
                 selectedTemplateId: this.selectedTemplateIdValue,
             };
@@ -197,7 +199,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     */
     handleNext() {
 
-        if (!this.isValidEmail(this.formData.fromAddress)) {
+        if (!this.isValidEmail(this.formDataValue.fromAddress)) {
             this.showToast('Error', 'Please enter a valid email address', 'error');
             return;
         }
@@ -205,7 +207,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
         if (this.isFormValid()) {
             console.log('marketingEmails ==> ', JSON.stringify(this.marketingEmails));
             const navigationState = {
-                ...this.formData,
+                ...this.formDataValue,
                 marketingEmails: this.marketingEmails,
                 selectedTemplateId: this.selectedTemplateIdValue,
                 selectedContacts: this.selectedContacts
@@ -244,7 +246,7 @@ export default class EmailCampaignModal extends NavigationMixin(LightningElement
     */
     isFormValid() {
         const requiredFields = ['campaignName', 'fromAddress', 'fromName'];
-        return requiredFields.every(field => this.formData[field]);
+        return requiredFields.every(field => this.formDataValue[field]);
     }
 
 
