@@ -575,25 +575,8 @@ public with sharing class EmailCampaignController {
             Integer totalMailsCountRemaining = 0;
             Integer previousTotalEmails = Integer.valueOf(campaign.Total_Emails__c );
             System.debug('previousTotalEmails-->'+previousTotalEmails);
-            totalMailsCount = ((totalEmails.size() - remainingTotalEmails.size()) * (existingTotalMembers.size() - newMembers.size() + membersToDelete.size())) + (remainingTotalEmails.size() * existingTotalMembers.size())
+            totalMailsCount = ((totalEmails.size() - remainingTotalEmails.size()) * (existingTotalMembers.size() - newMembers.size() + membersToDelete.size())) + (remainingTotalEmails.size() * existingTotalMembers.size());
             totalMailsCountRemaining = remainingTotalEmails.size() * existingTotalMembers.size();
-            // totalMailsCount = totalEmails.size() * existingTotalMembers.size();
-            // System.debug('existingTotalMembers-->' + existingTotalMembers.size());
-            // System.debug('totalMailsCount-->'+totalMailsCount);
-            // System.debug('existingMembers-->'+existingMembers.size());
-            // System.debug('existingEmails-->'+existingEmails.size());
-            // System.debug('existingTotalEmails-->'+existingTotalEmails.size());
-            // System.debug('currentTotalEmails-->' +currentTotalEmails.size());
-            // Integer temp = 0;
-
-            // if(existingMembers.size() != existingTotalMembers.size() || existingEmails.size() != currentTotalEmails.size()){
-            //     temp = selectedPrimaryRecipients.size() * emails.size();
-            // }
-
-            // else{
-            //     temp = previousTotalEmails;
-            // }
-            // System.debug('temp-->'+temp);
 
             campaign.Total_Emails__c = totalMailsCount;
             campaign.Remaining_Emails__c = totalMailsCountRemaining;
