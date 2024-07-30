@@ -72,11 +72,23 @@ export default class ImagesAndMedia extends LightningElement {
     @track fileURL = [];
     @track fetchedData = [];
 
+    // @track showMobileView = false;
+    @track screenWidth=0;
+    @track showExpose=true;
+    @track showWebsite=false;
+    @track showPortal=false;
+    @track showModal = false;
+
+
     get options() {
         return [
             { label: 'Image', value: 'Image' },
             { label: 'Video', value: 'Video' }
         ];
+    }
+
+    get showMobileView() {
+        return this.screenWidth > 500 ? false : true;
     }
 
     @wire(MessageContext)
@@ -90,6 +102,9 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     connectedCallback() {
         try {
+            this.updateScreenWidth();
+            // Add event listener for window resize
+            window.addEventListener('resize', this.handleResize.bind(this));
             loadStyle(this, uploadImageresponsiveCSS)
                 .then(() => {
                     console.log('CSS loaded successfully');
@@ -104,6 +119,69 @@ export default class ImagesAndMedia extends LightningElement {
             console.log('error in connectedcallback -> ', error);
         }
     }
+
+      /**
+    * Method Name : disconnectedCallback
+    * @description : remove the resize event.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
+    disconnectedCallback() {
+        // Remove event listener when component is destroyed
+        window.removeEventListener('resize', this.handleResize.bind(this));
+    }
+
+     /**
+    * Method Name : handleResize
+    * @description : call when component is resize.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
+    handleResize() {
+        // Update screen width when window is resized
+        this.updateScreenWidth();
+    }
+
+     /**
+    * Method Name : updateScreenWidth
+    * @description : update the width variable.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
+    updateScreenWidth() {
+        this.screenWidth = window.innerWidth;
+    }
+
+    updateShowModal(){
+        if(this.screenWidth < 500){
+            this.showModal = !this.showModal;
+        }
+    }
+
+      /**
+    * Method Name : handleMenuTabClick
+    * @description : handle the menu clicks in the header
+    *  Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
+    handleMenuTabClick(evt){
+        let target = evt.currentTarget.dataset.tabId;
+        this.showExpose = false;
+        this.showPortal = false;
+        this.showWebsite = false;
+        if(target == "1"){
+            this.showExpose = true;
+        }else if(target == "2"){
+            this.showWebsite = true;
+        }else if(target == "3"){
+            this.showPortal = true;
+        }
+            this.template.querySelectorAll(".feed-tab").forEach(tabel => {
+                    tabel.classList.remove("feed-tab-active");
+            });
+            this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("feed-tab-active");
+    }
+
 
     /**
     * Method Name: renderedCallback
@@ -362,6 +440,7 @@ export default class ImagesAndMedia extends LightningElement {
     modalpopup() {
         this.disabledUpload = true;
         this.isPopup = true;
+        this.updateShowModal();
     }
 
     /**
@@ -490,6 +569,7 @@ export default class ImagesAndMedia extends LightningElement {
                     this.showToast('Error', 'Invalid Url kindly check url and type', 'error');
                     this.isPopup = true;
                 }
+                this.updateShowModal();
             } else {
                 this.showToast('Error', 'Image URL and file name are required.', 'error');
             }
@@ -504,6 +584,7 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     toDeleteAllMedia() {
         this.isDeleteAll = true;
+        this.updateShowModal();
     }
 
     /**
@@ -519,6 +600,7 @@ export default class ImagesAndMedia extends LightningElement {
             deletelistingmedia({ propertyId: this.recordId }).then(() => {
                 this.fetchingdata();
             })
+            this.updateShowModal();
         } catch (error) {
             console.error('Error deleting media:', error);
         } finally {
@@ -534,9 +616,7 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     storeImgName(event) {
         this.saveEditbtnDisabled = false;
-        if (this.eventImgName != event.target.value) {
-            this.eventImgName = event.target.value;
-        }
+        this.eventImgName = event.target.value;
     }
 
     /**
@@ -550,6 +630,7 @@ export default class ImagesAndMedia extends LightningElement {
             this.isEdit = true;
             this.recIdToUpdate.push(event.currentTarget.dataset.key);
             this.currentImgName = event.currentTarget.dataset.name;
+            this.eventImgName = this.currentImgName;
             this.imgOldName.push(event.currentTarget.dataset.name);
             this.floorplanChecked = false;
             this.virtualTourChecked = false;
@@ -582,6 +663,7 @@ export default class ImagesAndMedia extends LightningElement {
                 }
                 this.picklistValues = this.removeDuplicates(this.picklistValues);
             }
+            this.updateShowModal();
         } catch (error) {
             console.log('error in editImageNameToStore -> ', error);
         }
@@ -611,6 +693,7 @@ export default class ImagesAndMedia extends LightningElement {
                 this.picklistValues = [];
                 this.isEdit = false;
                 this.saveEditbtnDisabled = true;
+                this.updateShowModal();
             } else {
                 this.showToast('Error', 'Name field should not be empty.', 'error');
             }
@@ -641,6 +724,7 @@ export default class ImagesAndMedia extends LightningElement {
         this.isEdit = false;
         this.imgOldName.pop();
         this.recIdToUpdate.pop();
+        this.updateShowModal();
     }
 
     /**
@@ -657,6 +741,7 @@ export default class ImagesAndMedia extends LightningElement {
         if (this.isData != true) {
             this.disabledDelete = true;
         }
+        this.updateShowModal();
     }
 
     /**
@@ -668,6 +753,7 @@ export default class ImagesAndMedia extends LightningElement {
     showImageInModal(imageUrl) {
         this.modalImageUrl = imageUrl;
         this.isModalOpen = true;
+        this.updateShowModal();
     }
 
     /**
@@ -709,6 +795,7 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     closeModal() {
         this.isModalOpen = false;
+        this.updateShowModal();
     }
 
     /**
@@ -771,6 +858,7 @@ export default class ImagesAndMedia extends LightningElement {
     deleteRow(event) {
         this.recIdToDelete = event.currentTarget.dataset.key;
         this.isdelete = true;
+        this.updateShowModal();
     }
 
     /**
@@ -883,6 +971,7 @@ export default class ImagesAndMedia extends LightningElement {
                     this.showToast('Error', this.largeImagefiles + ' has size more than 3 mb', 'error');
                 }
             }
+            this.template.querySelector('.slds-file-selector__input').value = null;
 
         } catch (error) {
             console.log('error file upload ', error);
