@@ -80,14 +80,14 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             .then(data => {
                 console.log('OUTPUT : ',data);
                 this.totalRecodslength = data.length;
-                // data.sort((a, b) => {
-                //     const labelA = a.Label__c.toLowerCase();
-                //     const labelB = b.Label__c.toLowerCase();
+                data.sort((a, b) => {
+                    const labelA = a.Label__c.toLowerCase();
+                    const labelB = b.Label__c.toLowerCase();
 
-                //     if (labelA < labelB) return -1;
-                //     if (labelA > labelB) return 1;
-                //     return 0;
-                // });
+                    if (labelA < labelB) return -1;
+                    if (labelA > labelB) return 1;
+                    return 0;
+                });
     
                 this.processTemplates(data);
                 this.isLoading = false; 
@@ -132,9 +132,9 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     formatDate(dateStr) {
-        var formatdate = new Date(dateStr);
+        let formatdate = new Date(dateStr);
         formatdate.setDate(formatdate.getDate());
-        var formattedDate = new Date(formatdate.getFullYear(), formatdate.getMonth(), formatdate.getDate(), 0, 0, 0);
+        let formattedDate = new Date(formatdate.getFullYear(), formatdate.getMonth(), formatdate.getDate(), 0, 0, 0);
         const day = formattedDate.getDate();
         const month = formattedDate.getMonth() + 1; // Month is zero-based, so we add 1
         const year = formattedDate.getFullYear();
@@ -166,7 +166,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
         }
-        var startIndex = (this.currentPage - 1) * PAGE_SIZE;
+        let startIndex = (this.currentPage - 1) * PAGE_SIZE;
         console.log('startIndex ==> ' , startIndex);
 
         if(startIndex < 0){
