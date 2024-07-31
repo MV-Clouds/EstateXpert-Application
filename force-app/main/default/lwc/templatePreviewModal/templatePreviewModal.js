@@ -10,7 +10,7 @@ export default class TemplatePreviewModal extends LightningElement {
     @track selectedRecord = '';
     @track recordOptions = [];
     @track recordName = 'Message Body';
-    @track updatedBody = this.templateBody;
+    @track updatedBody = '';
     @track recordOptions = [{ label: 'None', value: 'none' }];
     @track hasLibraryLoaded = false;
 
@@ -34,6 +34,7 @@ export default class TemplatePreviewModal extends LightningElement {
     * Created By: Rachit Shah
     */
     connectedCallback() {
+        this.updatedBody = this.templateBody;
         this.fetchRecords();
     }
 
@@ -131,11 +132,13 @@ export default class TemplatePreviewModal extends LightningElement {
 
         let regex = new RegExp(`{!${this.objectName}\\.(\\w+)}`, 'g');
 
-        tempUpdatedBody = tempUpdatedBody.replace(regex, (match, fieldName) => {
+        tempUpdatedBody = tempUpdatedBody.replace(regex, (fieldName) => {
             if (record.hasOwnProperty(fieldName)) {
                 return record[fieldName] != null ? record[fieldName] : `{${fieldName} data is empty}`;
             }
+
             else{
+
                 return `{${fieldName} data is empty}`;
             }
         });
