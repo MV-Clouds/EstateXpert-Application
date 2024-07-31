@@ -154,63 +154,70 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
                 .then((res) => {
                     this.showToast('Success', 'Template saved successfully', 'success');
                     this.currentRecordIdValue = res;
-
-                    if(this.objectSelectValue != '' && this.oldObject != '' && this.oldObject !== this.objectSelectValue) {
-                        this.isObjectChanged = true;
-                    }
-                    else{
-                        this.isObjectChanged = false;
-                    }
-                    
-                    const navigationState = {
-                        selectedObject: this.objectSelectValue,
-                        myrecordId: this.currentRecordIdValue,
-                        label: this.templateNameValue,
-                        description: this.descriptionValue,
-                        type : this.typeSelectValue,
-                        bodyoftemplate : this.bodyOfTemplateValue,
-                        isObjectChanged : this.isObjectChanged,
-                        oldObject: this.oldObject,
-                        isFirstTimeLoaded : false,
-                        templateTypeForCreation: this.nameValue,
-                        pageNumber : this.pageNumber,
-                        totalRecodslength : this.totalRecodslength,
-                        templateTypeSelect : this.templateTypeSelectValue,
-                        isQuickTemplate : this.isQuickTemplateValue,
-                        subject: this.subjectValue,
-                        isEmailTemplate : this.isEmailTemplate
-                    };
-            
-                    const serializedState = JSON.stringify(navigationState);
-        
-                    let cmpDef;                
-                    cmpDef = {
-                        componentDef: 'c:templateModalChild',
-                        attributes: {                    
-                            c__navigationState: serializedState,
-                            c__recordId : this.currentRecordIdValue
-                        }                
-                        };
-        
-                    let encodedDef = btoa(JSON.stringify(cmpDef));
-                        this[NavigationMixin.Navigate]({
-                        type: "standard__webPage",
-                        attributes: {
-                            url:  "/one/one.app#" + encodedDef                                                         
-                        }
-                    });
-        
-                    this.closeModal();
+                    this.navigationTotab();
                 })
                 .catch(error => {
                     console.error('Error saving template:', error);
                 });
     
             }
+            else{
+                this.navigationTotab();
+            }
     
         } else {
             this.showToast('Error', 'Please fill in all required fields', 'error');
         }
+    }
+
+
+    navigationTotab(){
+        if(this.objectSelectValue != '' && this.oldObject != '' && this.oldObject !== this.objectSelectValue) {
+            this.isObjectChanged = true;
+        }
+        else{
+            this.isObjectChanged = false;
+        }
+        
+        const navigationState = {
+            selectedObject: this.objectSelectValue,
+            myrecordId: this.currentRecordIdValue,
+            label: this.templateNameValue,
+            description: this.descriptionValue,
+            type : this.typeSelectValue,
+            bodyoftemplate : this.bodyOfTemplateValue,
+            isObjectChanged : this.isObjectChanged,
+            oldObject: this.oldObject,
+            isFirstTimeLoaded : false,
+            templateTypeForCreation: this.nameValue,
+            pageNumber : this.pageNumber,
+            totalRecodslength : this.totalRecodslength,
+            templateTypeSelect : this.templateTypeSelectValue,
+            isQuickTemplate : this.isQuickTemplateValue,
+            subject: this.subjectValue,
+            isEmailTemplate : this.isEmailTemplate
+        };
+
+        const serializedState = JSON.stringify(navigationState);
+
+        let cmpDef;                
+        cmpDef = {
+            componentDef: 'c:templateModalChild',
+            attributes: {                    
+                c__navigationState: serializedState,
+                c__recordId : this.currentRecordIdValue
+            }                
+            };
+
+        let encodedDef = btoa(JSON.stringify(cmpDef));
+            this[NavigationMixin.Navigate]({
+            type: "standard__webPage",
+            attributes: {
+                url:  "/one/one.app#" + encodedDef                                                         
+            }
+        });
+
+        this.closeModal();
     }
 
     /**

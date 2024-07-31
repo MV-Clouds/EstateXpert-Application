@@ -38,9 +38,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track isQuickTemplate = false;
     @track templateTypeSelect = '';
 
-    @track selectedObjectValue = '';
+    @track selectedObjectValue = this.selectedObject;
     @track currentRecordIdValue = this.currentRecordId ;
-    @track templateLabelValue = '';
+    @track templateLabelValue = this.templateLabel;
 
     get recordId(){
         return this.currentRecordIdValue ? this.currentRecordIdValue : 'tempId';
@@ -447,7 +447,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
 
         const template = {
             Object_Name__c: this.selectedObjectValue,
-            Label__c: this.templateLabel,
+            Label__c: this.templateLabelValue,
             Template_Body__c: content,
             Description__c : this.description,
             Template_Type__c : this.selectedType,

@@ -136,6 +136,9 @@ export default class TemplatePreviewModal extends LightningElement {
             if (record.hasOwnProperty(fieldName)) {
                 return record[fieldName] != null ? record[fieldName] : `{${fieldName} data is empty}`;
             }
+            else{
+                return `{${fieldName} data is empty}`;
+            }
         });
         
         this.updatedBody = tempUpdatedBody;
