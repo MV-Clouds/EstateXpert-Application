@@ -520,10 +520,10 @@ public with sharing class EmailCampaignController {
 
             Integer totalMailsCount = 0;
             Integer totalMailsCountRemaining = 0;
-            Integer previousTotalEmails = Integer.valueOf(campaign.Total_Emails__c );
-            totalMailsCount = ((totalEmails.size() - remainingTotalEmails.size()) * (existingTotalMembers.size() - newMembers.size() + membersToDelete.size())) + (remainingTotalEmails.size() * existingTotalMembers.size());
+            Integer previousTotalEmails = Integer.valueOf(campaign.Total_Sent_Mails__c );
+            // totalMailsCount = ((totalEmails.size() - remainingTotalEmails.size()) * (existingTotalMembers.size() - newMembers.size() + membersToDelete.size())) + (remainingTotalEmails.size() * existingTotalMembers.size());
 
-            
+            totalMailsCount = previousTotalEmails + (remainingTotalEmails.size() * existingTotalMembers.size());
             totalMailsCountRemaining = remainingTotalEmails.size() * existingTotalMembers.size();
 
             campaign.Total_Emails__c = totalMailsCount;
@@ -533,7 +533,6 @@ public with sharing class EmailCampaignController {
                 update campaign;
             }
 
-    
         return campaign.Id;
         
         } catch (Exception e) {
@@ -541,7 +540,6 @@ public with sharing class EmailCampaignController {
             System.debug('Error creating campaign and emails: ' + e.getLineNumber());
             return null;
         }
-        
     }
 
     /**
@@ -580,7 +578,6 @@ public with sharing class EmailCampaignController {
             return null;
         }
     }
-
 
     /**
     * Method Name : getCamapaignAndRelatedData
@@ -660,139 +657,152 @@ public with sharing class EmailCampaignController {
     */
     @InvocableMethod(label='Send Emails' description='Send emails to primary, cc, and bcc recipients')
     public static void sendEmails(List<EmailRequests> emailRequests) {
-        List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
-        Set<String> campaignIds = new Set<String>();
-        Set<String> contactIds = new Set<String>();
-        Map<String, Integer> remainingEmailsMap = new Map<String, Integer>();
-    
-        for (EmailRequests req : emailRequests) {
-            campaignIds.add(req.campaignId);
-        }
 
-        Map<String, Marketing_Campaign__c> campaignMap = new Map<String, Marketing_Campaign__c>();
-        if (!campaignIds.isEmpty()) {
-            List<Marketing_Campaign__c> campaigns = [SELECT Id, Name, Status__c,Remaining_Emails__c,Total_Sent_Mails__c FROM Marketing_Campaign__c WHERE Id IN :campaignIds WITH SECURITY_ENFORCED];
-            for (Marketing_Campaign__c campaign : campaigns) {
-                campaignMap.put(campaign.Id, campaign);
-                remainingEmailsMap.put(campaign.Id, Integer.valueOf(campaign.Remaining_Emails__c));
-            }
-        }
+        try {
+            List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+            Set<String> campaignIds = new Set<String>();
+            Set<String> contactIds = new Set<String>();
+            Map<String, Integer> remainingEmailsMap = new Map<String, Integer>();
         
-        Map<String, List<Id>> campaignToContactMap = new Map<String, List<Id>>();
-        if (!campaignIds.isEmpty()) {
-            List<Marketing_Campaign_Member__c> campaignMembers = [
-                SELECT Id, Marketing_Campaign__c, Contact__c
-                FROM Marketing_Campaign_Member__c
-                WHERE Marketing_Campaign__c IN :campaignIds WITH SECURITY_ENFORCED
-            ];
-            for (Marketing_Campaign_Member__c member : campaignMembers) {
-                if (!campaignToContactMap.containsKey(member.Marketing_Campaign__c)) {
-                    campaignToContactMap.put(member.Marketing_Campaign__c, new List<Id>());
-                }
-                campaignToContactMap.get(member.Marketing_Campaign__c).add(member.Contact__c);
-                contactIds.add(member.Contact__c);
+            for (EmailRequests req : emailRequests) {
+                campaignIds.add(req.campaignId);
             }
-        }
-        List<Contact> contactList = new List<Contact>();
-        Map<String, Contact> emailToContactMap = new Map<String, Contact>();
-        if (!contactIds.isEmpty()) {
-            contactList = getContacts(contactIds);
-            for (Contact contact : contactList) {
-                if (contact.Email != null) {
-                    emailToContactMap.put(contact.Email, contact);
+    
+            Map<String, Marketing_Campaign__c> campaignMap = new Map<String, Marketing_Campaign__c>();
+            if (!campaignIds.isEmpty()) {
+                List<Marketing_Campaign__c> campaigns = [SELECT Id, Name, Status__c,Remaining_Emails__c,Total_Sent_Mails__c FROM Marketing_Campaign__c WHERE Id IN :campaignIds WITH SECURITY_ENFORCED];
+                for (Marketing_Campaign__c campaign : campaigns) {
+                    campaignMap.put(campaign.Id, campaign);
+                    remainingEmailsMap.put(campaign.Id, Integer.valueOf(campaign.Remaining_Emails__c));
                 }
             }
-        }
-
-        Integer emailCount = 0;
-        for (EmailRequests request : emailRequests) {
-
-            Marketing_Campaign__c campaignRecord = campaignMap.get(request.campaignId);
-
-            for (String toAddress : request.toAddresses) {
-                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
-                
-                email.setToAddresses(new List<String>{toAddress});
-                
-                if (request.ccAddresses != null) {
-                    List<String> ccEmails = parseEmailAddresses(request.ccAddresses);
-                    email.setCcAddresses(ccEmails);
-                }
-                
-                if (request.bccContacts != null) {
-                    List<String> bccEmails = parseEmailAddresses(request.bccContacts);
-                    email.setBccAddresses(bccEmails);
-                }
-                
-                email.setSubject(request.subject);
-
-                Contact contact = emailToContactMap.get(toAddress);
-                String processedBody = request.body;
-
-                if (contact != null) {
-                    processedBody = replaceMergeFields(request.body, contact);
-                }
-                
-                String cssStyles = '<style>' +
-                '.table.table-bordered {' +
-                'border-collapse: collapse;' +
-                'width: 100%;' +
-                '}' +
-                '.table.table-bordered td, ' +
-                '.table.table-bordered th {' +
-                'border: 1px solid black;' +
-                'padding: 8px;' +
-                'text-align: center;' +
-                '}' +
-                '</style>';
             
-                processedBody = '<html><head>' + cssStyles + '</head><body>' + processedBody + '</body></html>';
-
-                email.setHtmlBody(processedBody);
-                emails.add(email);
-
-                if (remainingEmailsMap.containsKey(request.campaignId) && remainingEmailsMap.get(request.campaignId) > 0) {
-                    remainingEmailsMap.put(request.campaignId, remainingEmailsMap.get(request.campaignId) - 1);
+            Map<String, List<Id>> campaignToContactMap = new Map<String, List<Id>>();
+            if (!campaignIds.isEmpty()) {
+                List<Marketing_Campaign_Member__c> campaignMembers = [
+                    SELECT Id, Marketing_Campaign__c, Contact__c
+                    FROM Marketing_Campaign_Member__c
+                    WHERE Marketing_Campaign__c IN :campaignIds WITH SECURITY_ENFORCED
+                ];
+                for (Marketing_Campaign_Member__c member : campaignMembers) {
+                    if (!campaignToContactMap.containsKey(member.Marketing_Campaign__c)) {
+                        campaignToContactMap.put(member.Marketing_Campaign__c, new List<Id>());
+                    }
+                    campaignToContactMap.get(member.Marketing_Campaign__c).add(member.Contact__c);
+                    contactIds.add(member.Contact__c);
                 }
             }
-        }
+            List<Contact> contactList = new List<Contact>();
+            Map<String, Contact> emailToContactMap = new Map<String, Contact>();
+            if (!contactIds.isEmpty()) {
+                contactList = getContacts(contactIds);
+                for (Contact contact : contactList) {
+                    if (contact.Email != null) {
+                        emailToContactMap.put(contact.Email, contact);
+                    }
+                }
+            }
+    
+            for (EmailRequests request : emailRequests) {
+    
+                Marketing_Campaign__c campaignRecord = campaignMap.get(request.campaignId);
+    
+                for (String toAddress : request.toAddresses) {
+                    Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+                    
+                    email.setToAddresses(new List<String>{toAddress});
+                    
+                    if (request.ccAddresses != null) {
+                        List<String> ccEmails = parseEmailAddresses(request.ccAddresses);
+                        email.setCcAddresses(ccEmails);
+                    }
+                    
+                    if (request.bccContacts != null) {
+                        List<String> bccEmails = parseEmailAddresses(request.bccContacts);
+                        email.setBccAddresses(bccEmails);
+                    }
+                    
+                    email.setSubject(request.subject);
+    
+                    Contact contact = emailToContactMap.get(toAddress);
+                    String processedBody = request.body;
+    
+                    if (contact != null) {
+                        processedBody = replaceMergeFields(request.body, contact);
+                    }
+                    
+                    String cssStyles = '<style>' +
+                    '.table.table-bordered {' +
+                    'border-collapse: collapse;' +
+                    'width: 100%;' +
+                    '}' +
+                    '.table.table-bordered td, ' +
+                    '.table.table-bordered th {' +
+                    'border: 1px solid black;' +
+                    'padding: 8px;' +
+                    'text-align: center;' +
+                    '}' +
+                    '</style>';
+                
+                    processedBody = '<html><head>' + cssStyles + '</head><body>' + processedBody + '</body></html>';
+    
+                    email.setHtmlBody(processedBody);
+                    emails.add(email);
+    
+                    if (remainingEmailsMap.containsKey(request.campaignId) && remainingEmailsMap.get(request.campaignId) > 0) {
+                        remainingEmailsMap.put(request.campaignId, remainingEmailsMap.get(request.campaignId) - 1);
+                    }
+                }
+            }
+            
+            if (!emails.isEmpty()) {
+                try {
+                    Messaging.sendEmail(emails);
+    
+                    RefreshEvent__e event = new RefreshEvent__e();
+                    EventBus.publish(event);
+                } catch (Exception e) {
+                    System.debug('Error sending emails: ' + e.getMessage());
+                }
+            }
+    
+            List<Marketing_Campaign__c> campaignsToUpdate = new List<Marketing_Campaign__c>();
+            System.debug('campaignsToUpdate ==> ' + campaignsToUpdate);
+            for (String campaignId : remainingEmailsMap.keySet()) {
+                Marketing_Campaign__c campaignToUpdate = campaignMap.get(campaignId);
+                if (campaignToUpdate != null) {
+                    Integer remainingEmails = remainingEmailsMap.get(campaignId);
+                    campaignToUpdate.Remaining_Emails__c = remainingEmails;
+                    if(campaignToUpdate.Total_Sent_Mails__c != null){
+                        campaignToUpdate.Total_Sent_Mails__c += emails.size();
+                    }
+                    else {
+                        campaignToUpdate.Total_Sent_Mails__c = emails.size();
+                    }
         
-        if (!emails.isEmpty()) {
-            try {
-                Messaging.sendEmail(emails);
-
-                RefreshEvent__e event = new RefreshEvent__e();
-                EventBus.publish(event);
-            } catch (Exception e) {
-                System.debug('Error sending emails: ' + e.getMessage());
-            }
-        }
-
-        List<Marketing_Campaign__c> campaignsToUpdate = new List<Marketing_Campaign__c>();
-        for (String campaignId : remainingEmailsMap.keySet()) {
-            Marketing_Campaign__c campaignToUpdate = campaignMap.get(campaignId);
-            if (campaignToUpdate != null) {
-                Integer remainingEmails = remainingEmailsMap.get(campaignId);
-                campaignToUpdate.Remaining_Emails__c = remainingEmails;
-                campaignToUpdate.Total_Sent_Mails__c += emails.size();
-    
-                if (remainingEmails == 0) {
-                    campaignToUpdate.Status__c = 'Completed';
-                } else if (campaignToUpdate.Status__c != 'In Progress') {
-                    campaignToUpdate.Status__c = 'In Progress';
+                    if (remainingEmails == 0) {
+                        campaignToUpdate.Status__c = 'Completed';
+                    } else if (campaignToUpdate.Status__c != 'In Progress') {
+                        campaignToUpdate.Status__c = 'In Progress';
+                    }
+        
+                    campaignsToUpdate.add(campaignToUpdate);
                 }
-    
-                campaignsToUpdate.add(campaignToUpdate);
             }
+    
+            if (!campaignsToUpdate.isEmpty()) {
+                try {
+                    update campaignsToUpdate;
+                    System.debug('Updated +>' + campaignsToUpdate);
+                } catch (Exception e) {
+                    System.debug('Error updating campaigns: ' + e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            System.debug('Exception is ==> ' + e);
+            System.debug('Line number ==> ' + e.getLineNumber() );
         }
 
-        if (!campaignsToUpdate.isEmpty()) {
-            try {
-                update campaignsToUpdate;
-            } catch (Exception e) {
-                System.debug('Error updating campaigns: ' + e.getMessage());
-            }
-        }
     }
     
        /**
@@ -864,7 +874,7 @@ public with sharing class EmailCampaignController {
         return contactRecords;
     }
 
-        /**
+    /**
     * Method Name : getAllFieldNames
     * Date : 23/07/2024
     * Created By : Rachit Shah

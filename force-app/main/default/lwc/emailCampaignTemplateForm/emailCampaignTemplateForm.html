@@ -211,6 +211,19 @@
                                     class="input-field"
                                 ></lightning-input>
                             </div>
+
+                            <template if:true={isDateFieldDropdownVisible}>
+                                <div class="dropdown" onmousedown={handlePreventDefault}>
+                                    <template for:each={filteredContactDateFields} for:item="field">
+                                        <div key={field.value} class="dropdown-item" onclick={handleDateFieldSelect} data-id={field.value}>
+                                            <span class="slds-icon_container slds-icon-standard-account" title="Account">
+                                                <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
+                                            </span>
+                                            <span class="container-pill-label">{field.label}</span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
                         </div>
 
                     <!-- Selected Record Pill Container -->
@@ -234,20 +247,7 @@
                         </div>
 
                     </div>
-        
-                    <!-- Dropdown for selecting fields -->
-                    <template if:true={isDateFieldDropdownVisible}>
-                        <div class="dropdown" onmousedown={handlePreventDefault}>
-                            <template for:each={filteredContactDateFields} for:item="field">
-                                <div key={field.value} class="dropdown-item" onclick={handleDateFieldSelect} data-id={field.value}>
-                                    <span class="slds-icon_container slds-icon-standard-account" title="Account">
-                                        <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"></lightning-icon>
-                                    </span>
-                                    <span class="container-pill-label">{field.label}</span>
-                                </div>
-                            </template>
-                        </div>
-                    </template>
+          
                 </div>
             </template>
 
