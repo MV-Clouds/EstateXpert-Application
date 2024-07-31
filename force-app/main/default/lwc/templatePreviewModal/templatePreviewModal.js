@@ -10,7 +10,7 @@ export default class TemplatePreviewModal extends LightningElement {
     @track selectedRecord = '';
     @track recordOptions = [];
     @track recordName = 'Message Body';
-    @track updatedBody = '';
+    @track updatedBody = this.templateBody;
     @track recordOptions = [{ label: 'None', value: 'none' }];
     @track hasLibraryLoaded = false;
 
@@ -34,7 +34,6 @@ export default class TemplatePreviewModal extends LightningElement {
     * Created By: Rachit Shah
     */
     connectedCallback() {
-        this.updatedBody = this.templateBody;
         this.fetchRecords();
     }
 

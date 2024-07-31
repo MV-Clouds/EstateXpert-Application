@@ -91,25 +91,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     }
 
     /**
-    * Method Name: connectedCallback
-    * @description: Method to set api variable to another variable when component loaded
-    * Date: 13/06/2024
-    * Created By: Rachit Shah
-    */
-    connectedCallback(){    
-
-        console.log('1' ,this.selectedObjectValue);
-        console.log('2' ,this.currentRecordIdValue);
-        console.log('3' ,this.templateLabelValue);
-
-        // this.selectedObjectValue = this.selectedObject;
-        // this.currentRecordIdValue = this.currentRecordId;
-        // this.templateLabelValue = this.templateLabel;
-
-        console.log('currentRecordIdValue ==> ' ,this.currentRecordIdValue);
-    }
-
-    /**
     * Method Name: renderedCallback
     * @description: Method to load external libraries and jquery
     * Date: 13/06/2024

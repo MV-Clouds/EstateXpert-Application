@@ -27,16 +27,16 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         { label: 'Email Template', value: 'emailTemplate' }
     ];
 
-    @track templateNameValue = '';
-    @track descriptionValue = '';
-    @track objectSelectValue = '';
-    @track typeSelectValue = '';
-    @track currentRecordIdValue = '';
-    @track nameValue = '';
-    @track bodyOfTemplateValue = '';
-    @track templateTypeSelectValue = '';
-    @track isQuickTemplateValue = false;
-    @track subjectValue = '';
+    @track templateNameValue = this.templateName;
+    @track descriptionValue = this.description;
+    @track objectSelectValue = this.objectSelect;
+    @track typeSelectValue = this.typeSelect;
+    @track currentRecordIdValue = this.currentRecordId;
+    @track nameValue = this.name;
+    @track bodyOfTemplateValue = this.bodyOfTemplate;
+    @track templateTypeSelectValue = this.templateTypeSelect;
+    @track isQuickTemplateValue = this.isQuickTemplate;
+    @track subjectValue = this.subject;
 
     get isEmailTemplate() {
         return this.typeSelectValue === 'Email';
@@ -49,19 +49,8 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     connectedCallback(){    
-        this.templateNameValue = this.templateName;
-        this.descriptionValue = this.description;
-        this.objectSelectValue = this.objectSelect;
-        this.typeSelectValue = this.typeSelect;
-        this.currentRecordIdValue = this.currentRecordId;
-        this.nameValue = this.name;
-        this.bodyOfTemplateValue = this.bodyOfTemplate;
-        this.templateTypeSelectValue = this.templateTypeSelect;
-        this.isQuickTemplateValue = this.isQuickTemplate;
-        this.subjectValue = this.subject;
         this.fetchPicklistValues();
         this.fetchObjectNames();
-
 
         if(this.nameValue == 'New'){
             this.templateNameValue = '';
