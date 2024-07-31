@@ -49,6 +49,16 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     connectedCallback(){    
+        this.templateNameValue = this.templateName;
+        this.descriptionValue = this.description;
+        this.objectSelectValue = this.objectSelect;
+        this.typeSelectValue = this.typeSelect;
+        this.currentRecordIdValue = this.currentRecordId;
+        this.nameValue = this.name;
+        this.bodyOfTemplateValue = this.bodyOfTemplate;
+        this.templateTypeSelectValue = this.templateTypeSelect;
+        this.isQuickTemplateValue = this.isQuickTemplate;
+        this.subjectValue = this.subject;
         this.fetchPicklistValues();
         this.fetchObjectNames();
 
@@ -163,11 +173,15 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     navigationTotab(){
         if(this.objectSelectValue != '' && this.oldObject != '' && this.oldObject !== this.objectSelectValue) {
             this.isObjectChanged = true;
+            console.log('here');
         }
         else{
             this.isObjectChanged = false;
+            console.log('here2');
         }
         
+        console.log('objectChnaged ==> ' , this.isObjectChanged);
+
         const navigationState = {
             selectedObject: this.objectSelectValue,
             myrecordId: this.currentRecordIdValue,
