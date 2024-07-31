@@ -13,7 +13,6 @@ public with sharing class EmailCampaignController {
     * Created By : Rachit Shah
     * @description : Used for getting campaign data
     */
-
     @AuraEnabled(cacheable=true)
     public static List<Marketing_Campaign__c> getEmailCampaignTemplates() {
 
@@ -523,6 +522,8 @@ public with sharing class EmailCampaignController {
             Integer totalMailsCountRemaining = 0;
             Integer previousTotalEmails = Integer.valueOf(campaign.Total_Emails__c );
             totalMailsCount = ((totalEmails.size() - remainingTotalEmails.size()) * (existingTotalMembers.size() - newMembers.size() + membersToDelete.size())) + (remainingTotalEmails.size() * existingTotalMembers.size());
+
+            
             totalMailsCountRemaining = remainingTotalEmails.size() * existingTotalMembers.size();
 
             campaign.Total_Emails__c = totalMailsCount;
@@ -773,7 +774,7 @@ public with sharing class EmailCampaignController {
             if (campaignToUpdate != null) {
                 Integer remainingEmails = remainingEmailsMap.get(campaignId);
                 campaignToUpdate.Remaining_Emails__c = remainingEmails;
-                // campaignToUpdate.Total_Sent_Mails__c += emails.size();
+                campaignToUpdate.Total_Sent_Mails__c += emails.size();
     
                 if (remainingEmails == 0) {
                     campaignToUpdate.Status__c = 'Completed';
