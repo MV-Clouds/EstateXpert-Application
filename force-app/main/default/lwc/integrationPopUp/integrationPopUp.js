@@ -4,14 +4,14 @@ import getSettings from '@salesforce/apex/IntegrationPopupController.getSettings
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class IntegrationPopUp extends LightningElement {
+    @api integrationname = '';
+    @api integrationlabel = '';
     @track isModalOpen = true;
     @track secretAccessId = '';
     @track accessId = '';
     @track s3BucketNameId = '';
     @track s3RegionNameId = '';
-    @track saveDisable = true;
-    @api integrationname = '';
-    @api integrationlabel = '';
+    @track saveDisable = false;
     @track isLoading = true;
 
     connectedCallback(){
