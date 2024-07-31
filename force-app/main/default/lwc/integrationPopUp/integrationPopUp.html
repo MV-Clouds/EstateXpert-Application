@@ -1,0 +1,43 @@
+<template>
+    <template if:true={isLoading}>
+        <c-spinner-component></c-spinner-component>
+    </template>
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open custom-modal">
+            <div class="slds-modal__container custom-modal__container">
+                <!-- Modal/Popup Header -->
+                <header class="slds-modal__header custom-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="#000000" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#ffffff" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"></path></g></svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-text-heading_medium">{integrationlabel} Integration</h2>
+                </header>
+
+                <!-- Modal/Popup Body -->
+                <div class="slds-modal__content slds-p-around_medium custom-modal__content">
+                    <div class="body-cover">
+                        <div class="image-container">
+                            <img src="/resource/integrationPopupImg" alt="Integration Graphic" class="integration-image">
+                        </div>
+                        <div class="content-section">
+                            <div class="inupt-cover">
+                                <lightning-input label="Secret Access Key" value={secretAccessId} placeholder="Enter Secret Access Key" onchange={handleInputChange} data-id="secretAccessId" min-length="1" max-length="255" class="custom-input" required></lightning-input>
+                                <lightning-input label="Access Key" value={accessId} placeholder="Enter Access Key" onchange={handleInputChange} data-id="accessId" class="custom-input" min-length="1" max-length="255" required></lightning-input>
+                                <lightning-input label="S3 Bucket Name" value={s3BucketNameId} placeholder="Enter S3 Bucket Name" onchange={handleInputChange} data-id="s3BucketNameId" min-length="1" max-length="255" class="custom-input" required></lightning-input>
+                                <lightning-input label="S3 Region Name" value={s3RegionNameId} placeholder="Enter S3 Region Name" onchange={handleInputChange} data-id="s3RegionNameId" min-length="1" max-length="255" class="custom-input" required></lightning-input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal/Popup Footer -->
+                <footer class="custom-modal__footer">
+                    <button class="cancel-btn" onclick={closeModal}>Cancel</button>
+                    <button class="save-btn" onclick={saveDetails} disabled={saveDisable}>Save</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open custom-backdrop"></div>
+    </template>
+</template>

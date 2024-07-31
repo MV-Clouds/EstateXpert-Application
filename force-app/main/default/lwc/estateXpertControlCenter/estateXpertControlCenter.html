@@ -50,12 +50,21 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Listing Manager</h1>
                         </div>
+                        <div class="tile" onclick={openSelectionModel6}>
+                            <div class="tile-icon">
+                                <span class="slds-icon_container">
+                                    <img src="/resource/MVEX__controlcenterimg/listingtemplate.png" alt="support" class="tile-icon-img">
+                                    <span class="slds-assistive-text"></span>
+                                </span>
+                            </div>
+                            <h1 class="tile-title slds-text-heading_label">Listing Template</h1>
+                        </div>
                     </div>
                 </div>
                 <div class="tiles-section">
                     <div class="slds-box slds-box_xx-small slds-theme_default tiles-section-header">Integrations</div>
                     <div class="tile-flex">
-                        <div class="tile" onclick={openSelectionModel6}>
+                        <div class="tile" onclick={openSelectionModel7}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/gmail.png" alt="gmail" class="tile-icon-img">
@@ -64,7 +73,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Gmail Integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel7}>
+                        <div class="tile" onclick={openSelectionModel8}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/outlook.png" alt="outlook" class="tile-icon-img">
@@ -73,7 +82,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Outlook Integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel8}>
+                        <div class="tile" onclick={openSelectionModel9}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/whatsapp.png" alt="whatsapp" class="tile-icon-img">
@@ -82,7 +91,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Whatsapp integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel9}>
+                        <div class="tile" onclick={openSelectionModel10}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <svg viewBox="0 0 16 16" fill="none" height="3rem" width="3rem">
@@ -103,7 +112,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">AWS Integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel10}>
+                        <div class="tile" onclick={openSelectionModel11}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/socialmedia.png" alt="social media" class="tile-icon-img">
@@ -112,7 +121,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Social Media Integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel11}>
+                        <!-- <div class="tile" onclick={openSelectionModel12}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/websiteintegration.png" alt="social media" class="tile-icon-img">
@@ -120,13 +129,13 @@
                                 </span>
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Website Integration</h1>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="tiles-section">
                     <div class="slds-box slds-box_xx-small slds-theme_default tiles-section-header">Marketing</div>
                     <div class="tile-flex">
-                        <div class="tile" onclick={openSelectionModel12}>
+                        <div class="tile" onclick={openSelectionModel13}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/template.png" alt="social media" class="tile-icon-img">
@@ -135,7 +144,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Template Builder</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel13}>
+                        <div class="tile" onclick={openSelectionModel14}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/marketcampaign.png" alt="social media" class="tile-icon-img">
@@ -144,7 +153,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Marketing Campaign</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel14}>
+                        <div class="tile" onclick={openSelectionModel15}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/marketinglist.png" alt="social media" class="tile-icon-img">
@@ -158,4 +167,11 @@
             </div>
         </div>
     </div>
+    <template if:true={showIntegrationModal}>
+        <c-integration-pop-up 
+            integrationname={integrationName}
+            integrationlabel={integrationLabel}
+            onclosemodal = {handleModalSelect}
+        ></c-integration-pop-up>
+    </template>
 </template>

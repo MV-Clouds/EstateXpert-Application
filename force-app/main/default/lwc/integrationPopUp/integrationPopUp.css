@@ -1,0 +1,120 @@
+.custom-modal__container {
+  width: 50%;
+  max-width: 100%;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.custom-modal__header {
+  background: #0070d2;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.custom-modal__header h2 {
+  margin: 0;
+}
+
+.custom-modal__content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.body-cover{
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.image-container {
+  margin-bottom: 1rem;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-section{
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inupt-cover{
+  width: 100%;
+  height: 100%;
+}
+
+.integration-image {
+  width: 100%;
+  max-width: 20rem;
+}
+
+.custom-input {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.custom-modal__footer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  background: #ffffff;
+  border-radius: 0rem 0rem 0.25rem 0.25rem;
+  align-items: center;
+  padding: 1rem;
+}
+
+.cancel-btn{
+  background-color: white;
+  padding:0.46rem 2rem;
+  border-radius: 0.25rem;
+  border: black 1px solid;
+  color: rgb(0,118,211);
+}
+
+.cancel-btn:hover{
+  background-color: rgb(220, 220, 220);
+}
+
+.save-btn{
+  background-color: rgb(0,118,211);
+  padding: 0.5rem 2rem;
+  border-radius: 0.25rem;
+  border: none;
+  color: white;
+}
+
+.save-btn:hover{
+  background-color: rgb(120, 196, 255);
+}
+
+.custom-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+@media only screen and (max-width: 768px) {
+  .custom-modal__container {
+      width: 80%;
+  }
+
+  .body-cover {
+      flex-direction: column;
+  }
+
+  .image-container {
+      display: none;
+  }
+
+  .content-section {
+      width: 100%;
+  }
+}
