@@ -46,13 +46,13 @@ export default class TemplatePreviewModal extends LightningElement {
     */
     renderedCallback() {
         if (!this.hasLibraryLoaded) {
-            this.hasLibraryLoaded = true;
             loadStyle(this, summerNote_Editor + '/summernote-lite-pdf.css')
-                .then(() => {
-                    this.updateRichTextContent();
-                })
-                .catch(error => {
-                    console.log('Error loading style:', error);
+            .then(() => {
+                this.hasLibraryLoaded = true;
+                this.updateRichTextContent();
+            })
+            .catch(() => {
+                console.log('Error loading style:', error);
                 });
         } else {
             this.updateRichTextContent();

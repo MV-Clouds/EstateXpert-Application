@@ -16,7 +16,7 @@ public with sharing class TemplateBuilderController {
     * Created By: Rachit Shah 
     */ 
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<String> getAllFieldNames(String objectName) {
         List<String> fieldNames = new List<String>();
         
@@ -141,7 +141,7 @@ public with sharing class TemplateBuilderController {
     * Date: 11/06/2024 
     * Created By: Rachit Shah 
     */ 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static Map<String, String> getAllObjectNames() {
         Map<String, String> objectNamesMap = new Map<String, String>();
         
@@ -169,7 +169,7 @@ public with sharing class TemplateBuilderController {
     * Created By: Rachit Shah 
     */ 
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<String> getTemplateTypePicklistValues() {
         Schema.DescribeFieldResult fieldResult = Template__c.Template_Type__c.getDescribe();
         List<Schema.PicklistEntry> picklistValues = fieldResult.getPicklistValues();
