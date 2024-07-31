@@ -1,0 +1,241 @@
+.wrapper {
+    background-color: white;
+    padding: 0.5rem;
+    /* font-family: Arial, Helvetica, sans-serif; */
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+}
+
+.content-header {
+    background-color: #0176D3;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    padding: 10px 0;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.slds-card {
+    width: 100%;
+}
+
+.blur-text {
+    color: #000000B2;
+}
+
+.header-text {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.header lightning-icon {
+    margin-right: 0.5rem;
+}
+
+.header h1 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.container {
+    padding: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+    margin: 1rem;
+    border-radius: 1rem;
+}
+
+.content-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.edit {
+    --slds-g-color-border-base-4: #0176D3;
+}
+
+.content-details {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.content-text {
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+.content-data {
+    font-size: 14px;
+}
+
+.dotted-border {
+    border: 1px dashed black;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.input-field {
+    margin-bottom: 1rem;
+}
+
+.input-date-container{
+    width: 100%;
+}
+
+.input-date{
+    width: 30%;
+}
+
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3%;
+    font-size: 14px;
+}
+
+.dropdown {
+    border: 1px solid #ccc;
+    background: #fff;
+    position: absolute;
+    z-index: 1000;
+    width: 31%;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dropdown-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background: #f4f4f4;
+}
+
+.slds-icon_container lightning-icon {
+    height: 1rem !important;
+    width: 1rem;
+}
+
+.contact-input-fields{
+    display: flex;
+    gap: 10px;
+}
+
+.contact-input-fields .input-field{
+    width: 33%;
+}
+
+.container-pill-label{
+    margin-left: 6px;
+}
+
+.input-date-combobox{
+    width: 30%;
+}
+
+.contact-date-container{
+    display: flex;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 2%;
+}
+
+.plus-image-icon{
+    margin-top: 1.8rem;
+}
+
+.dropdown-imgae{
+    border: 1px solid #ccc;
+    background: #fff;
+    position: relative;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    top: 2.5rem;
+    left: 6px;
+}
+
+.plus-image{
+    display: flex;
+    align-items: inherit;
+}
+
+.table-container th{
+    padding: 1rem;
+    background-color: #0176D3;
+    color: white;
+}
+
+.slds-table{
+    border: none;
+}
+
+.slds-table tr:nth-child(even) {
+    background-color: #74b4ff2b;
+}
+
+.slds-table td{
+    border: none;
+    padding: 0.7rem;
+    padding-bottom: 1.2rem;
+}
+
+.action-btns{
+    display: flex;
+    gap: 15%;
+}
+
+fieldset .slds-form-element__legend{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.display-pill-input-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+}
+
+.display-pill-input{
+    display: flex;
+    border: 2px solid #35a5ff;
+    border-radius: 6px;
+}
+
+.input-pil-label{
+    font-size: 14px;  
+    font-weight: bold;
+}
+
+.input-pill-icon{
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+.display-pill-input button{
+    border: none;
+    margin-right: 5px;
+
+}
+
+.display-pill-input input{
+    pointer-events: none;
+}
+
+.red{
+    color: red;
+}

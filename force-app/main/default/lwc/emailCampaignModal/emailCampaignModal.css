@@ -1,0 +1,46 @@
+.slds-modal__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0176D3;
+    color: white;
+    --slds-c-icon-color-foreground-default : white;
+}
+
+.slds-modal {
+    --slds-c-input-color-border: #0176D3; 
+    --slds-c-modal-radius-border : 1rem;
+}
+
+.slds-input {
+    border: 2px solid #0176D3;
+    --slds-c-input-spacing-horizontal-end : 1rem;
+    --slds-c-input-spacing-horizontal-start : 1rem;
+}
+
+.slds-modal__footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    border-top-style: none !important;
+    background-color: white;
+}
+
+.detail-container {
+    display: flex;
+    width: 100%;
+    gap: 2rem;
+}
+
+.detail {
+    width: 50%;
+}
+
+.input-field {
+    margin-bottom: 1rem;
+}
+
+.pill-content{
+    margin-top: 8px;
+}

@@ -1,0 +1,127 @@
+.input-field input{
+  border: 2px solid #35a5ff;
+}
+
+.input-field button{
+  border: 2px solid #35a5ff;
+}
+
+.pill-content button{
+  border: none;
+}
+
+.input-field .slds-form-element__label{
+  font-size: 14px;  
+  font-weight: bold;
+
+}
+
+.input-date-container .slds-form-element__label{
+  font-size: 14px;  
+  font-weight: bold;
+  display: block;
+}
+
+button[disabled] {
+  cursor: default !important;
+  background-color: #D2D2D2 !important;
+  color: white !important;
+}
+
+.footer-btns button{
+  padding: 4px 20px 4px 20px;
+  border-radius: 9px !important;
+}
+
+.slds-icon_container .slds-icon_container .slds-icon{
+  height: 1rem !important;
+  width: 1rem;
+}
+
+.slds-pill_container .slds-pill__label{
+  margin-left: 6px;
+}
+
+.slds-pill_container .slds-pill{
+  margin-left: 0px !important;
+}
+
+.slds-pill_container button{
+  border: none;
+}
+
+.input-field .slds-pill_container{
+  border: none;
+  display: flex;
+  gap: 0.5%;
+  /* padding-bottom: 0.7rem;
+  padding-top: 0.3rem; */
+  flex-wrap: wrap;
+}
+
+
+.input-date input{
+  border: 2px solid #35a5ff;
+}
+
+.input-date-combobox button{
+  border: 2px solid #35a5ff;
+}
+
+.input-date-combobox .pill-content button{
+  border: none;
+}
+
+.contact-date-container input{
+  border: 2px solid #35a5ff;
+  cursor: not-allowed;
+  padding-left: 10px;
+}
+
+.action-btns .slds-button{
+  border: none;
+  background: transparent;
+}
+
+.add-btn button{
+  background-color: #0176D3;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+
+.add-btn button:hover , .add-btn button:focus  {
+  background-color: #0176D3;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.slds-form-element__control .slds-radio, .slds-form-element__control .slds-checkbox{
+  margin-bottom: 6px;
+}
+
+.actions td{
+  padding-bottom: 0rem !important;
+}
+
+.input-date-container .slds-has-error .slds-input{
+  border: 2px solid red;
+}
+
+.days-after-input .slds-has-error .slds-input{
+  border: 2px solid red;
+}
+
+.days-after-input .slds-has-error .slds-form-element__help{
+  position: absolute;
+}
+
+.timeCmp .slds-has-error .slds-input{
+  border: 2px solid red;
+}
+
+.timeCmp .slds-has-error .slds-form-element__help{
+  position: absolute;
+}

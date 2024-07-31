@@ -1,0 +1,71 @@
+<template>
+
+
+    <template if:true={isLoading}>
+        <c-spinner-component></c-spinner-component>
+    </template>
+    
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open custom-modal">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                    title="Close" onclick={handleCloseModal}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close"
+                        size="small"></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 class="slds-text-heading_medium">Email Campaign Template</h2>
+            </header>
+
+            <div class="slds-modal__content slds-p-around_medium">
+                <div class="input-field input-field-bold">
+                    <lightning-combobox name="selectedTemplate" label="Email Campaign Template" value={selectedTemplateIdValue} placeholder="Select a template" options={templateOptions} onchange={handleChange}>
+                    </lightning-combobox>
+                </div>
+
+                <div class="input-field input-field-bold">
+                    <lightning-input name="campaignName" label="Email Campaign Name" required value={formDataValue.campaignName}
+                        onchange={handleChange} placeholder="Campaign name" max-length="20"></lightning-input>
+                </div>
+                <div class="input-field">
+                    <fieldset class="slds-form-element">
+                        <legend class="slds-form-element__legend slds-form-element__label">Sender Mode</legend>
+                        <div class="slds-form-element__control">
+                            <lightning-radio-group name="senderMode" type="radio" label=""
+                                options={senderModeOptions} value={formDataValue.senderMode}
+                                onchange={handleChange}></lightning-radio-group>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="detail-container">
+                    <div class="detail input-field">
+                        <lightning-input type="email" name="fromAddress" label="From Address" required value={formDataValue.fromAddress}
+                            onchange={handleChange} placeholder="From address" max-length="40"></lightning-input>
+                    </div>
+
+                    <div class="detail input-field">
+                        <lightning-input name="fromName" label="From Name" required value={formDataValue.fromName}
+                            onchange={handleChange} placeholder="From name" max-length="20"></lightning-input>
+                    </div>
+                </div>
+
+                <div class="input-field">
+                    <lightning-input type="checkbox" name="saveForFuture" label="If you want to save marketing campaign for future"
+                        checked={formDataValue.saveForFuture} onchange={handleChange}></lightning-input>
+                </div>
+            </div>
+
+            <footer class="slds-modal__footer footer-btns">
+                <template if:true={isEdit}>
+                    <lightning-button variant="brand" label="Save" onclick={handleSave} disabled={isSaveDisabled}></lightning-button>
+                </template>
+                <template if:false={isEdit}>
+                    <lightning-button variant="brand" label="Next" onclick={handleNext}></lightning-button>
+                </template>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    
+</template>

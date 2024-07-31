@@ -1,0 +1,221 @@
+.wrapper {
+    background-color: white;
+    padding-bottom: 1rem;
+    min-height: 100%;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+
+.input-data{
+    display: flex;
+}
+
+.search-input{
+    width: 20vw;
+    margin-right: 10px;
+}
+
+.search-input{
+    --sds-c-input-radius-border : 10px;
+}
+
+.search-input .slds-input{
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.filter-btn a, button{
+    border: none !important;
+    background: none !important;
+}
+
+.filter-btn-container{
+    display: flex;
+    justify-content: center;
+    align-items: end;
+}
+
+.filter-btn img{
+    width: 2rem;
+    height: 2rem;
+}
+
+.add-btn-continer{
+    --slds-c-button-spacing-block-start : 4px;
+    --slds-c-button-spacing-block-end : 4px;
+    --slds-c-button-spacing-inline-end : 20px;
+    --slds-c-button-spacing-inline-start : 20px;
+    --slds-c-button-radius-border : 9px;
+}
+
+.table-content {
+    margin-top: 1rem;
+    overflow-x: auto;
+    min-height: 63vh;
+}
+
+.table-content table{
+    border: 1px solid #c8c8c8;
+}
+
+.slds-table th, .slds-table td {
+    text-align: left;
+}
+
+.slds-table th {
+    background-color: #0176D3;
+    color: white;
+    padding: 0.6rem;
+}
+
+.slds-table tr:nth-child(odd) {
+    background-color: aliceblue;
+  }
+
+.slds-table td {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0.4rem
+}
+
+
+.slds-table .sno, .slds-table .campaign-name, .slds-table .status, .slds-table .object-name, .slds-table .description, .slds-table .created-date, .slds-table .actions {
+    width: auto;
+}
+
+.no-data-container {
+    text-align: center;
+    padding: 2rem;
+}
+
+.no-data-message {
+    color: #888;
+    font-size: 1.2rem;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-info {
+    margin: 0 1rem;
+}
+
+.previous, .next {
+    margin: 0;
+}
+
+.action-btn{
+    display: flex;
+    /* justify-content: space-around; */
+    justify-content: center;
+    gap: 5%;
+}
+
+.action-btn .slds-button{
+    border: 1px solid black !important;
+}
+
+.no-data-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 45%;
+}
+
+.no-data-message {
+    text-align: center;
+    font-size: 18px; 
+    color: #ccc; 
+}
+
+.pending-class{
+    background-color: #f1e0e5;
+    color: #ff154f;
+    font-weight: 300;
+    display: flex;
+    justify-content: center;
+    margin: 0 10%;
+    padding: 4px 0px;
+    border-radius: 14px;
+}
+
+.in-progress-class{
+    background-color: #DFEEF9;
+    color: #008eff;
+    font-weight: 300;
+    display: flex;
+    justify-content: center;
+    margin: 0 10%;
+    padding: 4px 0px;
+    border-radius: 14px;
+}
+
+.completed-class{
+    background-color: #E1FCEF;
+    color: green;
+    font-weight: 300;
+    display: flex;
+    justify-content: center;
+    margin: 0 10%;
+    padding: 4px 0px;
+    border-radius: 14px;
+}
+
+.filter-modal .slds-modal__header{
+    border-bottom: none;
+    --sds-c-modal-radius-border : 1.5rem;
+    background: #0176D3;
+    color: white;
+    
+}
+
+.filter-modal-close{
+    position: absolute;
+    top: 1rem;
+    right: 0.7rem;
+}
+
+.filter-dates{
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+    gap: 5%;
+}
+
+.filter-created-date{
+    width: 50%;
+}
+
+.filter-end-date{
+    width: 50%;
+}
+
+.filter-modal .slds-modal__footer{
+    background-color: white;
+    border: none;
+    --sds-c-modal-radius-border : 1.5rem;
+}
+
+.filter-modal-footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
+}
+
+.center{
+    text-align: center;
+}
+
+.filter-body{
+    min-height: 12rem;
+}
