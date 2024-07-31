@@ -9,6 +9,7 @@ import { CurrentPageReference } from 'lightning/navigation';
 import { NavigationMixin } from 'lightning/navigation';
 
 
+
 export default class TemplateModalChild extends NavigationMixin(LightningElement) {
     @api selectedObject;
     @api currentRecordId = null;
@@ -111,6 +112,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 .then(() => {
                         this.isInitialRender = !this.initializeSummerNote();
                         this.isLoading = false;
+
                 })
                 .catch(error => {
                     console.log('Error loading libraries', error);
@@ -130,7 +132,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             console.error('No selected object found.');
             return;
         }
-    
+
         getFieldsForObject({ objectName: this.selectedObjectValue })
             .then(data => {
                 this.fieldOptions = data.map(field => ({ label: field, value: field }));
@@ -139,6 +141,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 if (this.isObjectChanged) {
                     const content = $(this.editor).summernote('code');
                     console.log('content ==>  ', content);
+
     
                     // Regular expression to match merge field syntax {!objectName.fieldName}
                     const mergeFieldRegex = /\{\![^\}]+\}/g;
@@ -169,8 +172,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     */
     initializeSummerNote() {
         try {
-
-
             const selector = this.currentRecordIdValue ? this.currentRecordIdValue : 'tempId';
             this.editor = this.template.querySelector(`[data-id="${selector}"]`);
 
@@ -337,6 +338,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             .then(result => {
                 this.description = result.Description__c;
                 this.bodyOfTemplate = result.Template_Body__c;
+
                 $(this.editor).summernote('code', this.bodyOfTemplate);
 
                 this.isLoading = false;
@@ -417,7 +419,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         var regex = /(<([^>]+)>)/ig;
 
         const editorContentWithoutHtml = content.replace(regex, "").replace(/&nbsp;/g, ' ').trim();
-        console.log('editorContentWithoutHtml ==> ' + editorContentWithoutHtml);
 
         if(editorContentWithoutHtml == ''){
             this.showToast('Error' , 'You cannot Save Empty Template Body' , 'error');
@@ -521,13 +522,13 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     
                     const errorPopup2 = this.template.querySelector('c-error_-pop-up');
                     console.log('in errorPopup2-->',errorPopup2);
+
                     if (errorPopup2) {
                         errorPopup2.showToast('warning', 'You will not able to use this template as template body is empty', 'Warning');
                     } else {
                         console.error('Error popup component not found');
                     }
                 }, 100);
-                console.log('after in else-->');
             }
 
             else{
@@ -550,7 +551,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             this[NavigationMixin.Navigate]({
                 type: 'standard__navItemPage',
                 attributes: {
-                    apiName: 'template_builder',
+                    apiName: 'MVEX__template_builder',
                     pageNumber: this.newPageNumber
                 },
             });
@@ -573,7 +574,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         this[NavigationMixin.Navigate]({
             type: 'standard__navItemPage',
             attributes: {
-                apiName: 'template_builder',
+                apiName: 'MVEX__template_builder',
                 pageNumber: this.newPageNumber
             },
         });

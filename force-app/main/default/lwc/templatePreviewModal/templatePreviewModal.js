@@ -8,7 +8,6 @@ export default class TemplatePreviewModal extends LightningElement {
     @api templateBody;
     @track isRecordSelectOpen = false;
     @track selectedRecord = '';
-    @track recordOptions = [];
     @track recordName = 'Message Body';
     @track updatedBody = '';
     @track recordOptions = [{ label: 'None', value: 'none' }];
@@ -36,6 +35,22 @@ export default class TemplatePreviewModal extends LightningElement {
     connectedCallback() {
         this.updatedBody = this.templateBody;
         this.fetchRecords();
+    }
+
+    renderedCallback(){
+
+        Promise.all([
+            loadStyle(this, summerNote_Editor + '/summernote-lite-pdf.css'),
+        ]).then(() => {
+            console.log('Success 112');
+            const richText = this.template.querySelector('.richText');
+            richText && (richText.innerHTML = this.setTempValue(this.updatedBody));
+    
+        })
+        .catch(error => {
+            console.log('Error ==> ' , error);
+        });        
+
     }
 
     /**
@@ -134,6 +149,7 @@ export default class TemplatePreviewModal extends LightningElement {
 
         tempUpdatedBody = tempUpdatedBody.replace(regex, (fieldName) => {
             if (record.hasOwnProperty(fieldName)) {
+
                 return record[fieldName] != null ? record[fieldName] : `{${fieldName} data is empty}`;
             }
 
@@ -150,6 +166,7 @@ export default class TemplatePreviewModal extends LightningElement {
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
+
     setTempValue(value){
         return `<div class=" note-editor2 note-frame2">
                     <div class="note-editing-area2">
@@ -172,4 +189,5 @@ export default class TemplatePreviewModal extends LightningElement {
             richText.innerHTML = this.setTempValue(this.updatedBody);
         }
     }
+
 }

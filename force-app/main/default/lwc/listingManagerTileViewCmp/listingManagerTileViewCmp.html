@@ -1,0 +1,59 @@
+<template>
+    <template if:false={showSection}>
+        <div class="slds-grid slds-wrap slds-gutters slds-p-left_large slds-p-right_large mainDiv">
+            <template for:each={shownProcessedListingData} for:item="listing" for:index="index">
+                <div key={listing.Id} class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+                    <div class="outerCover">
+                        <div class="imageSection">
+                            <img src={listing.media_url}/>
+                            <div class="checkboxDiv">
+                                   <lightning-input
+                                   data-id={index}
+                                   type="checkbox"
+                                   checked={listing.isChecked}
+                                   value={listing.isChecked}
+                                   onchange={checkBoxValueChange}>
+                               </lightning-input>
+                            </div>
+                        </div>
+                        <div class="bodySection slds-p-around_medium">
+                            <div class="nameSection"><p data-id={listing.Id} onclick={redirectToRecord}>{listing.Name}</p></div>
+                            <div class="descSection"><p>{listing.Title}</p></div>
+                            <div class="addSection"><p>Rs.{listing.Listing_Price__c}</p></div>
+                            <div class="shareIconDiv" data-id={listing.Id} onclick={redirectToRecord} >
+                                <img class="listing-manager-icon" src={shareIcon} />
+                            </div>
+                        </div>
+                    </div>   
+                </div>
+            </template>
+        </div>
+    </template>
+    <template if:true={showSection}>
+        <div class="noresult">
+                <div class="noresult-class">
+                    <p class="tag1">No Result found yet...</p>
+                    <p class="tag2">We did not find any result for your search</p>   
+                </div>
+        </div>
+    </template>
+    <div class="paginationDiv slds-p-around_medium">
+        <div class="btnCover">
+            <div class="leftButton slds-m-right_small">
+                <lightning-button-icon icon-name="utility:chevronleft" size="large"
+                variant="Bordered" onclick={goToPrevFeaturedProperty}
+                class="arrow1 left-arrow"
+                disabled={isPrevDisabled}></lightning-button-icon>
+            </div>
+            <div class="slds-m-right_small pageNumberDiv">
+                <p>{pageNumber}/{totalPages}</p>
+            </div>
+            <div class="rightButton">
+                <lightning-button-icon icon-name="utility:chevronright" size="large"
+                                        variant="Bordered" onclick={goToNextFeaturedProperty}
+                                        class="arrow1 right-arrow"
+                                        disabled={isNextDisabled}></lightning-button-icon>
+            </div>
+        </div>
+    </div>
+</template>

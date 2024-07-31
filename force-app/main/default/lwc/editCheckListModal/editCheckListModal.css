@@ -1,0 +1,156 @@
+.slds-button-group .slds-button_icon {
+    margin: 0 0.2rem;
+}
+
+.no-data-container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    font-size: 1rem;
+    font-family: verdana;
+}
+
+.footerbtns {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.blue-header {
+    background-color: #0176D3;
+    color: white;
+    border-bottom-style: unset;
+}
+
+.popup__header-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.5fr 0.3fr;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+    background: #0678FF1A;
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 21px;
+    letter-spacing: 0.01em;
+    text-align: left;
+}
+
+.popup__data-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.5fr 0.3fr;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid #a0a0a0;
+    margin-bottom: 0.5rem;
+    align-items: center;
+}
+
+.tableContainer {
+    max-height: 52vh;
+    overflow-y: auto;
+}
+
+.order_btn {
+    border: 1px solid #0176D3;
+    background: #FFFFFF;
+    border-radius: 4px;
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.order_btn_grp {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.cancel_btn_css {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 35px;
+    text-align: center;
+    border: none;
+    padding: 1px 25px;
+    background: #FFFFFF;
+    border: 1px solid #747474;
+    color: #0176D3;
+    border-radius: 5px;
+}
+
+.save_btn_css {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 35px;
+    text-align: center;
+    border: none;
+    padding: 1px 25px;
+    background: #0176D3;
+    color: white;
+    border-radius: 5px;
+}
+
+.editchecklistcss {
+    width: 80%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.add-new-btn {
+    background-color: #0176D3;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 35px;
+    text-align: center;
+    border: none;
+    padding: 1px 20px;
+    border-radius: 5px;
+}
+
+.header_container_css {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    align-items: center;
+}
+
+.object_name_css {
+    font-size: 16px;
+    text-align: left;
+}
+
+.wrap_css {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.padding_css {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error_css {
+    border: 2px solid red;
+    border-radius: 7px;
+}
+
+.display_css {
+    display: flex;
+    flex-direction: row;
+}

@@ -26,7 +26,7 @@
 
 .slds-modal__container {
     width: -webkit-fill-available;
-    height: auto;
+    height: 80%;
 }
 
 .section_css {
@@ -52,4 +52,16 @@
 .width_css {
     width: 65%;
     font-size: 15px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

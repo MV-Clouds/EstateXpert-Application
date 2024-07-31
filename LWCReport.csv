@@ -1,0 +1,5 @@
+"Problem","Severity","File","Line","Column","Rule","Description","URL","Category","Engine"
+"1","2","D:\EstateApplication\MarketingManager\EstateXpert-Application\force-app\main\default\lwc\listingManagerFilterCmp\listingManagerFilterCmp.js","536","17","no-undef","'fields' is not defined.","https://eslint.org/docs/latest/rules/no-undef","problem","eslint"
+"2","2","D:\EstateApplication\MarketingManager\EstateXpert-Application\force-app\main\default\lwc\listingManagerFilterCmp\listingManagerFilterCmp.js","537","37","no-undef","'fields' is not defined.","https://eslint.org/docs/latest/rules/no-undef","problem","eslint"
+"3","2","D:\EstateApplication\MarketingManager\EstateXpert-Application\force-app\main\default\lwc\listingManagerFilterCmp\listingManagerFilterCmp.js","706","13","no-const-assign","'value' is constant.","https://eslint.org/docs/latest/rules/no-const-assign","problem","eslint"
+"4","2","D:\EstateApplication\MarketingManager\EstateXpert-Application\force-app\main\default\lwc\listingManagerFilterCmp\listingManagerFilterCmp.js","727","13","no-const-assign","'value' is constant.","https://eslint.org/docs/latest/rules/no-const-assign","problem","eslint"

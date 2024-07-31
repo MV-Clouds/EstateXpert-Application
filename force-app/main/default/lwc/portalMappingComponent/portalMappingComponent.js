@@ -10,10 +10,13 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
     @track isPortalData = true;
     @track showModal = false;
     @track portals = [
-        { id: 1, name: 'Property Finder', logo: '/resource/propertyfinder' },
-        { id: 2, name: 'Bayut', logo: '/resource/bayut' },
-        { id: 3, name: 'Dubizzle', logo: '/resource/dubizzle' }
+        { id: 1, name: 'Property Finder', logo: '/resource/MVEX__propertyfinder' },
+        { id: 2, name: 'Bayut', logo: '/resource/MVEX__bayut' },
+        { id: 3, name: 'Dubizzle', logo: '/resource/MVEX__dubizzle' },
+        { id: 4, name: 'Zoopla', logo: '/resource/MVEX__zoopla' },
+        { id: 5, name: 'Rightmove', logo: '/resource/MVEX__rightmove' }
     ];
+    @track isSpinner = true;
 
     /**
     * Method Name: connectedCallback
@@ -45,6 +48,18 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
                     line-height: var(--lwc-lineHeightReset, 1);
                     z-index: 1;
                     top: -10px;
+                }
+
+                @media only screen and (max-width: 1300px) {
+                    .tooltip_css lightning-helptext .slds-form-element__icon {
+                        display: inline-block;
+                        position: relative;
+                        padding-top: unset;
+                        vertical-align: top;
+                        line-height: var(--lwc-lineHeightReset, 1);
+                        z-index: 1;
+                        top: -4px;
+                    }
                 }
             `;
 
@@ -88,23 +103,28 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
     * Created By: Karan Singh
     **/
     getPortalRecord() {
+        this.isSpinner = true;
         try {
             getPortalRecords()
                 .then(result => {
+                    this.isSpinner = false;
                     console.log('data--->', result);
                     if (result.length > 0) {
                         this.portalRecordList = result.map((val, index) => ({
                             number: index + 1,
                             val: val
                         }));;
+                        this.isPortalData = true;
                     } else {
                         this.isPortalData = false;
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching Listing field data', error);
+                    this.isSpinner = false;
+                    console.log('Error fetching Listing field data', error);
                 });
         } catch (error) {
+            this.isSpinner = false;
             console.log('error--> ',error);
         }
     }
@@ -150,7 +170,7 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
 
             console.log(portalName, portalIconURL, portalStatus);
             let componentDef = {
-                componentDef: "c:portalMappingLandingPage",
+                componentDef: "MVEX:portalMappingLandingPage",
                 attributes: {
                     portalId: portalId,
                     portalGen: portalGen,
@@ -193,7 +213,7 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
         try {
             event.preventDefault();
             let componentDef = {
-                componentDef: "c:estateXpertControlCenter",
+                componentDef: "MVEX:estateXpertControlCenter",
             };
 
             let encodedComponentDef = btoa(JSON.stringify(componentDef));

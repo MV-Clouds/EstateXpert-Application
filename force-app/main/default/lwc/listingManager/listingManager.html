@@ -1,0 +1,205 @@
+<template>
+    <div class="slds-grid slds-wrap slds-align_absolute-center full-page-container">
+        <div class="main">
+            <templete if:true={spinnerShow}>
+                <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+            </templete>
+            <lightning-card hide-header="true" variant="narrow" class="slds-size_full full-page-card">
+                <div class="slds-page-header slds-page-header_related-list">
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title">
+                          
+                            <div class="slds-media">
+                                <div class="slds-media__body">
+                                    <div class="slds-page-header__name">
+                                        <div class="slds-page-header__name-title">
+                                            <h1>
+                                                <span class="slds-page-header__title slds-truncate">Listing</span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-page-header__col-actions">
+                            <div class="slds-page-header__controls">
+                                <div class="slds-page-header__control">
+                                    <lightning-button label="New Listing" onclick={goTONewListing} class="slds-var-m-left_x-small"></lightning-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-page-header__row second-row">
+                        <div class="slds-page-header__col-meta">
+                            <p class="slds-page-header__meta-text">{totalSelected} Items Selected</p>
+                        </div>
+                        <div class="slds-page-header__col-controls">
+                            <div class="slds-page-header__controls">
+                                <div class="slds-page-header__control">
+                                    <ul class="slds-button-group-list">
+                                        <li>
+                                            <button class="slds-button slds-button_icon slds-button_icon-border menuButton activeButton" data-tab-id="1" onclick={handleMenuTabClick}
+                                                title="List View">
+                                                <img class="listing-manager-icon" src={listIcon} />
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="slds-button slds-button_icon slds-button_icon-border menuButton" data-tab-id="2"
+                                                title="Tile View" onclick={handleMenuTabClick}>
+                                                <img class="listing-manager-icon" src={tileIcon} />
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="slds-button slds-button_icon slds-button_icon-border menuButton" data-tab-id="3"
+                                                title="Maps" onclick={handleMenuTabClick}>
+                                                <img class="listing-manager-icon" src={mapIcon} />
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </lightning-card>
+            <div class="body">
+                <div class="innerDiv1">
+                    <div class="filterDiv">
+                        <c-listing-manager-filter-cmp onvalueselected={handleFilteredListings}>
+
+                        </c-listing-manager-filter-cmp>
+                    </div>
+                    <div class="filterWrap" onclick={wrapFilter}>
+                        <img class="listing-manager-icon" src={leftIcon} />
+                    </div>
+                </div>
+               
+                <div class="innerDiv2">
+                  <template if:true={showList}> 
+                    <template if:false={showSection}>
+                        <div class="tableDiv" id="tableDiv">
+                            <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid" aria-label="Example advanced table of Opportunities in actionable mode">
+                                <thead>
+                                  <tr class="slds-line-height_reset">
+                                    <th class="slds-text-align_right slds-cell_action-mode colume1" scope="col">
+                                      <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
+                                      <div class="slds-th__action slds-th__action_form">
+                                        <lightning-input
+                                              type="checkbox"
+                                              onchange={selectAllCheckbox}
+                                              checked={checkAll}
+                                              >
+                                              </lightning-input>
+                                      </div>
+                                    </th>
+                                    <th class="slds-cell_action-mode imageColume" scope="col">
+                                        <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                                    </th>
+                                    <th key={listing.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
+                                      <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                        <span class="slds-assistive-text">Sort by: </span>
+                                        <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                          <span class="slds-truncate" title="Title">Listing Name</span>
+                                          <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                            <img data-index="Name" class="listing-manager-icon" src={arrowUp} />
+                                          </span>
+                                        </div>
+                                      </a>
+                                    </th>
+                                    <template for:each={fields} for:item="listing" for:index="index">
+                                      <th key={listing.fieldName} data-id={listing.fieldName} onclick={sortClick} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
+                                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                          <span class="slds-assistive-text">Sort by: </span>
+                                          <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                                            <span class="slds-truncate" title="Title">{listing.fieldLabel}</span>
+                                            <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                                <img data-index={listing.fieldName} class="listing-manager-icon" src={arrowUp} />
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </th>
+                                    </template>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <template for:each={shownProcessedListingData} for:item="listing" for:index="index">
+                                    <tr key={listing.Id} aria-selected="false" class="slds-hint-parent">
+                                        <td class="slds-text-align_right slds-cell_action-mode" role="gridcell">
+                                            <lightning-input
+                                                data-id={index}
+                                                type="checkbox"
+                                                checked={listing.isChecked}
+                                                value={listing.isChecked}
+                                                onchange={checkBoxValueChange}>
+                                            </lightning-input>
+                                        </td>
+                                        <td class="slds-cell_action-mode" role="gridcell">
+                                            <div class="slds-truncate">
+                                                <img class="property-image" src={listing.media_url} alt="Listing Image"/>
+                                            </div>
+                                        </td>
+                                        <th class="slds-cell_action-mode" scope="row">
+                                            <div class="slds-truncate">
+                                                <a href="#" data-id={listing.Id} onclick={redirectToRecord} tabindex="0">{listing.Name}</a>
+                                            </div>
+                                        </th>
+                                        <template for:each={listing.orderedFields} for:item="field" for:index="index2">
+                                            <td key={field.fieldName} class="slds-cell_action-mode" role="gridcell">
+                                                <div class="slds-truncate">
+                                                    {field.value}
+                                                </div>
+                                            </td>
+                                        </template>
+                                    </tr>
+                                </template>
+                                </tbody>
+                              </table>
+                        </div>
+                    </template>
+                    <template if:true={showSection}>
+                        <div class="noresult">
+                                <div class="noresult-class">
+                                    <p class="tag1">No Result found yet...</p>
+                                    <p class="tag2">We did not find any result for your search</p>   
+                                </div>
+                        </div>
+                    </template>
+
+                    <div class="paginationDiv slds-var-p-around_medium">
+                        <div class="btnCover">
+                            <div class="leftButton slds-var-m-right_small">
+                                <lightning-button-icon icon-name="utility:chevronleft" size="large"
+                                variant="Bordered" onclick={goToPrevFeaturedProperty}
+                                class="arrow1 left-arrow"
+                                disabled={isPrevDisabled}></lightning-button-icon>
+                            </div>
+                            <div class="slds-var-m-right_small pageNumberDiv">
+                                <p>{pageNumber}/{totalPages}</p>
+                            </div>
+                            <div class="rightButton">
+                                <lightning-button-icon icon-name="utility:chevronright" size="large"
+                                                        variant="Bordered" onclick={goToNextFeaturedProperty}
+                                                        class="arrow1 right-arrow"
+                                                        disabled={isNextDisabled}></lightning-button-icon>
+                            </div>
+                        </div>
+                    </div>
+                  </template>
+                  
+                  <templete if:true={showTile}>
+                        <c-listing-manager-tile-view-cmp
+                          onvalueselected={handleListingSelect}
+                          listingsdata={processedListingData}
+                        ></c-listing-manager-tile-view-cmp>
+                  </templete>
+                  <templete if:true={showMap}>
+                      <c-listing-manager-mapview-cmp
+                        class="slds-p-around_medium"
+                        listingsdata = {listingData}
+                        ></c-listing-manager-mapview-cmp>
+                  </templete>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

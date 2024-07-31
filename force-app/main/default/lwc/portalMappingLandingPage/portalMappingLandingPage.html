@@ -17,10 +17,12 @@
                 <div class="buttons">
                     <div class="segmented-buttons">
                         <template if:true={activeInactive}>
-                            <button class="segmented" onclick={currentPortalAction} data-name="deactivate">Deactivate</button>
+                            <button class="segmented" onclick={currentPortalAction}
+                                data-name="deactivate">Deactivate</button>
                         </template>
                         <template if:false={activeInactive}>
-                            <button class="segmented" onclick={currentPortalAction} data-name="activate">Activate</button>
+                            <button class="segmented" onclick={currentPortalAction}
+                                data-name="activate">Activate</button>
                         </template>
                         <button class="segmented" onclick={handleSave}>Save</button>
                         <button class="segmented" onclick={revertTheChanges}>Cancel</button>
@@ -49,17 +51,13 @@
                             <div key={val.id} class="portalMapping_data-row">
                                 <div class="slds-col position_css">
                                     <div if:true={val.isRequired} class="red_css">*</div>
-                                    <lightning-combobox
-                                        label=""
-                                        options={val.listingFields}
-                                        data-index={index}
-                                        value={val.listingFieldAPIName}
-                                        onchange={handleComboboxChange}>
+                                    <lightning-combobox label="" options={val.listingFields} data-index={index} data-datatype={val.dataType}
+                                        value={val.listingFieldAPIName} onchange={handleComboboxChange}>
                                     </lightning-combobox>
                                 </div>
                                 <div class="slds-col view_input slds-input_faux font_styles">
                                     <div>
-                                        {val.portalLabel} 
+                                        {val.portalLabel}
                                     </div>
                                     <lightning-helptext content={val.description}></lightning-helptext>
                                 </div>
@@ -74,14 +72,19 @@
             <template if:false={isRecordAvailable}>
                 <div class="empty-state">
                     <div class="empty-state__content">
-                      <div class="empty-state__icon">
-                        <img src="/resource/emptyState" alt="">
-                      </div>
-                      <div class="empty-state__message">No records has been added yet.</div>
+                        <div class="empty-state__icon">
+                            <img src="/resource/MVEX__emptyState" alt="">
+                        </div>
+                        <div class="empty-state__message">No records has been added yet.</div>
                     </div>
-                  </div>
+                </div>
             </template>
         </div>
     </div>
+
+    <template if:true={isSpinner}>
+        <c-spinner-component></c-spinner-component>
+    </template>
+
 
 </template>

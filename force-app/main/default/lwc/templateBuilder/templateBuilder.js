@@ -40,7 +40,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     setCurrentPageReference(currentPageReference) {
         this.currentPageReference = currentPageReference;
         if (currentPageReference.state) {
-            if (currentPageReference.attributes.apiName == 'template_builder') {
+            if (currentPageReference.attributes.apiName == 'MVEX__template_builder') {
                 this.newPageNumber = currentPageReference.attributes.pageNumber;
                 this.fetchTemplates();
             }
@@ -59,7 +59,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         Promise.all([
             loadStyle(this, externalCss)
         ])
-        .then(res => {
+        .then(() => {
             console.log('External Css Loaded');
         })
         .catch(error => {
@@ -83,7 +83,6 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 data.sort((a, b) => {
                     const labelA = a.Label__c.toLowerCase();
                     const labelB = b.Label__c.toLowerCase();
-
                     if (labelA < labelB) return -1;
                     if (labelA > labelB) return 1;
                     return 0;
@@ -95,6 +94,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             })
             .catch(error => {
                 this.isLoading = false;
+                console.log('Error occuring during fetching templates', error);
             });
     }
 
@@ -110,7 +110,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.templates = data.map((template, index) => ({
             ...template,
             rowIndex: index + 1,
-            isActive: template.Status__c,
+            isActive: template.MVEX__Status__c,
             CreatedDateformatted: this.formatDate(template.CreatedDate)
         }));
         
@@ -222,7 +222,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         const searchTerm = event.target.value.toLowerCase();
         
         this.filteredTemplates = this.templates.filter(template =>
-            template.Label__c.toLowerCase().includes(searchTerm)
+            template.MVEX__Label__c.toLowerCase().includes(searchTerm)
             );
             this.filteredTemplates = this.filteredTemplates.map((template, index) => ({
                 ...template,
@@ -248,10 +248,10 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                 const template = this.templates.find(tmpl => tmpl.Id === templateId);
                 if (template) {
                     template.isActive = isActive;
-                    template.Status__c = isActive ? 'Active' : 'Inactive';
+                    template.MVEX__Status__c = isActive ? 'Active' : 'Inactive';
                     this.filteredTemplates = [...this.templates];
                     this.displayTemplates();
-                    this.showToast('Status Change', `Template status changed to: ${template.Status__c}`, 'success');
+                    this.showToast('Status Change', `Template status changed to: ${template.MVEX__Status__c}`, 'success');
                 }
             })
             .catch(error => {
@@ -278,8 +278,8 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     handlePreview(event) {
         const templateId = event.target.dataset.id;
         const template = this.templates.find(tmpl => tmpl.Id === templateId);
-        this.selectedobject = template.Object_Name__c;
-        this.selectedTemplateBody = template.Template_Body__c;
+        this.selectedobject = template.MVEX__Object_Name__c;
+        this.selectedTemplateBody = template.MVEX__Template_Body__c;
         this.isPreviewModal = true;
     }
 
@@ -315,10 +315,10 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             
             let cmpDef;                
             cmpDef = {
-                componentDef: 'c:templateModalChild',
+                componentDef: 'MVEX:templateModalChild',
                 attributes: {                    
-                    c__navigationState: serializedState,
-                    c__recordId : templateId
+                    MVEX__navigationState: serializedState,
+                    MVEX__recordId : templateId
                 }                
                 };
 
@@ -367,7 +367,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
                     
                     this.displayTemplates();
                     this.isLoading = false;
-                    this.showToast('Success', `Template '${template.Label__c}' deleted successfully.`, 'success');
+                    this.showToast('Success', `Template '${template.MVEX__Label__c}' deleted successfully.`, 'success');
                 })
                 .catch(error => {
                     this.isLoading = false;
