@@ -32,7 +32,7 @@
 
 .name-field label{
     font-family:"Poppins", sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     font-weight: 500;
     margin-bottom: 0rem;
 }
@@ -40,15 +40,15 @@
 .name-field span{
     color: red;
     font-size: 0.8rem;
-    
 }
 
 .name-field input,textarea{
     line-height: normal;
     border: none;
-    height: 1.8rem;
+    height: 2rem;
     background: transparent;
     border-bottom: 2px solid #c0c1c3;
+    resize: none;
 }
 
 .name-field input,textarea:focus{
@@ -157,6 +157,7 @@
     bottom: 0.5rem;
     /* width: 95%; */
     justify-content: center;
+    gap: 1rem;
     cursor: pointer;
     user-select: none;
 }
@@ -174,6 +175,14 @@
 }
 .btn-div:hover{
     background-color: rgb(88, 176, 248);
+}
+.close-btn{
+    background-color: white;
+    border: 2px #0176D3 solid;
+    color: #0176D3;
+}
+.close-btn:hover{
+    background-color: rgb(213, 218, 222);
 }
 @media (max-width: 1450px) {
     .UserConfigDetails{

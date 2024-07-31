@@ -1,8 +1,9 @@
 import { LightningElement , track} from 'lwc';
 import sendemail from '@salesforce/apex/SupportRequestController.sendemail';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class SupportRequestCmp extends LightningElement {
+export default class SupportRequestCmp extends NavigationMixin(LightningElement) {
 
     @track supportname = '';
     @track email ='';
@@ -12,6 +13,7 @@ export default class SupportRequestCmp extends LightningElement {
     @track email_msg = true;
     @track message_msg = true;
     @track subject_msg = true;
+    @track email_validation = false;
     @track filesData = [];
     @track FName = [];     
     @track FBase64 = [];
@@ -41,6 +43,11 @@ export default class SupportRequestCmp extends LightningElement {
     Support_email(event) {
       this.email = event.target.value;
       this.email_msg = true;
+      var pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      this.validation1 = pattern.test(this.email);
+      if(this.validation1 == false){
+        this.email_msg = false;
+      }
     }
 
     /**
@@ -74,13 +81,11 @@ export default class SupportRequestCmp extends LightningElement {
     * Created By: Vyom Soni
     */
     onSubmit() {
-      var pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      var validation1 = pattern.test(this.email);
         
         if (this.supportname == undefined || this.supportname == '') {
           this.name_msg = false;
         }
-        if (validation1 == false) {
+        if (this.validation1 == false) {
           this.email_msg = false;
         } 
         if (this.subject == undefined || this.subject == '') {
@@ -92,7 +97,28 @@ export default class SupportRequestCmp extends LightningElement {
         if(this.supportname != '' && this.validation1 != false && this.subject != '' && this.message != ''){
           this.email_msg = true;
           this.sendEmailCallMethod();
+          this.onClose();
         }
+    }
+
+    /**
+    * Method Name : onSubmit
+    * @description : handle the from submit button
+    * date:22/07/2024
+    * Created By: Vyom Soni
+    */
+    onClose(){
+    let componentDef = {
+        componentDef: "MVEX:estateXpertControlCenter",
+    };
+    
+    let encodedComponentDef = btoa(JSON.stringify(componentDef));
+    this[NavigationMixin.Navigate]({
+        type: 'standard__webPage',
+        attributes: {
+            url: '/one/one.app#' + encodedComponentDef
+        }
+    });
     }
 
     /**

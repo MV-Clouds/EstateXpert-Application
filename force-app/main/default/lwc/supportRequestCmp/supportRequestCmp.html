@@ -19,7 +19,7 @@
                     <div class="name-field">
                         <label for="myInput"><span>*</span> Email</label>
                         <input type="text" placeholder="Enter Your Email"
-                        value={email} onchange={Support_email}
+                        value={email} onkeyup={Support_email}
                         class="input selectDropValues1"  maxlength="255" minlength="0"/>
                         <div class="error-message" if:false={email_msg}>Please Enter Valid Email
                             Details..!</div>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="name-field">
                         <label for="myInput"><span>*</span> Message</label>
-                        <textarea rows="1" placeholder="Enter your Message"
+                        <textarea rows="3" placeholder="Enter your Message"
                          onchange={Support_message} value={message}
                         class="message selectDropValues1"></textarea>
                         <div class="error-message" if:false={message_msg}>Please Enter Valid Message
@@ -62,6 +62,7 @@
                     </div>
                 </div>
                 <div class="button">
+                    <div class="btn-div close-btn" onclick={onClose}>   Cancel   </div>
                     <div class="btn-div" onclick={onSubmit}>Send Message</div>
                 </div>
                     
