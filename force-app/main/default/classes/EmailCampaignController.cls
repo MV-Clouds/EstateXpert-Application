@@ -146,7 +146,7 @@ public with sharing class EmailCampaignController {
             Date minDate = null;
             if (!String.isEmpty(selectedContactDateField)) {
                 String soql = 'SELECT MIN(' + selectedContactDateField + ') minDate FROM Contact WHERE Id IN :selectedPrimaryRecipients';
-                AggregateResult result = Database.query(soql);
+                AggregateResult result = Database.query(String.escapeSingleQuotes(soql));
                 minDate = (Date) result.get('minDate');
             }
 
@@ -189,7 +189,9 @@ public with sharing class EmailCampaignController {
                 campaign.Campaign_Start_Date__c = minDate;          
             }    
             
-            if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
+            if(Schema.sObjectType.Marketing_Campaign__c.fields.Label__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Sender_Mode__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.From_Address__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.From_Name__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Is_Marketing_Campaign_Template__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.BCC_Contacts__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.CC_Contacts__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Total_Emails__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Remaining_Emails__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Total_Emails__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Marketing_Campaign_Template__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Start_Date__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Campaign_Start_Date__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.SelectedContactDateField__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Status__c.isCreateable() && Schema.sObjectType.Marketing_Campaign__c.fields.Label__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.Sender_Mode__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.From_Address__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.From_Name__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.Is_Marketing_Campaign_Template__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.BCC_Contacts__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.CC_Contacts__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.Total_Emails__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.Remaining_Emails__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.Total_Emails__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.Marketing_Campaign_Template__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.Start_Date__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.Campaign_Start_Date__c.isAccessible() && Schema.sObjectType.Marketing_Campaign__c.fields.SelectedContactDateField__c.isAccessible()
+            && Schema.sObjectType.Marketing_Campaign__c.fields.Status__c.isAccessible()){
+
                 Database.insert(campaign);
             }
 
@@ -316,7 +318,7 @@ public with sharing class EmailCampaignController {
             Date minDate = null;
             if (!String.isEmpty(selectedContactDateField)) {
                 String soql = 'SELECT MIN(' + selectedContactDateField + ') minDate FROM Contact WHERE Id IN :selectedPrimaryRecipients';
-                AggregateResult result = Database.query(soql);
+                AggregateResult result = Database.query(String.escapeSingleQuotes(soql));
                 minDate = (Date) result.get('minDate');
             }
 
@@ -520,9 +522,15 @@ public with sharing class EmailCampaignController {
 
             Integer totalMailsCount = 0;
             Integer totalMailsCountRemaining = 0;
-            Integer previousTotalEmails = Integer.valueOf(campaign.Total_Sent_Mails__c );
-            // totalMailsCount = ((totalEmails.size() - remainingTotalEmails.size()) * (existingTotalMembers.size() - newMembers.size() + membersToDelete.size())) + (remainingTotalEmails.size() * existingTotalMembers.size());
+            Integer previousTotalEmails = 0;
 
+            if(campaign.Total_Sent_Mails__c != null){
+                previousTotalEmails = Integer.valueOf(campaign.Total_Sent_Mails__c );
+            }
+
+            System.debug('previousTotalEmails ==>' + previousTotalEmails);
+            System.debug('remainingTotalEmails ==>' + remainingTotalEmails.size());
+            System.debug('existingTotalMembers ==>' + existingTotalMembers.size());
             totalMailsCount = previousTotalEmails + (remainingTotalEmails.size() * existingTotalMembers.size());
             totalMailsCountRemaining = remainingTotalEmails.size() * existingTotalMembers.size();
 
@@ -564,7 +572,7 @@ public with sharing class EmailCampaignController {
             }
     
             String fieldValueQuery = 'SELECT Id, ' + selectedContactDateField + ' FROM Contact WHERE Id IN :contactIds';
-            List<Contact> contacts = Database.query(fieldValueQuery);
+            List<Contact> contacts = Database.query(String.escapeSingleQuotes(fieldValueQuery));
         
             Map<String, String> idToFieldValueMap = new Map<String, String>();
             for (Contact con : contacts) {
@@ -602,17 +610,17 @@ public with sharing class EmailCampaignController {
 
         
         CampaignData campaignData = new CampaignData();
-        campaignData.Id = campaign.Id;
-        campaignData.Label = campaign.Label__c;
-        campaignData.SenderMode = campaign.Sender_Mode__c;
-        campaignData.FromAddress = campaign.From_Address__c;
-        campaignData.FromName = campaign.From_Name__c;
-        campaignData.IsMarketingCampaignTemplate = campaign.Is_Marketing_Campaign_Template__c;
-        campaignData.BCCContacts = campaign.BCC_Contacts__c;
-        campaignData.CCContacts = campaign.CC_Contacts__c;
-        campaignData.Status = campaign.Status__c;
-        campaignData.StartDate = campaign.Start_Date__c;
-        campaignData.SelectedContactDateField = campaign.SelectedContactDateField__c;
+        campaignData.id = campaign.Id;
+        campaignData.label = campaign.Label__c;
+        campaignData.senderMode = campaign.Sender_Mode__c;
+        campaignData.fromAddress = campaign.From_Address__c;
+        campaignData.fromName = campaign.From_Name__c;
+        campaignData.isMarketingCampaignTemplate = campaign.Is_Marketing_Campaign_Template__c;
+        campaignData.bCCContacts = campaign.BCC_Contacts__c;
+        campaignData.cCContacts = campaign.CC_Contacts__c;
+        campaignData.status = campaign.Status__c;
+        campaignData.startDate = campaign.Start_Date__c;
+        campaignData.selectedContactDateField = campaign.SelectedContactDateField__c;
         campaignData.marketingCampaignMembers = marketingCampaignMembers;
         campaignData.emailRecords = emailRecords;
         campaignData.templateId = campaign.Marketing_Campaign_Template__c;
@@ -805,7 +813,7 @@ public with sharing class EmailCampaignController {
 
     }
     
-       /**
+    /**
     * Method Name : EmailRequests
     * Date : 23/07/2024
     * Created By : Rachit Shah
@@ -857,7 +865,6 @@ public with sharing class EmailCampaignController {
 
     }
 
-
     /**
     * Method Name : getContacts
     * Date : 23/07/2024
@@ -869,7 +876,7 @@ public with sharing class EmailCampaignController {
         
         String query = 'SELECT ' + String.join(fieldNames, ', ') + ' FROM Contact WHERE Id IN : contactIds';
         
-        List<Contact> contactRecords = Database.query(query);
+        List<Contact> contactRecords = Database.query(String.escapeSingleQuotes(query));
         
         return contactRecords;
     }
@@ -897,7 +904,7 @@ public with sharing class EmailCampaignController {
         return fieldNames;
     }
 
-        /**
+    /**
     * Method Name : replaceMergeFields
     * Date : 23/07/2024
     * Created By : Rachit Shah
@@ -927,26 +934,25 @@ public with sharing class EmailCampaignController {
         }
     }
 
-
-        /**
+    /**
     * Method Name : CampaignData
     * Date : 23/07/2024
     * Created By : Rachit Shah
     * @description : wrapper class for camapign data
     */
     public class CampaignData {
-        public String Id;
-        public String Label;
-        public String SenderMode;
-        public String FromAddress;
-        public String FromName;
-        public Boolean IsMarketingCampaignTemplate;
-        public String BCCContacts;
-        public String CCContacts;
-        public String Status;
-        public Date StartDate;
+        public String id;
+        public String label;
+        public String senderMode;
+        public String fromAddress;
+        public String fromName;
+        public Boolean isMarketingCampaignTemplate;
+        public String bCCContacts;
+        public String cCContacts;
+        public String status;
+        public Date startDate;
         public String templateName;
-        public String SelectedContactDateField;
+        public String selectedContactDateField;
         public String templateId;
         public List<Marketing_Campaign_Member__c> marketingCampaignMembers;
         public List<Marketing_Email__c> emailRecords;

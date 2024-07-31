@@ -5,7 +5,7 @@
 * @description : Class for sedning email using flow
 */
 
-public class EmailCampaignScheduler {
+public with sharing class EmailCampaignScheduler {
 
     /**
     * Method Name : sendEmails
@@ -160,7 +160,7 @@ public class EmailCampaignScheduler {
         
         String query = 'SELECT ' + String.join(fieldNames, ', ') + ' FROM Contact WHERE Id IN : contactIds';
         
-        List<Contact> contactRecords = Database.query(query);
+        List<Contact> contactRecords = Database.query(String.escapeSingleQuotes(query));
         
         return contactRecords;
     }

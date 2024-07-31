@@ -198,7 +198,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             .then(result => {
 
                 const data = JSON.parse(result);
-                this.emailCampaignName = data.Label;
+                this.emailCampaignName = data.label;
 
                 const formData = {
                     selectedTemplate: '',
@@ -212,21 +212,21 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 this.templateId = data.templateId;
                 this.emailCampaignTemplate = data.templateName;
         
-                formData.campaignName = data.Label;
+                formData.campaignName = data.label;
                 formData.selectedTemplate = data.templateName;
-                formData.fromAddress = data.FromAddress;
-                formData.fromName = data.FromName;
-                formData.saveForFuture = data.IsMarketingCampaignTemplate;
+                formData.fromAddress = data.fromAddress;
+                formData.fromName = data.fromName;
+                formData.saveForFuture = data.isMarketingCampaignTemplate;
                 this.navigationStateString = formData;
 
-                if(data.StartDate != null){
-                    this.specificDate = data.StartDate;
+                if(data.startDate != null){
+                    this.specificDate = data.startDate;
                     this.startDateOption = 'specificDate';
                 }
-                else if(data.SelectedContactDateField != null){
+                else if(data.selectedContactDateField != null){
                     this.isFieldSelected = true;
                     this.startDateOption = 'contactDateField';
-                    this.selectedContactDateField = data.SelectedContactDateField;
+                    this.selectedContactDateField = data.selectedContactDateField;
                 }
 
                 var primaryContacts1 = [];
@@ -243,9 +243,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                     this.filteredPrimaryContacts = this.filteredPrimaryContacts.filter(contact => this.selectedPrimaryRecipients.includes(contact.value));
                 }
 
-                if(data.CCContacts){
-                    console.log('cc ==> ', data.CCContacts);
-                    data.CCContacts.split('@@@').forEach(ccContact => {
+                if(data.cCContacts){
+                    console.log('cc ==> ', data.cCContacts);
+                    data.cCContacts.split('@@@').forEach(ccContact => {
                         let [id] = ccContact.split(':');
                         ccContacts1.push(id);
                     });
@@ -254,9 +254,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
 
                 }
 
-                if(data.BCCContacts){
-                    console.log('bcc ==> ', data.BCCContacts);
-                    data.BCCContacts.split('@@@').forEach(bccContact => {
+                if(data.bCCContacts){
+                    console.log('bcc ==> ', data.bCCContacts);
+                    data.bCCContacts.split('@@@').forEach(bccContact => {
                         let [id] = bccContact.split(':');
                         bccContacts1.push(id);
                     });
@@ -273,7 +273,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                         timeToSend: this.parseTimeString(email.TimeToSend__c),
                         exactDate : this.parseDateString(email.Send_Date_Time__c),
                         name : email.Name,
-                        disabled: this.shouldDisableEmail(data.SelectedContactDateField, email.Send_Date_Time__c)
+                        disabled: this.shouldDisableEmail(data.selectedContactDateField, email.Send_Date_Time__c)
                     }));
 
                     this.emailsWithTemplate = [...this.emails];
