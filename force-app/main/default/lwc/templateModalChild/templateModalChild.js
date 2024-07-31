@@ -38,10 +38,16 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track isQuickTemplate = false;
     @track templateTypeSelect = '';
 
+    @track selectedObjectValue = '';
+    @track currentRecordIdValue = null;
+    @track templateLabelValue = '';
+
+
 
     get recordId(){
-        return this.currentRecordId ? this.currentRecordId : 'tempId';
+        return this.currentRecordIdValue ? this.currentRecordIdValue : 'tempId';
     }
+    
     
     /**
     * Method Name: getStateParameters
@@ -58,9 +64,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 try {
                     const parseObject = JSON.parse(navigationStateString);
 
-                    this.selectedObject = parseObject.selectedObject;
-                    this.currentRecordId = parseObject.myrecordId;
-                    this.templateLabel = parseObject.label;
+                    this.selectedObject = parseObject.selectedObjectValue;
+                    this.currentRecordIdValue = parseObject.myrecordId;
+                    this.templateLabelValue = parseObject.label;
                     this.description = parseObject.description;
                     this.selectedType = parseObject.type;
                     this.bodyOfTemplate = parseObject.bodyoftemplate;
@@ -84,6 +90,13 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         } else {
             console.error('currentPageReference or currentPageReference.state is not defined');
         }
+    }
+
+    connectedCallback(){    
+        this.selectedObjectValue = this.selectedObject;
+        this.currentRecordIdValue = this.currentRecordId;
+        this.templateLabelValue = this.templateLabel;
+
     }
 
     /**
@@ -125,17 +138,16 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Created By: Rachit Shah
     */
     fetchFields() {
-        if (!this.selectedObject) {
+        if (!this.selectedObjectValue) {
             console.error('No selected object found.');
             return;
         }
     
-        getFieldsForObject({ objectName: this.selectedObject })
+        getFieldsForObject({ objectName: this.selectedObjectValue })
             .then(data => {
                 this.fieldOptions = data.map(field => ({ label: field, value: field }));
                 console.log('isObjectChanged ==> ' , this.isObjectChanged);
                 console.log(this.oldObject);
-                console.log(this.selectedObject);
                 if (this.isObjectChanged) {
                     const content = $(this.editor).summernote('code');
                     console.log('content ==>  ', content);
@@ -172,7 +184,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             console.log('self : ', self.activeTabName);
 
 
-            const selector = this.currentRecordId ? this.currentRecordId : 'tempId';
+            const selector = this.currentRecordIdValue ? this.currentRecordIdValue : 'tempId';
             this.editor = this.template.querySelector(`[data-id="${selector}"]`);
 
             // Initialize SummerNote Editor...
@@ -308,7 +320,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             const page = noteFrame.querySelector('.note-editable');
             page.setAttribute('contenteditable', 'true');
 
-            if (this.currentRecordId && this.templateTypeForCreation == 'Edit') {
+            if (this.currentRecordIdValue && this.templateTypeForCreation == 'Edit') {
                 if (this.isDisplayedData) {
                     this.loadTemplateContent();
                     this.isDisplayedData = false;
@@ -335,7 +347,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     loadTemplateContent() {
 
         if(this.isFirstTimeLoaded){
-            getTemplateContent({ templateId: this.currentRecordId })
+            getTemplateContent({ templateId: this.currentRecordIdValue })
             .then(result => {
                 this.description = result.Description__c;
                 this.bodyOfTemplate = result.Template_Body__c;
@@ -375,7 +387,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
 
     appendFieldToEditor() {
         try {
-            const content = `{!${this.selectedObject}.${this.selectedField}} `;
+            const content = `{!${this.selectedObjectValue}.${this.selectedField}} `;
     
             $(this.editor).summernote('saveRange');
     
@@ -429,7 +441,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         this.isLoading = true;
 
         const template = {
-            Object_Name__c: this.selectedObject,
+            Object_Name__c: this.selectedObjectValue,
             Label__c: this.templateLabel,
             Template_Body__c: content,
             Description__c : this.description,
@@ -438,7 +450,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
             Subject__c	: this.subject
         };
 
-        saveTemplate({ template : template , recId : this.currentRecordId })
+        saveTemplate({ template : template , recId : this.currentRecordIdValue })
             .then((res) => {
                 this.showToast('Success', 'Template saved successfully', 'success');
                 this.isLoading = false;
@@ -606,10 +618,9 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         this.isObjectChanged  = false;
         
         if(this.oldObject){
-            this.selectedObject = this.oldObject;
+            this.selectedObjectValue = this.oldObject;
         }
         this.cancelBtn = false;
-        // $(this.editor).summernote('destroy');
     }
 
     /**

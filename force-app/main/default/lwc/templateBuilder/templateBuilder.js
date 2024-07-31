@@ -17,18 +17,17 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     @track filteredTemplates = [];
     @track visibleTemplates = [];
     @track currentRecId;
-    @track totalRecodslength;
+    @track totalRecodslength = 0;
     @track newPageNumber;
     @track selectedobject = '';
-    @track selectedTemplate = '';
     @track selectedDescription = '';
-    @track selectedType = '';
     @track selectedTemplateBody = ''; 
     @track isModalOpen = false;
     @track isLoading = false; 
     @track isPreviewModal = false;
     @track isPreviousDisabled = true;
     @track isNextDisabled = false;    
+    @track nameForTemplateValue = '';
     
 
     /**
@@ -55,6 +54,8 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     connectedCallback() {
+
+        this.nameForTemplateValue = this.nameForTemplate;
         Promise.all([
             loadStyle(this, externalCss)
         ])
@@ -401,7 +402,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     handleAdd() {
-        this.nameForTemplate = 'New';
+        this.nameForTemplateValue = 'New';
         this.isModalOpen = true;
     }
 

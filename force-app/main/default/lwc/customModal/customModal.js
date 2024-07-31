@@ -10,10 +10,9 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api description = '';
     @api objectSelect = '';
     @api typeSelect = '';
-    @api currentRecordId;
+    @api currentRecordId = '';
     @api name = ''
     @api bodyOfTemplate = '';
-    @api isEdit = false;
     @api pageNumber = 1;
     @api totalRecodslength;
     @api templateTypeSelect = '';
@@ -21,7 +20,6 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     @api subject = '';
     @track objectOptions;
     @track typeOptions;
-    @track IsChildModal = false;
     @track isObjectChanged = false;
     @track oldObject = '';
     @track templateTypeOptions = [
@@ -29,45 +27,19 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         { label: 'Email Template', value: 'emailTemplate' }
     ];
 
+    @track templateNameValue = '';
+    @track descriptionValue = '';
+    @track objectSelectValue = '';
+    @track typeSelectValue = '';
+    @track currentRecordIdValue = '';
+    @track nameValue = '';
+    @track bodyOfTemplateValue = '';
+    @track templateTypeSelectValue = '';
+    @track isQuickTemplateValue = false;
+    @track subjectValue = '';
 
     get isEmailTemplate() {
-        return this.typeSelect === 'Email';
-    }
-
-    /**
-    * Method Name: wiredSObjectNames
-    * @description: Method to retrive objectName for picklist value
-    * Date: 12/06/2024
-    * Created By: Rachit Shah
-    */
-    @wire(getAllObjectNames)
-    wiredObjectNames({ error, data }) {
-        if (data) {
-            this.objectOptions = Object.keys(data)
-                .map(key => ({
-                    label: data[key],
-                    value: key
-                }))
-                .sort((a, b) => a.label.localeCompare(b.label)); 
-        } else if (error) {
-            // Handle error
-            console.error('Error fetching object names:', error);
-        }
-    }
-
-    /**
-    * Method Name: wiredPicklistValues
-    * @description: Method to retrive type options for the picklist
-    * Date: 12/06/2024
-    * Created By: Rachit Shah
-    */
-    @wire(getTemplateTypePicklistValues)
-    wiredPicklistValues({ error, data }) {
-        if (data) {
-            this.typeOptions = data.map(picklistName => ({ label: picklistName, value: picklistName }));
-        } else if (error) {
-            console.error('Error fetching template type picklist values:', error);
-        }
+        return this.typeSelectValue === 'Email';
     }
 
     /**
@@ -77,15 +49,68 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     connectedCallback(){    
-        if(this.name == 'New'){
-            this.templateName = '';
-            this.description = '';
-            this.objectSelect = '';
-            this.typeSelect = '';
-            this.bodyOfTemplate = '';
-            this.subject = '';
+        this.templateNameValue = this.templateName;
+        this.descriptionValue = this.description;
+        this.objectSelectValue = this.objectSelect;
+        this.typeSelectValue = this.typeSelect;
+        this.currentRecordIdValue = this.currentRecordId;
+        this.nameValue = this.name;
+        this.bodyOfTemplateValue = this.bodyOfTemplate;
+        this.templateTypeSelectValue = this.templateTypeSelect;
+        this.isQuickTemplateValue = this.isQuickTemplate;
+        this.subjectValue = this.subject;
+        this.fetchPicklistValues();
+        this.fetchObjectNames();
+
+
+        if(this.nameValue == 'New'){
+            this.templateNameValue = '';
+            this.descriptionValue = '';
+            this.objectSelectValue = '';
+            this.typeSelectValue = '';
+            this.bodyOfTemplateValue = '';
+            this.subjectValue = '';
         }
     }
+
+    /**
+    * Method Name: fetchObjectNames
+    * @description: Method to retrieve objectName for picklist value
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
+    fetchObjectNames() {
+        getAllObjectNames()
+            .then(data => {
+                this.objectOptions = Object.keys(data)
+                    .map(key => ({
+                        label: data[key],
+                        value: key
+                    }))
+                    .sort((a, b) => a.label.localeCompare(b.label)); 
+            })
+            .catch(error => {
+                // Handle error
+                console.error('Error fetching object names:', error);
+            });
+    }
+
+    /**
+    * Method Name: fetchPicklistValues
+    * @description: Method to retrieve type options for the picklist
+    * Date: 12/06/2024
+    * Created By: Rachit Shah
+    */
+    fetchPicklistValues() {
+        getTemplateTypePicklistValues()
+            .then(data => {
+                this.typeOptions = data.map(picklistName => ({ label: picklistName, value: picklistName }));
+            })
+            .catch(error => {
+                console.error('Error fetching template type picklist values:', error);
+            });
+    }
+
 
     /**
     * Method Name: closeModal
@@ -104,82 +129,84 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
     * Date: 12/06/2024
     * Created By: Rachit Shah
     */
-    async handleSave() {
+    handleSave() {
         
-        if (this.templateName && this.objectSelect && this.typeSelect && this.templateTypeSelect) {
+        if (this.templateNameValue && this.objectSelectValue && this.typeSelectValue && this.templateTypeSelectValue) {
 
-            if(this.typeSelect === 'Email' && this.subject == ''){
+            if(this.typeSelectValue === 'Email' && this.subjectValue == ''){
                 this.showToast('Error', 'Please fill in all required fields', 'error');
                 return;
             }
 
-            if(this.name === 'New'){
+            if(this.nameValue === 'New'){
 
                 const template = {
-                    Object_Name__c: this.objectSelect,
-                    Label__c: this.templateName,
-                    Template_Body__c: this.bodyOfTemplate,
-                    Description__c : this.description,
-                    Template_Type__c : this.typeSelect,
-                    Template_pattern__c : this.templateTypeSelect,
-                    Subject__c	: this.subject
+                    Object_Name__c: this.objectSelectValue,
+                    Label__c: this.templateNameValue,
+                    Template_Body__c: this.bodyOfTemplateValue,
+                    Description__c : this.descriptionValue,
+                    Template_Type__c : this.typeSelectValue,
+                    Template_pattern__c : this.templateTypeSelectValue,
+                    Subject__c	: this.subjectValue
                 };
     
-                await insertTemplate({ template : template})
+                insertTemplate({ template : template})
                 .then((res) => {
                     this.showToast('Success', 'Template saved successfully', 'success');
-                    this.currentRecordId = res;
+                    this.currentRecordIdValue = res;
+
+                    if(this.objectSelectValue != '' && this.oldObject != '' && this.oldObject !== this.objectSelectValue) {
+                        this.isObjectChanged = true;
+                    }
+                    else{
+                        this.isObjectChanged = false;
+                    }
+                    
+                    const navigationState = {
+                        selectedObject: this.objectSelectValue,
+                        myrecordId: this.currentRecordIdValue,
+                        label: this.templateNameValue,
+                        description: this.descriptionValue,
+                        type : this.typeSelectValue,
+                        bodyoftemplate : this.bodyOfTemplateValue,
+                        isObjectChanged : this.isObjectChanged,
+                        oldObject: this.oldObject,
+                        isFirstTimeLoaded : false,
+                        templateTypeForCreation: this.nameValue,
+                        pageNumber : this.pageNumber,
+                        totalRecodslength : this.totalRecodslength,
+                        templateTypeSelect : this.templateTypeSelectValue,
+                        isQuickTemplate : this.isQuickTemplateValue,
+                        subject: this.subjectValue,
+                        isEmailTemplate : this.isEmailTemplate
+                    };
+            
+                    const serializedState = JSON.stringify(navigationState);
+        
+                    let cmpDef;                
+                    cmpDef = {
+                        componentDef: 'c:templateModalChild',
+                        attributes: {                    
+                            c__navigationState: serializedState,
+                            c__recordId : this.currentRecordIdValue
+                        }                
+                        };
+        
+                    let encodedDef = btoa(JSON.stringify(cmpDef));
+                        this[NavigationMixin.Navigate]({
+                        type: "standard__webPage",
+                        attributes: {
+                            url:  "/one/one.app#" + encodedDef                                                         
+                        }
+                    });
+        
+                    this.closeModal();
                 })
                 .catch(error => {
                     console.error('Error saving template:', error);
                 });
     
             }
-
-            if(this.oldObject !== this.objectSelect) {
-                // this.bodyOfTemplate = this.bodyOfTemplate.replace(/{![^}]+}/g, '{!merge text}');
-                this.isObjectChanged = true;
-            }
-            
-            const navigationState = {
-                selectedObject: this.objectSelect,
-                myrecordId: this.currentRecordId,
-                label: this.templateName,
-                description: this.description,
-                type : this.typeSelect,
-                bodyoftemplate : this.bodyOfTemplate,
-                isObjectChanged : this.isObjectChanged,
-                oldObject: this.oldObject,
-                isFirstTimeLoaded : false,
-                templateTypeForCreation: this.name,
-                pageNumber : this.pageNumber,
-                totalRecodslength : this.totalRecodslength,
-                templateTypeSelect : this.templateTypeSelect,
-                isQuickTemplate : this.isQuickTemplate,
-                subject: this.subject,
-                isEmailTemplate : this.isEmailTemplate
-            };
-    
-            const serializedState = JSON.stringify(navigationState);
-
-            var cmpDef;                
-            cmpDef = {
-                componentDef: 'c:templateModalChild',
-                attributes: {                    
-                    c__navigationState: serializedState,
-                    c__recordId : this.currentRecordId
-                }                
-                };
-
-            let encodedDef = btoa(JSON.stringify(cmpDef));
-                this[NavigationMixin.Navigate]({
-                type: "standard__webPage",
-                attributes: {
-                    url:  "/one/one.app#" + encodedDef                                                         
-                }
-            });
-
-            this.closeModal();
     
         } else {
             this.showToast('Error', 'Please fill in all required fields', 'error');
@@ -197,44 +224,44 @@ export default class CustomModal extends NavigationMixin(LightningElement) {
         const value = event.target.value;
 
         if (field === 'templateName') {
-            this.templateName = value;
+            this.templateNameValue = value;
         } else if (field === 'description') {
-            this.description = value;
+            this.descriptionValue = value;
         } else if (field === 'objectSelect') {
-            if(this.oldObject != value && this.name == 'Edit'){
+            if(this.oldObject != value && this.nameValue == 'Edit'){
                 this.isObjectChanged = true;
-                this.oldObject = this.objectSelect; // Store oldObject when changed
+                this.oldObject = this.objectSelectValue; // Store oldObject when changed
             }
-            this.objectSelect = value;
+            this.objectSelectValue = value;
         } else if (field === 'typeSelect') {
-            this.typeSelect = value;
+            this.typeSelectValue = value;
         }else if (field === 'templateType') {
-            this.templateTypeSelect = value;
-            if (value === 'quickTemplate' && this.name != 'Edit') {
-                this.oldObject = this.objectSelect; 
-                this.objectSelect = 'Contact'; 
-                this.isQuickTemplate = true;
+            this.templateTypeSelectValue = value;
+            if (value === 'quickTemplate' && this.nameValue != 'Edit') {
+                this.oldObject = this.objectSelectValue; 
+                this.objectSelectValue = 'Contact'; 
+                this.isQuickTemplateValue = true;
                 this.isObjectChanged = false;
             }
-            else if(value === 'quickTemplate' && this.name == 'Edit'){
-                this.oldObject = this.objectSelect; 
-                this.objectSelect = 'Contact'; 
-                this.isQuickTemplate = true;
+            else if(value === 'quickTemplate' && this.nameValue == 'Edit'){
+                this.oldObject = this.objectSelectValue; 
+                this.objectSelectValue = 'Contact'; 
+                this.isQuickTemplateValue = true;
                 this.isObjectChanged = false;
             }
             else if( value === 'emailTemplate'){
                 this.oldObject = 'Contact';
-                this.objectSelect = '';
-                this.isQuickTemplate = false;
+                this.objectSelectValue = '';
+                this.isQuickTemplateValue = false;
             }
             else{
-                this.isQuickTemplate = false;
+                this.isQuickTemplateValue = false;
                 this.oldObject = 'Contact';
-                this.objectSelect = '';
+                this.objectSelectValue = '';
             }
         }
         else if (field === 'subject') {
-            this.subject = value;
+            this.subjectValue = value;
         }
     }
 

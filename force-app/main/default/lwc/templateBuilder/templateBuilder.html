@@ -140,9 +140,9 @@
 
             </template>
 
-            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate}
-                object-select={selectedobject} type-select={selectedType} description={selectedDescription}
-                name={nameForTemplate} current-record-id={currentRecId} is-edit="false"
+            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose}
+                object-select={selectedobject}
+                name={nameForTemplateValue} current-record-id={currentRecId} is-edit="false"
                 body-of-template={selectedTemplateBody} page-number={currentPage}
                 total-recodslength={totalRecodslength}></c-custom-modal>
 

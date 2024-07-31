@@ -1,7 +1,7 @@
 import { LightningElement, track, api } from 'lwc';
 import getRecordsByObject from '@salesforce/apex/TemplateBuilderController.getRecordsByObject';
 import summerNote_Editor from '@salesforce/resourceUrl/summerNote_Editor';
-import { loadStyle, loadScript } from 'lightning/platformResourceLoader';
+import { loadStyle } from 'lightning/platformResourceLoader';
 
 export default class TemplatePreviewModal extends LightningElement {
     @api objectName;
@@ -12,6 +12,8 @@ export default class TemplatePreviewModal extends LightningElement {
     @track recordName = 'Message Body';
     @track updatedBody = '';
     @track recordOptions = [{ label: 'None', value: 'none' }];
+    @track hasLibraryLoaded = false;
+
 
     get toggleIconName() {
         return this.isRecordSelectOpen ? 'utility:chevronleft' : 'utility:chevronright';
@@ -42,19 +44,19 @@ export default class TemplatePreviewModal extends LightningElement {
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
-    renderedCallback(){
-
-        Promise.all([
-            loadStyle(this, summerNote_Editor + '/summernote-lite-pdf.css'),
-        ]).then(() => {
-            const richText = this.template.querySelector('.richText');
-            richText && (richText.innerHTML = this.setTempValue(this.updatedBody));
-    
-        })
-        .catch(error => {
-            console.log('Error ==> ' , error);
-        });        
-
+    renderedCallback() {
+        if (!this.hasLibraryLoaded) {
+            this.hasLibraryLoaded = true;
+            loadStyle(this, summerNote_Editor + '/summernote-lite-pdf.css')
+                .then(() => {
+                    this.updateRichTextContent();
+                })
+                .catch(error => {
+                    console.log('Error loading style:', error);
+                });
+        } else {
+            this.updateRichTextContent();
+        }
     }
 
     /**
@@ -108,7 +110,6 @@ export default class TemplatePreviewModal extends LightningElement {
     */
     handleRecordChange(event) {
         this.selectedRecord = event.detail.value;
-        console.log('selectedRecord ==> ' , this.selectedRecord);
 
         if (this.selectedRecord === 'none') {
             this.recordName = '';
@@ -134,8 +135,6 @@ export default class TemplatePreviewModal extends LightningElement {
         tempUpdatedBody = tempUpdatedBody.replace(regex, (match, fieldName) => {
             if (record.hasOwnProperty(fieldName)) {
                 return record[fieldName] != null ? record[fieldName] : `{${fieldName} data is empty}`;
-            } else {
-                return `{${fieldName} data is empty}`;
             }
         });
         
@@ -156,5 +155,18 @@ export default class TemplatePreviewModal extends LightningElement {
                         </div>
                     </div> 
                 </div>`
+    }
+
+    /**
+    * Method Name: updateRichTextContent
+    * @description: Method to change innertext value for the templatebody
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    updateRichTextContent() {
+        const richText = this.template.querySelector('.richText');
+        if (richText) {
+            richText.innerHTML = this.setTempValue(this.updatedBody);
+        }
     }
 }
