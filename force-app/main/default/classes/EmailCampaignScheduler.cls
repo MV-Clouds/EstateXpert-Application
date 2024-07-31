@@ -17,7 +17,6 @@ public class EmailCampaignScheduler {
     public static void sendEmails(List<EmailRequest> emailRequests) {
 
         try {
-            System.debug('emailRequests ==> ' + emailRequests);
 
             List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
             Set<String> campaignIds = new Set<String>();
@@ -61,7 +60,6 @@ public class EmailCampaignScheduler {
 
                 email.setSubject(req.subject);
                 
-                // Process the body to replace merge fields
                 String processedBody = req.body;
                 if (req.contactId != null) {
                     Contact contact = contactMap.get(req.contactId);
@@ -89,7 +87,6 @@ public class EmailCampaignScheduler {
 
                 Marketing_Campaign__c campaignRecord = campaignMap.get(req.campaignId);
                 if (campaignRecord != null) {
-                    System.debug('Campaign Name: ' + campaignRecord.Name);
                     if (campaignRecord.Remaining_Emails__c != null && campaignRecord.Remaining_Emails__c > 0) {
                         campaignRecord.Remaining_Emails__c -= 1;
                         // campaignRecord.Total_Sent_Mails__c += 1;
@@ -105,7 +102,6 @@ public class EmailCampaignScheduler {
                 emails.add(email);
             }
     
-            System.debug('emails ==> ' + emails);
     
             if (!emails.isEmpty()) {
                 Messaging.sendEmail(emails);

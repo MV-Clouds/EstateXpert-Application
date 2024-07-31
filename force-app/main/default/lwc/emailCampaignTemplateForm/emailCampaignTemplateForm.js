@@ -26,7 +26,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     @track selectedCCRecipients = [];
     @track selectedBCCRecipients = [];
     @track templateId = '';
-    @track newDate = '';
     @track newDaysAfterStartDate = 0;
     @track camapignId = '';
 
@@ -89,7 +88,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         return this.isFieldSelected ? 'slds-show display-pill-input-container' : 'slds-hide';
     }
 
-    /**
+    /*
     * Method Name: setCurrentPageReference
     * @description: Method to load the data when click on the tab or again come on the tab with redirection
     * Date: 24/06/2024
@@ -139,20 +138,18 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }
     }
 
-    /**
+    /*
     * Method Name: connectedCallback
     * @description: Method to load the data initally
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
     connectedCallback() {
-        // console.log('in connected');
         this.isLoading = true;
         Promise.all([
             loadStyle(this, externalCss)
         ])
         .then(() => {
-            console.log('External CSS Loaded');
             this.fetchDateFields();
             this.fetchQuickTemplates();
         })
@@ -164,13 +161,12 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.registerErrorListener();
     }
 
-    /**
+    /*
     * Method Name: loadContacts
     * @description: Method to load the contact informations
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-
     loadContacts() {
          getContacts()
             .then(result => {
@@ -190,7 +186,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     }
     
 
-    /**
+    /*
     * Method Name: loadCamapignData
     * @description: Method to load campaign data
     * Date: 24/06/2024
@@ -300,7 +296,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
 
     }
 
-    /**
+    /*
     * Method Name: fetchDateFields
     * @description: Method to fetch data fields for the contact
     * Date: 24/06/2024
@@ -310,7 +306,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     fetchDateFields() {
         getDateFieldsForPicklist()
             .then(result => {
-                // console.log(result);
                 this.contactDateFieldOptions = result.map(option => ({
                     label: option.label,
                     value: option.value
@@ -322,7 +317,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             });
     }
 
-        /**
+    /*
     * Method Name: fetchQuickTemplates
     * @description: Method to fetch template records from the backend
     * Date: 24/06/2024
@@ -342,7 +337,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             });
     }
 
-    /**
+    /*
     * Method Name: shouldDisableEmail
     * @description: Method to disable email if time is less then current time
     * Date: 24/06/2024
@@ -357,7 +352,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         return currentDateTime > emailDateTime;
     }
     
-    /**
+    /*
     * Method Name: parseTimeString
     * @description: Method to make formate for the time string
     * Date: 24/06/2024
@@ -375,19 +370,16 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         return timeToSend;
     }
     
-    
-    /**
+    /*
     * Method Name: parseDateString
     * @description: Method to make formate for the date string
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-
     parseDateString(dateString) {
         if (!dateString) return '';
     
         const parsedDate = new Date(dateString);
-        // console.log('parsedDate ==> ', parsedDate);
     
         if (!isNaN(parsedDate)) {
             const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -401,34 +393,28 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }
     }
     
-    /**
+    /*
     * Method Name: handleSubscribe
     * @description: Method to recive message from the platform event
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-
     handleSubscribe() {
         const channel = '/event/RefreshEvent__e';
-        // console.log('channel ==> ' + channel);
         subscribe(channel, -1, (response) => {
-            // console.log('response ==> ' , response);
             this.handleMessage();
             this.subscription = response;
         })
     }
 
-
-    /**
+    /*
     * Method Name: handleMessage
     * @description: Method to handle message for the make disbaled after sending mail
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
     handleMessage() {
-
         const currentTime = new Date();
-
         this.emails = this.emails.map(email => {
             const emailDate = new Date(`${email.exactDate}T${email.timeToSend}`);
             if (emailDate < currentTime) {
@@ -451,8 +437,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
      
     }
 
-
-    /**
+    /*
     * Method Name: handleModalClose
     * @description: Method to close modal
     * Date: 24/06/2024
@@ -462,26 +447,23 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isModalOpen = false;
     }
 
-    /**
+    /*
     * Method Name: handleSpecificDateChange
     * @description: Method to handle change for the specific date
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-
     handleSpecificDateChange(event){
         this.specificDate = event.target.value;
         this.updateExactDates();
     }
 
-
-    /**
+    /*
     * Method Name: handleContactDateFieldSearchChange
     * @description: Method to find searched contact from input
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-
     handleContactDateFieldSearchChange(event) {
         const searchTerm = event.target.value.toLowerCase();
         this.filteredContactDateFields = this.contactDateFieldOptions.filter(option =>
@@ -489,13 +471,12 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         );
     }
 
-    /**
+    /*
     * Method Name: handleTemplateDataChange
     * @description: Method to impletene data from custom event
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-
     handleTemplateDataChange(event){
         const eventData = event.detail;
         this.navigationStateString = eventData;
@@ -521,11 +502,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         
         this.emailCampaignName = eventData.campaignName;
         this.isModalOpen = false;
-
     }
-
     
-    /**
+    /*
     * Method Name: handleContactDateFieldSearchFocus
     * @description: Method to show dropdown blur section
     * Date: 24/06/2024
@@ -535,7 +514,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isDateFieldDropdownVisible = true;
     }
 
-    /**
+    /*
     * Method Name: handleContactDateFieldSearchBlur
     * @description: Method to hide dropdown blur section
     * Date: 24/06/2024
@@ -547,7 +526,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }, 200);
     }
 
-    /**
+    /*
     * Method Name: handlePrimarySearchInputChange
     * @description: Method to handle filter for the primary contact
     * Date: 24/06/2024
@@ -558,7 +537,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.filterContacts(event, 'Primary');
     }
 
-    /**
+    /*
     * Method Name: handlePrimarySearchInputFocus
     * @description: Method to show dropdownblur section
     * Date: 24/06/2024
@@ -569,7 +548,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isPrimaryDropdownVisible = true;
     }
 
-    /**
+    /*
     * Method Name: handlePrimarySearchInputFocus
     * @description: Method to hide dropdownblur section
     * Date: 24/06/2024
@@ -580,7 +559,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             this.isPrimaryDropdownVisible = false;
         }, 100);
     }
-    /**
+
+    /*
     * Method Name: handleSelectPrimaryContact
     * @description: Method to handle selection for the primary contact
     * Date: 24/06/2024
@@ -590,7 +570,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.selectContact(event, 'Primary');
     }
 
-    /**
+    /*
     * Method Name: removePrimaryRecipient
     * @description: Method to remove contact from the primary contact
     * Date: 24/06/2024
@@ -601,7 +581,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     }
 
 
-    /**
+    /*
     * Method Name: handleCCSearchInputChange
     * @description: Method to handle sarch for cc contacts
     * Date: 24/06/2024
@@ -612,7 +592,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.filterContacts(event, 'CC');
     }
 
-    /**
+    /*
     * Method Name: handleCCSearchInputChange
     * @description: Method to visible blur section for cc contacts
     * Date: 24/06/2024
@@ -623,7 +603,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isCCDropdownVisible = true;
     }
 
-    /**
+    /*
     * Method Name: handleCCSearchInputChange
     * @description: Method to hide blur section for cc contacts
     * Date: 24/06/2024
@@ -635,7 +615,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }, 100);
     }
 
-    /**
+    /*
     * Method Name: handleSelectCCContact
     * @description: Method to select contact from cc contacts
     * Date: 24/06/2024
@@ -645,7 +625,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.selectContact(event, 'CC');
     }
 
-    /**
+    /*
     * Method Name: removeCCRecipient
     * @description: Method to remove contact from cc contacts
     * Date: 24/06/2024
@@ -655,7 +635,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.removeRecipient(event, 'CC');
     }
 
-    /**
+    /*
     * Method Name: handleBCCSearchInputChange
     * @description: Method to handle search for the bcc
     * Date: 24/06/2024
@@ -666,7 +646,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.filterContacts(event, 'BCC');
     }
 
-    /**
+    /*
     * Method Name: handleBCCSearchInputFocus
     * @description: Method to show blur dropdown section for bcc contacts
     * Date: 24/06/2024
@@ -677,7 +657,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isBCCDropdownVisible = true;
     }
 
-    /**
+    /*
     * Method Name: handleBCCSearchInputBlur
     * @description: Method to hide blur dropdown section for bcc contacts
     * Date: 24/06/2024
@@ -689,7 +669,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }, 100);
     }
 
-    /**
+    /*
     * Method Name: handleSelectBCCContact
     * @description: Method to select contact for bcc contacts
     * Date: 24/06/2024
@@ -699,7 +679,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.selectContact(event, 'BCC');
     }
 
-    /**
+    /*
     * Method Name: removeBCCRecipient
     * @description: Method to remove contact for bcc contacts
     * Date: 24/06/2024
@@ -709,7 +689,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.removeRecipient(event, 'BCC');
     }
 
-    /**
+    /*
     * Method Name: filterContacts
     * @description: Method to filtercontacts based on event and type
     * Date: 24/06/2024
@@ -755,7 +735,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     }
 
 
-    /**
+    /*
     * Method Name: selectContact
     * @description: Method to select contact in corrosponding list
     * Date: 24/06/2024
@@ -779,7 +759,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.updateFilteredLists();
     }
 
-    /**
+    /*
     * Method Name: selectContact
     * @description: Method to remove contact in corrosponding list
     * Date: 24/06/2024
@@ -799,13 +779,12 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.updateFilteredLists();
     }
 
-    /**
+    /*
     * Method Name: updateFilteredLists
     * @description: Method to update the filterlist
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-
     updateFilteredLists() {
         console.log();
         const selectedPrimaryIds = new Set(this.selectedPrimaryRecipients.map(recipient => recipient.value));
@@ -825,12 +804,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             !selectedBCCIds.has(contact.value)
         );
     
-        // console.log('filteredPrimaryContacts ==> ', JSON.stringify(this.filteredPrimaryContacts));
-        // console.log('filteredCCContacts ==> ', JSON.stringify(this.filteredCCContacts));
-        // console.log('filteredBCCContacts ==> ', JSON.stringify(this.filteredBCCContacts));
     }
 
-    /**
+    /*
     * Method Name: toggleDateFieldDropdown
     * @description: Method to show date or contact field
     * Date: 24/06/2024
@@ -840,7 +816,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isDateFieldDropdownVisible = !this.isDateFieldDropdownVisible;
     }
 
-    /**
+    /*
     * Method Name: handleDateFieldSelect
     * @description: Method to show date field of contact
     * Date: 24/06/2024
@@ -854,7 +830,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isFieldSelected = true; 
     }
 
-    /**
+    /*
     * Method Name: updateExactDates
     * @description: Method to update exact date
     * Date: 24/06/2024
@@ -880,7 +856,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }
     }
     
-    /**
+    /*
     * Method Name: handleRemove
     * @description: Method remove selected field
     * Date: 24/06/2024
@@ -890,7 +866,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isFieldSelected = false; 
     }
 
-    /**
+    /*
     * Method Name: handleEdit
     * @description: Method to edit the campaign information
     * Date: 24/06/2024
@@ -907,7 +883,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isDateFieldDropdownVisible = false;
     }
 
-    /**
+    /*
     * Method Name: handleStartDateOptionChange
     * @description: Method to visible date field 
     * Date: 24/06/2024
@@ -934,7 +910,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.selectedContactDateField = event.detail.value;
     }
     
-    /**
+    /*
     * Method Name: handleAddNewEmail
     * @description: Method to add new email 
     * Date: 24/06/2024
@@ -947,7 +923,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.emailsWithTemplate = [...this.emailsWithTemplate, { id: newId, template: '', subject: '', daysAfterStartDate: 0, timeToSend: '', exactDate: this.specificDate, disabled: false }];
         }
 
-    /**
+    /*
     * Method Name: handleDeleteEmail
     * @description: Method to delete email 
     * Date: 24/06/2024
@@ -965,7 +941,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
 
     }
 
-    /**
+    /*
     * Method Name: handleTemplateChange
     * @description: Method to handle template and corrospoding subject change
     * Date: 24/06/2024
@@ -997,7 +973,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         
     }
 
-    /**
+    /*
     * Method Name: handleDaysAfterStartDateChange
     * @description: Method to handle days after start day change
     * Date: 24/06/2024
@@ -1024,7 +1000,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.updateExactDates();
     }
 
-    /**
+    /*
     * Method Name: handleNameChange
     * @description: Method to handle email name change
     * Date: 24/06/2024
@@ -1049,14 +1025,10 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             }
             return email;
         });
-
-        // console.log('emailsWithTemplate ==> ' , JSON.stringify(emailsWithTemplate));
-
-        
     }
 
 
-    /**
+    /*
     * Method Name: handleTimeToSendChange
     * @description: Method to handle time change
     * Date: 24/06/2024
@@ -1116,7 +1088,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }
     }
 
-    /**
+    /*
     * Method Name: handlepreviewBtn
     * @description: Method to handle preview change
     * Date: 24/06/2024
@@ -1135,7 +1107,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isPreviewModal = true;
     }
 
-    /**
+    /*
     * Method Name: handleCloseModal
     * @description: Method to handle close modal
     * Date: 24/06/2024
@@ -1145,7 +1117,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.isPreviewModal = false;
     }
 
-    /**
+    /*
     * Method Name: handleCancel
     * @description: Method to handle cancel button
     * Date: 24/06/2024
@@ -1155,9 +1127,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.navigateToDisplayCampaigns();
     }
 
-
-
-    /**
+    /*
     * Method Name: handleSave
     * @description: Method to handle save functionality
     * Date: 24/06/2024
@@ -1171,7 +1141,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             return;
         }
 
-        // console.log('emailsWithTemplate ==> ' , JSON.stringify(this.emailsWithTemplate));
         if (!this.validateInputs()) {
             this.showToast('Error', 'Please ensure all required fields are filled.', 'error');
             return;
@@ -1227,8 +1196,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
             return;
         }
 
-        
-        
         try {
             const emailsWithTemplate = this.emailsWithTemplate.filter(email => email.disabled == false);
 
@@ -1249,16 +1216,13 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
                 deletedEmailList : this.deletedEmailList
             };
 
-            // console.log(this.selectedCCRecipients);
 
             if (this.selectedContactDateField) {
                 console.log('selectedContactDateField ==> ' , this.selectedContactDateField);
                 checkContactDateFields({ contactsJson: JSON.stringify(this.selectedPrimaryRecipients), selectedContactDateField: this.selectedContactDateField })
                     .then(contactDateFieldValues => {
 
-                        // console.log('contactDateFieldValues ==> ' , contactDateFieldValues);
                         const isPreviousDate = this.dateMapHasDateLessThanToday(contactDateFieldValues);
-                        // console.log('isPreviousDate ==> ' , isPreviousDate);
 
                         if (isPreviousDate) {
                             this.showToast('Error', 'Some contacts date field value is less than today.', 'error');
@@ -1282,7 +1246,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }
     }
 
-    /**
+    /*
     * Method Name: dateMapHasDateLessThanToday
     * @description: Method to check current and previous date
     * Date: 24/06/2024
@@ -1300,7 +1264,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         });
     }
 
-    /**
+    /*
     * Method Name: saveCampaignEmailData
     * @description: Method to save camapign data
     * Date: 24/06/2024
@@ -1308,7 +1272,6 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     */
     saveCampaignEmailData(campaignEmailData) {
         const jsonCampaignEmailData = JSON.stringify(campaignEmailData);
-        // console.log('jsonCampaignEmailData ==> ', jsonCampaignEmailData);
     
         if (this.camapignId) {
             // console.log(this.camapignId);
@@ -1334,7 +1297,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         }
     }
     
-    /**
+    /*
     * Method Name: navigateToDisplayCampaigns
     * @description: Method to navigate to display component
     * Date: 24/06/2024
@@ -1354,8 +1317,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         });
     }
 
-
-    /**
+    /*
     * Method Name: validateInputs
     * @description: Method to validate all the input
     * Date: 24/06/2024
@@ -1379,7 +1341,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         return hasRecipients && isDateSelected && areEmailsValid;
     }
 
-    /**
+    /*
     * Method Name: transformRecipientsPrimary
     * @description: create map for the primary contacts
     * Date: 24/06/2024
@@ -1389,7 +1351,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         return recipients.map(recipient => recipient.value);
     }
 
-    /**
+    /*
     * Method Name: transformRecipients
     * @description: create map for the cc and bcc contacts
     * Date: 24/06/2024
@@ -1400,7 +1362,7 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     }
     
 
-    /**
+    /*
     * Method Name: showToast
     * @description: method to show toast
     * Date: 24/06/2024
@@ -1415,20 +1377,19 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         this.dispatchEvent(toastEvent);
     }
 
-     /**
+    /*
     * Method Name: registerErrorListener
     * @description: method to register platform event
     * Date: 24/06/2024
     * Created By: Rachit Shah
     */
-
     registerErrorListener() {
         onError(error => {
             console.error('Received error from server:', error);
         });
     }
 
-    /**
+    /*
     * Method Name: disconnectedCallback
     * @description: method to unregister platform event
     * Date: 24/06/2024

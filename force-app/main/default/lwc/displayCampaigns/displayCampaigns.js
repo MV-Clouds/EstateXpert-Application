@@ -11,19 +11,13 @@ import deleteCampaign from '@salesforce/apex/EmailCampaignController.deleteCampa
 import getCampaigns from '@salesforce/apex/EmailCampaignController.getCampaigns';
 import filterIcon from '@salesforce/resourceUrl/FilterIcon';
 
-
 export default class DisplayCampaigns extends NavigationMixin(LightningElement) {
     @track campaigns = [];
     @track visibleCampaigns = [];
     @track filteredCampaigns = [];
     @track isLoading = false;
     @track isModalOpen = false;
-    @track selectedCampaign;
-    @track selectedobject;
-    @track selectedType;
-    @track selectedDescription;
-    @track nameForCampaign;
-    @track currentRecId;
+    @track currentRecId = '';
     @track currentPage = 1;
     @track totalRecodslength = 0;
     @track totalPages = 0;
@@ -36,7 +30,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     @track createdDateStart = '';
     @track createdDateEnd = '';
 
-
     @track statusOptions = [
         {label: 'None' , value: ''},
         { label: 'Pending', value: 'Pending' },
@@ -44,14 +37,12 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         { label: 'Completed', value: 'Completed' },
     ];
 
-
     /*
     * Method Name: connectedCallback
     * @description: Method to load all the data initially
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     connectedCallback() {
         this.loadCampaigns();
     }
@@ -62,14 +53,11 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     loadCampaigns() {
         this.isLoading = true;
         getCampaigns()
             .then(result => {
-
                 result.sort((a, b) => new Date(b.CreatedDate) - new Date(a.CreatedDate));
-
                 this.processTemplates(result);
                 this.updatePagination();
                 this.isLoading = false;
@@ -86,16 +74,12 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     processTemplates(data) {
-        console.log('data ==> ', data);
-
         this.campaigns = data.map((campaign, index) => {
             const total = campaign.Total_Emails__c;
             const remaining = campaign.Remaining_Emails__c;
             const completed = total - remaining;
             const progressPercentage = total > 0 ? `${(completed / total) * 100}` : '0';
-            // const progressPercentage = '25';
     
             return {
                 ...campaign,
@@ -119,7 +103,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     getStatusClass(status) {
         switch (status) {
             case 'Pending':
@@ -140,7 +123,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     formatDate(dateStr) {
         var formatdate = new Date(dateStr);
         formatdate.setDate(formatdate.getDate());
@@ -160,26 +142,20 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     updatePagination() {
         this.totalRecodslength = this.filteredCampaigns.length;
-        console.log('totalRecodslength ' , this.totalRecodslength);
         this.totalPages = Math.ceil(this.totalRecodslength / 10);
-        console.log('totalPages ==> ' ,  this.totalPages)
 
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
         };
         this.visibleCampaigns = this.filteredCampaigns.slice((this.currentPage - 1) * 10, this.currentPage * 10);
-        // console.log('visibleCampaigns 1 ==> ' , JSON.stringify(this.visibleCampaigns));
-        console.log('length ==> ' , this.visibleCampaigns.length);
 
         this.visibleCampaigns = this.visibleCampaigns.map((campaign, index) => ({
             ...campaign,
             rowIndex: (this.currentPage - 1) * 10 + index + 1
         }));
 
-        // console.log('visibleCampaigns 2 ==> ' , JSON.stringify(this.visibleCampaigns));
         this.isPreviousDisabled = this.currentPage === 1;
         this.isNextDisabled = this.currentPage === this.totalPages;
     }
@@ -191,7 +167,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     handleSearch(event) {
         const searchKey = event.target.value.toLowerCase();
         this.filteredCampaigns = this.campaigns.filter(campaign => 
@@ -207,7 +182,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     handleAdd() {
         this.isModalOpen = true;
     }
@@ -218,7 +192,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     handleEdit(event) {
         this.currentRecId = event.target.dataset.id;
 
@@ -228,7 +201,7 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
 
         const serializedState = JSON.stringify(navigationState);
 
-        var cmpDef;                
+        let cmpDef;                
         cmpDef = {
             componentDef: 'c:emailCampaignTemplateForm',
             attributes: {                    
@@ -253,10 +226,8 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     handleDelete(event) {
         const campaignId = event.target.dataset.id;
-        console.log('campaignId ==> ' , campaignId);
         this.isLoading = true;
         deleteCampaign({ campaignId })
             .then(() => {
@@ -279,11 +250,9 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     handleModalClose() {
         this.isModalOpen = false;
     }
-
 
     /*
     * Method Name: handleFilterClick
@@ -291,11 +260,9 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     handleFilterClick() {
         this.isFilterModalOpen = true;
     }
-
 
     /*
     * Method Name: clearFilterModal
@@ -303,7 +270,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     clearFilterModal() {
         this.isFilterModalOpen = false;
         this.statusFilterList = [];
@@ -321,7 +287,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     * Date: 23/06/2024
     * Created By: Rachit Shah
     */
-
     closeFilterModal(){
         this.isFilterModalOpen = false;
     }
@@ -350,7 +315,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
             }
         } catch (error) {
             console.log('error ==> ' , error);
-            console.log('error ==> ' , JSON.stringify(error));
         }
 
     }
@@ -363,7 +327,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
     */
     handleRemove(event){
         const valueRemoved = event.target.name;
-        console.log('valueRemoved ==> ' , valueRemoved);
 
         if(this.statusFilter == valueRemoved){
             this.statusFilter = '';
@@ -373,7 +336,6 @@ export default class DisplayCampaigns extends NavigationMixin(LightningElement) 
         if (index > -1) {
             this.statusFilterList.splice(index, 1);
         }
-        console.log('statusFilterList ==> ' , JSON.stringify(this.statusFilterList));
     }
     
     /*

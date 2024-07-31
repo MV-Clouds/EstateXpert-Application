@@ -28,7 +28,6 @@ public with sharing class EmailCampaignController {
     * Created By : Rachit Shah
     * @description : Used for getting contact data
     */
-
     @AuraEnabled(cacheable=true)
     public static List<Contact> getContacts() {
         return [SELECT Id, Name,Email FROM Contact WITH SECURITY_ENFORCED ];
@@ -96,14 +95,10 @@ public with sharing class EmailCampaignController {
     */
     @AuraEnabled
     public static String createCampaignAndEmails(String jsonCampaignEmailData) {
-        System.debug('campaignEmailDataMap ==> ' + jsonCampaignEmailData);
     
         try {
-            // Deserialize the JSON string to a Map
             Map<String, Object> campaignEmailDataMap = (Map<String, Object>) JSON.deserializeUntyped(jsonCampaignEmailData);
-            System.debug('campaignEmailDataMap ==> ' + campaignEmailDataMap);
     
-            // Extract relevant fields
             String campaignName = (String) campaignEmailDataMap.get('campaignName');
             String senderMode = (String) campaignEmailDataMap.get('senderMode');
             String fromAddress = (String) campaignEmailDataMap.get('fromAddress');
@@ -111,7 +106,6 @@ public with sharing class EmailCampaignController {
             String templateId = (String) campaignEmailDataMap.get('templateId');
             Boolean saveForFuture = (Boolean) campaignEmailDataMap.get('saveForFuture');
             
-            // Extract and process Primary recipients (ContactIds)
             List<String> selectedPrimaryRecipients = new List<String>();
             if (campaignEmailDataMap.containsKey('selectedPrimaryRecipients')) {
                 Object selectedPrimaryRecipientsObj = campaignEmailDataMap.get('selectedPrimaryRecipients');
@@ -123,9 +117,7 @@ public with sharing class EmailCampaignController {
                     }
                 }
             }
-            System.debug('selectedPrimaryRecipients ==> ' + selectedPrimaryRecipients);
     
-            // Extract and process CC recipients
             List<String> selectedCCRecipients = new List<String>();
             if (campaignEmailDataMap.containsKey('selectedCCRecipients')) {
                 Object selectedCCRecipientsObj = campaignEmailDataMap.get('selectedCCRecipients');
@@ -137,9 +129,7 @@ public with sharing class EmailCampaignController {
                 }
             }
             String ccRecipients = String.join(selectedCCRecipients,'@@@');
-            System.debug('selectedCCRecipients ==> ' + ccRecipients);
 
-            // Extract and process BCC recipients
             List<String> selectedBCCRecipients = new List<String>();
             if (campaignEmailDataMap.containsKey('selectedBCCRecipients')) {
                 Object selectedBCCRecipientsObj = campaignEmailDataMap.get('selectedBCCRecipients');
@@ -151,7 +141,6 @@ public with sharing class EmailCampaignController {
                 }
             }
             String bccRecipients = String.join(selectedBCCRecipients,'@@@');
-            System.debug('selectedBCCRecipients ==> ' + bccRecipients);
 
             String selectedContactDateField = (String) campaignEmailDataMap.get('selectedContactDateField');
 
@@ -160,7 +149,6 @@ public with sharing class EmailCampaignController {
                 String soql = 'SELECT MIN(' + selectedContactDateField + ') minDate FROM Contact WHERE Id IN :selectedPrimaryRecipients';
                 AggregateResult result = Database.query(soql);
                 minDate = (Date) result.get('minDate');
-                System.debug('minDate ==> ' + minDate);
             }
 
             Date specificDate = null;
@@ -179,7 +167,6 @@ public with sharing class EmailCampaignController {
             }
     
             Integer emailToSend = primaryContactCount * marketingEmailCount;
-            // Create campaign record
             Marketing_Campaign__c campaign = new Marketing_Campaign__c();
             campaign.Label__c = campaignName;
             campaign.Sender_Mode__c = senderMode;
@@ -204,11 +191,9 @@ public with sharing class EmailCampaignController {
             }    
             
             if(Schema.Marketing_Campaign__c.SObjectType.getDescribe().isCreateable()){
-                System.debug('campaign ==> ' + campaign);
                 Database.insert(campaign);
             }
 
-            // Create Marketing_Campaign_Member__c records
             List<Marketing_Campaign_Member__c> marketingCampaignMembers = new List<Marketing_Campaign_Member__c>();
 
             for (String contactId : selectedPrimaryRecipients) {
@@ -219,18 +204,14 @@ public with sharing class EmailCampaignController {
                 marketingCampaignMembers.add(member);
             }
 
-            // Insert the Marketing_Campaign_Member__c records
             if (!marketingCampaignMembers.isEmpty()) {
                 Database.insert(marketingCampaignMembers);
             }
 
-            // List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
             List<Marketing_Email__c> emailRecordsToInsert = new List<Marketing_Email__c>();
             
             for (Object emailDataObj : emails) {
-                System.debug('emailDataObj ==> ' + emailDataObj);
                 Map<String, Object> emailData = (Map<String, Object>) emailDataObj;
-                System.debug('emailData ==> ' + emailData);
                 Marketing_Email__c emailCampaign = new Marketing_Email__c();
 
                 emailCampaign.Marketing_Campaign__c = campaign.Id;
@@ -239,7 +220,6 @@ public with sharing class EmailCampaignController {
                 emailCampaign.Quick_Template__c = String.valueOf(emailData.get('template'));
                 emailCampaign.Days_After_Start_Date__c	= Integer.valueOf(emailData.get('daysAfterStartDate'));
                 String timeString = (String)emailData.get('timeToSend');
-                System.debug('timeString ==> ' + timeString);
                 if (!String.isEmpty(timeString)) {
                     List<String> timeParts = timeString.split(':');
                     if (timeParts.size() == 3) {
@@ -256,12 +236,8 @@ public with sharing class EmailCampaignController {
                     }
                 }
                                 
-                System.debug('emailCampaign ==> ' + emailCampaign);
-
                 emailRecordsToInsert.add(emailCampaign);
             }
-
-            System.debug('emailRecordsToInsert ==> ' + emailRecordsToInsert);
             
             if (!emailRecordsToInsert.isEmpty()) {
                 Database.insert(emailRecordsToInsert);
@@ -272,7 +248,7 @@ public with sharing class EmailCampaignController {
         } catch (Exception e) {
             System.debug('Error creating campaign and emails: ' + e.getMessage());
             System.debug('Error creating campaign and emails: ' + e.getLineNumber());
-            throw new AuraHandledException('Error creating campaign and emails: ' + e.getMessage());
+            return null;
         }
         
     }
@@ -285,11 +261,9 @@ public with sharing class EmailCampaignController {
     */
     @AuraEnabled
     public static String updateCampaignAndEmails(String jsonCampaignEmailData) {
-        System.debug('campaignEmailDataMap ==> ' + jsonCampaignEmailData);
     
         try {
             Map<String, Object> campaignEmailDataMap = (Map<String, Object>) JSON.deserializeUntyped(jsonCampaignEmailData);
-            System.debug('campaignEmailDataMap ==> ' + campaignEmailDataMap);
     
             String campaignId = (String) campaignEmailDataMap.get('campaignId');
             String campaignName = (String) campaignEmailDataMap.get('campaignName');
@@ -311,10 +285,7 @@ public with sharing class EmailCampaignController {
                     }
                 }
             }
-            System.debug('selectedPrimaryRecipients ==> ' + selectedPrimaryRecipients);
-            // Integer primaryContactCount = selectedPrimaryRecipients.size();
     
-            // Extract and process CC recipients
             List<String> selectedCCRecipients = new List<String>();
             if (campaignEmailDataMap.containsKey('selectedCCRecipients')) {
                 Object selectedCCRecipientsObj = campaignEmailDataMap.get('selectedCCRecipients');
@@ -326,9 +297,7 @@ public with sharing class EmailCampaignController {
                 }
             }
             String ccRecipients = String.join(selectedCCRecipients,'@@@');
-            System.debug('selectedCCRecipients ==> ' + ccRecipients);
 
-            // Extract and process BCC recipients
             List<String> selectedBCCRecipients = new List<String>();
             if (campaignEmailDataMap.containsKey('selectedBCCRecipients')) {
                 Object selectedBCCRecipientsObj = campaignEmailDataMap.get('selectedBCCRecipients');
@@ -340,7 +309,6 @@ public with sharing class EmailCampaignController {
                 }
             }
             String bccRecipients = String.join(selectedBCCRecipients,'@@@');
-            System.debug('selectedBCCRecipients ==> ' + bccRecipients); 
     
             List<Object> emails = (List<Object>) campaignEmailDataMap.get('emails');
 
@@ -351,7 +319,6 @@ public with sharing class EmailCampaignController {
                 String soql = 'SELECT MIN(' + selectedContactDateField + ') minDate FROM Contact WHERE Id IN :selectedPrimaryRecipients';
                 AggregateResult result = Database.query(soql);
                 minDate = (Date) result.get('minDate');
-                System.debug('minDate ==> ' + minDate);
             }
 
             Date specificDate = null;
@@ -403,8 +370,6 @@ public with sharing class EmailCampaignController {
 
             }    
 
-            System.debug('campaign ==> ' + campaign);
-
             List<Marketing_Campaign_Member__c> existingMembers = [
                 SELECT Id, Contact__c, Contact_Type__c, Marketing_Campaign__c
                 FROM Marketing_Campaign_Member__c
@@ -419,7 +384,6 @@ public with sharing class EmailCampaignController {
 
             List<Marketing_Campaign_Member__c> membersToDelete = new List<Marketing_Campaign_Member__c>();
             for (Marketing_Campaign_Member__c member : existingMembers) {
-                System.debug('member ==> ' + member);
                 if (!selectedPrimaryRecipients.contains(member.Contact__c)) {
                     membersToDelete.add(member);
                 }
@@ -446,8 +410,6 @@ public with sharing class EmailCampaignController {
                 insert newMembers;
             }
 
-            // Integer totalMembersCount = Integer.valueOf((existingMembers.size() + newMembers.size()) - membersToDelete.size());
-
             List<Marketing_Email__c> existingEmails = [
                 SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c, Days_After_Start_Date__c, TimeToSend__c, Send_Date_Time__c
                 FROM Marketing_Email__c
@@ -461,25 +423,19 @@ public with sharing class EmailCampaignController {
             
             List<Marketing_Email__c> emailRecordsToInsert = new List<Marketing_Email__c>();
             List<Marketing_Email__c> emailRecordsToUpdate = new List<Marketing_Email__c>();
-            // Set<String> emailIdsToKeep = new Set<String>();
 
             for (Object emailDataObj : emails) {
-                System.debug('emailDataObj ==> ' + emailDataObj);
                 Map<String, Object> emailData = (Map<String, Object>) emailDataObj;
-                System.debug('emailData ==> ' + emailData);
             
                 Marketing_Email__c emailCampaign;
                 String emailId = String.valueOf(emailData.get('id'));
             
                 if (emailId != null && emailId.length() >= 15 && existingEmailMap.containsKey(emailId)) {
-                    // emailIdsToKeep.add(emailId);
                     emailCampaign = existingEmailMap.get(emailId);
-                    System.debug('Updating email with id ==> ' + emailId);
                 }
                 else {
                     emailCampaign = new Marketing_Email__c();
                     emailCampaign.Marketing_Campaign__c = String.valueOf(campaign.Id);
-                    System.debug('Inserting new email');
 
                 }
             
@@ -489,7 +445,6 @@ public with sharing class EmailCampaignController {
                 emailCampaign.Days_After_Start_Date__c = Integer.valueOf(emailData.get('daysAfterStartDate'));
             
                 String timeString = (String) emailData.get('timeToSend');
-                System.debug('timeString ==> ' + timeString);
                 if (!String.isEmpty(timeString)) {
                     List<String> timeParts = timeString.split(':');
                     if (timeParts.size() == 3) {
@@ -498,18 +453,14 @@ public with sharing class EmailCampaignController {
                         Integer seconds = Integer.valueOf(timeParts[2]);
             
                         emailCampaign.TimeToSend__c = Time.newInstance(hours, minutes, seconds, 0);
-                        System.debug('time ==> ' + emailCampaign.TimeToSend__c);
             
                         if (specificDate != null) {
                             Date sendDate = specificDate.addDays(Integer.valueOf(emailCampaign.Days_After_Start_Date__c));
                             emailCampaign.Send_Date_Time__c = DateTime.newInstance(sendDate, Time.newInstance(hours, minutes, seconds, 0));
-                            System.debug('date ==> ' + emailCampaign.Send_Date_Time__c);
                         }
                     }
                 }
             
-                System.debug('emailCampaign ==> ' + emailCampaign);
-
                 Boolean isDisabled = Boolean.valueOf(emailData.get('disabled'));
                 
                 if (emailId != null && emailId.length() >= 15 && existingEmailMap.containsKey(emailId)) {
@@ -531,7 +482,6 @@ public with sharing class EmailCampaignController {
             }
 
             List<Object> deletedEmails = (List<Object>) campaignEmailDataMap.get('deletedEmailList');
-            System.debug('deletedEmails ==> ' + deletedEmails);
 
             Set<String> emailIdsToDelete = new Set<String>();
             for (Object emailId : deletedEmails) {
@@ -548,8 +498,6 @@ public with sharing class EmailCampaignController {
                     delete emailsToDelete;
                 }
             }
-
-
 
             List<Marketing_Email__c> remainingTotalEmails = [
                 SELECT Id, Name, Marketing_Campaign__c, Subject__c, Quick_Template__c, Days_After_Start_Date__c, TimeToSend__c, Send_Date_Time__c
@@ -574,7 +522,6 @@ public with sharing class EmailCampaignController {
             Integer totalMailsCount = 0;
             Integer totalMailsCountRemaining = 0;
             Integer previousTotalEmails = Integer.valueOf(campaign.Total_Emails__c );
-            System.debug('previousTotalEmails-->'+previousTotalEmails);
             totalMailsCount = ((totalEmails.size() - remainingTotalEmails.size()) * (existingTotalMembers.size() - newMembers.size() + membersToDelete.size())) + (remainingTotalEmails.size() * existingTotalMembers.size());
             totalMailsCountRemaining = remainingTotalEmails.size() * existingTotalMembers.size();
 
@@ -591,7 +538,7 @@ public with sharing class EmailCampaignController {
         } catch (Exception e) {
             System.debug('Error creating campaign and emails: ' + e.getMessage());
             System.debug('Error creating campaign and emails: ' + e.getLineNumber());
-            throw new AuraHandledException('Error creating campaign and emails: ' + e.getMessage());
+            return null;
         }
         
     }
@@ -605,10 +552,6 @@ public with sharing class EmailCampaignController {
     @AuraEnabled
     public static Map<String, String> checkContactDateFields(String contactsJson, String selectedContactDateField) {
         try {
-            System.debug('contactsJson ==> ' + contactsJson);
-            System.debug('selectedContactDateField ==> ' + selectedContactDateField);
-    
-            // Deserialize JSON
             List<Object> selectedPrimaryRecipientsUntyped = (List<Object>) JSON.deserializeUntyped(contactsJson);
             List<Map<String, Object>> selectedPrimaryRecipients = new List<Map<String, Object>>();
     
@@ -618,21 +561,17 @@ public with sharing class EmailCampaignController {
     
             Set<String> contactIds = new Set<String>();
             for (Map<String, Object> contact : selectedPrimaryRecipients) {
-                contactIds.add((String) contact.get('value')); // Assuming 'value' holds the contact ID
+                contactIds.add((String) contact.get('value'));
             }
     
             String fieldValueQuery = 'SELECT Id, ' + selectedContactDateField + ' FROM Contact WHERE Id IN :contactIds';
             List<Contact> contacts = Database.query(fieldValueQuery);
-    
-            System.debug('contacts ==> ' + contacts);
-    
+        
             Map<String, String> idToFieldValueMap = new Map<String, String>();
             for (Contact con : contacts) {
                 idToFieldValueMap.put(con.Id, String.valueOf(con.get(selectedContactDateField)));
             }
-    
-            System.debug('idToFieldValueMap ==> ' + idToFieldValueMap);
-    
+        
             return idToFieldValueMap;
         } catch (Exception e) {
             System.debug('Error ==> ' + e);
@@ -650,7 +589,6 @@ public with sharing class EmailCampaignController {
     */
     @AuraEnabled
     public static String getCamapaignAndRelatedData(String campaignId) {
-        System.debug('campaignId ==> ' + campaignId);
         
         Marketing_Campaign__c campaign = [
             SELECT Id, Label__c, Sender_Mode__c, From_Address__c, From_Name__c, 
@@ -682,9 +620,7 @@ public with sharing class EmailCampaignController {
         campaignData.templateId = campaign.Marketing_Campaign_Template__c;
         
         String campaignJson = JSON.serialize(campaignData);
-        
-        System.debug('campaignJson ==> ' + campaignJson);
-        
+                
         return campaignJson;
     }
 
@@ -771,9 +707,6 @@ public with sharing class EmailCampaignController {
         for (EmailRequests request : emailRequests) {
 
             Marketing_Campaign__c campaignRecord = campaignMap.get(request.campaignId);
-            if (campaignRecord != null) {
-                System.debug('Campaign Name: ' + campaignRecord.Name);
-            }
 
             for (String toAddress : request.toAddresses) {
                 Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();

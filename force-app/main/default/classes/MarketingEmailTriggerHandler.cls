@@ -10,7 +10,7 @@ public with sharing class MarketingEmailTriggerHandler {
     Boolean isUndelete;
     private static final String CLASS_NAME = 'MarketingEmailTriggerHandler';
 
-    /**
+    /*
     * Method Name : MarketingEmailTriggerHandler
     * Date : 23/07/2024
     * Created By : Rachit Shah
@@ -27,7 +27,7 @@ public with sharing class MarketingEmailTriggerHandler {
         this.isUndelete = isUndelete;
     }
 
-        /**
+    /*
     * Method Name : onAfterInsert
     * Date : 23/07/2024
     * Created By : Rachit Shah
@@ -37,7 +37,7 @@ public with sharing class MarketingEmailTriggerHandler {
         handleCampaignLogic(newMarketingEmails, true);
     }
 
-     /**
+    /*
     * Method Name : onAfterUpdate
     * Date : 23/07/2024
     * Created By : Rachit Shah
@@ -47,7 +47,7 @@ public with sharing class MarketingEmailTriggerHandler {
         handleCampaignLogic(newMarketingEmails, false);
     }
 
-    /**
+    /*
     * Method Name : handleCampaignLogic
     * Date : 23/07/2024
     * Created By : Rachit Shah
@@ -66,15 +66,11 @@ public with sharing class MarketingEmailTriggerHandler {
             campaignToEmailsMap.get(email.Marketing_Campaign__c).add(email);
         }
 
-        System.debug('campaignToEmailsMap ==> ' + campaignToEmailsMap);
-
-
         List<Marketing_Campaign_Member__c> campaignMembers = [
             SELECT Id, Marketing_Campaign__c, Contact__c
             FROM Marketing_Campaign_Member__c
             WHERE Marketing_Campaign__c IN :campaignToEmailsMap.keySet()
-            AND Contact_Type__c = 'Primary'
-        ];
+            AND Contact_Type__c = 'Primary' WITH SECURITY_ENFORCED];
 
         for (Marketing_Campaign_Member__c member : campaignMembers) {
                 contactIds.add(member.Contact__c); 
