@@ -60,16 +60,16 @@
             <div class="primary-recipients input-field">
                 <legend class="slds-form-element__legend slds-form-element__label"><span class="red">*</span>Select the Primary recipients</legend>
                 <lightning-input
+                    class="blur-class"
                     placeholder="Type to search contacts"
                     onchange={handlePrimarySearchInputChange}
                     onfocus={handlePrimarySearchInputFocus}
-                    onblur={handlePrimarySearchInputBlur}
                     value={inputValuePrimary}
                     
                 ></lightning-input>
 
                 <template if:true={isPrimaryDropdownVisible}>
-                    <div class="dropdown">
+                    <div class="dropdown" onmousedown={handlePreventDefault}>
                         <template for:each={filteredPrimaryContacts} for:item="contact">
                             <div key={contact.value} class="dropdown-item" onclick={handleSelectPrimaryContact} data-id={contact.value}>
                                 <span class="slds-icon_container slds-icon-standard-account" title="Account">
@@ -100,16 +100,16 @@
             <!-- CC Recipients -->
             <div class="input-field">
                 <lightning-input
+                    class="blur-class"
                     label="Who should be CC?"
                     placeholder="Type to search contacts"
                     onchange={handleCCSearchInputChange}
                     onfocus={handleCCSearchInputFocus}
-                    onblur={handleCCSearchInputBlur}
                     value={inputValueCC}
                 ></lightning-input>
 
                 <template if:true={isCCDropdownVisible}>
-                    <div class="dropdown">
+                    <div class="dropdown" onmousedown={handlePreventDefault}>
                         <template for:each={filteredCCContacts} for:item="contact">
                             <div key={contact.value} class="dropdown-item" onclick={handleSelectCCContact} data-id={contact.value}>
                                 <span class="slds-icon_container slds-icon-standard-account" title="Account">
@@ -140,16 +140,16 @@
             <!-- BCC Recipients -->
             <div class="input-field">
                 <lightning-input
+                    class="blur-class"
                     label="Who should be BCC?"
                     placeholder="Type to search contacts"
                     onchange={handleBCCSearchInputChange}
                     onfocus={handleBCCSearchInputFocus}
-                    onblur={handleBCCSearchInputBlur}
                     value={inputValueBcc}
                 ></lightning-input>
 
                 <template if:true={isBCCDropdownVisible}>
-                    <div class="dropdown">
+                    <div class="dropdown" onmousedown={handlePreventDefault}>
                         <template for:each={filteredBCCContacts} for:item="contact">
                             <div key={contact.value} class="dropdown-item" onclick={handleSelectBCCContact} data-id={contact.value}>
                                 <span class="slds-icon_container slds-icon-standard-account" title="Account">
@@ -208,7 +208,6 @@
                                     placeholder="Select the field"
                                     onchange={handleContactDateFieldSearchChange}
                                     onfocus={handleContactDateFieldSearchFocus}
-                                    onblur={handleContactDateFieldSearchBlur}
                                     class="input-field"
                                 ></lightning-input>
                             </div>
@@ -238,7 +237,7 @@
         
                     <!-- Dropdown for selecting fields -->
                     <template if:true={isDateFieldDropdownVisible}>
-                        <div class="dropdown">
+                        <div class="dropdown" onmousedown={handlePreventDefault}>
                             <template for:each={filteredContactDateFields} for:item="field">
                                 <div key={field.value} class="dropdown-item" onclick={handleDateFieldSelect} data-id={field.value}>
                                     <span class="slds-icon_container slds-icon-standard-account" title="Account">

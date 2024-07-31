@@ -513,17 +513,9 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     handleContactDateFieldSearchFocus() {
         this.isDateFieldDropdownVisible = true;
     }
-
-    /*
-    * Method Name: handleContactDateFieldSearchBlur
-    * @description: Method to hide dropdown blur section
-    * Date: 24/06/2024
-    * Created By: Rachit Shah
-    */
-    handleContactDateFieldSearchBlur() {
-        setTimeout(() => {
-            this.isDateFieldDropdownVisible = false;
-        }, 200);
+    
+    handlePreventDefault(event){
+        event.preventDefault();
     }
 
     /*
@@ -544,20 +536,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Created By: Rachit Shah
     */
     handlePrimarySearchInputFocus(event) {
-        event.preventDefault();
+        // event.preventDefault();
         this.isPrimaryDropdownVisible = true;
-    }
-
-    /*
-    * Method Name: handlePrimarySearchInputFocus
-    * @description: Method to hide dropdownblur section
-    * Date: 24/06/2024
-    * Created By: Rachit Shah
-    */
-    handlePrimarySearchInputBlur() {
-        setTimeout(() => {
-            this.isPrimaryDropdownVisible = false;
-        }, 100);
     }
 
     /*
@@ -568,6 +548,11 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     */
     handleSelectPrimaryContact(event) {
         this.selectContact(event, 'Primary');
+        const inputs = this.template.querySelectorAll('.blur-class');
+        inputs.forEach(input => input.blur());
+
+        this.isPrimaryDropdownVisible = false;
+
     }
 
     /*
@@ -599,20 +584,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Created By: Rachit Shah
     */
     handleCCSearchInputFocus(event) {
-        event.preventDefault();
+        // event.preventDefault();
         this.isCCDropdownVisible = true;
-    }
-
-    /*
-    * Method Name: handleCCSearchInputChange
-    * @description: Method to hide blur section for cc contacts
-    * Date: 24/06/2024
-    * Created By: Rachit Shah
-    */
-    handleCCSearchInputBlur() {
-        setTimeout(() => {
-            this.isCCDropdownVisible = false;
-        }, 100);
     }
 
     /*
@@ -623,6 +596,11 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     */
     handleSelectCCContact(event) {
         this.selectContact(event, 'CC');
+
+        const inputs = this.template.querySelectorAll('.blur-class');
+        inputs.forEach(input => input.blur());
+        this.isCCDropdownVisible = false;
+
     }
 
     /*
@@ -653,20 +631,8 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     * Created By: Rachit Shah
     */
     handleBCCSearchInputFocus(event) {
-        event.preventDefault();
+        // event.preventDefault();
         this.isBCCDropdownVisible = true;
-    }
-
-    /*
-    * Method Name: handleBCCSearchInputBlur
-    * @description: Method to hide blur dropdown section for bcc contacts
-    * Date: 24/06/2024
-    * Created By: Rachit Shah
-    */
-    handleBCCSearchInputBlur() {
-        setTimeout(() => {
-            this.isBCCDropdownVisible = false;
-        }, 100);
     }
 
     /*
@@ -677,6 +643,10 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
     */
     handleSelectBCCContact(event) {
         this.selectContact(event, 'BCC');
+        const inputs = this.template.querySelectorAll('.blur-class');
+        inputs.forEach(input => input.blur());
+        this.isBCCDropdownVisible = false;
+
     }
 
     /*
