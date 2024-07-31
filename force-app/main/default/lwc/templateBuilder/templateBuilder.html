@@ -102,12 +102,20 @@
                                         <div title={template.MVEX__Template_Type__c}>{template.MVEX__Template_Type__c}</div>
                                     </td>
 
+                                    <td data-label="Template Type">
+                                        <div title={template.Template_pattern__c}>{template.Template_pattern__c}</div>
+                                    </td>
+
+                                    <td data-label="Type">
+                                        <div title={template.Template_Type__c}>{template.Template_Type__c}</div>
+                                    </td>
+
                                     <td data-label="Subject">
-                                        <div title={template.MVEX__Subject__c}>{template.MVEX__Subject__c}</div>
+                                        <div title={template.Subject__c}>{template.Subject__c}</div>
                                     </td>
 
                                     <td data-label="Description">
-                                        <div title={template.MVEX__Description__c}>{template.MVEX__Description__c}</div>
+                                        <div title={template.Description__c}>{template.Description__c}</div>
                                     </td>
                                     <td data-label="Created Date">
                                         <div title={template.CreatedDate}>{template.CreatedDateformatted}</div>
@@ -140,9 +148,9 @@
 
             </template>
 
-            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose} template-name={selectedTemplate}
-                object-select={selectedobject} type-select={selectedType} description={selectedDescription}
-                name={nameForTemplate} current-record-id={currentRecId} is-edit="false"
+            <c-custom-modal if:true={isModalOpen} onclose={handleModalClose}
+                object-select={selectedobject}
+                name={nameForTemplateValue} current-record-id={currentRecId} is-edit="false"
                 body-of-template={selectedTemplateBody} page-number={currentPage}
                 total-recodslength={totalRecodslength}></c-custom-modal>
 

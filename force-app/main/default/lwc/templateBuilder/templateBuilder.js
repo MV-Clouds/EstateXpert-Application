@@ -17,18 +17,17 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     @track filteredTemplates = [];
     @track visibleTemplates = [];
     @track currentRecId;
-    @track totalRecodslength;
+    @track totalRecodslength = 0;
     @track newPageNumber;
     @track selectedobject = '';
-    @track selectedTemplate = '';
     @track selectedDescription = '';
-    @track selectedType = '';
     @track selectedTemplateBody = ''; 
     @track isModalOpen = false;
     @track isLoading = false; 
     @track isPreviewModal = false;
     @track isPreviousDisabled = true;
     @track isNextDisabled = false;    
+    @track nameForTemplateValue = '';
     
 
     /**
@@ -55,6 +54,8 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     connectedCallback() {
+
+        this.nameForTemplateValue = this.nameForTemplate;
         Promise.all([
             loadStyle(this, externalCss)
         ])
@@ -77,11 +78,11 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.isLoading = true;
         getTemplates()
             .then(data => {
+                console.log('OUTPUT : ',data);
                 this.totalRecodslength = data.length;
                 data.sort((a, b) => {
-                    const labelA = a.MVEX__Label__c.toLowerCase();
-                    const labelB = b.MVEX__Label__c.toLowerCase();
-
+                    const labelA = a.Label__c.toLowerCase();
+                    const labelB = b.Label__c.toLowerCase();
                     if (labelA < labelB) return -1;
                     if (labelA > labelB) return 1;
                     return 0;
@@ -105,6 +106,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     */
     processTemplates(data) {
         // this.templates = data
+        console.log('data ==> ', data);
         this.templates = data.map((template, index) => ({
             ...template,
             rowIndex: index + 1,
@@ -130,9 +132,9 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     formatDate(dateStr) {
-        var formatdate = new Date(dateStr);
+        let formatdate = new Date(dateStr);
         formatdate.setDate(formatdate.getDate());
-        var formattedDate = new Date(formatdate.getFullYear(), formatdate.getMonth(), formatdate.getDate(), 0, 0, 0);
+        let formattedDate = new Date(formatdate.getFullYear(), formatdate.getMonth(), formatdate.getDate(), 0, 0, 0);
         const day = formattedDate.getDate();
         const month = formattedDate.getMonth() + 1; // Month is zero-based, so we add 1
         const year = formattedDate.getFullYear();
@@ -164,13 +166,16 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         if (this.currentPage > this.totalPages) {
             this.currentPage = this.totalPages;
         }
-        var startIndex = (this.currentPage - 1) * PAGE_SIZE;
+        let startIndex = (this.currentPage - 1) * PAGE_SIZE;
+        console.log('startIndex ==> ' , startIndex);
 
         if(startIndex < 0){
             startIndex = 0;
         }
+        console.log('startIndex2 ==> ' , startIndex);
 
         this.visibleTemplates = this.filteredTemplates.slice(startIndex, startIndex + PAGE_SIZE);
+        console.log('this.visibleTemplates ==> ' ,JSON.stringify(this.visibleTemplates));
         this.updatePaginationButtons();
     }
 
@@ -290,16 +295,17 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.currentRecId = templateId;
 
         if (template) {    
+            console.log('template ==>' , JSON.stringify(template));
             const navigationState = {
-                selectedObject: template.MVEX__Object_Name__c ? template.MVEX__Object_Name__c : '',
-                label: template.MVEX__Label__c ? template.MVEX__Label__c : '',
-                description: template.MVEX__Description__c ? template.MVEX__Description__c  : '',
-                type : template.MVEX__Template_Type__c ? template.MVEX__Template_Type__c : '',
-                templateTypeSelect : template.MVEX__Template_pattern__c ? template.MVEX__Template_pattern__c : '',
-                subject : template.MVEX__Subject__c ? template.MVEX__Subject__c : '',
+                selectedObject: template.Object_Name__c ? template.Object_Name__c : '',
+                label: template.Label__c ? template.Label__c : '',
+                description: template.Description__c ? template.Description__c  : '',
+                type : template.Template_Type__c ? template.Template_Type__c : '',
+                templateTypeSelect : template.Template_pattern__c ? template.Template_pattern__c : '',
+                subject : template.Subject__c ? template.Subject__c : '',
                 myrecordId : templateId,
-                isQuickTemplate : template.MVEX__Template_pattern__c == 'quickTemplate' ?  true : false,
-                isEmailTemplate : template.MVEX__Template_Type__c == 'Email' ?  true : false,
+                isQuickTemplate : template.Template_pattern__c == 'quickTemplate' ?  true : false,
+                isEmailTemplate : template.Template_Type__c == 'Email' ?  true : false,
                 bodyOfTemplate : '',
                 isFirstTimeLoaded : true,
                 templateTypeForCreation : 'Edit'
@@ -307,7 +313,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     
             const serializedState = JSON.stringify(navigationState);
             
-            var cmpDef;                
+            let cmpDef;                
             cmpDef = {
                 componentDef: 'MVEX:templateModalChild',
                 attributes: {                    
@@ -397,7 +403,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     * Created By: Rachit Shah
     */
     handleAdd() {
-        this.nameForTemplate = 'New';
+        this.nameForTemplateValue = 'New';
         this.isModalOpen = true;
     }
 

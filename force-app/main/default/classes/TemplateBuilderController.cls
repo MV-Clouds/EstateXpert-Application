@@ -16,7 +16,7 @@ public with sharing class TemplateBuilderController {
     * Created By: Rachit Shah 
     */ 
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<String> getAllFieldNames(String objectName) {
         List<String> fieldNames = new List<String>();
         
@@ -53,6 +53,35 @@ public with sharing class TemplateBuilderController {
         return template;
     }
 
+     /** 
+    * Method Name: insertTemplate
+    * @description: Insert Template
+    * @return Template__c id.
+    * Date: 27/06/2024 
+    * Created By: Rachit Shah 
+    */ 
+
+    @AuraEnabled
+    public static String insertTemplate(Template__c template) {
+        try {
+            if (Schema.sObjectType.Template__c.fields.Object_Name__c.isCreateable() &&
+                Schema.sObjectType.Template__c.fields.Label__c.isCreateable() &&
+                Schema.sObjectType.Template__c.fields.Template_Body__c.isCreateable() &&
+                Schema.sObjectType.Template__c.fields.Description__c.isCreateable() &&
+                Schema.sObjectType.Template__c.fields.Template_Type__c.isCreateable()) {
+                
+                insert template;
+
+                return template.Id;
+            } else {
+                throw new AuraHandledException('No access to create fields on Template__c.');
+            }
+            
+        } catch (Exception e) {
+            throw new AuraHandledException('Error saving template: ' + e.getMessage());
+        }
+    }
+
     /** 
     * Method Name: saveTemplate
     * @description: Saves or updates a Template__c record based on the provided Id.
@@ -73,7 +102,7 @@ public with sharing class TemplateBuilderController {
                     Schema.sObjectType.Template__c.fields.Description__c.isUpdateable() &&
                     Schema.sObjectType.Template__c.fields.Template_Type__c.isUpdateable()) {
                     
-                    Template__c existingTemplate = [SELECT Id, Object_Name__c, Label__c, Template_Body__c, Description__c 
+                    Template__c existingTemplate = [SELECT Id, Object_Name__c, Label__c, Template_Body__c, Description__c,Subject__c,Template_pattern__c
                                                     FROM Template__c WHERE Id = :recId WITH SECURITY_ENFORCED LIMIT 1];
                     
                     existingTemplate.Object_Name__c = template.Object_Name__c;
@@ -81,10 +110,12 @@ public with sharing class TemplateBuilderController {
                     existingTemplate.Template_Body__c = template.Template_Body__c;
                     existingTemplate.Description__c = template.Description__c;
                     existingTemplate.Template_Type__c = template.Template_Type__c;
+                    existingTemplate.Subject__c = template.Subject__c;
+                    existingTemplate.Template_pattern__c = template.Template_pattern__c;
                     System.debug('existingTemplate ==> ' + existingTemplate);
                     update existingTemplate;
                 } else {
-                    throw new AuraHandledException('No access to update fields on Template__c.');
+                    System.debug('No access to update fields on Template__c.');
                 }
             } else {
                 if (Schema.sObjectType.Template__c.fields.Object_Name__c.isCreateable() &&
@@ -95,11 +126,11 @@ public with sharing class TemplateBuilderController {
                     
                     insert template;
                 } else {
-                    throw new AuraHandledException('No access to create fields on Template__c.');
+                    System.debug('No access to create fields on Template__c.');
                 }
             }
         } catch (Exception e) {
-            throw new AuraHandledException('Error saving template: ' + e.getMessage());
+            System.debug('Error saving template: ' + e.getMessage());
         }
     }
 
@@ -110,7 +141,7 @@ public with sharing class TemplateBuilderController {
     * Date: 11/06/2024 
     * Created By: Rachit Shah 
     */ 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static Map<String, String> getAllObjectNames() {
         Map<String, String> objectNamesMap = new Map<String, String>();
         
@@ -138,7 +169,7 @@ public with sharing class TemplateBuilderController {
     * Created By: Rachit Shah 
     */ 
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<String> getTemplateTypePicklistValues() {
         Schema.DescribeFieldResult fieldResult = Template__c.Template_Type__c.getDescribe();
         List<Schema.PicklistEntry> picklistValues = fieldResult.getPicklistValues();
@@ -180,7 +211,7 @@ public with sharing class TemplateBuilderController {
     
     @AuraEnabled
     public static List<Template__c> getTemplates() {
-        List<Template__c> templates = [SELECT Id, Name, Label__c , Object_Name__c , Status__c, Template_Body__c	, Template_Type__c	, Description__c,CreatedDate  FROM Template__c WITH SECURITY_ENFORCED];
+        List<Template__c> templates = [SELECT Id, Name, Label__c , Object_Name__c , Status__c, Template_Body__c	, Template_Type__c	, Description__c,CreatedDate,Template_pattern__c,Subject__c  FROM Template__c WITH SECURITY_ENFORCED];
         return templates;
     }
 

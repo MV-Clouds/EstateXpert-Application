@@ -11,6 +11,8 @@ export default class TemplatePreviewModal extends LightningElement {
     @track recordName = 'Message Body';
     @track updatedBody = '';
     @track recordOptions = [{ label: 'None', value: 'none' }];
+    @track hasLibraryLoaded = false;
+
 
     get toggleIconName() {
         return this.isRecordSelectOpen ? 'utility:chevronleft' : 'utility:chevronright';
@@ -49,6 +51,27 @@ export default class TemplatePreviewModal extends LightningElement {
             console.log('Error ==> ' , error);
         });        
 
+    }
+
+    /**
+    * Method Name: renderedCallback
+    * @description: Method to load external library
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    renderedCallback() {
+        if (!this.hasLibraryLoaded) {
+            loadStyle(this, summerNote_Editor + '/summernote-lite-pdf.css')
+            .then(() => {
+                this.hasLibraryLoaded = true;
+                this.updateRichTextContent();
+            })
+            .catch(() => {
+                console.log('Error loading style:', error);
+                });
+        } else {
+            this.updateRichTextContent();
+        }
     }
 
     /**
@@ -102,7 +125,6 @@ export default class TemplatePreviewModal extends LightningElement {
     */
     handleRecordChange(event) {
         this.selectedRecord = event.detail.value;
-        console.log('selectedRecord ==> ' , this.selectedRecord);
 
         if (this.selectedRecord === 'none') {
             this.recordName = '';
@@ -125,16 +147,25 @@ export default class TemplatePreviewModal extends LightningElement {
 
         let regex = new RegExp(`{!${this.objectName}\\.(\\w+)}`, 'g');
 
-        tempUpdatedBody = tempUpdatedBody.replace(regex, (match, fieldName) => {
-            if (Object.prototype.hasOwnProperty.call(record, fieldName)) {
+        tempUpdatedBody = tempUpdatedBody.replace(regex, (fieldName) => {
+            if (record.hasOwnProperty(fieldName)) {
+
                 return record[fieldName] != null ? record[fieldName] : `{${fieldName} data is empty}`;
-            } else {
-                return `{${fieldName} data is empty}`;
             }
+
+            return `{${fieldName} data is empty}`;
+            
         });
         
         this.updatedBody = tempUpdatedBody;
     }
+
+    /**
+    * Method Name: setTempValue
+    * @description: Method to set template body for appling css
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
 
     setTempValue(value){
         return `<div class=" note-editor2 note-frame2">
@@ -145,4 +176,18 @@ export default class TemplatePreviewModal extends LightningElement {
                     </div> 
                 </div>`
     }
+
+    /**
+    * Method Name: updateRichTextContent
+    * @description: Method to change innertext value for the templatebody
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
+    updateRichTextContent() {
+        const richText = this.template.querySelector('.richText');
+        if (richText) {
+            richText.innerHTML = this.setTempValue(this.updatedBody);
+        }
+    }
+
 }

@@ -14,7 +14,7 @@
                     <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
                     <span class="slds-assistive-text">Close</span>
                 </button>
-                <h2 class="slds-text-heading_medium">{name} Email Template</h2>
+                <h2 class="slds-text-heading_medium">{nameValue} Template</h2>
             </header>
             <div class="slds-modal__content slds-p-around_medium">
                 <div class="custom-input-container">
@@ -22,7 +22,7 @@
                         <label><span class="red">*</span>Name</label>
                     </div>
                     <div class="input-container">
-                        <lightning-input placeholder="Template Name" name="templateName" value={templateName}
+                        <lightning-input placeholder="Template Name" name="templateName" value={templateNameValue}
                             onchange={handleInputChange}>
                         </lightning-input>
                     </div>
@@ -32,18 +32,30 @@
                         <label>Description</label>
                     </div>
                     <div class="input-container">
-                        <lightning-textarea name="description" value={description} onchange={handleInputChange}
+                        <lightning-textarea name="description" value={descriptionValue} onchange={handleInputChange}
                             aria-rowspan="5">
                         </lightning-textarea>
                     </div>
                 </div>
+
+                <div class="custom-input-container">
+                    <div class="label-container">
+                        <label><span class="red">*</span>Template Type</label>
+                    </div>
+                    <div class="input-container">
+                        <lightning-combobox placeholder="Please select the Template Type" name="templateType" options={templateTypeOptions}
+                            value={templateTypeSelectValue} onchange={handleInputChange}>
+                        </lightning-combobox>
+                    </div>
+                </div>
+
                 <div class="custom-input-container">
                     <div class="label-container">
                         <label><span class="red">*</span>Object Select</label>
                     </div>
                     <div class="input-container">
                         <lightning-combobox placeholder="Please select the Object" name="objectSelect"
-                            options={objectOptions} value={objectSelect} onchange={handleInputChange}>
+                            options={objectOptions} value={objectSelectValue} onchange={handleInputChange} disabled={isQuickTemplateValue}>
                         </lightning-combobox>
                     </div>
                 </div>
@@ -53,10 +65,24 @@
                     </div>
                     <div class="input-container">
                         <lightning-combobox placeholder="Please select the Type" name="typeSelect" options={typeOptions}
-                            value={typeSelect} onchange={handleInputChange}>
+                            value={typeSelectValue} onchange={handleInputChange}>
                         </lightning-combobox>
                     </div>
                 </div>
+                
+                <!-- Conditionally rendered Subject field -->
+                <template if:true={isEmailTemplate}>
+                    <div class="custom-input-container">
+                        <div class="label-container">
+                            <label><span class="red">*</span>Subject</label>
+                        </div>
+                        <div class="input-container">
+                            <lightning-input placeholder="Email Subject" name="subject" value={subjectValue}
+                                onchange={handleInputChange}>
+                            </lightning-input>
+                        </div>
+                    </div>
+                </template>
             </div>
             <footer class="slds-modal__footer custom-footer">
                 <div class="cancel-btn">
@@ -69,5 +95,4 @@
         </div>
     </section>
     <div class="slds-backdrop slds-backdrop_open"></div>
-
 </template>

@@ -1,0 +1,283 @@
+/*!
+ * 
+ * Super simple wysiwyg editor v0.8.18
+ * https://summernote.org
+ * 
+ * 
+ * Copyright 2013- Alan Hong. and other contributors
+ * summernote may be freely distributed under the MIT license.
+ * 
+ * Date: 2020-05-20T18:09Z
+ * 
+ */
+ @font-face {
+    font-family: "summernote";
+    font-style: normal;
+    font-weight: 400;
+    font-display: auto;
+    src: url(font/summernote.eot);
+    src: url(font/summernote.eot?#iefix) format("embedded-opentype"), url(font/summernote.woff2) format("woff2"), url(font/summernote.woff) format("woff"), url(font/summernote.ttf) format("truetype")
+}
+
+[class^=note-icon]:before,
+[class*=" note-icon"]:before {
+    display: inline-block;
+    font-family: summernote;
+    font-style: normal;
+    font-size: inherit;
+    text-decoration: inherit;
+    text-rendering: auto;
+    text-transform: none;
+    vertical-align: middle;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    speak: none
+}
+
+.note-frame2 {
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #000;
+    font-family: sans-serif;
+    border-radius: 4px
+}
+
+
+.note-editor2 {
+    position: relative
+}
+
+.note-editor2 .note-editing-area2 {
+    position: relative;
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 {
+    outline: none;
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 sup {
+    vertical-align: super
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 sub {
+    vertical-align: sub
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 img.note-float-left {
+    margin-right: 10px
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 img.note-float-right {
+    margin-left: 10px
+}
+
+.note-editor2.note-frame2,
+.note-editor2.note-airframe {
+    border: 1px solid #00000032
+}
+
+.note-editor2.note-frame2.codeview .note-editing-area2 .note-editable2,
+.note-editor2.note-airframe.codeview .note-editing-area2 .note-editable2 {
+    display: none
+}
+
+.note-editor2.note-frame2 .note-editing-area2,
+.note-editor2.note-airframe .note-editing-area2 {
+    overflow: hidden
+}
+
+.note-editor2.note-frame2 .note-editing-area2 .note-editable2,
+.note-editor2.note-airframe .note-editing-area2 .note-editable2 {
+    padding: 10px;
+    overflow: auto;
+    word-wrap: break-word
+}
+
+.note-editor2.note-frame2 .note-editing-area2 .note-editable2[contenteditable=false],
+.note-editor2.note-airframe .note-editing-area2 .note-editable2[contenteditable=false] {
+    background-color: #8080801d
+}
+
+.note-editor2.note-airframe .note-editing-area2 .note-editable2 {
+    padding: 0
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 table td,
+.note-editor2 .note-editing-area2 .note-editable2 table th {
+    border: 1px solid #ececec;
+    padding: 5px 3px
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 a {
+    background-color: inherit;
+    text-decoration: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    color: #337ab7
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 a:hover,
+.note-editor2 .note-editing-area2 .note-editable2 a:focus {
+    color: #23527c;
+    text-decoration: underline;
+    outline: 0
+}
+
+.note-editor2 .note-editing-area2 .note-editable2 figure {
+    margin: 0
+}
+
+/* ============ ==============  DocGenius - Custom CSS ============ ============= ========= ============ */
+            h1, h2, h3, h4, h5, h6, p, ol, ul, dl, fieldset{
+                margin: 0;
+                padding: 0;
+            }
+            .note-editor2.note-frame2 h1{
+                font-size: 34px;
+                font-weight: 600;
+                line-height: 34px;
+                display: block;
+            }
+            .note-editor2.note-frame2 h2{
+                font-size: 30px;
+                font-weight: 600;
+                line-height: 32px;
+                display: block;
+            }
+            .note-editor2.note-frame2 h3{
+                font-size: 24px;
+                font-weight: 600;
+                line-height: 26px;
+                display: block;
+            }
+            .note-editor2.note-frame2 h4{
+                font-size: 20px;
+                font-weight: 600;
+                line-height: 22px;
+                display: block;
+            }
+            .note-editor2.note-frame2 h5{
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 20px;
+                display: block;
+            }
+            .note-editor2.note-frame2 h6{
+                font-size: 16px;
+                font-weight: 600;
+                line-height: 18px;
+                display: block;
+            }
+                /* full editor container css */
+            .note-editor2.note-frame2,
+            .note-editor2.note-airframe {
+                padding-top: 0px !important;
+                border: none !important;
+                width: 100%;
+                max-width: 100% !important;
+                /* height: 100%; */
+                height: max-content !important;
+                overflow: hidden;
+                /* display: flex; */
+                display: block !important;
+            }
+            .headerFooterSection .note-editor2.note-frame2,
+            .headerFooterSection .note-editor2.note-airframe{
+                height: fit-content !important;
+                padding-bottom: 0.5rem;
+            }
+
+                    /* editing area outer div  */
+            .note-editor2 .note-editing-area2 {
+                /* max-width: calc(100% - 35rem - 1.25rem); */
+                max-width: 100% !important;
+                width: 100% !important;
+                /* margin-right: calc(30% + 1.5rem); */
+                /* height: calc(100% - 0.5rem ); */
+                height: max-content !important;
+                flex-grow: 1;
+                /* max-height: max-content; */
+                /* min-height: 80%; */
+                max-height: 100% !important;
+                overflow: auto !important;
+                overflow-y: scroll !important;
+                /* scrollbar-width: thin; */
+                scrollbar-width: none !important;
+                scrollbar-color: #00a4f1 #ff000000;
+            }
+            /* Main Editable area */
+            .note-editor2.note-frame2 .note-editing-area2 .note-editable2,
+            .note-editor2.note-airframe .note-editing-area2 .note-editable2 {
+                /* height: max-content; */
+                height: 100% !important;
+                min-height: max-content !important;
+                /* min-height: 100%; */
+                min-height: 1120px;
+                background-color: white;
+                /* padding: 70px 67px 48px;
+                width: 792px; */
+                padding: 0px !important;
+                width: 100% !important;
+                max-width : 100% !important;
+                margin-inline: auto;
+                margin-bottom: 0.5rem;
+                /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
+                /* border: 1px solid #D1D1D1; */
+                border-radius: 6px;
+                margin-bottom: 0.5rem;
+            }
+            .headerEditor.note-editor2.note-frame2 .note-editing-area2 .note-editable2,
+            .footerEditor.note-editor2.note-frame2 .note-editing-area2 .note-editable2{
+                height:  max-content !important;
+                min-height: max-content !important;
+                background-color: white;
+                padding: 0px !important;
+                width: 100% !important;
+                max-width : 100% !important;
+                box-shadow: none;
+                border-radius: none !important;
+                margin-bottom: 0px !important;
+                line-height: auto !important;
+                word-break: break-all;
+            }
+            .note-editor2 .note-editing-area2 .note-editable2 table td,
+            .note-editor2 .note-editing-area2 .note-editable2 table th {
+                border-width: 0.5px;
+                border-style: solid;
+                border-color: #808080;
+            }
+            /* table Header  */
+            .note-editor2 .note-editing-area2 .note-editable2 table thead tr{
+                background-color: #dcdcdc;
+            }
+            .note-editor2.note-frame2 hr{
+                page-break-after: always;
+                margin: 0px !important;
+                border-top: none !important;
+                border-bottom: none !important;
+                background: transparent;
+                height: 0px !important;
+                visibility: hidden !important;
+            }
+
+/* ========= =======  ========= ============ Media Query ======= ======== ========= ========= ============ */
+@media only screen and (max-width: 1440px){
+    .note-editor2 .note-editing-area2 {
+    }
+}
+@media only screen and (max-width: 1350px){
+    .note-editor2 .note-editing-area2 {
+        margin-right: 0%;
+        margin-inline: auto;
+        max-width: calc(100% - 2rem);
+    }
+    .note-custom_title{
+        display: none !important;
+    }
+}
