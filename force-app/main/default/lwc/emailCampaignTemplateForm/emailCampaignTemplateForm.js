@@ -518,6 +518,12 @@ export default class EmailCampaignTemplateForm extends NavigationMixin(Lightning
         event.preventDefault();
     }
 
+    handleBlur(){
+        this.isPrimaryDropdownVisible = false;
+        this.isBCCDropdownVisible = false;
+        this.isCCDropdownVisible = false;
+    }
+
     /*
     * Method Name: handlePrimarySearchInputChange
     * @description: Method to handle filter for the primary contact

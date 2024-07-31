@@ -64,6 +64,7 @@
                     placeholder="Type to search contacts"
                     onchange={handlePrimarySearchInputChange}
                     onfocus={handlePrimarySearchInputFocus}
+                    onblur={handleBlur}
                     value={inputValuePrimary}
                     
                 ></lightning-input>
@@ -105,6 +106,7 @@
                     placeholder="Type to search contacts"
                     onchange={handleCCSearchInputChange}
                     onfocus={handleCCSearchInputFocus}
+                    onblur={handleBlur}
                     value={inputValueCC}
                 ></lightning-input>
 
@@ -145,6 +147,8 @@
                     placeholder="Type to search contacts"
                     onchange={handleBCCSearchInputChange}
                     onfocus={handleBCCSearchInputFocus}
+                    onblur={handleBlur}
+                    
                     value={inputValueBcc}
                 ></lightning-input>
 
