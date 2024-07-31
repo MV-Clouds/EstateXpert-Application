@@ -39,10 +39,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     @track templateTypeSelect = '';
 
     @track selectedObjectValue = '';
-    @track currentRecordIdValue = null;
+    @track currentRecordIdValue = this.currentRecordId ;
     @track templateLabelValue = '';
-
-
 
     get recordId(){
         return this.currentRecordIdValue ? this.currentRecordIdValue : 'tempId';
@@ -64,7 +62,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 try {
                     const parseObject = JSON.parse(navigationStateString);
 
-                    this.selectedObject = parseObject.selectedObjectValue;
+                    this.selectedObjectValue = parseObject.selectedObject;
                     this.currentRecordIdValue = parseObject.myrecordId;
                     this.templateLabelValue = parseObject.label;
                     this.description = parseObject.description;
@@ -92,11 +90,23 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
         }
     }
 
+    /**
+    * Method Name: connectedCallback
+    * @description: Method to set api variable to another variable when component loaded
+    * Date: 13/06/2024
+    * Created By: Rachit Shah
+    */
     connectedCallback(){    
-        this.selectedObjectValue = this.selectedObject;
-        this.currentRecordIdValue = this.currentRecordId;
-        this.templateLabelValue = this.templateLabel;
 
+        console.log('1' ,this.selectedObjectValue);
+        console.log('2' ,this.currentRecordIdValue);
+        console.log('3' ,this.templateLabelValue);
+
+        // this.selectedObjectValue = this.selectedObject;
+        // this.currentRecordIdValue = this.currentRecordId;
+        // this.templateLabelValue = this.templateLabel;
+
+        console.log('currentRecordIdValue ==> ' ,this.currentRecordIdValue);
     }
 
     /**
@@ -105,6 +115,7 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
+
     renderedCallback() {
         if (this.isInitialRender) {
             Promise.all([
@@ -117,11 +128,8 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                     ]);
                 })
                 .then(() => {
-                    this.isInitialRender = false;
-                    setTimeout(() => {
-                        this.initializeSummerNote(this, 'editor');
-                    }, 100);
-                    this.isLoading = false;
+                        this.isInitialRender = !this.initializeSummerNote();
+                        this.isLoading = false;
                 })
                 .catch(error => {
                     console.log('Error loading libraries', error);
@@ -129,7 +137,6 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
                 });
         }
     }
-
 
     /**
     * Method Name: fetchFields
@@ -179,161 +186,159 @@ export default class TemplateModalChild extends NavigationMixin(LightningElement
     * Date: 13/06/2024
     * Created By: Rachit Shah
     */
-    async initializeSummerNote(self, editorSelector) {
+    initializeSummerNote() {
         try {
-            console.log('self : ', self.activeTabName);
 
 
             const selector = this.currentRecordIdValue ? this.currentRecordIdValue : 'tempId';
             this.editor = this.template.querySelector(`[data-id="${selector}"]`);
 
-            // Initialize SummerNote Editor...
-            $(this.editor).summernote({
-                editing: true,
-                styleTags: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-                fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '26', '28', '30', '32', '34', '36', '38', '40', '42', '44', '46', '48', '52', '56', '60', '64', '68', '72', '76', '80', '86', '92', '98'],
-                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
-                addDefaultFonts: true,
-                tableClassName: 'table table-bordered',
-                insertTableMaxSize: {
-                    col: 10,
-                    row: 10,
-                },
-                toolbar: [
-                    // Customized Toolbar 
-                    ['custom_paragraphFormatting', ['ul', 'ol', 'paragraph', 'height']],
-                    ['custom_style', ['style']],
-                    ['custom_fontFormattings', ['fontname', 'fontsize', 'forecolor', 'backcolor', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript']],
-                    ['custom_insert', ['table', 'link', 'picture', 'hr']],
-                    ['custom_clearFormatting', ['clear']],
-                ],
-                popover: {
-                    image: [
-                        ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
-                        ['float', ['floatLeft', 'floatRight', 'floatNone']],
-                        ['remove', ['removeMedia']]
-                    ],
-                    link: [
-                        ['link', ['linkDialogShow', 'unlink']]
-                    ],
-                    table: [
-                        ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
-                        ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
-                        ['merge', ['jMerge']],
-                        ['style', ['jBackcolor', 'jBorderColor', 'jAlign']],
-                        ['info', ['jTableInfo']],
-                    ],
-                },
-                tabsize: 2,
-                disableResizeEditor: true,
-                blockquoteBreakingLevel: 2,
-                dialogsInBody: true,
-                dialogsFade: false,
-                disableDragAndDrop: true,
-                shortcuts: true,
-                tabDisable: false,
-                codeviewFilter: false,
-                codeviewIframeFilter: true,
-                toolbarPosition: 'top',
-                spellCheck: true,
-                disableGrammar: false,
-                maximumImageFileSize: null,
-                acceptImageFileTypes: "image/*",
-                allowClipboardImagePasting: true,
-                icons: {
-                    'align': 'note-icon-align',
-                    'alignCenter': 'note-icon-align-center',
-                    'alignJustify': 'note-icon-align-justify',
-                    'alignLeft': 'note-icon-align-left',
-                    'alignRight': 'note-icon-align-right',
-                    'rowBelow': 'note-icon-row-below',
-                    'colBefore': 'note-icon-col-before',
-                    'colAfter': 'note-icon-col-after',
-                    'rowAbove': 'note-icon-row-above',
-                    'rowRemove': 'note-icon-row-remove',
-                    'colRemove': 'note-icon-col-remove',
-                    'indent': 'note-icon-align-indent',
-                    'outdent': 'note-icon-align-outdent',
-                    'arrowsAlt': 'note-icon-arrows-alt',
-                    'bold': 'note-icon-bold',
-                    'caret': 'note-icon-caret',
-                    'circle': 'note-icon-circle',
-                    'close': 'note-icon-close',
-                    'code': 'note-icon-code',
-                    'eraser': 'note-icon-eraser',
-                    'floatLeft': 'note-icon-float-left',
-                    'floatRight': 'note-icon-float-right',
-                    'font': 'note-icon-font',
-                    'frame': 'note-icon-frame',
-                    'italic': 'note-icon-italic',
-                    'link': 'note-icon-link',
-                    'unlink': 'note-icon-chain-broken',
-                    'magic': 'note-icon-magic',
-                    'menuCheck': 'note-icon-menu-check',
-                    'minus': 'note-icon-minus',
-                    'orderedlist': 'note-icon-orderedlist',
-                    'pencil': 'note-icon-pencil',
-                    'picture': 'note-icon-picture',
-                    'question': 'note-icon-question',
-                    'redo': 'note-icon-redo',
-                    'rollback': 'note-icon-rollback',
-                    'square': 'note-icon-square',
-                    'strikethrough': 'note-icon-strikethrough',
-                    'subscript': 'note-icon-subscript',
-                    'superscript': 'note-icon-superscript',
-                    'table': 'note-icon-table',
-                    'textHeight': 'note-icon-text-height',
-                    'trash': 'note-icon-trash',
-                    'underline': 'note-icon-underline',
-                    'undo': 'note-icon-undo',
-                    'unorderedlist': 'note-icon-unorderedlist',
-                    'video': 'note-icon-video',
-                },
+            if(this.editor){
 
-                callbacks: {
-                    onBeforeCommand: null,
-                    onBlur: null,
-                    onBlurCodeview: null,
-                    onChange: function (contents, context, $editable) {
+                // Initialize SummerNote Editor...
+                $(this.editor).summernote({
+                    editing: true,
+                    styleTags: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+                    fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '26', '28', '30', '32', '34', '36', '38', '40', '42', '44', '46', '48', '52', '56', '60', '64', '68', '72', '76', '80', '86', '92', '98'],
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
+                    addDefaultFonts: true,
+                    tableClassName: 'table table-bordered',
+                    insertTableMaxSize: {
+                        col: 10,
+                        row: 10,
                     },
-                    onChangeCodeview: null,
-                    onDialogShown: null,
-                    onEnter: null,
-                    onFocus: null,
-                    onImageLinkInsert: null,
-                    onImageUpload: null,
-                    onImageUploadError: null,
-                    onInit: function () {
+                    toolbar: [
+                        // Customized Toolbar 
+                        ['custom_paragraphFormatting', ['ul', 'ol', 'paragraph', 'height']],
+                        ['custom_style', ['style']],
+                        ['custom_fontFormattings', ['fontname', 'fontsize', 'forecolor', 'backcolor', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript']],
+                        ['custom_insert', ['table', 'link', 'picture', 'hr']],
+                        ['custom_clearFormatting', ['clear']],
+                    ],
+                    popover: {
+                        image: [
+                            ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                            ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                            ['remove', ['removeMedia']]
+                        ],
+                        link: [
+                            ['link', ['linkDialogShow', 'unlink']]
+                        ],
+                        table: [
+                            ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                            ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                            ['merge', ['jMerge']],
+                            ['style', ['jBackcolor', 'jBorderColor', 'jAlign']],
+                            ['info', ['jTableInfo']],
+                        ],
                     },
-                    onKeydown: null,
-                    onKeyup: null,
-                    onMousedown: null,
-                    onMouseup: function (e) {
+                    tabsize: 2,
+                    disableResizeEditor: true,
+                    blockquoteBreakingLevel: 2,
+                    dialogsInBody: true,
+                    dialogsFade: false,
+                    disableDragAndDrop: true,
+                    shortcuts: true,
+                    tabDisable: false,
+                    codeviewFilter: false,
+                    codeviewIframeFilter: true,
+                    toolbarPosition: 'top',
+                    spellCheck: true,
+                    disableGrammar: false,
+                    maximumImageFileSize: null,
+                    acceptImageFileTypes: "image/*",
+                    allowClipboardImagePasting: true,
+                    icons: {
+                        'align': 'note-icon-align',
+                        'alignCenter': 'note-icon-align-center',
+                        'alignJustify': 'note-icon-align-justify',
+                        'alignLeft': 'note-icon-align-left',
+                        'alignRight': 'note-icon-align-right',
+                        'rowBelow': 'note-icon-row-below',
+                        'colBefore': 'note-icon-col-before',
+                        'colAfter': 'note-icon-col-after',
+                        'rowAbove': 'note-icon-row-above',
+                        'rowRemove': 'note-icon-row-remove',
+                        'colRemove': 'note-icon-col-remove',
+                        'indent': 'note-icon-align-indent',
+                        'outdent': 'note-icon-align-outdent',
+                        'arrowsAlt': 'note-icon-arrows-alt',
+                        'bold': 'note-icon-bold',
+                        'caret': 'note-icon-caret',
+                        'circle': 'note-icon-circle',
+                        'close': 'note-icon-close',
+                        'code': 'note-icon-code',
+                        'eraser': 'note-icon-eraser',
+                        'floatLeft': 'note-icon-float-left',
+                        'floatRight': 'note-icon-float-right',
+                        'font': 'note-icon-font',
+                        'frame': 'note-icon-frame',
+                        'italic': 'note-icon-italic',
+                        'link': 'note-icon-link',
+                        'unlink': 'note-icon-chain-broken',
+                        'magic': 'note-icon-magic',
+                        'menuCheck': 'note-icon-menu-check',
+                        'minus': 'note-icon-minus',
+                        'orderedlist': 'note-icon-orderedlist',
+                        'pencil': 'note-icon-pencil',
+                        'picture': 'note-icon-picture',
+                        'question': 'note-icon-question',
+                        'redo': 'note-icon-redo',
+                        'rollback': 'note-icon-rollback',
+                        'square': 'note-icon-square',
+                        'strikethrough': 'note-icon-strikethrough',
+                        'subscript': 'note-icon-subscript',
+                        'superscript': 'note-icon-superscript',
+                        'table': 'note-icon-table',
+                        'textHeight': 'note-icon-text-height',
+                        'trash': 'note-icon-trash',
+                        'underline': 'note-icon-underline',
+                        'undo': 'note-icon-undo',
+                        'unorderedlist': 'note-icon-unorderedlist',
+                        'video': 'note-icon-video',
                     },
-                    onPaste: function (event) {
+    
+                    callbacks: {
+                        onBeforeCommand: null,
+                        onBlur: null,
+                        onBlurCodeview: null,
+                        onChangeCodeview: null,
+                        onDialogShown: null,
+                        onEnter: null,
+                        onFocus: null,
+                        onImageLinkInsert: null,
+                        onImageUpload: null,
+                        onImageUploadError: null,
+                        onKeydown: null,
+                        onKeyup: null,
+                        onMousedown: null,
+                        onScroll: null,
                     },
-                    onScroll: null,
-                },
-            });
-
-            const noteFrame = this.editor.nextSibling;
-            const page = noteFrame.querySelector('.note-editable');
-            page.setAttribute('contenteditable', 'true');
-
-            if (this.currentRecordIdValue && this.templateTypeForCreation == 'Edit') {
-                if (this.isDisplayedData) {
-                    this.loadTemplateContent();
-                    this.isDisplayedData = false;
+                });
+    
+                const noteFrame = this.editor?.nextSibling;
+                console.log('done + ', this.currentRecordIdValue);
+                noteFrame?.setAttribute('name', this.currentRecordIdValue);
+                const page = noteFrame?.querySelector('.note-editable');
+                page?.setAttribute('contenteditable', 'true');
+    
+                if (this.currentRecordIdValue && this.templateTypeForCreation == 'Edit') {
+                    if (this.isDisplayedData) {
+                        this.loadTemplateContent();
+                        this.isDisplayedData = false;
+                    }
                 }
+                else{
+    
+                    this.setEmailBody();
+                }
+                return true;
             }
-            else{
 
-                this.setEmailBody();
-            }
-
-            return true;
+            return false;
         } catch (error) {
             console.log(JSON.stringify(error));
+            console.log('OUTPUT : ',error );
             return false;
         }
     }

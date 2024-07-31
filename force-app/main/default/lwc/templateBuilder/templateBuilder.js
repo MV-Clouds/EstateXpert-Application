@@ -80,14 +80,14 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
             .then(data => {
                 console.log('OUTPUT : ',data);
                 this.totalRecodslength = data.length;
-                data.sort((a, b) => {
-                    const labelA = a.Label__c.toLowerCase();
-                    const labelB = b.Label__c.toLowerCase();
+                // data.sort((a, b) => {
+                //     const labelA = a.Label__c.toLowerCase();
+                //     const labelB = b.Label__c.toLowerCase();
 
-                    if (labelA < labelB) return -1;
-                    if (labelA > labelB) return 1;
-                    return 0;
-                });
+                //     if (labelA < labelB) return -1;
+                //     if (labelA > labelB) return 1;
+                //     return 0;
+                // });
     
                 this.processTemplates(data);
                 this.isLoading = false; 
@@ -295,6 +295,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
         this.currentRecId = templateId;
 
         if (template) {    
+            console.log('template ==>' , JSON.stringify(template));
             const navigationState = {
                 selectedObject: template.Object_Name__c ? template.Object_Name__c : '',
                 label: template.Label__c ? template.Label__c : '',
@@ -312,7 +313,7 @@ export default class TemplateBuilder extends NavigationMixin(LightningElement) {
     
             const serializedState = JSON.stringify(navigationState);
             
-            var cmpDef;                
+            let cmpDef;                
             cmpDef = {
                 componentDef: 'c:templateModalChild',
                 attributes: {                    
