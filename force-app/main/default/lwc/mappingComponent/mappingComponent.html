@@ -1,0 +1,92 @@
+<template>
+    <div class="mainDiv">
+        <div class="slds-p-around_medium">
+            <!-- Spinner -->
+            <template if:true={isLoading}>
+                <c-spinner-component></c-spinner-component>
+            </template>
+
+            <div class="container">
+                <h2 class="title">Map Listing And Inquiry</h2>
+
+                <div class="buttons">
+                    <div class="checkbox-container">
+                        <input class="checkbox" type="checkbox" name="Sync" checked={checkboxValue}
+                            onchange={handleCheckboxChange}>
+                        <label class="label-text">Auto Sync</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Picklist section -->
+        <div class="scrollable-container">
+            <template for:each={dropDownPairs} for:item="pair" for:index="index">
+                <div key={pair.id} class="picklist-div">
+                    <lightning-layout>
+                        <div class="map-container">
+                            <lightning-layout-item size="4">
+                                <lightning-combobox label="Listing Field" options={pair.listingOptions}
+                                    data-index={index} value={pair.selectedListing}
+                                    onchange={handleSourceFieldChange}
+                                    disabled={isAutoSyncEnabled}
+                                    class="disabled">
+                                </lightning-combobox>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="2">
+                                <lightning-combobox label="Condition" options={conditionsOptions}
+                                    data-index={index} value={pair.selectedCondition}
+                                    onchange={handleConditionChange}
+                                    disabled={isAutoSyncEnabled}
+                                    class="disabled">
+                                </lightning-combobox>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="4">
+                                <lightning-combobox label="Inquiry Field" options={pair.inquiryOptions}
+                                    data-index={index} value={pair.selectedInquiry}
+                                    onchange={handleDestinationFieldChange}
+                                    disabled={isAutoSyncEnabled}
+                                    class="disabled">
+                                </lightning-combobox>
+                            </lightning-layout-item>
+                        </div>
+                        <div class="icon-button-del">
+                            <lightning-button-icon class={delButtonClass}
+                                icon-name="utility:delete" alternative-text="Delete This Mapping" value={index}
+                                onclick={deletePair}
+                                disabled={isAutoSyncEnabled}>
+                            </lightning-button-icon>
+                        </div>
+                    </lightning-layout>
+                </div>
+            </template>
+        </div>
+
+        <div class="save-btn">
+            <div>
+                <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={isAutoSyncEnabled}>Add</button>
+            </div>
+            <button class="slds-button slds-button_brand" disabled={saveButtonDisabled} onclick={handleAddPairClick}>SAVE MAPPING</button>
+        </div>
+    </div>
+
+    <!-- Modal section -->
+    <template if:true={showConfirmationModal}>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container custom-width-33">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Confirmation</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p class="slds-text-align_center con-msg">Are you sure you want to save the changes?</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={closeConfirmationModal}>Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick={handleConfirmAddPair}>Confirm</button>
+                </footer>
+            </div>
+        </section>
+    </template>
+</template>

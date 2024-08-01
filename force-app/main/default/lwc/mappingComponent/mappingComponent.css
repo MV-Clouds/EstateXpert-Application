@@ -1,0 +1,141 @@
+.mainDiv {
+    background-color: rgb(255, 255, 255);
+    margin: 5px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.scrollable-container {
+    height: 60vh;
+    overflow: auto;
+    padding-left: 3%;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.title {
+    margin-right: 20px; 
+    font-size: 25px;
+    font-family: Arial, sans-serif; 
+    font-weight: bold; 
+    color: #333; 
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    margin-left: auto; 
+}
+
+.add-button {
+    width: 5rem;
+    --slds-c-button-border: 10px;
+}
+
+.checkbox {
+    height: 20px;
+    width: 20px;
+}
+
+.checkbox-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.label-text {
+    margin-left: 5px;
+    font-size: 15px;
+}
+
+.picklist-div {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.symbol-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mapping-symbol {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-button-del {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.del-button {
+    margin-top: 15%;
+    background-color: #FFD2D2;
+    border-radius: 5px; 
+    --slds-g-color-neutral-base-50: black;
+}
+
+.del-button:hover {
+    background-color: #FFD2D2; 
+}
+
+.del-button lightning-button-icon {
+    padding: 0.5rem;
+}
+
+.save-btn {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.save-btn button {
+    font-weight: bold;
+}
+
+.mapping-symbol img {
+    max-width: 2.5rem;
+}
+
+.disabled {
+    --slds-g-color-neutral-base-95: #D2D2D2;
+    --slds-g-color-neutral-base-50: white;
+}
+
+.disabled-del {
+    background-color: #D2D2D2 !important;
+    --slds-g-color-neutral-base-80: white !important;
+}
+
+/* Modal Styles */
+.slds-modal__container.custom-width-33 {
+    width: 33%;
+}
+
+.slds-text-align_center {
+    text-align: center;
+}
+
+.con-msg {
+    margin-top: 13px;
+}
+
+.title {
+    font-size: 1.5rem;
+}
+
+.map-container{
+    display: flex;
+    gap: 5%;
+    width: 90%;
+}
