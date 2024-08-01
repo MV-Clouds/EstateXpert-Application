@@ -85,7 +85,7 @@ export default class SupportRequestCmp extends NavigationMixin(LightningElement)
         if (this.supportname == undefined || this.supportname == '') {
           this.name_msg = false;
         }
-        if (this.validation1 == false) {
+        if (this.email == undefined ||this.email == '') {
           this.email_msg = false;
         } 
         if (this.subject == undefined || this.subject == '') {
@@ -94,7 +94,7 @@ export default class SupportRequestCmp extends NavigationMixin(LightningElement)
         if (this.message == undefined || this.message == '') {
           this.message_msg = false;
         } 
-        if(this.supportname != '' && this.validation1 != false && this.subject != '' && this.message != ''){
+        if(this.supportname != '' && this.validation1 != false && this.email != '' && this.subject != '' && this.message != ''){
           this.email_msg = true;
           this.sendEmailCallMethod();
           this.onClose();
@@ -108,17 +108,17 @@ export default class SupportRequestCmp extends NavigationMixin(LightningElement)
     * Created By: Vyom Soni
     */
     onClose(){
-    let componentDef = {
-        componentDef: "MVEX:estateXpertControlCenter",
-    };
-    
-    let encodedComponentDef = btoa(JSON.stringify(componentDef));
-    this[NavigationMixin.Navigate]({
-        type: 'standard__webPage',
-        attributes: {
-            url: '/one/one.app#' + encodedComponentDef
-        }
-    });
+      let componentDef = {
+          componentDef: "MVEX:estateXpertControlCenter",
+      };
+      
+      let encodedComponentDef = btoa(JSON.stringify(componentDef));
+      this[NavigationMixin.Navigate]({
+          type: 'standard__webPage',
+          attributes: {
+              url: '/one/one.app#' + encodedComponentDef
+          }
+      });
     }
 
     /**
@@ -151,7 +151,7 @@ export default class SupportRequestCmp extends NavigationMixin(LightningElement)
                   variant: 'success',
                 });
                 this.dispatchEvent(event);
-                window.location.reload(); 
+                // window.location.reload(); 
               } else {
                 this.spinnerdatatable = false;
                 const event = new ShowToastEvent({
