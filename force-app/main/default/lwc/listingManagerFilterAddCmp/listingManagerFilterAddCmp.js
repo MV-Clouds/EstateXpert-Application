@@ -223,7 +223,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     
         if (selectedValue && selectedField && !this.selectedValues.includes(selectedValue)) {
             
-            this.selectedFields.push({ label: selectedField.label, objectApiName: selectedField.objectApiName,value:selectedField.value,type:selectedField.type,picklistValues:selectedField.picklistValues,prevApiName:this.selectedValues.length > 0 ? this.selectedValues[this.selectedValues.length - 1]:''}); // Only store the label
+            this.selectedFields.push({ label: selectedField.label, objectApiName: selectedField.objectApiName,value:selectedField.value,type:selectedField.type,picklistValues:selectedField.picklistValues,prevApiName:this.selectedValues.length > 0 ? this.selectedValues[this.selectedValues.length - 1]:'',isNot:false}); // Only store the label
             this.selectedValues.push(selectedValue);
             this.updateBreadcrumbs();
         }

@@ -178,7 +178,7 @@
 
 .paginationDiv .btnCover{
     display: flex;
-    justify-content: left;
+    justify-content: center;
 }
 
 .paginationDiv .pageNumberDiv{

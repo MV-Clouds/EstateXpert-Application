@@ -183,7 +183,8 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 (field.apiName === newField.apiName ||field.value === newField.apiName)&&
                 field.label === newField.label &&
                 field.objectApiName === newField.objectApiName &&
-                field.type === newField.type
+                field.type === newField.type &&
+                field.isNot === newField.isNot
             );
             if (!isFieldPresent) {
                 this.filterFields = [...this.filterFields, newField];
@@ -438,7 +439,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         
     }
 
-       /**
+    /**
     * Method Name: selectOption1
     * @description: Handle the slection of option in picklist fiedls.
     * Date: 14/06/2024

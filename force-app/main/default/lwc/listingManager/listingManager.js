@@ -34,7 +34,7 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
-    @track pageSize = 30;
+    @track pageSize = 28;
     @track totalPages;
     @track shownProcessedListingData = [];
     @track wrapOn = false;
