@@ -10,46 +10,56 @@
         <c-spinner-component></c-spinner-component>
     </template>
 
+    
+    
     <div class="main-card">
-        <lightning-card title="Properties List" icon-name="standard:account">
-			<div>
-				<div class="filter-search-container">
-					<div class="filter-section">
-						<div class="search-bar">
-							<lightning-input variant="label-hidden" type="search" placeholder="Enter property name"
-								value={searchTerm} onchange={handleSearch}></lightning-input>
-						</div>
-					</div>
-					<div class="view-buttons">
-                        <button class={gridButtonClass} onclick={setGridView}>Grid</button>
-                        <button class={listButtonClass} onclick={setListView}>List</button>
-                        <button class={mapButtonClass} onclick={setMapView}>Map View</button>
-                    </div>
-				</div>
-			</div>
-			
-			<div class="filter-container">
-				<div class="dotted-border"></div>
+        
+        <lightning-card>
+            <div>
 
-				<div class="filter-input">
-					<lightning-input label="City" value={filterData.city} onchange={handleInputChange} data-field="city" maxlength="15"></lightning-input>
-					<lightning-input label="Bedrooms" value={filterData.bedrooms} type="number" onchange={handleInputChange} data-field="bedrooms" maxlength="5"></lightning-input>
-					<lightning-input label="Bathrooms" value={filterData.bathrooms} type="number" onchange={handleInputChange} data-field="bathrooms" max-length="5"></lightning-input>
-					<lightning-input label="Zipcode" value={filterData.zipcode} onchange={handleInputChange} data-field="zipcode" max-length="6"></lightning-input>
-					<lightning-input label="Min Price" value={filterData.minPrice} type="number" onchange={handleInputChange} data-field="minPrice" max-length="15"></lightning-input>
-					<lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice" max-length="15"></lightning-input>
-					<div class="listing-buttons">
-                        <button class={rentButtonClass} onclick={handleRentClick}>Rent</button>
-                        <button class={saleButtonClass} onclick={handleSaleClick}>Sale</button>
+                <template if:true={isPropertyAvailable}>
+                    <div class="filter-search-container">
+                        <template if:false={isInquiryobject}>
+                            <div class="filter-section">
+                                <div class="search-bar">
+                                    <lightning-input variant="label-hidden" type="search" placeholder="Enter property name"
+                                        value={searchTerm} onchange={handleSearch}></lightning-input>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="view-buttons">
+                            <button class={gridButtonClass} onclick={setGridView}>Grid</button>
+                            <button class={listButtonClass} onclick={setListView}>List</button>
+                            <button class={mapButtonClass} onclick={setMapView}>Map View</button>
+                        </div>
                     </div>
-				</div>
-				<div class="filter-input">
-					<div class="filter-btns">
-						<button onclick={applyFilters} disabled={isFilterButtonDisabled} class="filter-btn">Apply Filters</button>
-						<lightning-button label="Clear Filters" onclick={clearFilter} variant="neutral"></lightning-button>
-					</div>
-				</div>
-			</div>
+                </template>
+            </div>
+			
+            <template if:false={isInquiryobject}>
+                <div class="filter-container">
+                    <div class="dotted-border"></div>
+    
+                    <div class="filter-input">
+                        <lightning-input label="City" value={filterData.city} onchange={handleInputChange} data-field="city" maxlength="15"></lightning-input>
+                        <lightning-input label="Bedrooms" value={filterData.bedrooms} type="number" onchange={handleInputChange} data-field="bedrooms" maxlength="5"></lightning-input>
+                        <lightning-input label="Bathrooms" value={filterData.bathrooms} type="number" onchange={handleInputChange} data-field="bathrooms" max-length="5"></lightning-input>
+                        <lightning-input label="Zipcode" value={filterData.zipcode} onchange={handleInputChange} data-field="zipcode" max-length="6"></lightning-input>
+                        <lightning-input label="Min Price" value={filterData.minPrice} type="number" onchange={handleInputChange} data-field="minPrice" max-length="15"></lightning-input>
+                        <lightning-input label="Max Price" value={filterData.maxPrice} type="number" onchange={handleInputChange} data-field="maxPrice" max-length="15"></lightning-input>
+                        <div class="listing-buttons">
+                            <button class={rentButtonClass} onclick={handleRentClick}>Rent</button>
+                            <button class={saleButtonClass} onclick={handleSaleClick}>Sale</button>
+                        </div>
+                    </div>
+                    <div class="filter-input">
+                        <div class="filter-btns">
+                            <button onclick={applyFilters} disabled={isFilterButtonDisabled} class="filter-btn">Apply Filters</button>
+                            <lightning-button label="Clear Filters" onclick={clearFilter} variant="neutral"></lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </template>
 
             <div class="slds-col slds-box slds-theme_default">
                 <template if:true={isPropertyAvailable}>
@@ -153,7 +163,7 @@
 
                 <template if:false={isPropertyAvailable}>
                     <div class="no_prop">
-                        <p>No properties found. Please change your search filters and try again.</p>
+                        <p>No Matching Listing Found.</p>
                     </div>
                 </template>
             </div>

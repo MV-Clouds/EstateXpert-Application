@@ -38,6 +38,7 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     @track isPropertyAvailable = true;
     @track selectedView = 'Grid'; 
     @track isInitial = false;
+    @track isInquiryobject = false;
 
     get isFilterButtonDisabled() {
         const { city, bedrooms, bathrooms, minPrice, maxPrice, zipcode } = this.filterData;
@@ -125,6 +126,12 @@ export default class DisplayProperties extends NavigationMixin(LightningElement)
     connectedCallback() {
         console.log('Object Name ==> ' , this.objectName);
         console.log('recordId => ' , this.recordId);
+
+        if(this.objectName == 'Inquiry__c'){
+            this.isInquiryobject = true;
+            console.log('isInquiryobject ==> ' , this.isInquiryobject);
+        }
+
         this.isLoading = true;
         this.fetchListings();
         loadStyle(this, mapCss_V1)

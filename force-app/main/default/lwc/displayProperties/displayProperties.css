@@ -257,6 +257,12 @@
     cursor: not-allowed; 
 }
 
+.view-buttons{
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+
 
 @media only screen and (max-width: 1024px) {
     .filter-input{
