@@ -1,7 +1,7 @@
 import { LightningElement, track } from 'lwc';
-import getObjectFields from '@salesforce/apex/MapFieldCmp.getObjectFields';
-import saveMappings from '@salesforce/apex/MapFieldCmp.saveMappings';
-import getMetadata from '@salesforce/apex/MapFieldCmp.getMetadata';
+import getObjectFields from '@salesforce/apex/DynamicMappingCmp.getObjectFields';
+import saveMappings from '@salesforce/apex/DynamicMappingCmp.saveMappings';
+import getMetadata from '@salesforce/apex/DynamicMappingCmp.getMetadata';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class MappingComponent extends LightningElement {
@@ -71,7 +71,7 @@ export default class MappingComponent extends LightningElement {
                 value: field.apiName,
                 dataType: field.dataType
             }));
-            this.listingOptions = [...this.mainListingOptions]; // Clone the array
+            this.listingOptions = [...this.mainListingOptions];
         }
     }
 
@@ -82,13 +82,14 @@ export default class MappingComponent extends LightningElement {
                 value: field.apiName,
                 dataType: field.dataType
             }));
-            this.inquiryOptions = [...this.mainInquiryOptions]; // Clone the array
+            this.inquiryOptions = [...this.mainInquiryOptions];
         }
     }
 
     getMetadataFunction() {
         getMetadata()
             .then((result) => {
+                console.log('result ==> ' , result);
                 if (result[0] != null) {
                     this.parseAndSetMappings(result[0]);
                 }
@@ -102,11 +103,12 @@ export default class MappingComponent extends LightningElement {
     }
 
     parseAndSetMappings(mappingString) {
+        console.log('mappingString ==> ' , mappingString);
         const mappings = mappingString.split(';');
         if (this.listingOptions != null) {
             mappings.forEach((mapping) => {
                 this.isLoading = true;
-                const [selectedListing, selectedInquiry, condition] = mapping.split(':');
+                const [selectedListing, condition,selectedInquiry] = mapping.split(':');
                 if (selectedListing && selectedInquiry && condition) {
                     const newPair = {
                         id: this.dropDownPairs.length,
@@ -208,16 +210,16 @@ export default class MappingComponent extends LightningElement {
 
         console.log('data ==> ' , data);
 
-        // saveMappings({ mappings: data, autoSync: this.checkboxValue })
-        //     .then(() => {
-        //         this.showToast('Success', 'Mappings saved successfully', 'success');
-        //         this.showConfirmationModal = false;
-        //         this.isLoading = false;
-        //     })
-        //     .catch((error) => {
-        //         this.showToast('Error', 'Error saving mappings', 'error');
-        //         this.isLoading = false;
-        //     });
+        saveMappings({ mappingsData: data, checkboxValue: this.checkboxValue })
+            .then(() => {
+                this.showToast('Success', 'Mappings saved successfully', 'success');
+                this.showConfirmationModal = false;
+                this.isLoading = false;
+            })
+            .catch((error) => {
+                this.showToast('Error', 'Error saving mappings', 'error');
+                this.isLoading = false;
+            });
     }
 
     closeConfirmationModal() {
