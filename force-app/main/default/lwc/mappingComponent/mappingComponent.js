@@ -11,15 +11,14 @@ export default class MappingComponent extends LightningElement {
     @track mainListingOptions = [];
     @track mainInquiryOptions = [];
     @track checkboxValue = false;
-    @track temp = false;
     @track isLoading = false;
     @track showConfirmationModal = false;
     @track logicalCondition = '';
     @track conditionsOptions = [
-        { label: 'Greater Than', value: 'greaterThan', type : 'DOUBLE' ,type2:'DOUBLE'},
-        { label: 'Less Than', value: 'lessThan' ,type : 'DOUBLE' ,type2:'DOUBLE'},
-        { label: 'Equal To', value: 'equalTo' , type : 'DOUBLE' ,type2 :'TEXT' },
-        { label: 'Contains', value: 'contains',type : 'TEXT', type2:'TEXT'}
+        { label: 'Greater Than', value: 'greaterThan', type: 'DOUBLE', type2: 'DOUBLE' },
+        { label: 'Less Than', value: 'lessThan', type: 'DOUBLE', type2: 'DOUBLE' },
+        { label: 'Equal To', value: 'equalTo', type: 'DOUBLE', type2: 'TEXT' },
+        { label: 'Contains', value: 'contains', type: 'TEXT', type2: 'TEXT' }
     ];
 
     get delButtonClass() {
@@ -30,6 +29,13 @@ export default class MappingComponent extends LightningElement {
 
     get saveButtonDisabled() {
         return this.dropDownPairs.every(pair => !pair.selectedListing || !pair.selectedInquiry || !pair.selectedCondition);
+    }
+
+    get dropDownPairsWithIndex() {
+        return this.dropDownPairs.map((pair, index) => ({
+            ...pair,
+            displayIndex: index + 1
+        }));
     }
 
     connectedCallback() {
@@ -88,7 +94,6 @@ export default class MappingComponent extends LightningElement {
     getMetadataFunction() {
         getMetadata()
             .then((result) => {
-                console.log('result ==> ', JSON.stringify(result));
                 if (result[0] != null) {
                     this.parseAndSetMappings(result[0]);
                 }
@@ -116,13 +121,13 @@ export default class MappingComponent extends LightningElement {
                         selectedCondition: condition,
                         listingOptions: this.listingOptions,
                         inquiryOptions: this.filterInquiryOptions(selectedListing),
-                        conditionsOptions: this.conditionsOptions,
+                        conditionsOptions: this.filterConditionOptions(selectedListing),
                         isInquiryPicklistDisabled: false
                     };
                     this.dropDownPairs.push(newPair);
-                    this.filterAndUpdateListingOptions();
-                    this.filterAndUpdateInquiryOptions();
                 }
+                this.filterAndUpdateListingOptions();
+                this.filterAndUpdateInquiryOptions();
                 this.isLoading = false;
             });
             this.isLoading = false;
@@ -131,7 +136,6 @@ export default class MappingComponent extends LightningElement {
 
     setCheckboxValue(isAutoSync) {
         this.checkboxValue = isAutoSync === 'true';
-        console.log(this.checkboxValue);
     }
 
     filterInquiryOptions(selectedListing) {
@@ -153,23 +157,20 @@ export default class MappingComponent extends LightningElement {
         this.filterAndUpdateListingOptions();
     }
 
-    filterConditionOptions(selectedListing){
+    filterConditionOptions(selectedListing) {
         if (!selectedListing) return this.conditionsOptions;
 
         const selectedListingField = this.listingOptions.find(
             (option) => option.value === selectedListing
         );
 
-        if(selectedListingField){
-            if(selectedListingField.dataType === 'DOUBLE'){
-                const temp = this.conditionsOptions.filter((option) => option.type === 'DOUBLE');
-                console.log('temp ==> ' , JSON.stringify(temp));
+        if (selectedListingField) {
+            if (selectedListingField.dataType === 'DOUBLE') {
                 return this.conditionsOptions.filter((option) => option.type === 'DOUBLE');
-            }
-            else{
-                const temp = this.conditionsOptions.filter((option) => option.type === 'DOUBLE');
-                console.log('temp ==> ' , JSON.stringify(temp));
-                return this.conditionsOptions.filter((option) => option.type === 'TEXT' || option.type2 === 'TEXT');
+            } else {
+                return this.conditionsOptions.filter(
+                    (option) => option.type === 'TEXT' || option.type2 === 'TEXT'
+                );
             }
         }
     }
@@ -181,7 +182,6 @@ export default class MappingComponent extends LightningElement {
 
     filterAndUpdateListingOptions() {
         const selectedListings = this.dropDownPairs.map((pair) => pair.selectedListing);
-        console.log('selectedListings ==> ' , JSON.stringify(selectedListings));
         this.listingOptions = this.mainListingOptions.filter(
             (option) => !selectedListings.includes(option.value)
         );
@@ -227,7 +227,7 @@ export default class MappingComponent extends LightningElement {
 
     handleConfirmAddPair() {
         this.isLoading = true;
-        const data = this.dropDownPairs.map((pair) => 
+        const data = this.dropDownPairs.map((pair) =>
             `${pair.selectedListing}:${pair.selectedCondition}:${pair.selectedInquiry}`
         ).join(';');
 
@@ -258,7 +258,6 @@ export default class MappingComponent extends LightningElement {
 
     handleCheckboxChange(event) {
         this.checkboxValue = event.target.checked;
-        console.log(this.checkboxValue);
     }
 
     handleConditionInputChange(event) {
@@ -266,12 +265,34 @@ export default class MappingComponent extends LightningElement {
     }
 
     checkConditionSyntax() {
-        console.log('logicalCondition ==> ' , this.logicalCondition);
-        const regex = /^(\s*\(?\s*\d+\s*\)?\s*(\&\&|\|\|)?\s*)+$/;
-        if (regex.test(this.logicalCondition)) {
-            this.showToast('Success', 'Condition syntax is correct', 'success');
-        } else {
+        console.log('logicalCondition ==> ', this.logicalCondition);
+    
+        const listingLength = this.dropDownPairs.length;
+        console.log('listingLength ==> ' , listingLength);
+    
+        const regex = /\(\d+\s*&&\s*\d+\)\s*\|\|\s*\d+|\d+\s*&&\s*\d+/;
+        
+        if (!regex.test(this.logicalCondition)) {
             this.showToast('Error', 'Invalid condition syntax', 'error');
+            return;
+        }
+        
+        const numbers = this.logicalCondition.match(/\d+/g);
+        if (numbers) {
+            const numberSet = new Set(numbers.map(Number));
+            console.log(numberSet);
+            const invalidIndex = Array.from(numberSet).some(num => num >= listingLength + 1);
+            console.log(invalidIndex);
+            
+            if (invalidIndex) {
+                this.showToast('Error', 'Condition uses invalid index', 'error');
+            } else {
+                this.showToast('Success', 'Condition syntax is correct', 'success');
+            }
+        } else {
+            this.showToast('Error', 'Condition syntax is correct but contains no indices', 'error');
         }
     }
+    
+
 }

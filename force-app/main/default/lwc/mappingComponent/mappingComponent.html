@@ -21,34 +21,33 @@
 
         <!-- Picklist section -->
         <div class="scrollable-container">
-            <template for:each={dropDownPairs} for:item="pair" for:index="index">
+            <template for:each={dropDownPairsWithIndex} for:item="pair" for:index="index">
                 <div key={pair.id} class="picklist-div">
-                    <lightning-layout>
-                        <div class="map-container">
-                            <lightning-layout-item size="4">
-                                <lightning-combobox label="Listing Field" options={pair.listingOptions}
-                                    data-index={index} value={pair.selectedListing}
-                                    onchange={handleSourceFieldChange}
-                                    disabled={checkboxValue}
-                                    class="disabled">
-                                </lightning-combobox>
-                            </lightning-layout-item>
-                            <lightning-layout-item size="2">
-                                <lightning-combobox label="Condition" options={pair.conditionsOptions}
-                                    data-index={index} value={pair.selectedCondition}
-                                    onchange={handleConditionChange}
-                                    disabled={checkboxValue}
-                                    class="disabled">
-                                </lightning-combobox>
-                            </lightning-layout-item>
-                            <lightning-layout-item size="4">
-                                <lightning-combobox label="Inquiry Field" options={pair.inquiryOptions}
-                                    data-index={index} value={pair.selectedInquiry}
-                                    onchange={handleDestinationFieldChange}
-                                    disabled={checkboxValue}
-                                    class="disabled">
-                                </lightning-combobox>
-                            </lightning-layout-item>
+                    <div class="flex-container">
+                        <div class="index-display">{pair.displayIndex}</div>
+                        <div class="flex-item">
+                            <lightning-combobox label="Listing Field" options={pair.listingOptions}
+                                data-index={index} value={pair.selectedListing}
+                                onchange={handleSourceFieldChange}
+                                disabled={checkboxValue}
+                                class="disabled">
+                            </lightning-combobox>
+                        </div>
+                        <div class="flex-item">
+                            <lightning-combobox label="Condition" options={pair.conditionsOptions}
+                                data-index={index} value={pair.selectedCondition}
+                                onchange={handleConditionChange}
+                                disabled={checkboxValue}
+                                class="disabled">
+                            </lightning-combobox>
+                        </div>
+                        <div class="flex-item">
+                            <lightning-combobox label="Inquiry Field" options={pair.inquiryOptions}
+                                data-index={index} value={pair.selectedInquiry}
+                                onchange={handleDestinationFieldChange}
+                                disabled={checkboxValue}
+                                class="disabled">
+                            </lightning-combobox>
                         </div>
                         <div class="icon-button-del">
                             <lightning-button-icon class={delButtonClass}
@@ -57,26 +56,26 @@
                                 disabled={checkboxValue}>
                             </lightning-button-icon>
                         </div>
-                    </lightning-layout>
+                    </div>
                 </div>
             </template>
         </div>
 
-            <div class="condition-container">
-                <div class="condition-container-item">
-                    <lightning-input type="text" class="condition-input" value={logicalCondition} 
-                    onchange={handleConditionInputChange} ></lightning-input>
-                </div>
-
-                <div>
-                    <button class="slds-button slds-button_neutral" onclick={checkConditionSyntax}>Check Syntax</button>
-                </div>
+        <div class="condition-container">
+            <div class="condition-container-item">
+                <lightning-input type="text" class="condition-input" value={logicalCondition} 
+                onchange={handleConditionInputChange} ></lightning-input>
+                <!-- <p class="index-display">Index Range: 0 to {dropDownPairs.length - 1}</p> -->
             </div>
 
+            <div>
+                <button class="slds-button slds-button_neutral" onclick={checkConditionSyntax}>Check Syntax</button>
+            </div>
+        </div>
 
         <div class="save-btn">
             <div>
-                <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={checkboxValue}>Add</button>
+                <button class="slds-button slds-button_brand add-button" onclick={addNewPair} disabled={checkboxValue}>Add</button>
             </div>
             <button class="slds-button slds-button_brand" disabled={saveButtonDisabled} onclick={handleAddPairClick}>SAVE MAPPING</button>
         </div>
