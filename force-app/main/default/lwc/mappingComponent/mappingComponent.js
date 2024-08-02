@@ -14,6 +14,7 @@ export default class MappingComponent extends LightningElement {
     @track temp = false;
     @track isLoading = false;
     @track showConfirmationModal = false;
+    @track logicalCondition = '';
     @track conditionsOptions = [
         { label: 'Greater Than', value: 'greaterThan', type : 'DOUBLE' ,type2:'DOUBLE'},
         { label: 'Less Than', value: 'lessThan' ,type : 'DOUBLE' ,type2:'DOUBLE'},
@@ -258,5 +259,19 @@ export default class MappingComponent extends LightningElement {
     handleCheckboxChange(event) {
         this.checkboxValue = event.target.checked;
         console.log(this.checkboxValue);
+    }
+
+    handleConditionInputChange(event) {
+        this.logicalCondition = event.target.value;
+    }
+
+    checkConditionSyntax() {
+        console.log('logicalCondition ==> ' , this.logicalCondition);
+        const regex = /^(\s*\(?\s*\d+\s*\)?\s*(\&\&|\|\|)?\s*)+$/;
+        if (regex.test(this.logicalCondition)) {
+            this.showToast('Success', 'Condition syntax is correct', 'success');
+        } else {
+            this.showToast('Error', 'Invalid condition syntax', 'error');
+        }
     }
 }

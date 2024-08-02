@@ -62,6 +62,18 @@
             </template>
         </div>
 
+            <div class="condition-container">
+                <div class="condition-container-item">
+                    <lightning-input type="text" class="condition-input" value={logicalCondition} 
+                    onchange={handleConditionInputChange} ></lightning-input>
+                </div>
+
+                <div>
+                    <button class="slds-button slds-button_neutral" onclick={checkConditionSyntax}>Check Syntax</button>
+                </div>
+            </div>
+
+
         <div class="save-btn">
             <div>
                 <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={checkboxValue}>Add</button>

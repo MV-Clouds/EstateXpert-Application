@@ -139,3 +139,15 @@
     gap: 5%;
     width: 90%;
 }
+
+.condition-container{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: end;
+}
+
+.condition-container-item{
+    margin-right: 1rem;
+    margin-left: 1rem;
+}
