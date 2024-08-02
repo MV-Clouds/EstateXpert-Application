@@ -4,7 +4,7 @@ import saveMappings from '@salesforce/apex/MapFieldCmp.saveMappings';
 import getMetadata from '@salesforce/apex/MapFieldCmp.getMetadata';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-export default class MapFields extends LightningElement {
+export default class MappingComponent extends LightningElement {
     @track dropDownPairs = [];
     @track listingOptions = [];
     @track inquiryOptions = [];
@@ -65,9 +65,8 @@ export default class MapFields extends LightningElement {
     }
 
     handleListingObjectFields(data) {
-        const filteredFields = data;
         if (data) {
-            this.mainListingOptions = filteredFields.map((field) => ({
+            this.mainListingOptions = data.map((field) => ({
                 label: field.label,
                 value: field.apiName,
                 dataType: field.dataType
@@ -77,9 +76,8 @@ export default class MapFields extends LightningElement {
     }
 
     handleInquiryObjectFields(data) {
-        const filteredFields = data;
         if (data) {
-            this.mainInquiryOptions = filteredFields.map((field) => ({
+            this.mainInquiryOptions = data.map((field) => ({
                 label: field.label,
                 value: field.apiName,
                 dataType: field.dataType
@@ -165,7 +163,6 @@ export default class MapFields extends LightningElement {
     }
 
     filterAndUpdateInquiryOptions() {
-        // Here we should reset inquiry options based on current selections
         const selectedInquiries = this.dropDownPairs.map((pair) => pair.selectedInquiry);
         this.inquiryOptions = this.mainInquiryOptions.filter(
             (option) => !selectedInquiries.includes(option.value)
@@ -210,6 +207,7 @@ export default class MapFields extends LightningElement {
         ).join(';');
 
         console.log('data ==> ' , data);
+
         // saveMappings({ mappings: data, autoSync: this.checkboxValue })
         //     .then(() => {
         //         this.showToast('Success', 'Mappings saved successfully', 'success');
