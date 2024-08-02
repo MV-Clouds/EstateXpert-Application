@@ -11,6 +11,7 @@ export default class MappingComponent extends LightningElement {
     @track mainListingOptions = [];
     @track mainInquiryOptions = [];
     @track checkboxValue = false;
+    @track temp = false;
     @track isLoading = false;
     @track showConfirmationModal = false;
     @track conditionsOptions = [
@@ -20,13 +21,9 @@ export default class MappingComponent extends LightningElement {
     ];
 
     get delButtonClass() {
-        return this.isAutoSyncEnabled
+        return this.checkboxValue
             ? 'slds-var-m-left_x-small del-button disabled-del'
             : 'slds-var-m-left_x-small del-button';
-    }
-
-    get isAutoSyncEnabled() {
-        return this.checkboxValue;
     }
 
     get saveButtonDisabled() {
@@ -89,11 +86,12 @@ export default class MappingComponent extends LightningElement {
     getMetadataFunction() {
         getMetadata()
             .then((result) => {
-                console.log('result ==> ' , result);
+                console.log('result ==> ', JSON.stringify(result));
                 if (result[0] != null) {
                     this.parseAndSetMappings(result[0]);
                 }
-                this.setCheckboxValue(result[1] || result[0]);
+                const isAutoSync = result.length > 0 ? result[1] : false;
+                this.setCheckboxValue(isAutoSync);
             })
             .catch((error) => {
                 console.error('Error fetching metadata:', error);
@@ -103,12 +101,11 @@ export default class MappingComponent extends LightningElement {
     }
 
     parseAndSetMappings(mappingString) {
-        console.log('mappingString ==> ' , mappingString);
         const mappings = mappingString.split(';');
         if (this.listingOptions != null) {
             mappings.forEach((mapping) => {
                 this.isLoading = true;
-                const [selectedListing, condition,selectedInquiry] = mapping.split(':');
+                const [selectedListing, condition, selectedInquiry] = mapping.split(':');
                 if (selectedListing && selectedInquiry && condition) {
                     const newPair = {
                         id: this.dropDownPairs.length,
@@ -130,8 +127,9 @@ export default class MappingComponent extends LightningElement {
         }
     }
 
-    setCheckboxValue(checkboxValue) {
-        this.checkboxValue = checkboxValue === true;
+    setCheckboxValue(isAutoSync) {
+        this.checkboxValue = isAutoSync === 'true';
+        console.log(this.checkboxValue);
     }
 
     filterInquiryOptions(selectedListing) {
@@ -208,8 +206,6 @@ export default class MappingComponent extends LightningElement {
             `${pair.selectedListing}:${pair.selectedCondition}:${pair.selectedInquiry}`
         ).join(';');
 
-        console.log('data ==> ' , data);
-
         saveMappings({ mappingsData: data, checkboxValue: this.checkboxValue })
             .then(() => {
                 this.showToast('Success', 'Mappings saved successfully', 'success');
@@ -237,8 +233,6 @@ export default class MappingComponent extends LightningElement {
 
     handleCheckboxChange(event) {
         this.checkboxValue = event.target.checked;
-        this.dropDownPairs.forEach((pair) => {
-            pair.isInquiryPicklistDisabled = this.checkboxValue;
-        });
+        console.log(this.checkboxValue);
     }
 }

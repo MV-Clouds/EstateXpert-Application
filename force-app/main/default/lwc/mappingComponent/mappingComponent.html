@@ -29,7 +29,7 @@
                                 <lightning-combobox label="Listing Field" options={pair.listingOptions}
                                     data-index={index} value={pair.selectedListing}
                                     onchange={handleSourceFieldChange}
-                                    disabled={isAutoSyncEnabled}
+                                    disabled={checkboxValue}
                                     class="disabled">
                                 </lightning-combobox>
                             </lightning-layout-item>
@@ -37,7 +37,7 @@
                                 <lightning-combobox label="Condition" options={conditionsOptions}
                                     data-index={index} value={pair.selectedCondition}
                                     onchange={handleConditionChange}
-                                    disabled={isAutoSyncEnabled}
+                                    disabled={checkboxValue}
                                     class="disabled">
                                 </lightning-combobox>
                             </lightning-layout-item>
@@ -45,7 +45,7 @@
                                 <lightning-combobox label="Inquiry Field" options={pair.inquiryOptions}
                                     data-index={index} value={pair.selectedInquiry}
                                     onchange={handleDestinationFieldChange}
-                                    disabled={isAutoSyncEnabled}
+                                    disabled={checkboxValue}
                                     class="disabled">
                                 </lightning-combobox>
                             </lightning-layout-item>
@@ -54,7 +54,7 @@
                             <lightning-button-icon class={delButtonClass}
                                 icon-name="utility:delete" alternative-text="Delete This Mapping" value={index}
                                 onclick={deletePair}
-                                disabled={isAutoSyncEnabled}>
+                                disabled={checkboxValue}>
                             </lightning-button-icon>
                         </div>
                     </lightning-layout>
@@ -64,7 +64,7 @@
 
         <div class="save-btn">
             <div>
-                <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={isAutoSyncEnabled}>Add</button>
+                <button class="slds-button slds-button_brand add-button disabled" onclick={addNewPair} disabled={checkboxValue}>Add</button>
             </div>
             <button class="slds-button slds-button_brand" disabled={saveButtonDisabled} onclick={handleAddPairClick}>SAVE MAPPING</button>
         </div>
