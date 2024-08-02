@@ -15,9 +15,10 @@ export default class MappingComponent extends LightningElement {
     @track isLoading = false;
     @track showConfirmationModal = false;
     @track conditionsOptions = [
-        { label: 'Greater Than', value: 'greaterThan' },
-        { label: 'Less Than', value: 'lessThan' },
-        { label: 'Equal To', value: 'equalTo' }
+        { label: 'Greater Than', value: 'greaterThan', type : 'DOUBLE' ,type2:'DOUBLE'},
+        { label: 'Less Than', value: 'lessThan' ,type : 'DOUBLE' ,type2:'DOUBLE'},
+        { label: 'Equal To', value: 'equalTo' , type : 'DOUBLE' ,type2 :'TEXT' },
+        { label: 'Contains', value: 'contains',type : 'TEXT', type2:'TEXT'}
     ];
 
     get delButtonClass() {
@@ -147,7 +148,29 @@ export default class MappingComponent extends LightningElement {
         const index = event.target.dataset.index;
         this.dropDownPairs[index].selectedListing = event.detail.value;
         this.dropDownPairs[index].inquiryOptions = this.filterInquiryOptions(event.detail.value);
+        this.dropDownPairs[index].conditionsOptions = this.filterConditionOptions(event.detail.value);
         this.filterAndUpdateListingOptions();
+    }
+
+    filterConditionOptions(selectedListing){
+        if (!selectedListing) return this.conditionsOptions;
+
+        const selectedListingField = this.listingOptions.find(
+            (option) => option.value === selectedListing
+        );
+
+        if(selectedListingField){
+            if(selectedListingField.dataType === 'DOUBLE'){
+                const temp = this.conditionsOptions.filter((option) => option.type === 'DOUBLE');
+                console.log('temp ==> ' , JSON.stringify(temp));
+                return this.conditionsOptions.filter((option) => option.type === 'DOUBLE');
+            }
+            else{
+                const temp = this.conditionsOptions.filter((option) => option.type === 'DOUBLE');
+                console.log('temp ==> ' , JSON.stringify(temp));
+                return this.conditionsOptions.filter((option) => option.type === 'TEXT' || option.type2 === 'TEXT');
+            }
+        }
     }
 
     handleConditionChange(event) {
@@ -157,6 +180,7 @@ export default class MappingComponent extends LightningElement {
 
     filterAndUpdateListingOptions() {
         const selectedListings = this.dropDownPairs.map((pair) => pair.selectedListing);
+        console.log('selectedListings ==> ' , JSON.stringify(selectedListings));
         this.listingOptions = this.mainListingOptions.filter(
             (option) => !selectedListings.includes(option.value)
         );
