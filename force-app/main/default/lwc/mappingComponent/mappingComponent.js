@@ -94,10 +94,16 @@ export default class MappingComponent extends LightningElement {
     getMetadataFunction() {
         getMetadata()
             .then((result) => {
-                if (result[0] != null) {
+                console.log('result ==> ' , JSON.stringify(result));
+                if (result[0] != null) { 
                     this.parseAndSetMappings(result[0]);
                 }
                 const isAutoSync = result.length > 0 ? result[1] : false;
+                const logicalExpression = result.length > 1 ? result[2] : '';
+                if(logicalExpression){
+                    this.logicalCondition = logicalExpression;
+                }
+                console.log(this.logicalCondition);
                 this.setCheckboxValue(isAutoSync);
             })
             .catch((error) => {
@@ -231,7 +237,7 @@ export default class MappingComponent extends LightningElement {
             `${pair.selectedListing}:${pair.selectedCondition}:${pair.selectedInquiry}`
         ).join(';');
 
-        saveMappings({ mappingsData: data, checkboxValue: this.checkboxValue })
+        saveMappings({ mappingsData: data, checkboxValue: this.checkboxValue ,logicalCondition : this.logicalCondition})
             .then(() => {
                 this.showToast('Success', 'Mappings saved successfully', 'success');
                 this.showConfirmationModal = false;
@@ -270,7 +276,9 @@ export default class MappingComponent extends LightningElement {
         const listingLength = this.dropDownPairs.length;
         console.log('listingLength ==> ' , listingLength);
     
+        // const regex = /\(\d+\s*&&\s*\d+\)\s*\|\|\s*\d+|\d+\s*&&\s*\d+/;
         const regex = /\(\d+\s*&&\s*\d+\)\s*\|\|\s*\d+|\d+\s*&&\s*\d+/;
+
         
         if (!regex.test(this.logicalCondition)) {
             this.showToast('Error', 'Invalid condition syntax', 'error');

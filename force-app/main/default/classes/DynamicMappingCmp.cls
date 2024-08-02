@@ -73,10 +73,10 @@ public with sharing class DynamicMappingCmp {
    * @param checkboxValue Boolean value.
    */
    @AuraEnabled
-   public static void saveMappings( String mappingsData ,Boolean checkboxValue){
+   public static void saveMappings( String mappingsData ,Boolean checkboxValue,String logicalCondition){
 
        //fetch records
-       List<Dynamicmapping__mdt	> metaList = [Select MasterLabel, DeveloperName, Mapping_String__c From Dynamicmapping__mdt	 WITH SECURITY_ENFORCED];
+       List<Dynamicmapping__mdt	> metaList = [Select MasterLabel, DeveloperName, Mapping_String__c,Logical_Condition__c From Dynamicmapping__mdt	 WITH SECURITY_ENFORCED];
 
        System.debug('metaList ==> ' + metaList);
        
@@ -103,7 +103,13 @@ public with sharing class DynamicMappingCmp {
        //adding the value to the record
        mdata.values.add(instance2);
 
-       System.debug('instance2 ==> ' + instance2);
+       Metadata.CustomMetadataValue instance3 = new Metadata.CustomMetadataValue();
+       instance3.field = 'Logical_Condition__c';
+       instance3.value = logicalCondition;
+       //adding the value to the record
+       mdata.values.add(instance3);
+
+       System.debug('instance3 ==> ' + instance3);
 
        //instance of the container
        Metadata.DeployContainer container = new Metadata.DeployContainer();
@@ -129,7 +135,7 @@ public with sharing class DynamicMappingCmp {
         List<String> metadataValues = new List<String>();
     
         // Fetch records
-        List<Dynamicmapping__mdt> metadataRecords = [SELECT Mapping_String__c, Autometic_Sync__c FROM Dynamicmapping__mdt WITH SECURITY_ENFORCED LIMIT 1];
+        List<Dynamicmapping__mdt> metadataRecords = [SELECT Mapping_String__c, Autometic_Sync__c,Logical_Condition__c FROM Dynamicmapping__mdt WITH SECURITY_ENFORCED LIMIT 1];
         
         // Check if records exist
         if (!metadataRecords.isEmpty()) {
@@ -138,6 +144,7 @@ public with sharing class DynamicMappingCmp {
             // Add field values to the list
             metadataValues.add(metadataRecord.Mapping_String__c);
             metadataValues.add(String.valueOf(metadataRecord.Autometic_Sync__c));
+            metadataValues.add(String.valueOf(metadataRecord.Logical_Condition__c));
         }
         
         return metadataValues;
