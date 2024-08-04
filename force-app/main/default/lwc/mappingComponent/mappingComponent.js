@@ -300,7 +300,7 @@ export default class MappingComponent extends LightningElement {
         const listingLength = this.dropDownPairs.length;
         console.log('listingLength ==> ', listingLength);
     
-        const regex = /\(\d+&&\d+\)\s*\|\|\s*\d+|\d+&&\d+/;
+        const regex = /\d+\s*(?:&&|\|\|)\s*\d+/;
 
         if (!regex.test(this.logicalCondition)) {
             this.showToast('Error', 'Invalid condition syntax', 'error');
