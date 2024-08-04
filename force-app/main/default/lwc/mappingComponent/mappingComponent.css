@@ -1,15 +1,14 @@
 .mainDiv {
-    background-color: rgb(255, 255, 255);
+    background-color: #fff;
     margin: 5px;
     border-radius: 5px;
-    padding: 10px;
+    padding: 20px;
 }
-
 
 .container {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .title {
@@ -28,7 +27,6 @@
 
 .add-button {
     width: 5rem;
-    --slds-c-button-border: 10px;
 }
 
 .checkbox {
@@ -69,7 +67,6 @@
     margin-top: 15%;
     background-color: #FFD2D2;
     border-radius: 5px; 
-    --slds-g-color-neutral-base-50: black;
 }
 
 .del-button:hover {
@@ -105,7 +102,6 @@
     --slds-g-color-neutral-base-80: white !important;
 }
 
-/* Modal Styles */
 .slds-modal__container.custom-width-33 {
     width: 33%;
 }
@@ -118,24 +114,20 @@
     margin-top: 13px;
 }
 
-.title {
-    font-size: 1.5rem;
-}
-
-.map-container{
+.map-container {
     display: flex;
     gap: 5%;
     width: 90%;
 }
 
-.condition-container{
+.condition-container {
     display: flex;
     justify-content: flex-start;
     flex-direction: row;
     align-items: end;
 }
 
-.condition-container-item{
+.condition-container-item {
     margin-right: 1rem;
     margin-left: 1rem;
 }
@@ -153,11 +145,9 @@
 
 .index-display {
     width: 3rem;
-    height: 0rem;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    /* margin-top: 2rem; */
     font-weight: bold;
 }
 
@@ -172,4 +162,3 @@
     height: 60vh;
     overflow: auto;
 }
-
