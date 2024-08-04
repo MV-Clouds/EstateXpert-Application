@@ -14,6 +14,7 @@ export default class MappingComponent extends LightningElement {
     @track isLoading = false;
     @track showConfirmationModal = false;
     @track logicalCondition = '';
+    @track isSaveButtonDisabled = true;
     @track conditionsOptions = [
         { label: 'Greater Than', value: 'greaterThan', type: 'DOUBLE', type2: 'DOUBLE' },
         { label: 'Less Than', value: 'lessThan', type: 'DOUBLE', type2: 'DOUBLE' },
@@ -25,10 +26,6 @@ export default class MappingComponent extends LightningElement {
         return this.checkboxValue
             ? 'slds-var-m-left_x-small del-button disabled-del'
             : 'slds-var-m-left_x-small del-button';
-    }
-
-    get saveButtonDisabled() {
-        return this.dropDownPairs.every(pair => !pair.selectedListing || !pair.selectedInquiry || !pair.selectedCondition);
     }
 
     get dropDownPairsWithIndex() {
@@ -161,6 +158,7 @@ export default class MappingComponent extends LightningElement {
         this.dropDownPairs[index].inquiryOptions = this.filterInquiryOptions(event.detail.value);
         this.dropDownPairs[index].conditionsOptions = this.filterConditionOptions(event.detail.value);
         this.filterAndUpdateListingOptions();
+
     }
 
     filterConditionOptions(selectedListing) {
@@ -170,10 +168,13 @@ export default class MappingComponent extends LightningElement {
             (option) => option.value === selectedListing
         );
 
+        console.log(selectedListingField.dataType);
+
         if (selectedListingField) {
-            if (selectedListingField.dataType === 'DOUBLE') {
+            if (selectedListingField.dataType === 'DOUBLE' || selectedListingField.dataType === 'CURRENCY' || selectedListingField.dataType === 'DATETIME') {
                 return this.conditionsOptions.filter((option) => option.type === 'DOUBLE');
-            } else {
+            }
+            else {
                 return this.conditionsOptions.filter(
                     (option) => option.type === 'TEXT' || option.type2 === 'TEXT'
                 );
@@ -203,6 +204,28 @@ export default class MappingComponent extends LightningElement {
     handleDestinationFieldChange(event) {
         const index = event.target.dataset.index;
         this.dropDownPairs[index].selectedInquiry = event.detail.value;
+        this.filterAndUpdateInquiryOptions();
+
+        const isInquiryValid = this.dropDownPairs.every(
+            (pair) => pair.selectedInquiry
+          );
+          console.log('isInquiryValid ==> ' , isInquiryValid);
+
+        const isListingValid = this.dropDownPairs.every(
+        (pair) => pair.selectedListing
+        );
+        console.log('isListingValid ==> ' , isListingValid);
+
+        const isOptionValid = this.dropDownPairs.every(
+            (pair) => pair.selectedCondition
+        );
+
+        console.log('isListingValid ==> ' , isListingValid);
+
+        if (isListingValid && isInquiryValid && isListingValid ) {
+            this.isSaveButtonDisabled = false;
+        }
+        
     }
 
     deletePair(event) {
@@ -264,6 +287,7 @@ export default class MappingComponent extends LightningElement {
 
     handleCheckboxChange(event) {
         this.checkboxValue = event.target.checked;
+        this.isSaveButtonDisabled = false;
     }
 
     handleConditionInputChange(event) {
@@ -274,24 +298,22 @@ export default class MappingComponent extends LightningElement {
         console.log('logicalCondition ==> ', this.logicalCondition);
     
         const listingLength = this.dropDownPairs.length;
-        console.log('listingLength ==> ' , listingLength);
+        console.log('listingLength ==> ', listingLength);
     
-        // const regex = /\(\d+\s*&&\s*\d+\)\s*\|\|\s*\d+|\d+\s*&&\s*\d+/;
-        const regex = /\(\d+\s*&&\s*\d+\)\s*\|\|\s*\d+|\d+\s*&&\s*\d+/;
+        const regex = /\(\d+&&\d+\)\s*\|\|\s*\d+|\d+&&\d+/;
 
-        
         if (!regex.test(this.logicalCondition)) {
             this.showToast('Error', 'Invalid condition syntax', 'error');
             return;
         }
-        
+    
         const numbers = this.logicalCondition.match(/\d+/g);
         if (numbers) {
             const numberSet = new Set(numbers.map(Number));
             console.log(numberSet);
             const invalidIndex = Array.from(numberSet).some(num => num >= listingLength + 1);
             console.log(invalidIndex);
-            
+    
             if (invalidIndex) {
                 this.showToast('Error', 'Condition uses invalid index', 'error');
             } else {
@@ -302,5 +324,4 @@ export default class MappingComponent extends LightningElement {
         }
     }
     
-
 }
