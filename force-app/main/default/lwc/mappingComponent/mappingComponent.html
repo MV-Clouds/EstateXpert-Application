@@ -1,19 +1,22 @@
 <template>
     <div class="mainDiv">
-        <div class="slds-p-around_medium">
+        <div>
             <!-- Spinner -->
             <template if:true={isLoading}>
                 <c-spinner-component></c-spinner-component>
             </template>
 
             <div class="container">
-                <h2 class="title">Map Listing And Inquiry</h2>
-                <div class="buttons">
-                    <div class="checkbox-container">
-                        <input class="checkbox" type="checkbox" name="Sync" checked={checkboxValue} onchange={handleCheckboxChange}>
-                        <label class="label-text">Auto Sync</label>
-                    </div>
+                <div class="title-container">
+                    <h2 class="title">Listing-Inquiry Mapping</h2>
                 </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <div class="checkbox-container">
+                <input class="checkbox" type="checkbox" name="Sync" checked={checkboxValue} onchange={handleCheckboxChange}>
+                <label class="label-text">Auto Sync</label>
             </div>
         </div>
 
@@ -42,10 +45,10 @@
 
         <div class="condition-container">
             <div class="condition-container-item">
-                <lightning-input type="text" class="condition-input" value={logicalCondition} onchange={handleConditionInputChange}></lightning-input>
+                <lightning-input type="text" class="condition-input" data-id="condition-input" value={logicalCondition} onchange={handleConditionInputChange} disabled={checkboxValue} placeholder="1 && 2"></lightning-input>
             </div>
             <div>
-                <button class="slds-button slds-button_neutral" onclick={checkConditionSyntax}>Check Syntax</button>
+                <button class="slds-button slds-button_neutral" onclick={checkConditionSyntax} disabled={checkboxValue}>Check Syntax</button>
             </div>
         </div>
 

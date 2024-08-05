@@ -19,3 +19,15 @@
     padding-bottom: 4px;
   }
 
+.scrollable-container .slds-form-element__label{
+  margin-bottom: 8px !important;
+  font-size: 16px !important;
+}
+
+.condition-container-item .slds-has-error .slds-form-element__help{
+  position: absolute;
+}
+
+.icon-button-del lightning-button-icon{
+  color: red;
+}

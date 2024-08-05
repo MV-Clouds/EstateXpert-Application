@@ -1,8 +1,12 @@
+*{
+    font-family: 'verdana';
+}
+
 .mainDiv {
-    background-color: #fff;
-    margin: 5px;
     border-radius: 5px;
     padding: 20px;
+    min-height: 100%;
+    background: linear-gradient(to right, #eafdff, #f0f0f0);
 }
 
 .container {
@@ -11,18 +15,25 @@
     margin-bottom: 20px;
 }
 
+.title-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .title {
-    margin-right: 20px; 
-    font-size: 25px;
-    font-family: Arial, sans-serif; 
-    font-weight: bold; 
-    color: #333; 
+    font-size: 23px;
+    font-weight: bold;
+    color: #333;
 }
 
 .buttons {
     display: flex;
     align-items: center;
     margin-left: auto; 
+    position: absolute;
+    top: 1.6rem;
+    right: 1.4rem;
 }
 
 .add-button {
@@ -38,7 +49,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 20px;
 }
 
 .label-text {
@@ -65,7 +75,7 @@
 
 .del-button {
     margin-top: 15%;
-    background-color: #FFD2D2;
+    background-color: #FFE2E2;
     border-radius: 5px; 
 }
 
@@ -78,10 +88,12 @@
 }
 
 .save-btn {
-    margin-top: 1rem;
     display: flex;
     justify-content: center;
     gap: 1rem;
+    position: absolute;
+    bottom: 1.5rem;
+    width: 98%;
 }
 
 .save-btn button {
@@ -122,9 +134,12 @@
 
 .condition-container {
     display: flex;
-    justify-content: flex-start;
-    flex-direction: row;
+    justify-content: start;
     align-items: end;
+    gap: 1rem;
+    position: absolute;
+    bottom: 4rem;
+    width: 98%;
 }
 
 .condition-container-item {
@@ -134,7 +149,7 @@
 
 .flex-container {
     display: flex;
-    align-items: center;
+    align-items: end;
     margin-bottom: 1rem;
 }
 
@@ -144,11 +159,12 @@
 }
 
 .index-display {
-    width: 3rem;
+    width: 2rem;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     font-weight: bold;
+    margin-bottom: 6px;
 }
 
 .icon-button-del {
@@ -156,9 +172,12 @@
     justify-content: center;
     align-items: center;
     margin-top: 1rem;
+    --slds-g-color-neutral-base-50: red;
+    --lwc-borderWidthThin : none;
 }
 
 .scrollable-container {
-    height: 60vh;
+    min-height: 55vh;
+    max-height: 55vh;
     overflow: auto;
 }

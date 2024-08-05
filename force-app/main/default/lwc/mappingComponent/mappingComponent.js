@@ -3,6 +3,10 @@ import getObjectFields from '@salesforce/apex/DynamicMappingCmp.getObjectFields'
 import saveMappings from '@salesforce/apex/DynamicMappingCmp.saveMappings';
 import getMetadata from '@salesforce/apex/DynamicMappingCmp.getMetadata';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { loadStyle } from 'lightning/platformResourceLoader';
+import externalCss from '@salesforce/resourceUrl/templateCss';
+import plainBackground from '@salesforce/resourceUrl/PlainBackground';
+	
 
 export default class MappingComponent extends LightningElement {
     @track dropDownPairs = [];
@@ -21,6 +25,7 @@ export default class MappingComponent extends LightningElement {
         { label: 'Equal To', value: 'equalTo', type: 'DOUBLE', type2: 'TEXT' },
         { label: 'Contains', value: 'contains', type: 'TEXT', type2: 'TEXT' }
     ];
+    @track plainBackgroundUrl = plainBackground;
 
     get delButtonClass() {
         return this.checkboxValue
@@ -37,6 +42,9 @@ export default class MappingComponent extends LightningElement {
 
     connectedCallback() {
         this.isLoading = true;
+
+        loadStyle(this, externalCss);
+
         getObjectFields({ objectName: 'Listing__c' })
             .then((data) => {
                 this.handleListingObjectFields(data);
@@ -301,9 +309,12 @@ export default class MappingComponent extends LightningElement {
         console.log('listingLength ==> ', listingLength);
     
         const regex = /\d+\s*(?:&&|\|\|)\s*\d+/;
-
+    
+        const inputElement = this.template.querySelector('lightning-input[data-id="condition-input"]');
+    
         if (!regex.test(this.logicalCondition)) {
-            this.showToast('Error', 'Invalid condition syntax', 'error');
+            inputElement.setCustomValidity('Invalid condition syntax');
+            inputElement.reportValidity();
             return;
         }
     
@@ -315,13 +326,16 @@ export default class MappingComponent extends LightningElement {
             console.log(invalidIndex);
     
             if (invalidIndex) {
-                this.showToast('Error', 'Condition uses invalid index', 'error');
+                inputElement.setCustomValidity('Condition uses invalid index');
             } else {
+                inputElement.setCustomValidity('');
                 this.showToast('Success', 'Condition syntax is correct', 'success');
             }
         } else {
-            this.showToast('Error', 'Condition syntax is correct but contains no indices', 'error');
+            inputElement.setCustomValidity('Condition syntax is correct but contains no indices');
         }
+        
+        inputElement.reportValidity();
     }
     
 }
