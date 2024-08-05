@@ -10,13 +10,7 @@ export default class PortalMapping extends NavigationMixin(LightningElement) {
     @track portalRecordList = [];
     @track isPortalData = true;
     @track showModal = false;
-    @track portals = [
-        { id: 1, name: 'Property Finder', logo: '/resource/MVEX__propertyfinder' },
-        { id: 2, name: 'Bayut', logo: '/resource/MVEX__bayut' },
-        { id: 3, name: 'Dubizzle', logo: '/resource/MVEX__dubizzle' },
-        { id: 4, name: 'Zoopla', logo: '/resource/MVEX__zoopla' },
-        { id: 5, name: 'Rightmove', logo: '/resource/MVEX__rightmove' }
-    ];
+    @track portals = [];
     @track isSpinner = true;
     @track portalMappingIcon = portalMappingIcon;
 
