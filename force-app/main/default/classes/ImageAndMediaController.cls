@@ -2,7 +2,7 @@
 * Class Name : ImageAndMediaController
 * Test Class : ImageAndMediaControllerTest
 * Created By : Karan Singh
-* Last Modified Date : 24/06/2024
+* Last Modified Date : 08/08/2024
 * Last Modified By : Karan Singh
 * @description : Used to get, create and sort the images related to property.
 */
@@ -216,31 +216,63 @@ public with sharing class ImageAndMediaController {
         }
     }
 
+    /**
+    * Method Name : saveFile
+    * @param strFileName to stored the Filename
+    * @param base64Data to stored the Filedata
+    * @return ContentVersion data
+    * @description : Used to create the ContentVersion record.
+    */
     @AuraEnabled
-    public static ContentVersion saveFile(String strFileName, String base64Data) {     
-           
-        base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
-        ContentVersion cv = new ContentVersion();
-        cv.Title = strFileName;
-        cv.PathOnClient = '/' + strFileName;
-        cv.VersionData = EncodingUtil.base64Decode(base64Data);
-        cv.ExternalDocumentInfo1 = 'watermark3112';
-        insert cv;
+    public static ContentVersion saveFile(String strFileName, String base64Data) {  
+        try {
+            if (!ContentVersion.SObjectType.getDescribe().isAccessible() && 
+                !ContentVersion.SObjectType.getDescribe().isCreateable()) {
+                throw new AuraHandledException('ContentVersion is not accessible, createable and updateable.');
+            } else {
+                base64Data = EncodingUtil.urlDecode(base64Data, 'UTF-8');
+                ContentVersion cv = new ContentVersion();
+                cv.Title = strFileName;
+                cv.PathOnClient = '/' + strFileName;
+                cv.VersionData = EncodingUtil.base64Decode(base64Data);
+                cv.ExternalDocumentInfo1 = 'watermark3112';
+                insert cv;
 
-        return cv;
-    }
-
-    @AuraEnabled
-    public static void deleteFiles(String contentVersionRecId){ 
-        List<ContentVersion> cvList = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id =: contentVersionRecId WITH SECURITY_ENFORCED];
-
-        if (!cvList.isEmpty()) {
-            List<ContentDocument> cdList = [SELECT Id FROM ContentDocument WHERE Id =: cvList[0].ContentDocumentId WITH SECURITY_ENFORCED];
-
-            delete cdList;
+                return cv;
+            }
+        } catch (Exception e) {
+            ErrorHandler.insert_errordata(e, 'ImageAndMediaController', 'saveFile', 'Error while create ContentVersion record.');
+            return null;
         }
     }
 
+    /**
+    * Method Name : deleteFiles
+    * @param contentVersionRecId to stored the contentversion record id.
+    * @description : Used to delete the ContentVersion record.
+    */
+    @AuraEnabled
+    public static void deleteFiles(String contentVersionRecId){ 
+        try {
+            List<ContentVersion> cvList = [SELECT Id, ContentDocumentId FROM ContentVersion WHERE Id =: contentVersionRecId WITH SECURITY_ENFORCED];
+
+            if (!cvList.isEmpty() && ContentDocument.SObjectType.getDescribe().isDeletable()) {
+                List<ContentDocument> cdList = [SELECT Id FROM ContentDocument WHERE Id =: cvList[0].ContentDocumentId WITH SECURITY_ENFORCED];
+
+                delete cdList;
+            }
+        } catch (Exception e) {
+            ErrorHandler.insert_errordata(e, 'ImageAndMediaController', 'deleteFiles', 'Error while deleting ContentVersion record.');
+        }
+    }
+
+    /**
+    * Method Name : saveFile
+    * @param strFileName to stored the Filename
+    * @param base64Data to stored the Filedata
+    * @return ContentVersion data
+    * @description : Used to create the ContentVersion record.
+    */
     @AuraEnabled
     public static List<ContentVersion> getContentVersionData(){
         try {
@@ -252,7 +284,8 @@ public with sharing class ImageAndMediaController {
             }
             
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            ErrorHandler.insert_errordata(e, 'ImageAndMediaController', 'deleteFiles', 'Error while deleting ContentVersion record.');
+            return null;
         }
     }
     

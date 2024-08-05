@@ -20,10 +20,22 @@ export default class WaterMarkImageUploader extends LightningElement {
     @track imageName;
     @track imageSize;
 
+    /**
+    * Method Name: connectedCallback
+    * @description: Used to fetch data.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     connectedCallback() {
         this.getData();
     }
 
+    /**
+    * Method Name: getData
+    * @description: Used to fetch data from apex.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     getData() {
         this.isSpinner = true;
         getContentVersionData()
@@ -44,9 +56,14 @@ export default class WaterMarkImageUploader extends LightningElement {
         });
     }
 
+    /**
+    * Method Name: handleDrop
+    * @description: Used to handle drop files.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     handleDrop(event) {
         event.preventDefault();
-        console.log("handleDrop triggered");
         const files = event.dataTransfer.files;
         console.log('files-->',files);
 
@@ -73,10 +90,22 @@ export default class WaterMarkImageUploader extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: allowDrop
+    * @description: Used to handle drop files.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     allowDrop(event) {
         event.preventDefault();
     }
 
+    /**
+    * Method Name: handleSelectedFiles
+    * @description: Used to collect data from the selected files.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     handleSelectedFiles(event) {
         try {
             if (this.filesUploaded.length == 1 || this.data.length > 0) {
@@ -102,10 +131,25 @@ export default class WaterMarkImageUploader extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: handleDialogueClose
+    * @description: Used to Close watermark modal.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     handleDialogueClose() {
         this.dispatchEvent(new CustomEvent('close'));
     }
 
+    /**
+    * Method Name: toast
+    * @description: Generic toast message.
+    * @param {string} title - Title of toast message.
+    * @param {string} message - Description of toast message.
+    * @param {string} variant - Variant of toast message.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     toast(title, message, variant) {
         const toastEvent = new ShowToastEvent({
             title,
@@ -115,6 +159,12 @@ export default class WaterMarkImageUploader extends LightningElement {
         this.dispatchEvent(toastEvent)
     }
 
+    /**
+    * Method Name: handleSave
+    * @description: Used to create contentversion record.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     handleSave() {
         this.isSpinner = true;
         console.log('fileuploaded-->',this.filesUploaded);
@@ -133,6 +183,12 @@ export default class WaterMarkImageUploader extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: uploadHelper
+    * @description: Used to create contentversion record.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     uploadHelper() {
         try {
             this.file = this.filesUploaded[0];
@@ -152,6 +208,12 @@ export default class WaterMarkImageUploader extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: saveToFile
+    * @description: Used to create contentversion record.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     saveToFile() {
         saveFile({ strFileName: this.file.name, base64Data: encodeURIComponent(this.fileContents) })
         .then(result => {
@@ -167,6 +229,12 @@ export default class WaterMarkImageUploader extends LightningElement {
         });
     }
 
+    /**
+    * Method Name: removeReceiptImage
+    * @description: Used to delete contentversion record.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     removeReceiptImage(event) {
         let dataname = event.currentTarget.dataset.name;
         console.log('dataname-->',dataname);
@@ -195,6 +263,12 @@ export default class WaterMarkImageUploader extends LightningElement {
         }
     }
 
+    /**
+    * Method Name: removeReceiptImage
+    * @description: Used to show image preview.
+    * Date: 08/08/2024
+    * Created By: Karan Singh
+    **/
     showImagePreview(file) {
         console.log('showImagePreview<><><>>>>>');
         this.imageSrc = URL.createObjectURL(file);
