@@ -1,6 +1,7 @@
 .portal-logo {
     width: 50%;
-    margin: 3rem;
+    margin: 2rem;
+    height: auto;
 }
 
 .portal-box.blackout {
@@ -74,6 +75,7 @@
     border-radius: 0.5rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    font-family: Verdana;
 }
 
 .grid-style {
@@ -88,20 +90,21 @@
 }
 
 .portal_mapping {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 600;
-    line-height: 2.198rem;
+    line-height: 2rem;
     text-align: left;
 }
 
 .details_cls {
-    padding-left: 3.5rem;
+    padding-left: 2.7rem;
+    padding-right: 3rem;
 }
 
 .details_cls p {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 300;
-    line-height: 1.318rem;
+    line-height: 1rem;
     text-align: left;
 }
 
@@ -110,7 +113,7 @@
     border: 1px solid #D2D2D2;
     background: white;
     padding: 8px 15px;
-    margin-right: 10px;
+    color: rgba(1, 118, 211, 1);
 }
 
 .main_body_cls {
@@ -126,22 +129,23 @@
 }
 
 .available_css {
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 500;
-    line-height: 1.831rem;
-    padding-bottom: 1rem;
+    line-height: 1.5rem;
+    padding-bottom: 0.5rem;
 }
 
 .availale_css1 {
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 500;
-    line-height: 1.831rem;
+    line-height: 1.5rem;
     padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-bottom: 0.5rem;
 }
 
 .small-logo {
     width: 5rem;
+    height: auto;
 }
 
 .settings {
@@ -160,8 +164,8 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: -webkit-fill-available;
-    width: -webkit-fill-available;
+    /* height: -webkit-fill-available;
+    width: -webkit-fill-available; */
 }
 
 .portalMapping_header-row {
@@ -188,23 +192,26 @@
     padding: 0.5rem 1rem 0.5rem 1rem;
     border-bottom: 1px solid #d3d3d3;
     align-items: center;
+    border-left: 1px solid #d3d3d3;
+    border-right: 1px solid #d3d3d3;
 }
 
 .portalMapping_recordValues {
-    max-height: 25rem;
+    /* max-height: 25rem; */
     overflow: auto;
     user-select: none;
 }
 
 .field-mapping-container {
     background-color: #fff;
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
     border-radius: 8px;
     margin: 1rem;
     margin-top: 0;
-    /* height: -webkit-fill-available;
-    position: absolute;
-    width: -webkit-fill-available; */
+    /* position: absolute;
+    height: -webkit-fill-available;
+    width: -webkit-fill-available;
+    margin-right: 2rem; */
 }
 
 .no_portal_css {
@@ -219,7 +226,7 @@
 }
 
 .font_style_css {
-    font-family: Montserrat;
+    font-family: Verdana;
     font-size: 14px;
     font-weight: 500;
     line-height: 1.067rem;
@@ -230,6 +237,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    padding-bottom: 8px;
 }
 
 .sub_header_css {
@@ -239,7 +247,7 @@
 
 @media only screen and (max-width: 1500px) {
     .portalMapping_recordValues {
-        max-height: 10rem;
+        /* max-height: 8.5rem; */
         overflow: auto;
         user-select: none;
     }
@@ -247,6 +255,7 @@
     .portal-logo {
         width: 50%;
         margin: 2rem;
+        height: auto;
     }
 
     .available_css {
@@ -255,7 +264,7 @@
         line-height: 1.25rem;
         padding-bottom: 10px;
     }
-    
+
     .availale_css1 {
         font-size: 22px;
         font-weight: 500;
@@ -263,4 +272,67 @@
         padding-top: 10px;
         padding-bottom: 10px;
     }
+
+    .details_cls p {
+        font-size: 15px;
+    }
+
+    .portal_mapping {
+        font-size: 25px;
+    }
+}
+
+.portalMapping_data-row:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+@media only screen and (max-width: 1400px) {
+    .portalMapping_header-row {
+        padding: 0.5rem;
+    }
+
+    .portalMapping_data-row {
+        padding: 0.5rem;
+    }
+
+    .portal-logo {
+        width: 50%;
+        margin: 1rem;
+        height: auto;
+    }
+
+    .available_css {
+        font-size: 21px;
+        font-weight: 500;
+        line-height: 1rem;
+        padding-bottom: 5px;
+    }
+
+    .availale_css1 {
+        font-size: 21px;
+        font-weight: 500;
+        line-height: 1rem;
+        padding-top: 5px;
+        padding-bottom: 10px;
+    }
+
+    .details_cls p {
+        font-size: 15px;
+    }
+
+    .portal_mapping {
+        font-size: 25px;
+    }
+}
+
+.icon {
+    width: 85% !important;
+    height: auto;
+}
+
+.main_body {
+    position: absolute;
+    height: -webkit-fill-available;
+    overflow: auto;
 }

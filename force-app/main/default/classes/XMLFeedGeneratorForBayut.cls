@@ -2,7 +2,7 @@
 * Class Name : XMLFeedGeneratorForBayut
 * Test Class : XMLFeedPortalTest
 * Created By : Karan Singh
-* Last Modified Date : 24/06/2024
+* Last Modified Date : 08/08/2024
 * Last Modified By : Karan Singh
 * @description : Used to generate XML Feed for Bayut and Dubizzle portal.
 */
@@ -34,8 +34,11 @@ public with sharing class XMLFeedGeneratorForBayut {
             }
 
             Set<Id> listingIds = new Set<Id>();
+            List<PortalListing__c> portalListings;
             
-            List<PortalListing__c> portalListings = [SELECT Id, Listing__c, Portal__c, Portal__r.LastModifiedDate FROM PortalListing__c WHERE Portal__c =: recordID AND SystemIsActive__c = True WITH SECURITY_ENFORCED ORDER BY CreatedDate DESC];
+            if (recordId != null && recordId != '') {
+                portalListings = [SELECT Id, Listing__c, Portal__c, Portal__r.LastModifiedDate FROM PortalListing__c WHERE Portal__c =: recordID AND SystemIsActive__c = True WITH SECURITY_ENFORCED ORDER BY CreatedDate DESC];
+            }
             
             for (PortalListing__c portalList : portalListings) {
                 if (portalList.Listing__c != null) {
