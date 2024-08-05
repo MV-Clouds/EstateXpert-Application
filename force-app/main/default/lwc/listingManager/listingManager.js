@@ -346,13 +346,15 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     redirectToRecord(event){
         const recordId = event.target.dataset.id;
-        this[NavigationMixin.Navigate]({
+        this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
                 recordId: recordId,
-                objectApiName: 'MVEX__Listing__c', 
+                objectApiName: 'MVEX__Listing__c',
                 actionName: 'view'
             }
+        }).then(url => {
+            window.open(url, '_blank');
         });
     }
 
@@ -557,10 +559,9 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         if (this.pageNumber > 1) {
             this.pageNumber--;
             this.updateProcessedListingData();
+            this.sortData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 
@@ -574,10 +575,9 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         if (this.pageNumber < this.totalPages) {
             this.pageNumber++;
             this.updateProcessedListingData();
+            this.sortData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 

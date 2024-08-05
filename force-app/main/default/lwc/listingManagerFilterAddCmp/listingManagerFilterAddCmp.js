@@ -344,9 +344,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     **/
     handleBlur1() {
         // Delay the blur action to allow click event to be registered
-        setTimeout(() => {
             this.isFocused1 = false;
-        }, 700);
     }
 
       /**
@@ -449,6 +447,16 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         
         // Dispatch the custom event
         this.dispatchEvent(customEvent);
+    }
+
+     /**
+    * Method Name: handlePreventDefault
+    * @description: prevent default events when the options div clicked.
+    * Date: 23/07/2024
+    * Created By: Vyom Soni
+    **/
+     handlePreventDefault(event){
+        event.preventDefault();
     }
 
 
