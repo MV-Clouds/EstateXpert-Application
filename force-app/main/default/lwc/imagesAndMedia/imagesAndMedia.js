@@ -8,15 +8,15 @@ import deletelistingmedia from "@salesforce/apex/ImageAndMediaController.deletel
 import { publish, MessageContext } from 'lightning/messageService';
 import Refresh_msg from '@salesforce/messageChannel/refreshMessageChannel__c';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import { refreshApex } from '@salesforce/apex';
 import watermarkjs from "@salesforce/resourceUrl/watermarkjs";
 import videoThumbnail from '@salesforce/resourceUrl/videothumbnail';
 import buffer from 'c/buffer';
-import estatexpertLogo from '@salesforce/resourceUrl/watermarkLogo';
+// import estatexpertLogo from '@salesforce/resourceUrl/watermarkLogo';
 import uploadImageresponsiveCSS from '@salesforce/resourceUrl/UploadImageCss';
 import updatePropertyFileRecords from '@salesforce/apex/ImageAndMediaController.updatePropertyFileRecords';
 import { loadStyle } from 'lightning/platformResourceLoader';
 
+import designcss from '@salesforce/resourceUrl/imageAndMediaCss';
 
 export default class ImagesAndMedia extends LightningElement {
     @api recordId;
@@ -65,12 +65,13 @@ export default class ImagesAndMedia extends LightningElement {
     @track saveEditbtnDisabled = true;
     @track disabledDelete = true;
     @track currentDateTimeWithSeconds = '';
-    @track logo = estatexpertLogo;
+    @track logo;
     @track thumbnail = videoThumbnail;
     @track dataMap = [];
     @track confData;
     @track fileURL = [];
     @track fetchedData = [];
+    @track isContentVersionDataIsAvailable = false;
 
     // @track showMobileView = false;
     @track screenWidth=0;
@@ -105,6 +106,7 @@ export default class ImagesAndMedia extends LightningElement {
             this.updateScreenWidth();
             // Add event listener for window resize
             window.addEventListener('resize', this.handleResize.bind(this));
+            loadStyle(this, designcss);
             loadStyle(this, uploadImageresponsiveCSS)
                 .then(() => {
                     console.log('CSS loaded successfully');
@@ -247,6 +249,8 @@ export default class ImagesAndMedia extends LightningElement {
                     if (result != null) {
                         this.data = result.listingImages;
                         this.propertyId = result.propertyId;
+                        this.isContentVersionDataIsAvailable = result.contentVersionData != '' ? true : false;
+                        this.logo = result.contentVersionData;
 
                         this.Expose = this.data.filter(media => media.MVEX__Sort_on_Expose__c !== null && media.MVEX__IsOnExpose__c !== false).sort((a, b) => a.MVEX__Sort_on_Expose__c - b.MVEX__Sort_on_Expose__c);
                         this.Website = this.data.filter(media => media.MVEX__Sort_on_Website__c !== null && media.MVEX__IsOnWebsite__c !== false).sort((a, b) => a.MVEX__Sort_on_Website__c - b.MVEX__Sort_on_Website__c);
@@ -273,7 +277,7 @@ export default class ImagesAndMedia extends LightningElement {
                     }
                 }).catch(error => {
                     this.showSpinner = false;
-                    console.error('Error fetching data:', error);
+                    console.error('Error fetching data:', error.stack);
                 });
         } catch (error) {
             this.showSpinner = false;
@@ -530,6 +534,7 @@ export default class ImagesAndMedia extends LightningElement {
                             console.error('Error:', error);
                         });
                     }
+                    this.updateShowModal();
                 }
             } else if (this.selectedUrlType === 'Video') {
                 if (!this.imageUrlToUpload.match(/\.(png|jpg|jpeg|gif|png|svg)(\?.*)?$/)) {
@@ -597,10 +602,10 @@ export default class ImagesAndMedia extends LightningElement {
         try {
             this.showSpinner = true;
             this.isDeleteAll = false;
+            this.updateShowModal();
             deletelistingmedia({ propertyId: this.recordId }).then(() => {
                 this.fetchingdata();
             })
-            this.updateShowModal();
         } catch (error) {
             console.error('Error deleting media:', error);
         } finally {
@@ -768,6 +773,7 @@ export default class ImagesAndMedia extends LightningElement {
             deletelistingmedia({ id: this.recIdToDelete }).then(() => {
                 this.fetchingdata();
             });
+            this.updateShowModal();
         } catch (error) {
             console.error('Error deleting media:', error);
             this.showToast('Error', 'Something went wrong while deleting media.', 'error');
@@ -986,6 +992,11 @@ export default class ImagesAndMedia extends LightningElement {
     **/
     async handleclick() {
         try {
+            if (this.isContentVersionDataIsAvailable === false && this.isWatermark === true) {
+                this.showToast('Error', 'Please uncheck the "Upload Image With Watermark" checkbox or upload a watermark image from the Control Center.', 'error');
+                return;
+            }
+
             var startTime = new Date().getTime();
             if (this.propertyId) {
                 this.isNull = true;
@@ -1021,7 +1032,6 @@ export default class ImagesAndMedia extends LightningElement {
                         this.showToast('Error', JSON.stringify(error), 'error');
                         console.error('Error:', error);
                     });
-                refreshApex(this.data);
             } else {
                 this.showToast('Error', 'Property not added.', 'error');
             }
@@ -1523,7 +1533,7 @@ export default class ImagesAndMedia extends LightningElement {
     async imageWithWatermark(image) {
         try {
             let file = image;
-            let logoImg = this.logo;
+            let logoImg = 'data:image/png;base64,'+this.logo;
 
             const fileUrl = URL.createObjectURL(file);
 

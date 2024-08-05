@@ -203,7 +203,7 @@ hr {
     .modalbody {
         height: 47vh !important;
         padding-top: 6% !important;
-        overflow: visible;
+        overflow: auto;
     }
 
     .popup-m {
@@ -344,7 +344,7 @@ hr {
 
 @media only screen and (max-width: 500px) {
     *{
-        font-size: 0.5rem;
+        font-size: 0.7rem;
         /* padding: 0.4rem; */
     }
     .stylebtn {
@@ -376,6 +376,7 @@ hr {
         color: black;
         font-weight: 500;
         height: 100%;
+        font-size: 0.56rem;
     }
 
     .feed-tab-active{
