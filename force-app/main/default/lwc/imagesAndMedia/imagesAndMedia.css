@@ -34,12 +34,20 @@ progress {
     height: 52px;
 }
 
+.title_delete h2{
+    font-size: 0.9rem;
+}
+
 .title {
     background-color: #E1F1FE;
     color: #016DC3;
 }
 
 .title_text {
+    font-size: 20px;
+}
+
+.title_text b{
     font-size: 20px;
 }
 
@@ -195,7 +203,7 @@ hr {
     .modalbody {
         height: 47vh !important;
         padding-top: 6% !important;
-        overflow: visible;
+        overflow: auto;
     }
 
     .popup-m {
@@ -331,4 +339,132 @@ hr {
 
 .astrick_css {
     color: red;
+}
+
+
+@media only screen and (max-width: 500px) {
+    *{
+        font-size: 0.7rem;
+        /* padding: 0.4rem; */
+    }
+    .stylebtn {
+        flex-direction: row;
+    }
+    .btns {
+        margin-top: 2vh;
+    }
+    .left{
+        display: flex;
+        justify-content: space-evenly;
+        height: 2rem;
+        margin-bottom: 0.5rem;
+        border: 2px solid #61A9E4;
+        border-bottom: none;
+        border-radius: 0.2rem;
+        background-color: #D8EDFD;
+    }
+
+    .right{
+        padding-left: 1rem;
+    }
+
+    .feed-tab{
+        width: 34%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: black;
+        font-weight: 500;
+        height: 100%;
+        font-size: 0.56rem;
+    }
+
+    .feed-tab-active{
+        background-color: #0176D3; 
+        color: white;
+        border: 3px solid;  
+    }
+
+    .sort-container {
+        display: block;
+    }
+
+    .card-view{
+        display: flex;
+        border: 1px solid #000000;
+        border-radius: 0.3rem;
+        height: 11rem;
+        background-color: white;
+    }
+    .card-view .btn-div{
+        display: flex;
+        flex-direction: column;
+        width: 2rem;
+        justify-content: space-around;
+    }
+    .card-view .btn-div .icon-btn{
+        /* padding: 0.3rem; */
+        border: solid 0.1rem rgb(1, 118, 211);
+        border-radius: 0.2rem;
+        margin: 0.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    .card-view .img-section{
+        width: 25%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .card-view .img-section img{
+        width: 4rem;
+        max-width: 100%;
+        height: 4rem;
+        box-sizing: border-box;
+        display: block;
+        padding: 0rem;
+        border: none;
+        margin: 0rem;
+    }
+    .card-view .detail-section{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 25%;
+    }
+    .card-view .name-section{
+       padding: 0.3rem;
+       margin-top: 0.4rem;
+    }
+    .card-view .name-section label{
+        font-size: 0.8rem;
+        font-weight: 600;    
+    }
+    .card-view .name-section h2{
+        font-size: 0.6rem;
+        font-weight: 300;    
+    }
+    .status-section{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40%;
+    }
+    .status-section label{
+        font-size: 0.8rem;
+        font-weight: 600; 
+        margin-bottom: 0.5rem;
+        margin-top: 0.5rem;
+        
+    }
+    .main_content h2{
+        font-size: 0.7rem;
+    }
+
+
+
+
 }
