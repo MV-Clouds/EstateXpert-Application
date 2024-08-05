@@ -7,7 +7,6 @@ import { loadStyle } from 'lightning/platformResourceLoader';
 import externalCss from '@salesforce/resourceUrl/templateCss';
 import plainBackground from '@salesforce/resourceUrl/PlainBackground';
 	
-
 export default class MappingComponent extends LightningElement {
     @track dropDownPairs = [];
     @track listingOptions = [];
@@ -259,7 +258,12 @@ export default class MappingComponent extends LightningElement {
     }
 
     handleAddPairClick() {
-        this.showConfirmationModal = true;
+        const isLogicalExpression = this.checkConditionSyntax(false);
+        console.log('isLogicalExpression ==> ' , isLogicalExpression);
+
+        if(isLogicalExpression === true){
+            this.showConfirmationModal = true;
+        }
     }
 
     handleConfirmAddPair() {
@@ -302,7 +306,7 @@ export default class MappingComponent extends LightningElement {
         this.logicalCondition = event.target.value;
     }
 
-    checkConditionSyntax() {
+    checkConditionSyntax(isShowToast) {
         console.log('logicalCondition ==> ', this.logicalCondition);
     
         const listingLength = this.dropDownPairs.length;
@@ -315,7 +319,8 @@ export default class MappingComponent extends LightningElement {
         if (!regex.test(this.logicalCondition)) {
             inputElement.setCustomValidity('Invalid condition syntax');
             inputElement.reportValidity();
-            return;
+            this.isSaveButtonDisabled = true;
+            return false;
         }
     
         const numbers = this.logicalCondition.match(/\d+/g);
@@ -327,15 +332,24 @@ export default class MappingComponent extends LightningElement {
     
             if (invalidIndex) {
                 inputElement.setCustomValidity('Condition uses invalid index');
+                inputElement.reportValidity();
+                this.isSaveButtonDisabled = true;
+                return false;
             } else {
                 inputElement.setCustomValidity('');
-                this.showToast('Success', 'Condition syntax is correct', 'success');
+                inputElement.reportValidity();
+                this.isSaveButtonDisabled = false; 
+                if(isShowToast){
+                    this.showToast('Success', 'Condition syntax is correct', 'success');
+                }
+                return true;
             }
         } else {
             inputElement.setCustomValidity('Condition syntax is correct but contains no indices');
+            inputElement.reportValidity();
+            return false;
         }
         
-        inputElement.reportValidity();
     }
     
 }
