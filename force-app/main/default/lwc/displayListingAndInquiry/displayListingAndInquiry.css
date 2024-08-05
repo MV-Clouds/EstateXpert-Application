@@ -1,0 +1,259 @@
+.main-card {
+    min-height: 100%;
+    padding : 1rem;
+}
+
+.filter-search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #E1F1FE;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar lightning-input {
+    width: 300px;
+}
+
+.filter-section{
+    display: flex;
+    align-items: center;
+}
+
+.filter-btns{
+    display: flex;
+    gap: 4%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+
+}
+
+.property-item {
+    background-color: #ffffff;
+    position: relative;
+    height: auto;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    margin: 0 0 10% 0;
+    transition: box-shadow 0.3s ease;
+}
+
+.card{
+    padding: 0 1% 1% 1%;
+}
+
+.property-item:hover {
+    box-shadow: 1px 1px 10px 1px #509fdaa2;
+}
+
+.card-body {
+    padding: 0.5rem;
+    display: flex;
+}
+
+.room_details{
+    display: flex;
+    flex-direction: row;
+}
+
+.property-image {
+    margin-right: 15px;
+    border-radius: 5px;
+    height: 10rem;
+    width: 100%;
+    object-fit: cover;
+}
+
+.property_type {
+    background-color: #dbfaff;
+    border-radius: 5px 0 0 0;
+    position: absolute;
+    color: black;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    padding: 3px 15px;
+}
+
+.details {
+    height: 7rem;
+    border-bottom: 0.5px solid grey;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.card-title{
+    color:black;
+    font-size: 16px;
+}
+
+.bedroom, .bathroom {
+    display: flex;
+    margin: 0 20px 0 0;
+    align-items: end;
+}
+
+.bathroom_icon {
+    width: 20px;
+}
+
+.main {
+    background-color: white;
+    display: flex;
+    width: 100%;
+}
+
+.card-text {
+    display: flex;
+    color: #737D8C;
+    font-size: 12px;
+}
+
+.card-text p {
+    width: -webkit-fill-available;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-1 p {
+    font-size: 16px;
+    color: #1252AE;
+}
+
+.item-2 button {
+    height: 2rem;
+    background-color: #1252AE;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    gap: 1rem;
+}
+
+.no_prop {
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    font-family: 'DM Sans';
+}
+
+.listing-buttons {
+    display: flex;
+    gap: 10px;
+    height: fit-content;
+}
+
+.custom-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.header-cell {
+    padding: 10px;
+    background-color: #f4f6f9;
+    font-weight: bold;
+    text-align: left;
+    background: #0176D3;
+    color: white;
+    text-align: center;
+}
+
+.property-image img {
+    width: 100px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.custom-data-table td {
+    padding: 10px;
+    border-bottom: 1px solid #dcdcdc;
+    text-align: center;
+}
+
+.custom-data-table td img {
+    width: 100px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.custom-data-table .slds-table tr:nth-child(odd) {
+    background-color: aliceblue;
+}
+
+.view-more-button {
+    background-color: #0070d2;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.view-more-button:hover {
+    background-color: #005fb2;
+}
+
+.custom-data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.filter-btn,
+.edit-btn {
+    background-color: #0176D3;
+    color: white;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    padding: 5px 16px;
+}
+
+.filter-btn:disabled,
+.edit-btn:disabled {
+    background-color: #737D8C;
+    cursor: not-allowed; 
+}
+
+.view-buttons{
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+
+
+@media only screen and (max-width: 1024px) {
+
+    .listing-buttons{
+        margin-top: 1rem;
+    }
+
+    .filter-search-container{
+        flex-direction: column;
+    }
+
+    .view-buttons{
+        margin-top: 10px;
+    }
+}
