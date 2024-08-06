@@ -1,6 +1,6 @@
-import { LightningElement, api, track ,wire} from 'lwc';
+import { LightningElement, track ,wire} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import getListings from '@salesforce/apex/PropertySearchController.getListings';
+import getRecords from '@salesforce/apex/PropertySearchController.getRecords';
 import NoImageFound from '@salesforce/resourceUrl/blankImage';
 import propertyIcons from '@salesforce/resourceUrl/PropertyIcons';
 import location_icon from '@salesforce/resourceUrl/location_icon';
@@ -11,6 +11,8 @@ import { CurrentPageReference } from 'lightning/navigation';
 import getMetadata from '@salesforce/apex/DynamicMappingCmp.getMetadata';
 
 export default class DisplayListingAndInquiry extends NavigationMixin(LightningElement) {
+    @track recordId;
+    
     @track mapMarkers = [];
     @track totalRecords = 0;
     @track properties = [];
@@ -27,8 +29,11 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     @track propertyMediaUrls;
     @track isPropertyAvailable = true;
     @track selectedView = 'Grid'; 
-    // @track isInquiryobject = false;
-
+    @track filters = '';
+    @track isAutoSync = false;
+    @track logicalExpression = '';
+    
+    @track NoImageFoundUrl = NoImageFound;
 
     get gridButtonClass() {
         return this.isGridView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
@@ -83,6 +88,18 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
         return null;
     }
 
+    @wire(CurrentPageReference)
+    getPageReferenceParameters(currentPageReference) {
+       if (currentPageReference) {
+          console.log(currentPageReference);
+          this.recordId = currentPageReference.attributes.recordId;
+       }
+    }
+
+    get isInquiryObject(){
+        this.objectName === 'Inquiry__c';
+    }
+
     /**
     * Method Name: ConnectedCallback
     * @description: Standard ConnectedCallback method which executes when the component is loaded and it is calling apex to fetch all the properties and loading map library
@@ -92,13 +109,9 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     */
     connectedCallback() {
         console.log('Object Name ==> ' , this.objectName);
-
-        if(this.objectName == 'Inquiry__c'){
-            // this.isInquiryobject = true;
-        }
+        console.log('recordId ==> ' , this.recordId);
 
         this.isLoading = true;
-        this.fetchListings();
         this.fetchMetadataRecords();
         loadStyle(this, mapCss_V1)
             .then(() =>{
@@ -110,70 +123,122 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
                 this.isLoading = false;
             });
     }
-
-    /**
-    * Method Name: fetchListings
-    * @description: this method is used to get all properties data from the apex and update the property list to display them
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    * Last modified by : Rachit Shah
-    */
-    fetchListings() {
-        getListings({objectName : this.objectName})
-            .then(result => {
-                console.log('result ==> ' , result);
-                const resultListing = result.listings;
-
-                this.filteredListingData = resultListing;
-                this.listingData = resultListing;
-                this.propertyMediaUrls = result.medias;
-
-                this.listingData.forEach(row => {
-                    const prop_id = row.Property__c;
-                    row.media_url = this.propertyMediaUrls[prop_id];
+    applyFiltersData() {
+        try {
+            if (this.objectName === 'Listing__c') {
+                // Parse conditions from filters
+                const conditions = this.filters.map((filter) => {
+                    const [field, operator, value] = filter.split(':');
+                    return { field, operator, value: value.toLowerCase() };
                 });
+    
+                // Ensure there's at least one listing and inquiry
+                if (this.listingData.length === 0 || this.inquiryData.length === 0) {
+                    this.pagedFilteredListingData = [];
+                    this.isPropertyAvailable = false;
+                    this.totalRecords = 0;
+                    this.currentPage = 1;
+                    this.updateMapMarkers();
+                    return;
+                }
+    
+                console.log('listingData ==> ' , this.listingData.length);
+                const filteredListings = this.inquiryData.filter(property => {
+                    return conditions.every(condition => {
+                        const { field, operator, value } = condition;
+                        const propertyValue = property[value] ? property[value] : '';
+                        console.log('propertyValue ==> ' , propertyValue);
 
-                this.filteredListingData.forEach(row => {
-                    const prop_id = row.Property__c;
-                    row.media_url = row.Primary_Image_URL__c || this.propertyMediaUrls[prop_id] || NoImageFound;
-                    row.Listing_Price__c = row.Listing_Price__c;
-                    row.Listing_Type__c = row.Listing_Type__c || 'Sale';
-                    row.Bedrooms__c = row.Bedrooms__c || 0;
-                    row.Bathrooms__c = row.Bathrooms__c || 0;
+                        const listing = this.listingData[0];
+                        console.log('listing ==> ' , listing);
+                        console.log('value ==> ' ,field);
+                        const actualValue = listing[field];
+                        console.log('actualValue ==> ' , actualValue);
+    
+                        switch (operator) {
+                            case 'equalTo':
+                                return propertyValue === actualValue;
+                            case 'contains':
+                                return propertyValue.includes(actualValue);
+                            case 'greaterThan':
+                                return parseFloat(propertyValue) > parseFloat(value);
+                            case 'lessThan':
+                                return parseFloat(propertyValue) < parseFloat(value);
+                            default:
+                                return false;
+                        }
+                    });
                 });
+    
+                if (this.logicalExpression) {
+                    const logicalResults = filteredListings.map(property => {
+                        const conditionsResults = conditions.map(condition => {
+                            const { field, operator, value } = condition;
+                            const propertyValue = property[field] ? property[field].toLowerCase() : '';
 
-                this.pagedFilteredListingData = this.filteredListingData;
+    
+                            switch (operator) {
+                                case 'equalTo':
+                                    return propertyValue === value;
+                                case 'contains':
+                                    return propertyValue.includes(value);
+                                case 'greaterThan':
+                                    return parseFloat(propertyValue) > parseFloat(value);
+                                case 'lessThan':
+                                    return parseFloat(propertyValue) < parseFloat(value);
+                                default:
+                                    return false;
+                            }
+                        });
+                        return this.evaluateLogicalExpression(this.logicalExpression, conditionsResults);
+                    });
+    
+                    this.pagedFilteredListingData = filteredListings.filter((_, index) => logicalResults[index]);
+                } else {
+                    this.pagedFilteredListingData = filteredListings;
+                }
+    
+                this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
                 this.totalRecords = this.pagedFilteredListingData.length;
-                this.isPropertyAvailable = this.totalRecords > 0;
-
-                if(this.objectName == 'Listing__c'){
-                    const listing = result.listingRec;
-                }
-
-                else if(this.objectName == 'Inquiry__c'){
-                    const inquiry = result.inquiryRec;
-                }
+                this.currentPage = 1;
+    
                 this.updateMapMarkers();
-            })
-            .catch(error => console.error('Error getting properties from apex:', error));
+            }
+        } catch (error) {
+            console.log('Error applying filters:', error);
+            this.showToast('Error', 'Error applying filters', 'error');
+        }
     }
+    
+    
+    evaluateLogicalExpression(expression, results) {
+        try {
+            const expressionToEvaluate = expression.replace(/\d+/g, match => {
+                const index = parseInt(match) - 1;
+                return results[index] ? 'true' : 'false';
+            });
+    
+            return eval(expressionToEvaluate);
+        } catch (error) {
+            console.error('Error evaluating expression:', error);
+            return false;
+        }
+    }
+    
 
     fetchMetadataRecords(){
         getMetadata()
         .then((result) => {
-            console.log('result ==> ' , JSON.stringify(result));
-            if (result[0] != null) { 
-                console.log('result ==> ' , result[0]);
+            
+            if (result && result.length > 0) {
+                this.filters = result[0] ? result[0].split(';') : [];
+                this.isAutoSync = result[1] === 'true';
+                this.logicalExpression = result[2] || '';
             }
-            const isAutoSync = result.length > 0 ? result[1] : false;
-            console.log('isAutoSync ==> ' , isAutoSync);
-            const logicalExpression = result.length > 1 ? result[2] : '';
-            if(logicalExpression){
-                console.log(logicalExpression);
-            }
-            else{
-                console.log('Expression not found');
-            }
+
+            console.log('filters ==> ' , JSON.stringify(result));
+
+            this.fetchListings();
         })
         .catch((error) => {
             console.error('Error fetching metadata:', error);
@@ -182,6 +247,36 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
         });
     }
 
+        /**
+    * Method Name: fetchListings
+    * @description: this method is used to get all properties data from the apex and update the property list to display them
+    * Date: 17/06/2024
+    * Created By: Mitrajsinh Gohil
+    * Last modified by : Rachit Shah
+    */
+
+    fetchListings() {
+        getRecords({ recId: this.recordId, objectName: this.objectName })
+            .then(result => {
+                console.log('result ==> ', result);
+    
+                const data = result;
+    
+                if (this.objectName === 'Listing__c') {
+                    this.listingData = data.listings;
+                    this.inquiryData = data.inquiries || [];
+                    console.log('Listing Data ==> ', this.listingData);
+                    console.log('Inquiries ==> ', this.inquiryData);
+                } else if (this.objectName === 'Inquiry__c') {
+                    const inquiry = data.inquiryRec;
+                    console.log('Inquiry Rec ==> ', inquiry);
+                }
+    
+                this.applyFiltersData();
+                this.updateMapMarkers();
+            })
+            .catch(error => console.error('Error getting properties from apex:', error));
+    }
     /**
     * Method Name: updateMapMarkers
     * @description: this method is used to update and set the markers on the map for the properties with the pagination

@@ -13,14 +13,12 @@
         <lightning-card>
             <div>
                 <div class="filter-search-container">
-                    <template if:false={isInquiryobject}>
                         <div class="filter-section">
                             <div class="search-bar">
                                 <lightning-input variant="label-hidden" type="search" placeholder="Enter property name"
                                     value={searchTerm} onchange={handleSearch}></lightning-input>
                             </div>
                         </div>
-                    </template>
                     <div class="view-buttons">
                         <button class={gridButtonClass} onclick={setGridView}>Grid</button>
                         <button class={listButtonClass} onclick={setListView}>List</button>
@@ -49,18 +47,25 @@
                                 <template for:each={pagedProperties} for:item="property">
                                     <tr key={property.id}>
                                         <td class="image-data">
-                                            <img src={property.media_url} alt="Property image" />
+                                            <template if:false={isInquiryObject}>
+                                                <img src={NoImageFoundUrl} alt="Property image"></img>
+                                            </template>
+    
+                                            <template if:true={isInquiryObject}>
+                                                <img src={property.media_url} alt="Property image"></img>
+                                            </template>
+                                            <!-- <img src={property.media_url} alt="Property image" /> -->
                                         </td>
                                         <td>{property.Name}</td>
                                         <td>{property.Listing_Type__c}</td>
                                         <td>{property.City__c}</td>
-                                        <td>{property.Bedrooms__c}</td>
-                                        <td>{property.Bathrooms__c}</td>
+                                        <td>{property.Bedrooms_min__c}</td>
+                                        <td>{property.Bathrooms_min__c}</td>
                                         <td>
-                                            <template if:true={property.Listing_Price__c}>
-                                                {property.CurrencyIsoCode} {property.Listing_Price__c}
+                                            <template if:true={property.Price_min__c}>
+                                                {property.CurrencyIsoCode} {property.Price_min__c}
                                             </template>
-                                            <template if:false={property.Listing_Price__c}>
+                                            <template if:false={property.Price_min__c}>
                                                 TBD
                                             </template>
                                         </td>
@@ -79,7 +84,13 @@
                                 <div class="card slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3"
                                     key={property.id}>
                                     <div class="property-item">
-                                        <img class="property-image card-img-top" src={property.media_url} alt="Property image"></img>
+                                        <template if:false={isInquiryObject}>
+                                            <img class="property-image card-img-top" src={NoImageFoundUrl} alt="Property image"></img>
+                                        </template>
+
+                                        <template if:true={isInquiryObject}>
+                                            <img class="property-image card-img-top" src={property.media_url} alt="Property image"></img>
+                                        </template>
                                         <div class="property_type">
                                             <p>For {property.Listing_Type__c}</p>
                                         </div>
@@ -92,21 +103,21 @@
                                             <div class="room_details">
                                                 <lightning-layout-item class="bedroom">
                                                     <img src={bedroom_icon} height="24px" width="20px" />
-                                                    <h1 class="slds-m-left_xx-small">{property.Bedrooms__c} Bedrooms</h1>
+                                                    <h1 class="slds-m-left_xx-small">{property.Bedrooms_min__c} Bedrooms</h1>
                                                 </lightning-layout-item>
                                                 <lightning-layout-item class="bathroom" alignment-bump="left">
                                                     <img src={bathroom_icon} class="bathroom_icon"/>
-                                                    <h1 class="slds-m-left_xx-small">{property.Bathrooms__c} Bathrooms</h1>
+                                                    <h1 class="slds-m-left_xx-small">{property.Bathrooms_min__c} Bathrooms</h1>
                                                 </lightning-layout-item>
                                             </div>
                                         </div>
-                                        <div class="card-body">
+                                        <div class="card-body-footer">
                                             <lightning-layout-item class="item-1">
                                                 <p class="card-link"><b>
-                                                    <template if:true={property.Listing_Price__c}>
-                                                        {property.CurrencyIsoCode} {property.Listing_Price__c}
+                                                    <template if:true={property.Price_min__c}>
+                                                        {property.CurrencyIsoCode} {property.Price_min__c}
                                                     </template>
-                                                    <template if:false={property.Listing_Price__c}>
+                                                    <template if:false={property.Price_min__c}>
                                                         TBD
                                                     </template>
                                                 </b></p>

@@ -1,6 +1,6 @@
 .main-card {
     min-height: 100%;
-    padding : 1rem;
+    padding: 1rem;
 }
 
 .filter-search-container {
@@ -17,19 +17,18 @@
     width: 300px;
 }
 
-.filter-section{
+.filter-section {
     display: flex;
     align-items: center;
 }
 
-.filter-btns{
+.filter-btns {
     display: flex;
     gap: 4%;
     width: 100%;
     justify-content: center;
     align-items: center;
     margin-top: 1rem;
-
 }
 
 .property-item {
@@ -38,11 +37,13 @@
     height: auto;
     border: 1px solid #d8d8d8;
     border-radius: 8px;
-    margin: 0 0 10% 0;
+    margin: 1rem 0;
     transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
-.card{
+.card {
     padding: 0 1% 1% 1%;
 }
 
@@ -55,9 +56,18 @@
     display: flex;
 }
 
-.room_details{
+
+.card-body-footer{
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.room_details {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .property-image {
@@ -87,15 +97,14 @@
     justify-content: space-around;
 }
 
-.card-title{
-    color:black;
+.card-title {
+    color: black;
     font-size: 16px;
 }
 
 .bedroom, .bathroom {
     display: flex;
-    margin: 0 20px 0 0;
-    align-items: end;
+    align-items: center;
 }
 
 .bathroom_icon {
@@ -136,7 +145,6 @@
     transition: background-color 0.3s ease;
 }
 
-
 .pagination-container {
     display: flex;
     justify-content: center;
@@ -170,10 +178,7 @@
 
 .header-cell {
     padding: 10px;
-    background-color: #f4f6f9;
-    font-weight: bold;
-    text-align: left;
-    background: #0176D3;
+    background-color: #0176D3;
     color: white;
     text-align: center;
 }
@@ -196,7 +201,7 @@
     border-radius: 4px;
 }
 
-.custom-data-table .slds-table tr:nth-child(odd) {
+.custom-data-table tr:nth-child(odd) {
     background-color: aliceblue;
 }
 
@@ -217,8 +222,7 @@
     border-bottom: none;
 }
 
-.filter-btn,
-.edit-btn {
+.filter-btn, .edit-btn {
     background-color: #0176D3;
     color: white;
     border-radius: 4px;
@@ -230,30 +234,27 @@
     padding: 5px 16px;
 }
 
-.filter-btn:disabled,
-.edit-btn:disabled {
+.filter-btn:disabled, .edit-btn:disabled {
     background-color: #737D8C;
-    cursor: not-allowed; 
+    cursor: not-allowed;
 }
 
-.view-buttons{
-    width: 100%;
+.view-buttons {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
+    width: 100%;
 }
-
 
 @media only screen and (max-width: 1024px) {
-
-    .listing-buttons{
+    .listing-buttons {
         margin-top: 1rem;
     }
-
-    .filter-search-container{
+    
+    .filter-search-container {
         flex-direction: column;
     }
-
-    .view-buttons{
+    
+    .view-buttons {
         margin-top: 10px;
     }
 }
