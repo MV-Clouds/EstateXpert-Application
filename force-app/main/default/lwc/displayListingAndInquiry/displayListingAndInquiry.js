@@ -23,9 +23,8 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
     @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
     @track location_icon = location_icon;
-    @track filteredListingData = [];
-    @track pagedFilteredListingData = [];
-    @track listingData = [];
+    @track pagedFilteredInquiryData = [];
+    @track inquirydata = [];
     @track propertyMediaUrls;
     @track isPropertyAvailable = true;
     @track selectedView = 'Grid'; 
@@ -60,7 +59,7 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     }
 
     get totalProperties() {
-        return this.pagedFilteredListingData.length;
+        return this.pagedFilteredInquiryData.length;
     }
 
     get totalPages() {
@@ -77,7 +76,7 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
 
     get pagedProperties() {
         const startIndex = (this.currentPage - 1) * this.pageSize;
-        return this.pagedFilteredListingData.slice(startIndex, startIndex + this.pageSize);
+        return this.pagedFilteredInquiryData.slice(startIndex, startIndex + this.pageSize);
     }
 
     @wire(CurrentPageReference) pageRef;
@@ -123,105 +122,116 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
                 this.isLoading = false;
             });
     }
-    applyFiltersData() {
+
+
+
+    applyFiltersData(listing) {
         try {
-            if (this.objectName === 'Listing__c') {
-                // Parse conditions from filters
-                const conditions = this.filters.map((filter) => {
-                    const [field, operator, value] = filter.split(':');
-                    return { field, operator, value: value.toLowerCase() };
+            this.pagedFilteredInquiryData = this.inquirydata;
+            this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
+            this.totalRecords = this.pagedFilteredInquiryData.length;
+            this.currentPage = 1;
+    
+            console.log('filters ==> ', JSON.stringify(this.filters));
+            console.log('listing ==> ', listing);
+    
+            let filterResults = [];
+    
+            this.filters.forEach((filter, index) => {
+                console.log(`Processing filter at index ${index}: ${filter}`);
+                let [object, field, operation, valueField] = filter.split(':');
+                console.log(object);
+                console.log(field);
+                console.log(operation);
+                console.log(valueField);
+                console.log(index + 1);
+    
+                let filteredData = this.pagedFilteredInquiryData.filter(record => {
+                    let recordValue, listingValue;
+    
+                    if (object === 'Inquiry__c') {
+                        recordValue = record[field];
+                        listingValue = listing[valueField];
+                    } else if (object === 'Listing__c') {
+                        recordValue = listing[field];
+                        listingValue = record[valueField];
+                    }
+    
+                    if (operation === 'contains') {
+                        return recordValue && recordValue.includes(listingValue);
+                    } else if (operation === 'equalTo') {
+                        return recordValue === listingValue;
+                    } else if (operation === 'greaterThan') {
+                        console.log('1 ==> ' ,parseFloat(recordValue));
+                        console.log('2 ==> ' ,parseFloat(listingValue));
+                        return parseFloat(recordValue) > parseFloat(listingValue);
+                    } else if (operation === 'lessThan') {
+                        return parseFloat(recordValue) < parseFloat(listingValue);
+                    }
+    
+                    return false;
                 });
     
-                // Ensure there's at least one listing and inquiry
-                if (this.listingData.length === 0 || this.inquiryData.length === 0) {
-                    this.pagedFilteredListingData = [];
-                    this.isPropertyAvailable = false;
-                    this.totalRecords = 0;
-                    this.currentPage = 1;
-                    this.updateMapMarkers();
-                    return;
-                }
+                filterResults[index+1] = filteredData; 
+            });
     
-                console.log('listingData ==> ' , this.listingData.length);
-                const filteredListings = this.inquiryData.filter(property => {
-                    return conditions.every(condition => {
-                        const { field, operator, value } = condition;
-                        const propertyValue = property[value] ? property[value] : '';
-                        console.log('propertyValue ==> ' , propertyValue);
-
-                        const listing = this.listingData[0];
-                        console.log('listing ==> ' , listing);
-                        console.log('value ==> ' ,field);
-                        const actualValue = listing[field];
-                        console.log('actualValue ==> ' , actualValue);
+            console.log('logicalExpression ==> ', this.logicalExpression);
     
-                        switch (operator) {
-                            case 'equalTo':
-                                return propertyValue === actualValue;
-                            case 'contains':
-                                return propertyValue.includes(actualValue);
-                            case 'greaterThan':
-                                return parseFloat(propertyValue) > parseFloat(value);
-                            case 'lessThan':
-                                return parseFloat(propertyValue) < parseFloat(value);
-                            default:
-                                return false;
-                        }
-                    });
-                });
+            // Evaluate logical expression
+            let finalFilteredData = this.evaluateLogicalExpression(filterResults, this.logicalExpression);
     
-                if (this.logicalExpression) {
-                    const logicalResults = filteredListings.map(property => {
-                        const conditionsResults = conditions.map(condition => {
-                            const { field, operator, value } = condition;
-                            const propertyValue = property[field] ? property[field].toLowerCase() : '';
-
+            this.pagedFilteredInquiryData = finalFilteredData;
+            this.totalRecords = finalFilteredData.length;
+            this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
     
-                            switch (operator) {
-                                case 'equalTo':
-                                    return propertyValue === value;
-                                case 'contains':
-                                    return propertyValue.includes(value);
-                                case 'greaterThan':
-                                    return parseFloat(propertyValue) > parseFloat(value);
-                                case 'lessThan':
-                                    return parseFloat(propertyValue) < parseFloat(value);
-                                default:
-                                    return false;
-                            }
-                        });
-                        return this.evaluateLogicalExpression(this.logicalExpression, conditionsResults);
-                    });
+            this.updateMapMarkers();
     
-                    this.pagedFilteredListingData = filteredListings.filter((_, index) => logicalResults[index]);
-                } else {
-                    this.pagedFilteredListingData = filteredListings;
-                }
-    
-                this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
-                this.totalRecords = this.pagedFilteredListingData.length;
-                this.currentPage = 1;
-    
-                this.updateMapMarkers();
-            }
         } catch (error) {
             console.log('Error applying filters:', error);
             this.showToast('Error', 'Error applying filters', 'error');
         }
     }
     
-    
-    evaluateLogicalExpression(expression, results) {
+    // Function to evaluate the logical expression
+    evaluateLogicalExpression(filterResults, logicalExpression) {
         try {
-            const expressionToEvaluate = expression.replace(/\d+/g, match => {
-                const index = parseInt(match) - 1;
-                return results[index] ? 'true' : 'false';
+            let finalFilteredData = [];
+            console.log('filterResults ==> ', JSON.stringify(filterResults));
+    
+            // Create sets for each filter result
+            let resultSets = {};
+            Object.keys(filterResults).forEach(index => {
+                if (filterResults[index] && filterResults[index].length > 0) {
+                    resultSets[index] = new Set(filterResults[index].map(item => JSON.stringify(item)));
+                    console.log(`Length of resultSets[${index}] ==> `, resultSets[index].size);
+                }
             });
     
-            return eval(expressionToEvaluate);
+            console.log('resultSets ==> ', JSON.stringify(resultSets));
+    
+            // Parse logical expression
+            let expression = logicalExpression.replace(/\b(\d+)\b/g, match => {
+                return resultSets[match] ? `resultSets["${match}"]` : 'new Set()';
+            });
+            console.log('expression ==> ', expression);
+    
+            // Evaluate the logical expression
+            let finalSet = new Function('resultSets', `
+                let result = new Set();
+                ${expression.split('||').map(term => `result = new Set([...result, ...${term.trim()}]);`).join('\n')}
+                return result;
+            `)(resultSets);
+    
+            console.log('finalSet ==> ', finalSet);
+    
+            finalFilteredData = Array.from(finalSet).map(item => JSON.parse(item));
+            console.log('finalFilteredData ==> ', finalFilteredData);
+    
+            return finalFilteredData;
+    
         } catch (error) {
-            console.error('Error evaluating expression:', error);
-            return false;
+            console.log('Error evaluating logical expression:', error);
+            return [];
         }
     }
     
@@ -261,18 +271,16 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
                 console.log('result ==> ', result);
     
                 const data = result;
-    
+                let listing = {};
                 if (this.objectName === 'Listing__c') {
-                    this.listingData = data.listings;
-                    this.inquiryData = data.inquiries || [];
-                    console.log('Listing Data ==> ', this.listingData);
-                    console.log('Inquiries ==> ', this.inquiryData);
+                    this.inquirydata = data.inquiries;
+                    listing = data.listings[0];
                 } else if (this.objectName === 'Inquiry__c') {
                     const inquiry = data.inquiryRec;
                     console.log('Inquiry Rec ==> ', inquiry);
                 }
     
-                this.applyFiltersData();
+                this.applyFiltersData(listing);
                 this.updateMapMarkers();
             })
             .catch(error => console.error('Error getting properties from apex:', error));
@@ -287,7 +295,7 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     updateMapMarkers() {
 
         const startIndex = (this.currentPage - 1) * this.pageSize;
-        const currentPageData = this.pagedFilteredListingData.slice(startIndex, startIndex + this.pageSize);
+        const currentPageData = this.pagedFilteredInquiryData.slice(startIndex, startIndex + this.pageSize);
 
         this.mapMarkers = currentPageData.map(listing => ({
             id: listing.Id,
@@ -314,7 +322,7 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     handleSearch(event) {
         this.searchTerm = event.target.value.toLowerCase();
         this.currentPage = 1;
-        this.totalRecords = this.pagedFilteredListingData.length;
+        this.totalRecords = this.pagedFilteredInquiryData.length;
         this.isPropertyAvailable = this.totalRecords > 0;
         this.applyFilters();
         this.updateMapMarkers();
@@ -329,14 +337,14 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     applyFilters() {
         try {
     
-            this.pagedFilteredListingData = this.listingData.filter(property => {
+            this.pagedFilteredInquiryData = this.inquirydata.filter(property => {
                 const searchProperty = property.Name.toLowerCase().includes(this.searchTerm);
                 return searchProperty;
             });
     
-            this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
+            this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
             this.currentPage = 1;
-            this.totalRecords = this.pagedFilteredListingData.length;
+            this.totalRecords = this.pagedFilteredInquiryData.length;
 
             this.updateMapMarkers();
         } catch (error) {
@@ -462,3 +470,94 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
         }));
     }
 }
+
+
+
+
+
+// applyFiltersData(listing) {
+//     try {
+//         this.pagedFilteredInquiryData = this.inquirydata;
+//         this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
+//         this.totalRecords = this.pagedFilteredInquiryData.length;
+//         this.currentPage = 1;
+
+//         console.log('filters ==> ', JSON.stringify(this.filters));
+//         console.log('listing ==> ', listing);
+
+//         let filterResults = [];
+
+//         this.filters.forEach((filter, index) => {
+//             console.log(`Processing filter at index ${index}: ${filter}`);
+//             let [object, field, operation, valueField] = filter.split(':');
+//             console.log(object);
+//             console.log(field);
+//             console.log(operation);
+//             console.log(valueField);
+//             console.log(index + 1);
+
+//             // Apply the filter to the inquirydata
+//             let filteredData = this.pagedFilteredInquiryData.filter(record => {
+//                 if (object === 'Inquiry__c') {
+//                     let recordValue = record[field];
+//                     let listingValue = listing[valueField];
+//                     if (operation === 'contains') {
+//                         return recordValue && recordValue.includes(listingValue);
+//                     } else if (operation === 'equalTo') {
+//                         return recordValue === listingValue;
+//                     } 
+//                 }
+//                 return false;
+//             });
+
+//             filterResults[index] = filteredData;
+//         });
+
+//         console.log('logicalExpression ==> ', this.logicalExpression);
+
+//         // Evaluate logical expression
+//         let finalFilteredData = this.evaluateLogicalExpression(filterResults, this.logicalExpression);
+
+//         this.pagedFilteredInquiryData = finalFilteredData;
+//         this.totalRecords = finalFilteredData.length;
+//         this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
+
+//         this.updateMapMarkers();
+
+//     } catch (error) {
+//         console.log('Error applying filters:', error);
+//         this.showToast('Error', 'Error applying filters', 'error');
+//     }
+// }
+
+// // Function to evaluate the logical expression
+// evaluateLogicalExpression(filterResults, logicalExpression) {
+
+//     console.log('filterResults2 ==> ' , JSON.stringify(filterResults));
+//     console.log('filterResults2 length ==> ' , filterResults.length);
+//     console.log('logicalExpression2 ==> ' , logicalExpression);
+    
+//     try {
+//         let finalDataSet = [];
+//         let expression = logicalExpression;
+//         console.log('expression ==> ' ,expression);
+
+//         filterResults.forEach((result, index) => {
+//             let resultSet = new Set(result.map(item => JSON.stringify(item)));
+//             let variableName = `result${index + 1}`;
+//             expression = expression.replace(new RegExp(`\\b${index + 1}\\b`, 'g'), variableName);
+//             this[variableName] = resultSet;
+//         });
+
+//         // Evaluate the logical expression
+//         let finalSet = eval(expression);
+
+//         finalDataSet = Array.from(finalSet).map(item => JSON.parse(item));
+
+//         return finalDataSet;
+
+//     } catch (error) {
+//         console.log('Error evaluating logical expression:', error);
+//         return [];
+//     }
+// }
