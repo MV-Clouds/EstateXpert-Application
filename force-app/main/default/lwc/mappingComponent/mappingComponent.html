@@ -26,14 +26,18 @@
                 <div key={pair.id} class="picklist-div">
                     <div class="flex-container">
                         <div class="index-display">{pair.displayIndex}</div>
+
                         <div class="flex-item">
-                            <lightning-combobox label="Listing Field" options={pair.listingOptions} data-index={index} value={pair.selectedListing} onchange={handleSourceFieldChange} disabled={checkboxValue} class="disabled"></lightning-combobox>
+                            <lightning-combobox label="Object" options={objectOptions} data-index={index} value={pair.selectedObject} onchange={handleObjectChange} disabled={checkboxValue}></lightning-combobox>
                         </div>
                         <div class="flex-item">
-                            <lightning-combobox label="Condition" options={pair.conditionsOptions} data-index={index} value={pair.selectedCondition} onchange={handleConditionChange} disabled={checkboxValue} class="disabled"></lightning-combobox>
+                            <lightning-combobox label={pair.firstlabel} options={pair.firstOptions} data-index={index} value={pair.selectedFirst} data-object={pair.selectedObject} onchange={handleFirstFieldChange} disabled={checkboxValue}></lightning-combobox>
                         </div>
                         <div class="flex-item">
-                            <lightning-combobox label="Inquiry Field" options={pair.inquiryOptions} data-index={index} value={pair.selectedInquiry} onchange={handleDestinationFieldChange} disabled={checkboxValue} class="disabled"></lightning-combobox>
+                            <lightning-combobox label="Condition" options={pair.conditionsOptions} data-index={index} value={pair.selectedCondition} onchange={handleConditionChange} disabled={checkboxValue}></lightning-combobox>
+                        </div>
+                        <div class="flex-item">
+                            <lightning-combobox label={pair.secondlabel} options={pair.secondOptions} data-index={index} value={pair.selectedSecond} data-object={pair.selectedObject} onchange={handleSecondFieldChange} disabled={checkboxValue}></lightning-combobox>
                         </div>
                         <div class="icon-button-del">
                             <lightning-button-icon class={delButtonClass} icon-name="utility:delete" alternative-text="Delete This Mapping" value={index} onclick={deletePair} disabled={checkboxValue}></lightning-button-icon>

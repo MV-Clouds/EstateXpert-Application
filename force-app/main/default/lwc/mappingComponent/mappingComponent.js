@@ -24,6 +24,11 @@ export default class MappingComponent extends LightningElement {
         { label: 'Equal To', value: 'equalTo', type: 'DOUBLE', type2: 'TEXT' },
         { label: 'Contains', value: 'contains', type: 'TEXT', type2: 'TEXT' }
     ];
+
+    @track objectOptions = [
+        { label: 'Listing', value: 'Listing__c' },
+        { label: 'Inquiry', value: 'Inquiry__c' }
+    ];
     @track plainBackgroundUrl = plainBackground;
 
     get delButtonClass() {
@@ -122,139 +127,210 @@ export default class MappingComponent extends LightningElement {
         if (this.listingOptions != null) {
             mappings.forEach((mapping) => {
                 this.isLoading = true;
-                const [selectedListing, condition, selectedInquiry] = mapping.split(':');
+                const [selectedObject ,selectedListing, condition, selectedInquiry] = mapping.split(':');
                 if (selectedListing && selectedInquiry && condition) {
+                    const isInquiry = selectedObject === 'Inquiry__c';
                     const newPair = {
+                        selectedObject : selectedObject ,
                         id: this.dropDownPairs.length,
-                        selectedListing: selectedListing,
-                        selectedInquiry: selectedInquiry,
+                        selectedFirst: selectedListing,
+                        selectedSecond: selectedInquiry,
                         selectedCondition: condition,
-                        listingOptions: this.listingOptions,
-                        inquiryOptions: this.filterInquiryOptions(selectedListing),
-                        conditionsOptions: this.filterConditionOptions(selectedListing),
-                        isInquiryPicklistDisabled: false
+                        conditionsOptions : this.filterConditionOptions(selectedListing),
+                        firstlabel: isInquiry ? 'Inquiry Field' : 'Listing Field',
+                        secondlabel: isInquiry ? 'Listing Field' : 'Inquiry Field',
+                        firstOptions: isInquiry ? this.inquiryOptions : this.listingOptions,
+                        secondOptions: isInquiry ? this.listingOptions : this.inquiryOptions
                     };
                     this.dropDownPairs.push(newPair);
                 }
-                this.filterAndUpdateListingOptions();
-                this.filterAndUpdateInquiryOptions();
+                this.filterAndUpdateOptions();
                 this.isLoading = false;
             });
             this.isLoading = false;
         }
     }
+    
+    filterAndUpdateOptions() {
+        const selectedFirstOptions = new Set();
+        const selectedSecondOptions = new Set();
+    
+        this.dropDownPairs.forEach(pair => {
+            if (pair.selectedFirst) {
+                selectedFirstOptions.add(pair.selectedFirst);
+            }
+            if (pair.selectedSecond) {
+                selectedSecondOptions.add(pair.selectedSecond);
+            }
+        });
+    
+        // Update the options for each pair
+        this.dropDownPairs = this.dropDownPairs.map(pair => {
+            let filteredFirstOptions = this.listingOptions;
+            let filteredSecondOptions = this.inquiryOptions;
+    
+            if (pair.selectedObject === 'Listing__c') {
+                filteredFirstOptions = this.listingOptions.filter(option => !selectedFirstOptions.has(option.value) || option.value === pair.selectedFirst);
+                filteredSecondOptions = this.inquiryOptions.filter(option => !selectedSecondOptions.has(option.value) || option.value === pair.selectedSecond);
+            } else if (pair.selectedObject === 'Inquiry__c') {
+                filteredFirstOptions = this.inquiryOptions.filter(option => !selectedFirstOptions.has(option.value) || option.value === pair.selectedFirst);
+                filteredSecondOptions = this.listingOptions.filter(option => !selectedSecondOptions.has(option.value) || option.value === pair.selectedSecond);
+            }
+    
+            return {
+                ...pair,
+                firstOptions: filteredFirstOptions,
+                secondOptions: filteredSecondOptions
+            };
+        });
+    
+        // Ensure previously selected values in other rows remain valid
+        this.dropDownPairs.forEach((pair, index) => {
+            if (pair.selectedFirst && !this.dropDownPairs[index].firstOptions.find(option => option.value === pair.selectedFirst)) {
+                this.dropDownPairs[index].selectedFirst = '';
+            }
+            if (pair.selectedSecond && !this.dropDownPairs[index].secondOptions.find(option => option.value === pair.selectedSecond)) {
+                this.dropDownPairs[index].selectedSecond = '';
+            }
+        });
+    
+        // Refresh the dropDownPairs to update the view
+        this.dropDownPairs = [...this.dropDownPairs];
+    }
+    
+    
 
     setCheckboxValue(isAutoSync) {
         this.checkboxValue = isAutoSync === 'true';
     }
 
-    filterInquiryOptions(selectedListing) {
-        if (!selectedListing) return this.inquiryOptions;
-        const selectedListingField = this.listingOptions.find(
-            (option) => option.value === selectedListing
-        );
-        if (selectedListingField) {
-            return this.mainInquiryOptions.filter((option) => option.dataType === selectedListingField.dataType);
-        }
-        return this.inquiryOptions;
-    }
-
-    handleSourceFieldChange(event) {
+    handleFirstFieldChange(event) {
         const index = event.target.dataset.index;
-        this.dropDownPairs[index].selectedListing = event.detail.value;
-        this.dropDownPairs[index].inquiryOptions = this.filterInquiryOptions(event.detail.value);
-        this.dropDownPairs[index].conditionsOptions = this.filterConditionOptions(event.detail.value);
-        this.filterAndUpdateListingOptions();
-
-    }
-
-    filterConditionOptions(selectedListing) {
-        if (!selectedListing) return this.conditionsOptions;
-
-        const selectedListingField = this.listingOptions.find(
-            (option) => option.value === selectedListing
-        );
-
-        console.log(selectedListingField.dataType);
-
-        if (selectedListingField) {
-            if (selectedListingField.dataType === 'DOUBLE' || selectedListingField.dataType === 'CURRENCY' || selectedListingField.dataType === 'DATETIME') {
-                return this.conditionsOptions.filter((option) => option.type === 'DOUBLE');
-            }
-            else {
-                return this.conditionsOptions.filter(
-                    (option) => option.type === 'TEXT' || option.type2 === 'TEXT'
-                );
-            }
+        const selectedFirst = event.detail.value;
+        const selectedObject = event.target.dataset.object;
+    
+        let filteredSecondOptions = [];
+    
+        if (selectedObject === 'Listing__c') {
+            const selectedFirstField = this.listingOptions.find(option => option.value === selectedFirst);
+            const selectedFirstDataType = selectedFirstField ? selectedFirstField.dataType : null;
+            
+            filteredSecondOptions = this.mainInquiryOptions.filter(option => option.dataType === selectedFirstDataType);
+        } else if (selectedObject === 'Inquiry__c') {
+            const selectedFirstField = this.inquiryOptions.find(option => option.value === selectedFirst);
+            const selectedFirstDataType = selectedFirstField ? selectedFirstField.dataType : null;
+            filteredSecondOptions = this.mainListingOptions.filter(option => option.dataType === selectedFirstDataType);
         }
+    
+        this.dropDownPairs = this.dropDownPairs.map((pair, i) => {
+            if (i === parseInt(index, 10)) {
+                return { ...pair, selectedFirst, secondOptions: filteredSecondOptions ,conditionsOptions: this.filterConditionOptions(selectedFirst),selectedSecond : '',selectedCondition : ''};
+            }
+            return pair;
+        });
+
+        this.updateSaveButtonState();
+
     }
 
     handleConditionChange(event) {
         const index = event.target.dataset.index;
-        this.dropDownPairs[index].selectedCondition = event.detail.value;
+        const selectedCondition = event.detail.value;
+
+        this.dropDownPairs = this.dropDownPairs.map((pair, i) => {
+            if (i === parseInt(index, 10)) {
+                return { ...pair, selectedCondition };
+            }
+            return pair;
+        });
+
+        this.updateSaveButtonState();
+
     }
 
-    filterAndUpdateListingOptions() {
-        const selectedListings = this.dropDownPairs.map((pair) => pair.selectedListing);
-        this.listingOptions = this.mainListingOptions.filter(
-            (option) => !selectedListings.includes(option.value)
-        );
-    }
-
-    filterAndUpdateInquiryOptions() {
-        const selectedInquiries = this.dropDownPairs.map((pair) => pair.selectedInquiry);
-        this.inquiryOptions = this.mainInquiryOptions.filter(
-            (option) => !selectedInquiries.includes(option.value)
-        );
-    }
-
-    handleDestinationFieldChange(event) {
+    handleSecondFieldChange(event) {
         const index = event.target.dataset.index;
-        this.dropDownPairs[index].selectedInquiry = event.detail.value;
-        this.filterAndUpdateInquiryOptions();
+        const selectedSecond = event.detail.value;
 
-        const isInquiryValid = this.dropDownPairs.every(
-            (pair) => pair.selectedInquiry
-          );
-          console.log('isInquiryValid ==> ' , isInquiryValid);
+        this.dropDownPairs = this.dropDownPairs.map((pair, i) => {
+            if (i === parseInt(index, 10)) {
+                return { ...pair, selectedSecond };
+            }
+            return pair;
+        });
 
-        const isListingValid = this.dropDownPairs.every(
-        (pair) => pair.selectedListing
-        );
-        console.log('isListingValid ==> ' , isListingValid);
+        this.updateSaveButtonState();
 
-        const isOptionValid = this.dropDownPairs.every(
-            (pair) => pair.selectedCondition
-        );
+    }
 
-        console.log('isListingValid ==> ' , isListingValid);
-
-        if (isListingValid && isInquiryValid && isListingValid ) {
-            this.isSaveButtonDisabled = false;
+    filterConditionOptions(selectedFirst) {
+        if (!selectedFirst) return this.conditionsOptions;
+    
+        const selectedFirstField = this.listingOptions.find(option => option.value === selectedFirst) || 
+                                   this.inquiryOptions.find(option => option.value === selectedFirst);
+    
+        if (selectedFirstField) {
+            if (selectedFirstField.dataType === 'DOUBLE' || selectedFirstField.dataType === 'CURRENCY' || selectedFirstField.dataType === 'DATETIME') {
+                return this.conditionsOptions.filter(option => option.type === 'DOUBLE');
+            } else {
+                return this.conditionsOptions.filter(option => option.type === 'TEXT' || option.type2 === 'TEXT');
+            }
         }
-        
+        return this.conditionsOptions;
+    }
+
+    handleObjectChange(event) {
+        const index = event.target.dataset.index;
+        const selectedObject = event.target.value;
+
+        const isInquiry = selectedObject === 'Inquiry__c';
+        this.dropDownPairs[index] = {
+            ...this.dropDownPairs[index],
+            selectedObject : selectedObject,
+            selectedFirst : '',
+            selectedSecond : '',
+            selectedCondition: '',
+            conditionsOptions : this.conditionsOptions,
+            firstlabel: isInquiry ? 'Inquiry Field' : 'Listing Field',
+            secondlabel: isInquiry ? 'Listing Field' : 'Inquiry Field',
+            firstOptions: isInquiry ? this.inquiryOptions : this.listingOptions,
+            secondOptions: isInquiry ? this.listingOptions : this.inquiryOptions
+    
+        };
+        this.dropDownPairs = [...this.dropDownPairs];
+        this.filterAndUpdateOptions();
+    }
+
+
+    updateSaveButtonState() {
+        const allNotEmpty = this.dropDownPairs.every(pair => pair.selectedFirst !== '' && pair.selectedSecond !== '' && pair.selectedCondition !== '');
+        console.log('allNotEmpty ==> ' ,allNotEmpty);
+        this.isSaveButtonDisabled = !allNotEmpty;
     }
 
     deletePair(event) {
         const index = event.target.value;
         this.dropDownPairs.splice(index, 1);
-        this.filterAndUpdateListingOptions();
-        this.filterAndUpdateInquiryOptions();
+        this.filterAndUpdateOptions();
     }
 
     addNewPair() {
+        const selectedObject = 'Listing__c';
+        const isInquiry = selectedObject === 'Inquiry__c';
+
         this.dropDownPairs.push({
             id: this.dropDownPairs.length,
-            selectedListing: '',
-            selectedInquiry: '',
+            selectedObject : selectedObject,
+            firstOptions: isInquiry ? this.inquiryOptions : this.listingOptions,
+            secondOptions: isInquiry ? this.listingOptions : this.inquiryOptions,
+            selectedFirst: '',
+            selectedSecond: '',
             selectedCondition: '',
-            listingOptions: this.listingOptions,
-            inquiryOptions: this.inquiryOptions,
-            conditionsOptions: this.conditionsOptions,
-            isInquiryPicklistDisabled: false
+            conditionsOptions : this.conditionsOptions,
+            firstlabel: isInquiry ? 'Inquiry Field' : 'Listing Field',
+            secondlabel: isInquiry ? 'Listing Field' : 'Inquiry Field',
         });
-        this.filterAndUpdateListingOptions();
-        this.filterAndUpdateInquiryOptions();
+        this.filterAndUpdateOptions();
     }
 
     handleAddPairClick() {
@@ -269,7 +345,7 @@ export default class MappingComponent extends LightningElement {
     handleConfirmAddPair() {
         this.isLoading = true;
         const data = this.dropDownPairs.map((pair) =>
-            `${pair.selectedListing}:${pair.selectedCondition}:${pair.selectedInquiry}`
+            `${pair.selectedObject}:${pair.selectedFirst}:${pair.selectedCondition}:${pair.selectedSecond}`
         ).join(';');
 
         saveMappings({ mappingsData: data, checkboxValue: this.checkboxValue ,logicalCondition : this.logicalCondition})
