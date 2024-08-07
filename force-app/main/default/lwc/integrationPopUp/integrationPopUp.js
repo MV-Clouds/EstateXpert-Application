@@ -5,44 +5,86 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class IntegrationPopUp extends LightningElement {
     @api integrationname = '';
-    @api integrationlabel = '';
     @track isModalOpen = true;
-    @track secretAccessId = '';
-    @track accessId = '';
-    @track s3BucketNameId = '';
-    @track s3RegionNameId = '';
     @track saveDisable = false;
+    @track fieldsData = {};
     @track isLoading = true;
 
+    get isAWS() {
+        return this.integrationname === 'AWS';
+    }
+
+    get isGmail() {
+        return this.integrationname === 'Gmail';
+    }
+
+    get isOutlook() {
+        return this.integrationname === 'Outlook';
+    }
+
+    get isWhatsApp() {
+        return this.integrationname === 'WhatsApp';
+    }
+
+    get isSocialMedia() {
+        return this.integrationname === 'Social Media';
+    }
+
+    /**
+    * Method Name : connectedCallback
+    * @description : call the intializeValues method
+    * * Date: 6/08/2024
+    * Created By:Vyom Soni
+    */
     connectedCallback(){
         this.intializeValues();
     }
 
-    intializeValues(){
-        getSettings().then((data,error) => {
-            this.isLoading = true;
-            if (data) {
-                this.secretAccessId = data.MVEX__AWS_Secret_Access_Key__c;
-                this.accessId = data.MVEX__AWS_Access_Key__c;
-                this.s3BucketNameId = data.MVEX__S3_Bucket_Name__c;
-                this.s3RegionNameId = data.MVEX__S3_Region_Name__c;
-            }  else if (error) {
+    /**
+    * Method Name : intializeValues
+    * @description : get the record data from the custom settings
+    * * Date: 6/08/2024
+    * Created By:Vyom Soni
+    */
+    intializeValues() {
+        getSettings({ integrationType: this.integrationname })
+            .then(data => {
+                this.isLoading = true;
+                if (data) {
+                    this.fieldsData = { ...data }; // Store retrieved data in fieldsData object
+                } else {
+                    this.fieldsData = {}; // Initialize fieldsData as empty if no data found
+                }
+                this.isLoading = false;
+            })
+            .catch(() => {
                 this.dispatchEvent(
                     new ShowToastEvent({
                         title: 'Error loading settings',
-                        message: 'Error retrieve values',
+                        message: 'Error retrieving values',
                         variant: 'error',
                     })
                 );
-            }
-            this.isLoading = false;
-        })
+                this.isLoading = false;
+            });
     }
 
+    /**
+    * Method Name : openModal
+    * @description : show the pop-up modal
+    * * Date: 6/08/2024
+    * Created By:Vyom Soni
+    */
     openModal() {
         this.isModalOpen = true;
     }
 
+    /**
+    * Method Name : closeModal
+    * @description : close the pop-up modal
+    * * Date: 6/08/2024
+    * Created By:Vyom Soni
+    */
     closeModal() {
         const customEvent = new CustomEvent('closemodal', {
             detail: false
@@ -52,83 +94,88 @@ export default class IntegrationPopUp extends LightningElement {
         this.dispatchEvent(customEvent);
     }
 
+    /**
+    * Method Name : handleInputChange
+    * @description : validate the change object as per input values
+    * * Date: 6/08/2024
+    * Created By:Vyom Soni
+    */
     handleInputChange(event) {
         const field = event.target.dataset.id;
+        const value = event.target.value;
+
         this.saveDisable = false;
-        const inputField = event.target;
-        const value = inputField.value;
 
-        // Check for spaces in the input value
+        // Update the fieldsData object dynamically
+        this.fieldsData[field] = value;
+
+        // Validate the input
         if (/\s/.test(value)) {
-            inputField.setCustomValidity('Spaces are not allowed.');
+            event.target.setCustomValidity('Spaces are not allowed.');
         } else {
-            inputField.setCustomValidity(''); // Clear any previous error messages
+            event.target.setCustomValidity('');
         }
 
-        inputField.reportValidity(); // Show the error message if there's an error
-
-        if (field === 'secretAccessId') {
-            this.secretAccessId = event.target.value;
-        } else if (field === 'accessId') {
-            this.accessId = event.target.value;
-        } else if (field === 's3BucketNameId') {
-            this.s3BucketNameId = event.target.value;
-        } else if (field === 's3RegionNameId') {
-            this.s3RegionNameId = event.target.value;
-        }
-
+        event.target.reportValidity();
         this.checkValidity();
     }
 
+    /**
+    * Method Name : checkValidity
+    * @description : check the validation for the all input fields.
+    * * Date: 6/08/2024
+    * Created By:Vyom Soni
+    */
     checkValidity() {
         const inputs = this.template.querySelectorAll('lightning-input');
         let allValid = true;
 
         inputs.forEach(input => {
+            // Trigger validation on each input
+            input.reportValidity();
+
+            // If any input is invalid, set allValid to false
             if (!input.checkValidity()) {
                 allValid = false;
             }
-        });
+    });
 
-        this.saveDisable = !allValid;
+    // Disable the save button if any input is invalid
+    this.saveDisable = !allValid;
+    return allValid;
     }
 
-    validateFields() {
-        const allValid = [...this.template.querySelectorAll('lightning-input')]
-            .reduce((validSoFar, inputCmp) => {
-                inputCmp.reportValidity();
-                return validSoFar && inputCmp.checkValidity();
-            }, true);
-        return allValid;
-    }
-
+    /**
+    * Method Name : saveDetails
+    * @description : save the input data in custom settigns
+    * * Date: 6/08/2024
+    * Created By:Vyom Soni
+    */
     saveDetails() {
-        if (this.validateFields()) {
-            saveSettings({ 
-                secretAccessId: this.secretAccessId, 
-                accessId: this.accessId, 
-                s3BucketNameId: this.s3BucketNameId, 
-                s3RegionNameId: this.s3RegionNameId 
-            })
-            .then(() => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Success',
-                        message: 'Credentials saved successfully',
-                        variant: 'success',
-                    })
-                );
-                this.closeModal();
-            })
-            .catch(error => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Error saving settings',
-                        message: error.body.message,
-                        variant: 'error',
-                    })
-                );
-            });
+        if (this.checkValidity()) {
+            // Serialize the fieldsData object to JSON
+            const jsonData = JSON.stringify(this.fieldsData);
+
+            saveSettings({ jsonData: jsonData, integrationType: this.integrationname })
+                .then(() => {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Success',
+                            message: 'Credentials saved successfully',
+                            variant: 'success',
+                        })
+                    );
+                    this.closeModal();
+                })
+                .catch(error => {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Error saving settings',
+                            message: error.body.message,
+                            variant: 'error',
+                        })
+                    );
+                });
         } else {
             this.dispatchEvent(
                 new ShowToastEvent({

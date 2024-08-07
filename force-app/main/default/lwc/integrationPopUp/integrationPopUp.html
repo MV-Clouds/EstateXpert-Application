@@ -5,7 +5,6 @@
     <template if:true={isModalOpen}>
         <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open custom-modal">
             <div class="slds-modal__container custom-modal__container">
-                <!-- Modal/Popup Header -->
                 <header class="slds-modal__header custom-modal__header">
                     <button class="slds-button slds-button_icon slds-button_icon-inverse close-btn" title="Close" onclick={closeModal}>
                         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="#000000" stroke="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#ffffff" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"></path></g></svg>
@@ -14,24 +13,49 @@
                     <h2 class="slds-text-heading_medium">{integrationlabel} Integration</h2>
                 </header>
 
-                <!-- Modal/Popup Body -->
                 <div class="slds-modal__content slds-p-around_medium custom-modal__content">
                     <div class="body-cover">
                         <div class="image-container">
                             <img src="/resource/integrationPopupImg" alt="Integration Graphic" class="integration-image">
                         </div>
                         <div class="content-section">
-                            <div class="inupt-cover">
-                                <lightning-input label="Secret Access Key" value={secretAccessId} placeholder="Enter Secret Access Key" onchange={handleInputChange} data-id="secretAccessId" min-length="1" max-length="255" class="custom-input" required></lightning-input>
-                                <lightning-input label="Access Key" value={accessId} placeholder="Enter Access Key" onchange={handleInputChange} data-id="accessId" class="custom-input" min-length="1" max-length="255" required></lightning-input>
-                                <lightning-input label="S3 Bucket Name" value={s3BucketNameId} placeholder="Enter S3 Bucket Name" onchange={handleInputChange} data-id="s3BucketNameId" min-length="1" max-length="255" class="custom-input" required></lightning-input>
-                                <lightning-input label="S3 Region Name" value={s3RegionNameId} placeholder="Enter S3 Region Name" onchange={handleInputChange} data-id="s3RegionNameId" min-length="1" max-length="255" class="custom-input" required></lightning-input>
+                            <div class="input-cover">
+                                <!-- AWS Fields -->
+                                <template if:true={isAWS}>
+                                    <lightning-input label="Secret Access Key" value={fieldsData.MVEX__AWS_Secret_Access_Key__c} placeholder="Enter Secret Access Key" onchange={handleInputChange} data-id="MVEX__AWS_Secret_Access_Key__c" class="custom-input" required></lightning-input>
+                                    <lightning-input label="Access Key" value={fieldsData.MVEX__AWS_Access_Key__c} placeholder="Enter Access Key" onchange={handleInputChange} data-id="MVEX__AWS_Access_Key__c" class="custom-input" required></lightning-input>
+                                    <lightning-input label="S3 Bucket Name" value={fieldsData.MVEX__S3_Bucket_Name__c} placeholder="Enter S3 Bucket Name" onchange={handleInputChange} data-id="MVEX__S3_Bucket_Name__c" class="custom-input" required></lightning-input>
+                                    <lightning-input label="S3 Region Name" value={fieldsData.MVEX__S3_Region_Name__c} placeholder="Enter S3 Region Name" onchange={handleInputChange} data-id="MVEX__S3_Region_Name__c" class="custom-input" required></lightning-input>
+                                </template>
+
+                                <!-- Gmail Fields -->
+                                <template if:true={isGmail}>
+                                    <lightning-input label="Gmail Client ID" value={fieldsData.MVEX__Gmail_Client_ID__c} placeholder="Enter Gmail Client ID" onchange={handleInputChange} data-id="MVEX__Gmail_Client_ID__c" class="custom-input" required></lightning-input>
+                                    <lightning-input label="Gmail Client Secret" value={fieldsData.MVEX__Gmail_Client_Secret__c} placeholder="Enter Gmail Client Secret" onchange={handleInputChange} data-id="MVEX__Gmail_Client_Secret__c" class="custom-input" required></lightning-input>
+                                </template>
+
+                                <!-- Outlook Fields -->
+                                <template if:true={isOutlook}>
+                                    <lightning-input label="Outlook Client ID" value={fieldsData.MVEX__Outlook_Client_ID__c} placeholder="Enter Outlook Client ID" onchange={handleInputChange} data-id="MVEX__Outlook_Client_ID__c" class="custom-input" required></lightning-input>
+                                    <lightning-input label="Outlook Client Secret" value={fieldsData.MVEX__Outlook_Client_Secret__c} placeholder="Enter Outlook Client Secret" onchange={handleInputChange} data-id="MVEX__Outlook_Client_Secret__c" class="custom-input" required></lightning-input>
+                                </template>
+
+                                <!-- WhatsApp Fields -->
+                                <template if:true={isWhatsApp}>
+                                    <lightning-input label="WhatsApp Client ID" value={fieldsData.MVEX__WhatsApp_Client_ID__c} placeholder="Enter WhatsApp API Key" onchange={handleInputChange} data-id="MVEX__WhatsApp_Client_ID__c" class="custom-input" required></lightning-input>
+                                    <lightning-input label="WhatsApp Client Secret ID" value={fieldsData.MVEX__WhatsApp_Client_Secret__c} placeholder="Enter WhatsApp Phone Number ID" onchange={handleInputChange} data-id="MVEX__WhatsApp_Client_Secret__c" class="custom-input" required></lightning-input>
+                                </template>
+
+                                <!-- WhatsApp Fields -->
+                                <template if:true={isSocialMedia}>
+                                    <lightning-input label="Social Media Client ID" value={fieldsData.MVEX__Client_ID__c} placeholder="Enter WhatsApp API Key" onchange={handleInputChange} data-id="MVEX__Client_ID__c" class="custom-input" required></lightning-input>
+                                    <lightning-input label="Social Media Secret ID" value={fieldsData.MVEX__Client_Secret__c} placeholder="Enter WhatsApp Phone Number ID" onchange={handleInputChange} data-id="MVEX__Client_Secret__c" class="custom-input" required></lightning-input>
+                                </template>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Modal/Popup Footer -->
                 <footer class="custom-modal__footer">
                     <button class="cancel-btn" onclick={closeModal}>Cancel</button>
                     <button class="save-btn" onclick={saveDetails} disabled={saveDisable}>Save</button>

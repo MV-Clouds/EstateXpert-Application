@@ -7,6 +7,7 @@ export default class EstateXpert_Control_Center extends NavigationMixin(Lightnin
     @track showIntegrationModal=false;
     @track integrationName = '';
     @track integrationLabel = '';
+    @track isWaterMarkUploader = false;
 
     openSelectionModel1(event){
         event.preventDefault();
@@ -88,29 +89,44 @@ export default class EstateXpert_Control_Center extends NavigationMixin(Lightnin
     }
 
     openSelectionModel7(){
-        this.showtoastMessage();
+        this.isWaterMarkUploader = true;
+    }
+
+    closeWaterMarkModal(){
+        this.isWaterMarkUploader = false;
     }
 
     openSelectionModel8(){
-        this.showtoastMessage();
+        this.integrationLabel = 'Gmail';
+        this.integrationName = 'Gmail';
+        // this.showtoastMessage();
+        this.showIntegrationModal = true;
     }
 
     openSelectionModel9(){
-        this.showtoastMessage();
+        this.integrationLabel = 'Outlook';
+        this.integrationName = 'Outlook';
+        // this.showtoastMessage();
+        this.showIntegrationModal = true;
     }
 
     openSelectionModel10(){
+         this.integrationLabel = 'WhatsApp';
+        this.integrationName = 'WhatsApp';
+        // this.showtoastMessage();
+        this.showIntegrationModal = true;
+    }
+
+    openSelectionModel11(){
         this.integrationLabel = 'AWS';
         this.integrationName = 'AWS';
         this.showIntegrationModal = true;
     }
 
-    openSelectionModel11(){
-        this.showtoastMessage();
-    }
-
     openSelectionModel12(){
-        this.showtoastMessage();
+         this.integrationLabel = 'Social Media';
+        this.integrationName = 'Social Media';
+        this.showIntegrationModal = true;
     }
 
     openSelectionModel13(event){

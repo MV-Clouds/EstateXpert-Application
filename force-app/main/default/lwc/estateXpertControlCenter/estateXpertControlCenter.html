@@ -59,12 +59,21 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Listing Template</h1>
                         </div>
+                        <div class="tile" onclick={openSelectionModel7}>
+                            <div class="tile-icon">
+                                <span class="slds-icon_container">
+                                    <img src="/resource/MVEX__controlcenterimg/watermarkimage.png" alt="support" class="tile-icon-img">
+                                    <span class="slds-assistive-text"></span>
+                                </span>
+                            </div>
+                            <h1 class="tile-title slds-text-heading_label">Watermark Uploader</h1>
+                        </div>
                     </div>
                 </div>
                 <div class="tiles-section">
                     <div class="slds-box slds-box_xx-small slds-theme_default tiles-section-header">Integrations</div>
                     <div class="tile-flex">
-                        <div class="tile" onclick={openSelectionModel7}>
+                        <div class="tile" onclick={openSelectionModel8}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/gmail.png" alt="gmail" class="tile-icon-img">
@@ -73,7 +82,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Gmail Integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel8}>
+                        <div class="tile" onclick={openSelectionModel9}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/outlook.png" alt="outlook" class="tile-icon-img">
@@ -82,7 +91,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Outlook Integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel9}>
+                        <div class="tile" onclick={openSelectionModel10}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/whatsapp.png" alt="whatsapp" class="tile-icon-img">
@@ -91,7 +100,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">Whatsapp integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel10}>
+                        <div class="tile" onclick={openSelectionModel11}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <svg viewBox="0 0 16 16" fill="none" height="3rem" width="3rem">
@@ -112,7 +121,7 @@
                             </div>
                             <h1 class="tile-title slds-text-heading_label">AWS Integration</h1>
                         </div>
-                        <div class="tile" onclick={openSelectionModel11}>
+                        <div class="tile" onclick={openSelectionModel12}>
                             <div class="tile-icon">
                                 <span class="slds-icon_container">
                                     <img src="/resource/MVEX__controlcenterimg/socialmedia.png" alt="social media" class="tile-icon-img">
@@ -173,5 +182,8 @@
             integrationlabel={integrationLabel}
             onclosemodal = {handleModalSelect}
         ></c-integration-pop-up>
+    </template>
+    <template if:true={isWaterMarkUploader}>
+        <c-water-mark-image-uploader onclose={closeWaterMarkModal}></c-water-mark-image-uploader>
     </template>
 </template>
