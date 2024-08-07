@@ -149,6 +149,7 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
             })
             .catch(error => console.error('Error getting properties from apex:', error));
     }
+
     applyFiltersData(inquiry) {
         try {
             this.pagedFilteredListingData = this.listingData;
@@ -157,9 +158,9 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
             this.currentPage = 1;
     
             console.log('filters ==> ', JSON.stringify(this.filters));
-            console.log('listing ==> ', inquiry);
+            console.log('inquiry ==> ', inquiry);
     
-            let filterResults = [];
+            let filterResults = {};
     
             this.filters.forEach((filter, index) => {
                 console.log(`Processing filter at index ${index}: ${filter}`);
@@ -183,23 +184,14 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
                     }
     
                     if (operation === 'contains') {
-                        console.log(recordValue);
-                        console.log(inquiryValue);
                         if (typeof recordValue === 'string' && typeof inquiryValue === 'string') {
-                            if(object === 'Inquiry__c'){
-                                return recordValue.includes(inquiryValue);
-                            }
-                            else{
-                                return inquiryValue.includes(recordValue);
-                            }
+                            return recordValue.includes(inquiryValue);
                         }
                     } else if (operation === 'equalTo') {
                         return recordValue === inquiryValue;
                     } else if (operation === 'greaterThan') {
                         return parseFloat(recordValue) > parseFloat(inquiryValue);
                     } else if (operation === 'lessThan') {
-                        console.log('recordValue ==> ' , recordValue);
-                        console.log('inquiryValue ==> ' , inquiryValue);
                         return parseFloat(recordValue) < parseFloat(inquiryValue);
                     }
     
@@ -228,15 +220,17 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
     }
     
     
+    
     evaluateLogicalExpression(filterResults, logicalExpression) {
         try {
             let finalFilteredData = [];
             console.log('filterResults ==> ', JSON.stringify(filterResults));
+            console.log('filterResults length ==> ', Object.keys(filterResults).length);
     
-            // Create sets for each filter result
             let resultSets = {};
             Object.keys(filterResults).forEach(index => {
                 if (filterResults[index] && filterResults[index].length > 0) {
+                    console.log(index);
                     resultSets[index] = new Set(filterResults[index].map(item => JSON.stringify(item)));
                     console.log(`Length of resultSets[${index}] ==> `, resultSets[index].size);
                 }
@@ -244,37 +238,58 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
     
             console.log('resultSets ==> ', JSON.stringify(resultSets));
     
-            // Parse logical expression
             let expression = logicalExpression.replace(/\b(\d+)\b/g, match => {
-                return resultSets[match] ? `resultSets["${match}"]` : 'false';
+                return resultSets[match] ? `resultSets["${match}"]` : 'new Set()';
             });
     
-            // Remove invalid logical operators (e.g., '|| false ||' -> '||')
-            expression = expression.replace(/(\|\|\s*false\s*\|\|)|(&&\s*false\s*&&)/g, 'false');
-            expression = expression.replace(/\|\|\s*false\s*\|\|/g, '||');
-            expression = expression.replace(/&&\s*false\s*&&/g, '&&');
+            console.log('Initial expression ==> ', expression);
     
-            // Clean up expression
-            expression = expression.replace(/\bfalse\s*\|\|\s*false\b/g, 'false');
-            expression = expression.replace(/\bfalse\s*&&\s*false\b/g, 'false');
-            expression = expression.replace(/\bfalse\s*\|\|/g, '');
-            expression = expression.replace(/\|\|\s*\bfalse\b/g, '');
-            expression = expression.replace(/\bfalse\s*&&/g, '');
-            expression = expression.replace(/&&\s*\bfalse\b/g, '');
+            expression = expression.replace(/\|\|\s*new Set\(\)\s*\|\|/g, '||');
+            expression = expression.replace(/&&\s*new Set\(\)\s*&&/g, '&&');
+            expression = expression.replace(/\bnew Set\(\)\s*\|\|\s*new Set\(\)\b/g, 'new Set()');
+            expression = expression.replace(/\bnew Set\(\)\s*&&\s*new Set\(\)\b/g, 'new Set()');
+            expression = expression.replace(/\bnew Set\(\)\s*\|\|/g, '');
+            expression = expression.replace(/\|\|\s*\bnew Set\(\)\b/g, '');
+            expression = expression.replace(/\bnew Set\(\)\s*&&/g, '');
+            expression = expression.replace(/&&\s*\bnew Set\(\)\b/g, '');
     
-            console.log('expression ==> ', expression);
+            console.log('Cleaned expression ==> ', expression);
     
-            // Evaluate the logical expression
             let finalSet = new Function('resultSets', `
                 let result = new Set();
-                result = ${expression};
+                let evaluate = (sets) => {
+                    if (sets) {
+                        if (Array.isArray(sets)) {
+                            sets.forEach(set => evaluate(set));
+                        } else if (sets instanceof Set) {
+                            sets.forEach(item => result.add(item));
+                        }
+                    }
+                };
+                let intersection = (set1, set2) => {
+                    let result = new Set();
+                    set1.forEach(item => {
+                        if (set2.has(item)) {
+                            result.add(item);
+                        }
+                    });
+                    return result;
+                };
+                let union = (set1, set2) => {
+                    let result = new Set(set1);
+                    set2.forEach(item => result.add(item));
+                    return result;
+                };
+                let evaluatedExpression = ${expression};
+                evaluate(evaluatedExpression);
                 return result;
             `)(resultSets);
     
             console.log('finalSet ==> ', finalSet);
     
             finalFilteredData = Array.from(finalSet).map(item => JSON.parse(item));
-            console.log('finalFilteredData ==> ', finalFilteredData);
+            console.log('finalFilteredData ==> ', JSON.stringify(finalFilteredData));
+            console.log('finalFilteredData ==> ',finalFilteredData.length);
     
             return finalFilteredData;
     
@@ -284,7 +299,7 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
         }
     }
     
-
+    
     /**
     * Method Name: updateMapMarkers
     * @description: this method is used to update and set the markers on the map for the properties with the pagination
