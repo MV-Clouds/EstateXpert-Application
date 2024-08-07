@@ -1,69 +1,32 @@
 import { LightningElement, track ,wire} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getRecords from '@salesforce/apex/PropertySearchController.getRecords';
-import NoImageFound from '@salesforce/resourceUrl/blankImage';
-import propertyIcons from '@salesforce/resourceUrl/PropertyIcons';
-import location_icon from '@salesforce/resourceUrl/location_icon';
-import mapCss_V1 from '@salesforce/resourceUrl/mapCss_V1';
-import { loadStyle } from 'lightning/platformResourceLoader';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CurrentPageReference } from 'lightning/navigation';
 import getMetadata from '@salesforce/apex/DynamicMappingCmp.getMetadata';
 
 export default class DisplayListingAndInquiry extends NavigationMixin(LightningElement) {
     @track recordId;
-    
-    @track mapMarkers = [];
     @track totalRecords = 0;
-    @track properties = [];
+    @track inquiries = [];
     @track currentPage = 1;
     @track searchTerm = '';
     @track isLoading = false;
     @track pageSize = 6;
-    @track bathroom_icon = propertyIcons + '/PropertyIcons/Bathroom.png';
-    @track bedroom_icon = propertyIcons + '/PropertyIcons/Bedroom.png';
-    @track location_icon = location_icon;
     @track pagedFilteredInquiryData = [];
     @track inquirydata = [];
-    @track propertyMediaUrls;
-    @track isPropertyAvailable = true;
-    @track selectedView = 'Grid'; 
+    @track isInquiryAvailable = true;
     @track filters = '';
     @track isAutoSync = false;
     @track logicalExpression = '';
     
-    @track NoImageFoundUrl = NoImageFound;
 
-    get gridButtonClass() {
-        return this.isGridView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
-    }
-
-    get listButtonClass() {
-        return this.isListView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
-    }
-
-    get mapButtonClass() {
-        return this.isMapView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral';
-    }
-
-    get isListView() {
-        return this.selectedView === 'List';
-    }
-
-    get isMapView() {
-        return this.selectedView === 'map';
-    }
-
-    get isGridView() {
-        return this.selectedView === 'Grid';
-    }
-
-    get totalProperties() {
+    get totalinquiries() {
         return this.pagedFilteredInquiryData.length;
     }
 
     get totalPages() {
-        return Math.ceil(this.totalProperties / this.pageSize);
+        return Math.ceil(this.totalinquiries / this.pageSize);
     }
 
     get isFirstPage() {
@@ -74,7 +37,7 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
         return this.currentPage === this.totalPages;
     }
 
-    get pagedProperties() {
+    get pagedInquries() {
         const startIndex = (this.currentPage - 1) * this.pageSize;
         return this.pagedFilteredInquiryData.slice(startIndex, startIndex + this.pageSize);
     }
@@ -101,7 +64,7 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
 
     /**
     * Method Name: ConnectedCallback
-    * @description: Standard ConnectedCallback method which executes when the component is loaded and it is calling apex to fetch all the properties and loading map library
+    * @description: Standard ConnectedCallback method which executes when the component is loaded and it is calling apex to fetch all the inquiries and loading map library
     * Date: 17/06/2024
     * Created By: Mitrajsinh Gohil
     * Last modified by : Rachit Shah
@@ -109,18 +72,7 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     connectedCallback() {
         console.log('Object Name ==> ' , this.objectName);
         console.log('recordId ==> ' , this.recordId);
-
-        this.isLoading = true;
         this.fetchMetadataRecords();
-        loadStyle(this, mapCss_V1)
-            .then(() =>{
-                console.log('CSS loaded');
-                this.isLoading = false;
-            })
-            .catch(error => {
-                console.error('Error loading CSS:', error);
-                this.isLoading = false;
-            });
     }
 
 
@@ -128,7 +80,7 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     applyFiltersData(listing) {
         try {
             this.pagedFilteredInquiryData = this.inquirydata;
-            this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
+            this.isInquiryAvailable = this.pagedFilteredInquiryData.length > 0;
             this.totalRecords = this.pagedFilteredInquiryData.length;
             this.currentPage = 1;
     
@@ -181,10 +133,10 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
             let finalFilteredData = this.evaluateLogicalExpression(filterResults, this.logicalExpression);
     
             this.pagedFilteredInquiryData = finalFilteredData;
+            this.inquirydata = finalFilteredData;
             this.totalRecords = finalFilteredData.length;
-            this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
+            this.isInquiryAvailable = this.pagedFilteredInquiryData.length > 0;
     
-            this.updateMapMarkers();
     
         } catch (error) {
             console.log('Error applying filters:', error);
@@ -257,9 +209,9 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
         });
     }
 
-        /**
+    /**
     * Method Name: fetchListings
-    * @description: this method is used to get all properties data from the apex and update the property list to display them
+    * @description: this method is used to get all inquiries data from the apex and update the property list to display them
     * Date: 17/06/2024
     * Created By: Mitrajsinh Gohil
     * Last modified by : Rachit Shah
@@ -281,36 +233,8 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
                 }
     
                 this.applyFiltersData(listing);
-                this.updateMapMarkers();
             })
-            .catch(error => console.error('Error getting properties from apex:', error));
-    }
-    /**
-    * Method Name: updateMapMarkers
-    * @description: this method is used to update and set the markers on the map for the properties with the pagination
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    * Last modified by : Rachit Shah
-    */
-    updateMapMarkers() {
-
-        const startIndex = (this.currentPage - 1) * this.pageSize;
-        const currentPageData = this.pagedFilteredInquiryData.slice(startIndex, startIndex + this.pageSize);
-
-        this.mapMarkers = currentPageData.map(listing => ({
-            id: listing.Id,
-            location: {
-                Street: listing.Street__c,
-                City: listing.City__c,
-                State: listing.State__c,
-                Country: listing.Country__c
-            },
-            title: listing.Name,
-            description: `City: ${listing.City__c}, Sq Ft: ${listing.Sq_Ft__c}`,
-            icon: 'custom:custom26',
-            media_url: listing.media_url
-        }));
-
+            .catch(error => console.error('Error getting inquiries from apex:', error));
     }
 
     /**
@@ -323,9 +247,8 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
         this.searchTerm = event.target.value.toLowerCase();
         this.currentPage = 1;
         this.totalRecords = this.pagedFilteredInquiryData.length;
-        this.isPropertyAvailable = this.totalRecords > 0;
+        this.isInquiryAvailable = this.totalRecords > 0;
         this.applyFilters();
-        this.updateMapMarkers();
     }
 
     /**
@@ -337,54 +260,19 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     applyFilters() {
         try {
     
-            this.pagedFilteredInquiryData = this.inquirydata.filter(property => {
-                const searchProperty = property.Name.toLowerCase().includes(this.searchTerm);
-                return searchProperty;
+            this.pagedFilteredInquiryData = this.inquirydata.filter(inquiry => {
+                const searchInquiry = inquiry.Name.toLowerCase().includes(this.searchTerm);
+                return searchInquiry;
             });
     
-            this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
+            this.isInquiryAvailable = this.pagedFilteredInquiryData.length > 0;
             this.currentPage = 1;
             this.totalRecords = this.pagedFilteredInquiryData.length;
 
-            this.updateMapMarkers();
         } catch (error) {
             console.log('Error ==> ', error);
             console.log(JSON.stringify(err));
         }
-    }
-
-    /**
-    * Method Name: setGridView
-    * @description: this method is used to set grid view
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    */
-    setGridView() {
-        this.selectedView = 'Grid';
-        this.currentPage = 1;
-    }
-
-    /**
-    * Method Name: setListView
-    * @description: this method is used to set list view
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    */
-    setListView() {
-        this.selectedView = 'List';
-        this.currentPage = 1;
-    }
-
-    /**
-    * Method Name: setMapView
-    * @description: this method is used to set map view
-    * Date: 17/06/2024
-    * Created By: Mitrajsinh Gohil
-    */
-    setMapView() {
-        this.selectedView = 'map';
-        this.currentPage = 1;
-        this.updateMapMarkers();
     }
 
     /**
@@ -394,11 +282,12 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     * Created By: Mitrajsinh Gohil
     */
     navigateToRecord(event) {
-        const propertyId = event.target.dataset.id;
+        const inquiryid = event.target.dataset.id;
+        console.log('inquiryid ==> ' ,inquiryid);
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
-                recordId: propertyId,
+                recordId: inquiryid,
                 actionName: 'view'
             }
         }).then(url => {
@@ -416,7 +305,6 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     */
     goToFirst() {
         this.currentPage = 1;
-        this.updateMapMarkers();
     }
 
     /**
@@ -428,7 +316,6 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     goToPrevious() {
         if (this.currentPage > 1) {
             this.currentPage -= 1;
-            this.updateMapMarkers();
         }
     }
 
@@ -441,7 +328,6 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     goToNext() {
         if (this.currentPage < this.totalPages) {
             this.currentPage += 1;
-            this.updateMapMarkers();
         }
     }
 
@@ -453,7 +339,6 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
     */
     goToLast() {
         this.currentPage = this.totalPages;
-        this.updateMapMarkers();
     }
 
     /**
@@ -470,94 +355,3 @@ export default class DisplayListingAndInquiry extends NavigationMixin(LightningE
         }));
     }
 }
-
-
-
-
-
-// applyFiltersData(listing) {
-//     try {
-//         this.pagedFilteredInquiryData = this.inquirydata;
-//         this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
-//         this.totalRecords = this.pagedFilteredInquiryData.length;
-//         this.currentPage = 1;
-
-//         console.log('filters ==> ', JSON.stringify(this.filters));
-//         console.log('listing ==> ', listing);
-
-//         let filterResults = [];
-
-//         this.filters.forEach((filter, index) => {
-//             console.log(`Processing filter at index ${index}: ${filter}`);
-//             let [object, field, operation, valueField] = filter.split(':');
-//             console.log(object);
-//             console.log(field);
-//             console.log(operation);
-//             console.log(valueField);
-//             console.log(index + 1);
-
-//             // Apply the filter to the inquirydata
-//             let filteredData = this.pagedFilteredInquiryData.filter(record => {
-//                 if (object === 'Inquiry__c') {
-//                     let recordValue = record[field];
-//                     let listingValue = listing[valueField];
-//                     if (operation === 'contains') {
-//                         return recordValue && recordValue.includes(listingValue);
-//                     } else if (operation === 'equalTo') {
-//                         return recordValue === listingValue;
-//                     } 
-//                 }
-//                 return false;
-//             });
-
-//             filterResults[index] = filteredData;
-//         });
-
-//         console.log('logicalExpression ==> ', this.logicalExpression);
-
-//         // Evaluate logical expression
-//         let finalFilteredData = this.evaluateLogicalExpression(filterResults, this.logicalExpression);
-
-//         this.pagedFilteredInquiryData = finalFilteredData;
-//         this.totalRecords = finalFilteredData.length;
-//         this.isPropertyAvailable = this.pagedFilteredInquiryData.length > 0;
-
-//         this.updateMapMarkers();
-
-//     } catch (error) {
-//         console.log('Error applying filters:', error);
-//         this.showToast('Error', 'Error applying filters', 'error');
-//     }
-// }
-
-// // Function to evaluate the logical expression
-// evaluateLogicalExpression(filterResults, logicalExpression) {
-
-//     console.log('filterResults2 ==> ' , JSON.stringify(filterResults));
-//     console.log('filterResults2 length ==> ' , filterResults.length);
-//     console.log('logicalExpression2 ==> ' , logicalExpression);
-    
-//     try {
-//         let finalDataSet = [];
-//         let expression = logicalExpression;
-//         console.log('expression ==> ' ,expression);
-
-//         filterResults.forEach((result, index) => {
-//             let resultSet = new Set(result.map(item => JSON.stringify(item)));
-//             let variableName = `result${index + 1}`;
-//             expression = expression.replace(new RegExp(`\\b${index + 1}\\b`, 'g'), variableName);
-//             this[variableName] = resultSet;
-//         });
-
-//         // Evaluate the logical expression
-//         let finalSet = eval(expression);
-
-//         finalDataSet = Array.from(finalSet).map(item => JSON.parse(item));
-
-//         return finalDataSet;
-
-//     } catch (error) {
-//         console.log('Error evaluating logical expression:', error);
-//         return [];
-//     }
-// }

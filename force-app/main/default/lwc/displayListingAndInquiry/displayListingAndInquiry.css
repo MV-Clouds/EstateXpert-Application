@@ -17,134 +17,6 @@
     width: 300px;
 }
 
-.filter-section {
-    display: flex;
-    align-items: center;
-}
-
-.filter-btns {
-    display: flex;
-    gap: 4%;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.property-item {
-    background-color: #ffffff;
-    position: relative;
-    height: auto;
-    border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    margin: 1rem 0;
-    transition: box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.card {
-    padding: 0 1% 1% 1%;
-}
-
-.property-item:hover {
-    box-shadow: 1px 1px 10px 1px #509fdaa2;
-}
-
-.card-body {
-    padding: 0.5rem;
-    display: flex;
-}
-
-
-.card-body-footer{
-    padding: 0.5rem;
-    display: flex;
-    align-items: center;
-}
-
-.room_details {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.property-image {
-    margin-right: 15px;
-    border-radius: 5px;
-    height: 10rem;
-    width: 100%;
-    object-fit: cover;
-}
-
-.property_type {
-    background-color: #dbfaff;
-    border-radius: 5px 0 0 0;
-    position: absolute;
-    color: black;
-    left: 0;
-    top: 0;
-    z-index: 1;
-    padding: 3px 15px;
-}
-
-.details {
-    height: 7rem;
-    border-bottom: 0.5px solid grey;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
-.card-title {
-    color: black;
-    font-size: 16px;
-}
-
-.bedroom, .bathroom {
-    display: flex;
-    align-items: center;
-}
-
-.bathroom_icon {
-    width: 20px;
-}
-
-.main {
-    background-color: white;
-    display: flex;
-    width: 100%;
-}
-
-.card-text {
-    display: flex;
-    color: #737D8C;
-    font-size: 12px;
-}
-
-.card-text p {
-    width: -webkit-fill-available;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.item-1 p {
-    font-size: 16px;
-    color: #1252AE;
-}
-
-.item-2 button {
-    height: 2rem;
-    background-color: #1252AE;
-    border: none;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
 .pagination-container {
     display: flex;
     justify-content: center;
@@ -154,7 +26,7 @@
     gap: 1rem;
 }
 
-.no_prop {
+.no-prop {
     font-size: 20px;
     display: flex;
     justify-content: center;
@@ -163,10 +35,8 @@
     font-family: 'DM Sans';
 }
 
-.listing-buttons {
-    display: flex;
-    gap: 10px;
-    height: fit-content;
+.data-table-container{
+    margin-top: 12px;
 }
 
 .custom-data-table {
@@ -183,22 +53,10 @@
     text-align: center;
 }
 
-.property-image img {
-    width: 100px;
-    height: auto;
-    border-radius: 4px;
-}
-
 .custom-data-table td {
     padding: 10px;
     border-bottom: 1px solid #dcdcdc;
     text-align: center;
-}
-
-.custom-data-table td img {
-    width: 100px;
-    height: auto;
-    border-radius: 4px;
 }
 
 .custom-data-table tr:nth-child(odd) {
@@ -209,7 +67,7 @@
     background-color: #0070d2;
     color: #fff;
     border: none;
-    padding: 8px 16px;
+    padding:5px 8px;
     border-radius: 4px;
     cursor: pointer;
 }
@@ -222,7 +80,7 @@
     border-bottom: none;
 }
 
-.filter-btn, .edit-btn {
+.edit-btn {
     background-color: #0176D3;
     color: white;
     border-radius: 4px;
@@ -234,27 +92,23 @@
     padding: 5px 16px;
 }
 
-.filter-btn:disabled, .edit-btn:disabled {
+.edit-btn:disabled {
     background-color: #737D8C;
     cursor: not-allowed;
 }
 
-.view-buttons {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
+.name-header {
+    width: 8.5%;
 }
 
-@media only screen and (max-width: 1024px) {
-    .listing-buttons {
-        margin-top: 1rem;
-    }
-    
-    .filter-search-container {
-        flex-direction: column;
-    }
-    
-    .view-buttons {
-        margin-top: 10px;
-    }
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100px;
+}
+
+.empty-body{
+    width: 100%;
+    text-align: center;
 }
