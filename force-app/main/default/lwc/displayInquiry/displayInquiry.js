@@ -227,9 +227,6 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
                 if (this.objectName === 'Listing__c') {
                     this.inquirydata = data.inquiries;
                     listing = data.listings[0];
-                } else if (this.objectName === 'Inquiry__c') {
-                    const inquiry = data.inquiryRec;
-                    console.log('Inquiry Rec ==> ', inquiry);
                 }
     
                 this.applyFiltersData(listing);
