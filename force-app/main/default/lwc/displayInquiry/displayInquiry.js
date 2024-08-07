@@ -5,7 +5,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CurrentPageReference } from 'lightning/navigation';
 import getMetadata from '@salesforce/apex/DynamicMappingCmp.getMetadata';
 
-export default class DisplayListingAndInquiry extends NavigationMixin(LightningElement) {
+export default class displayInquiry extends NavigationMixin(LightningElement) {
     @track recordId;
     @track totalRecords = 0;
     @track inquiries = [];
