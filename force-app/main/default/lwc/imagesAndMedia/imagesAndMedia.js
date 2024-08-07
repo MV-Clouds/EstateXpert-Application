@@ -11,6 +11,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import watermarkjs from "@salesforce/resourceUrl/watermarkjs";
 import videoThumbnail from '@salesforce/resourceUrl/videothumbnail';
 import buffer from 'c/buffer';
+import { NavigationMixin } from "lightning/navigation";
 // import estatexpertLogo from '@salesforce/resourceUrl/watermarkLogo';
 import uploadImageresponsiveCSS from '@salesforce/resourceUrl/UploadImageCss';
 import updatePropertyFileRecords from '@salesforce/apex/ImageAndMediaController.updatePropertyFileRecords';
@@ -18,7 +19,7 @@ import { loadStyle } from 'lightning/platformResourceLoader';
 
 import designcss from '@salesforce/resourceUrl/imageAndMediaCss';
 
-export default class ImagesAndMedia extends LightningElement {
+export default class ImagesAndMedia extends NavigationMixin( LightningElement ) {
     @api recordId;
     @track s3;
     @track isAwsSdkInitialized = false;
@@ -92,6 +93,42 @@ export default class ImagesAndMedia extends LightningElement {
         return this.screenWidth > 500 ? false : true;
     }
 
+
+    /**
+    * Method Name: disableEnableBtn
+    * @description: Enable and Disable the save and cancel buttons.
+    * Date: 27/06/2024
+    * Created By: Karan Singh
+    **/
+    get disableEnableBtn() {
+        let recordMap = new Map();
+        let combinedMediaListToSave = this.saveOrder();
+        this.data.forEach(record => {
+            let existingRecord = { Id: record.Id };
+            for (let key in record) {
+                existingRecord[key] = record[key];
+            }
+            recordMap.set(record.Id, existingRecord);
+        });
+
+        combinedMediaListToSave.forEach(media => {
+            if (!recordMap.has(media.Id)) {
+                recordMap.set(media.Id, { Id: media.Id });
+            }
+            let existingRecord = recordMap.get(media.Id);
+            for (let key in media) {
+                if (Object.prototype.hasOwnProperty.call(media, key) && key !== 'Id') {
+                    existingRecord[key] = media[key];
+                }
+            }
+        });
+
+        let finalListToUpdate = Array.from(recordMap.values());
+        const fetchedDataString = JSON.stringify(this.fetchedData);
+        const dataString = JSON.stringify(finalListToUpdate);
+        return fetchedDataString === dataString;
+    }
+
     @wire(MessageContext)
     messageContext;
 
@@ -122,68 +159,16 @@ export default class ImagesAndMedia extends LightningElement {
         }
     }
 
-      /**
+    /**
     * Method Name : disconnectedCallback
     * @description : remove the resize event.
-    * * Date: 3/06/2024
+    * Date: 3/06/2024
     * Created By:Vyom Soni
     */
     disconnectedCallback() {
         // Remove event listener when component is destroyed
         window.removeEventListener('resize', this.handleResize.bind(this));
     }
-
-     /**
-    * Method Name : handleResize
-    * @description : call when component is resize.
-    * * Date: 3/06/2024
-    * Created By:Vyom Soni
-    */
-    handleResize() {
-        // Update screen width when window is resized
-        this.updateScreenWidth();
-    }
-
-     /**
-    * Method Name : updateScreenWidth
-    * @description : update the width variable.
-    * * Date: 3/06/2024
-    * Created By:Vyom Soni
-    */
-    updateScreenWidth() {
-        this.screenWidth = window.innerWidth;
-    }
-
-    updateShowModal(){
-        if(this.screenWidth < 500){
-            this.showModal = !this.showModal;
-        }
-    }
-
-      /**
-    * Method Name : handleMenuTabClick
-    * @description : handle the menu clicks in the header
-    *  Date: 3/06/2024
-    * Created By:Vyom Soni
-    */
-    handleMenuTabClick(evt){
-        let target = evt.currentTarget.dataset.tabId;
-        this.showExpose = false;
-        this.showPortal = false;
-        this.showWebsite = false;
-        if(target == "1"){
-            this.showExpose = true;
-        }else if(target == "2"){
-            this.showWebsite = true;
-        }else if(target == "3"){
-            this.showPortal = true;
-        }
-            this.template.querySelectorAll(".feed-tab").forEach(tabel => {
-                    tabel.classList.remove("feed-tab-active");
-            });
-            this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("feed-tab-active");
-    }
-
 
     /**
     * Method Name: renderedCallback
@@ -206,6 +191,51 @@ export default class ImagesAndMedia extends LightningElement {
         } catch (error) {
             console.log('error in renderedcallback -> ', error);
         }
+    }
+
+     /**
+    * Method Name : handleResize
+    * @description : call when component is resize.
+    * * Date: 27/07/2024
+    * Created By:Vyom Soni
+    */
+    handleResize() {
+        // Update screen width when window is resized
+        this.updateScreenWidth();
+    }
+
+    /**
+    * Method Name : updateScreenWidth
+    * @description : update the width variable.
+    * * Date: 27/07/2024
+    * Created By:Vyom Soni
+    */
+    updateScreenWidth() {
+        this.screenWidth = window.innerWidth;
+    }
+
+    /**
+    * Method Name : handleMenuTabClick
+    * @description : handle the menu clicks in the header
+    * * Date: 27/07/2024
+    * Created By:Vyom Soni
+    */
+    handleMenuTabClick(evt){
+        let target = evt.currentTarget.dataset.tabId;
+        this.showExpose = false;
+        this.showPortal = false;
+        this.showWebsite = false;
+        if(target == "1"){
+            this.showExpose = true;
+        }else if(target == "2"){
+            this.showWebsite = true;
+        }else if(target == "3"){
+            this.showPortal = true;
+        }
+            this.template.querySelectorAll(".feed-tab").forEach(tabel => {
+                    tabel.classList.remove("feed-tab-active");
+            });
+            this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("feed-tab-active");
     }
 
     /**
@@ -849,7 +879,13 @@ export default class ImagesAndMedia extends LightningElement {
     handlePreview(event) {
         console.log('-->', event.currentTarget.dataset.exturl);
         if (event.currentTarget.dataset.exturl) {
-            window.open(event.currentTarget.dataset.exturl, '_blank');
+            const config = {
+                type: 'standard__webPage',
+                attributes: {
+                    url: event.currentTarget.dataset.exturl
+                }
+            };
+            this[NavigationMixin.Navigate](config);
         } else {
             this.showImageInModal(event.currentTarget.dataset.url);
         }
@@ -1664,33 +1700,5 @@ export default class ImagesAndMedia extends LightningElement {
         this.dispatchEvent(event);
     }
 
-    get disableEnableBtn() {
-        let recordMap = new Map();
-        let combinedMediaListToSave = this.saveOrder();
-        this.data.forEach(record => {
-            let existingRecord = { Id: record.Id };
-            for (let key in record) {
-                existingRecord[key] = record[key];
-            }
-            recordMap.set(record.Id, existingRecord);
-        });
-
-        combinedMediaListToSave.forEach(media => {
-            if (!recordMap.has(media.Id)) {
-                recordMap.set(media.Id, { Id: media.Id });
-            }
-            let existingRecord = recordMap.get(media.Id);
-            for (let key in media) {
-                if (Object.prototype.hasOwnProperty.call(media, key) && key !== 'Id') {
-                    existingRecord[key] = media[key];
-                }
-            }
-        });
-
-        let finalListToUpdate = Array.from(recordMap.values());
-        const fetchedDataString = JSON.stringify(this.fetchedData);
-        const dataString = JSON.stringify(finalListToUpdate);
-        return fetchedDataString === dataString;
-    }
 
 }
