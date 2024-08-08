@@ -79,111 +79,74 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
 
     applyFiltersData(listing) {
         try {
-            this.pagedFilteredInquiryData = this.inquirydata;
-            this.isInquiryAvailable = this.pagedFilteredInquiryData.length > 0;
-            this.totalRecords = this.pagedFilteredInquiryData.length;
-            this.currentPage = 1;
+            this.pagedFilteredInquiryData = [...this.inquirydata];
+
+            console.log('logical expression ==> ' , this.logicalExpression);
+            console.log('inquirydata ==> ' , JSON.stringify(this.inquirydata));
     
             console.log('filters ==> ', JSON.stringify(this.filters));
             console.log('listing ==> ', listing);
     
-            let filterResults = [];
-    
-            this.filters.forEach((filter, index) => {
-                console.log(`Processing filter at index ${index}: ${filter}`);
-                let [object, field, operation, valueField] = filter.split(':');
-                console.log(object);
-                console.log(field);
-                console.log(operation);
-                console.log(valueField);
-                console.log(index + 1);
-    
-                let filteredData = this.pagedFilteredInquiryData.filter(record => {
-                    let recordValue, listingValue;
-    
-                    if (object === 'Inquiry__c') {
-                        recordValue = record[field];
-                        listingValue = listing[valueField];
-                    } else if (object === 'Listing__c') {
-                        recordValue = listing[field];
-                        listingValue = record[valueField];
-                    }
-    
-                    if (operation === 'contains') {
-                        return recordValue && recordValue.includes(listingValue);
-                    } else if (operation === 'equalTo') {
-                        return recordValue === listingValue;
-                    } else if (operation === 'greaterThan') {
-                        console.log('1 ==> ' ,parseFloat(recordValue));
-                        console.log('2 ==> ' ,parseFloat(listingValue));
-                        return parseFloat(recordValue) > parseFloat(listingValue);
-                    } else if (operation === 'lessThan') {
-                        return parseFloat(recordValue) < parseFloat(listingValue);
-                    }
-    
-                    return false;
-                });
-    
-                filterResults[index+1] = filteredData; 
+            const parsedFilters = this.filters.map(filter => {
+                const [object, field, operator, valueField] = filter.split(':');
+                return { object, field, operator, valueField };
             });
     
-            console.log('logicalExpression ==> ', this.logicalExpression);
+            if (!this.logicalExpression || this.logicalExpression.trim() === '') {
+                this.logicalExpression = parsedFilters.map((_, index) => index + 1).join(' && ');
+            }
+            
+            this.pagedFilteredInquiryData = this.inquirydata.filter(inquiry => {
+                let filterResults = [];
     
-            // Evaluate logical expression
-            let finalFilteredData = this.evaluateLogicalExpression(filterResults, this.logicalExpression);
+                parsedFilters.forEach((filter, index) => {
+                    let fieldValue, filterValue;
     
-            this.pagedFilteredInquiryData = finalFilteredData;
-            this.inquirydata = finalFilteredData;
-            this.totalRecords = finalFilteredData.length;
+                    if (filter.object === 'Inquiry__c') {
+                        fieldValue = inquiry[filter.field];
+                        filterValue = listing[filter.valueField];
+                    } else if (filter.object === 'Listing__c') {
+                        fieldValue = listing[filter.field];
+                        filterValue = inquiry[filter.valueField];
+                    }
+
+                    console.log('fieldValue ==> ' , fieldValue , ' filterValue ==>' , filterValue);
+                    console.log('operator ==> ' , filter.operator);
+                    console.log('object ==> ' , filter.object);
+
+                    if (fieldValue === undefined || filterValue === undefined) {
+                        filterResults[index + 1] = false; 
+                        return;
+                    }
+    
+                    switch (filter.operator) {
+                        case 'lessThan':
+                            filterResults[index + 1] = parseFloat(fieldValue) < parseFloat(filterValue);
+                            break;
+                        case 'greaterThan':
+                            filterResults[index + 1] = parseFloat(fieldValue) > parseFloat(filterValue);
+                            break;
+                        case 'equalTo':
+                            filterResults[index + 1] = fieldValue === filterValue;
+                            break;
+                        case 'contains':
+                            filterResults[index + 1] = fieldValue && fieldValue.includes(filterValue);
+                            break;
+                    }
+                });
+    
+                const evaluationResult = eval(this.logicalExpression.replace(/\d+/g, match => filterResults[match]));
+                console.log('evaluationResult ==> ' , evaluationResult);
+                return evaluationResult;
+            });
+    
             this.isInquiryAvailable = this.pagedFilteredInquiryData.length > 0;
-    
+            this.totalRecords = this.pagedFilteredInquiryData.length;
+            this.currentPage = 1;
     
         } catch (error) {
             console.log('Error applying filters:', error);
             this.showToast('Error', 'Error applying filters', 'error');
-        }
-    }
-    
-    // Function to evaluate the logical expression
-    evaluateLogicalExpression(filterResults, logicalExpression) {
-        try {
-            let finalFilteredData = [];
-            console.log('filterResults ==> ', JSON.stringify(filterResults));
-    
-            // Create sets for each filter result
-            let resultSets = {};
-            Object.keys(filterResults).forEach(index => {
-                if (filterResults[index] && filterResults[index].length > 0) {
-                    resultSets[index] = new Set(filterResults[index].map(item => JSON.stringify(item)));
-                    console.log(`Length of resultSets[${index}] ==> `, resultSets[index].size);
-                }
-            });
-    
-            console.log('resultSets ==> ', JSON.stringify(resultSets));
-    
-            // Parse logical expression
-            let expression = logicalExpression.replace(/\b(\d+)\b/g, match => {
-                return resultSets[match] ? `resultSets["${match}"]` : 'new Set()';
-            });
-            console.log('expression ==> ', expression);
-    
-            // Evaluate the logical expression
-            let finalSet = new Function('resultSets', `
-                let result = new Set();
-                ${expression.split('||').map(term => `result = new Set([...result, ...${term.trim()}]);`).join('\n')}
-                return result;
-            `)(resultSets);
-    
-            console.log('finalSet ==> ', finalSet);
-    
-            finalFilteredData = Array.from(finalSet).map(item => JSON.parse(item));
-            console.log('finalFilteredData ==> ', finalFilteredData);
-    
-            return finalFilteredData;
-    
-        } catch (error) {
-            console.log('Error evaluating logical expression:', error);
-            return [];
         }
     }
     

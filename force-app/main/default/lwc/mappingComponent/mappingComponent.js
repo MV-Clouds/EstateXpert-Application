@@ -341,12 +341,7 @@ export default class MappingComponent extends LightningElement {
     }
 
     handleAddPairClick() {
-        const isLogicalExpression = this.checkConditionSyntax(false);
-        console.log('isLogicalExpression ==> ' , isLogicalExpression);
-
-        if(isLogicalExpression === true){
-            this.showConfirmationModal = true;
-        }
+        this.showConfirmationModal = true;
     }
 
     handleConfirmAddPair() {
@@ -391,13 +386,22 @@ export default class MappingComponent extends LightningElement {
 
     checkConditionSyntax(isShowToast) {
         console.log('logicalCondition ==> ', this.logicalCondition);
+        const inputElement = this.template.querySelector('lightning-input[data-id="condition-input"]');
+    
+        if(this.logicalCondition.trim() === ''){
+            inputElement.setCustomValidity('');
+            inputElement.reportValidity();
+            this.isSaveButtonDisabled = false; 
+            if(isShowToast){
+                this.showToast('Success', 'Condition syntax is correct', 'success');
+            }
+            return true;
+        }
     
         const listingLength = this.dropDownPairs.length;
         console.log('listingLength ==> ', listingLength);
     
         const regex = /\d+\s*(?:&&|\|\|)\s*\d+/;
-    
-        const inputElement = this.template.querySelector('lightning-input[data-id="condition-input"]');
     
         if (!regex.test(this.logicalCondition)) {
             inputElement.setCustomValidity('Invalid condition syntax');
@@ -418,21 +422,29 @@ export default class MappingComponent extends LightningElement {
                 inputElement.reportValidity();
                 this.isSaveButtonDisabled = true;
                 return false;
-            } else {
-                inputElement.setCustomValidity('');
+            } 
+            
+            if (listingLength === 3 && numberSet.size !== 3) {
+                inputElement.setCustomValidity('Condition must include all indices');
                 inputElement.reportValidity();
-                this.isSaveButtonDisabled = false; 
-                if(isShowToast){
-                    this.showToast('Success', 'Condition syntax is correct', 'success');
-                }
-                return true;
+                this.isSaveButtonDisabled = true;
+                return false;
             }
+    
+            inputElement.setCustomValidity('');
+            inputElement.reportValidity();
+            this.isSaveButtonDisabled = false; 
+            if(isShowToast){
+                this.showToast('Success', 'Condition syntax is correct', 'success');
+            }
+            return true;
+            
         } else {
             inputElement.setCustomValidity('Condition syntax is correct but contains no indices');
             inputElement.reportValidity();
             return false;
         }
-        
     }
+    
     
 }

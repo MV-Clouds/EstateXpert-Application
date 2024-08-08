@@ -157,154 +157,76 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
             .catch(error => console.error('Error getting properties from apex:', error));
     }
 
+    
     applyFiltersData(inquiry) {
         try {
-            this.pagedFilteredListingData = this.listingData;
+            this.pagedFilteredListingData = [...this.listingData];
+    
+            console.log('filters ==> ', JSON.stringify(this.filters));
+            console.log('inquiry ==> ', inquiry);
+            console.log('filters ==> ', this.filters);
+            console.log('logical expression ==> ', this.logicalExpression);
+    
+            const parsedFilters = this.filters.map(filter => {
+                const [object, field, operator, valueField] = filter.split(':');
+                return { object, field, operator, valueField };
+            });
+    
+            if (!this.logicalExpression || this.logicalExpression.trim() === '') {
+                this.logicalExpression = parsedFilters.map((_, index) => index + 1).join(' && ');
+            }
+    
+            this.pagedFilteredListingData = this.listingData.filter(listing => {
+                let filterResults = [];
+    
+                parsedFilters.forEach((filter, index) => {
+                    let fieldValue, filterValue;
+    
+                    if (filter.object === 'Listing__c') {
+                        fieldValue = listing[filter.field];
+                        filterValue = inquiry[filter.valueField];
+                    } else if (filter.object === 'Inquiry__c') {
+                        fieldValue = inquiry[filter.field];
+                        filterValue = listing[filter.valueField];
+                    }
+
+                    if (fieldValue === undefined || filterValue === undefined) {
+                        filterResults[index + 1] = false; 
+                        return;
+                    }
+    
+                    switch (filter.operator) {
+                        case 'lessThan':
+                            filterResults[index + 1] = parseFloat(fieldValue) < parseFloat(filterValue);
+                            break;
+                        case 'greaterThan':
+                            filterResults[index + 1] = parseFloat(fieldValue) > parseFloat(filterValue);
+                            break;
+                        case 'equalTo':
+                            filterResults[index + 1] = fieldValue === filterValue;
+                            break;
+                        case 'contains':
+                            filterResults[index + 1] = fieldValue && fieldValue.includes(filterValue);
+                            break;
+                    }
+                });
+    
+                const evaluationResult = eval(this.logicalExpression.replace(/\d+/g, match => filterResults[match]));
+                return evaluationResult;
+            });
+    
             this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
             this.totalRecords = this.pagedFilteredListingData.length;
             this.currentPage = 1;
     
-            console.log('filters ==> ', JSON.stringify(this.filters));
-            console.log('inquiry ==> ', inquiry);
-    
-            let filterResults = {};
-    
-            this.filters.forEach((filter, index) => {
-                console.log(`Processing filter at index ${index}: ${filter}`);
-                let [object, field, operation, valueField] = filter.split(':');
-    
-                console.log(object, field, operation, valueField);
-    
-                let filteredData = this.pagedFilteredListingData.filter(record => {
-                    let recordValue, inquiryValue;
-    
-                    if (object === 'Inquiry__c') {
-                        recordValue = inquiry[field];
-                        inquiryValue = record[valueField];
-                    } else if (object === 'Listing__c') {
-                        recordValue = record[field];
-                        inquiryValue = inquiry[valueField];
-                    }
-    
-                    if (recordValue == null || inquiryValue == null) {
-                        return false;
-                    }
-    
-                    if (operation === 'contains') {
-                        if (typeof recordValue === 'string' && typeof inquiryValue === 'string') {
-                            return recordValue.includes(inquiryValue);
-                        }
-                    } else if (operation === 'equalTo') {
-                        return recordValue === inquiryValue;
-                    } else if (operation === 'greaterThan') {
-                        return parseFloat(recordValue) > parseFloat(inquiryValue);
-                    } else if (operation === 'lessThan') {
-                        return parseFloat(recordValue) < parseFloat(inquiryValue);
-                    }
-    
-                    return false;
-                });
-    
-                filterResults[index + 1] = filteredData;
-            });
-    
-            console.log('logicalExpression ==> ', this.logicalExpression);
-    
-            // Evaluate logical expression
-            let finalFilteredData = this.evaluateLogicalExpression(filterResults, this.logicalExpression);
-    
-            this.pagedFilteredListingData = finalFilteredData;
-            this.listingData = finalFilteredData;
-            this.totalRecords = finalFilteredData.length;
-            this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
-    
             this.updateMapMarkers();
     
         } catch (error) {
-            console.log('Error applying filters:', error);
+            console.error('Error applying filters:', error);
             this.showToast('Error', 'Error applying filters', 'error');
         }
     }
     
-    
-    
-    evaluateLogicalExpression(filterResults, logicalExpression) {
-        try {
-            let finalFilteredData = [];
-            console.log('filterResults ==> ', JSON.stringify(filterResults));
-            console.log('filterResults length ==> ', Object.keys(filterResults).length);
-    
-            let resultSets = {};
-            Object.keys(filterResults).forEach(index => {
-                if (filterResults[index] && filterResults[index].length > 0) {
-                    console.log(index);
-                    resultSets[index] = new Set(filterResults[index].map(item => JSON.stringify(item)));
-                    console.log(`Length of resultSets[${index}] ==> `, resultSets[index].size);
-                }
-            });
-    
-            console.log('resultSets ==> ', JSON.stringify(resultSets));
-    
-            let expression = logicalExpression.replace(/\b(\d+)\b/g, match => {
-                return resultSets[match] ? `resultSets["${match}"]` : 'new Set()';
-            });
-    
-            console.log('Initial expression ==> ', expression);
-    
-            expression = expression.replace(/\|\|\s*new Set\(\)\s*\|\|/g, '||');
-            expression = expression.replace(/&&\s*new Set\(\)\s*&&/g, '&&');
-            expression = expression.replace(/\bnew Set\(\)\s*\|\|\s*new Set\(\)\b/g, 'new Set()');
-            expression = expression.replace(/\bnew Set\(\)\s*&&\s*new Set\(\)\b/g, 'new Set()');
-            expression = expression.replace(/\bnew Set\(\)\s*\|\|/g, '');
-            expression = expression.replace(/\|\|\s*\bnew Set\(\)\b/g, '');
-            expression = expression.replace(/\bnew Set\(\)\s*&&/g, '');
-            expression = expression.replace(/&&\s*\bnew Set\(\)\b/g, '');
-    
-            console.log('Cleaned expression ==> ', expression);
-    
-            let finalSet = new Function('resultSets', `
-                let result = new Set();
-                let evaluate = (sets) => {
-                    if (sets) {
-                        if (Array.isArray(sets)) {
-                            sets.forEach(set => evaluate(set));
-                        } else if (sets instanceof Set) {
-                            sets.forEach(item => result.add(item));
-                        }
-                    }
-                };
-                let intersection = (set1, set2) => {
-                    let result = new Set();
-                    set1.forEach(item => {
-                        if (set2.has(item)) {
-                            result.add(item);
-                        }
-                    });
-                    return result;
-                };
-                let union = (set1, set2) => {
-                    let result = new Set(set1);
-                    set2.forEach(item => result.add(item));
-                    return result;
-                };
-                let evaluatedExpression = ${expression};
-                evaluate(evaluatedExpression);
-                return result;
-            `)(resultSets);
-    
-            console.log('finalSet ==> ', finalSet);
-    
-            finalFilteredData = Array.from(finalSet).map(item => JSON.parse(item));
-            console.log('finalFilteredData ==> ', JSON.stringify(finalFilteredData));
-            console.log('finalFilteredData ==> ',finalFilteredData.length);
-    
-            return finalFilteredData;
-    
-        } catch (error) {
-            console.log('Error evaluating logical expression:', error);
-            return [];
-        }
-    }
     
     
     /**
