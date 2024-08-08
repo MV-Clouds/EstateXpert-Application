@@ -5,7 +5,6 @@ import getMetadata from '@salesforce/apex/DynamicMappingCmp.getMetadata';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import externalCss from '@salesforce/resourceUrl/templateCss';
-import plainBackground from '@salesforce/resourceUrl/PlainBackground';
 	
 export default class MappingComponent extends LightningElement {
     @track dropDownPairs = [];
@@ -18,6 +17,7 @@ export default class MappingComponent extends LightningElement {
     @track showConfirmationModal = false;
     @track logicalCondition = '';
     @track isSaveButtonDisabled = true;
+    @track isModalOpen = false;
     @track conditionsOptions = [
         { label: 'Greater Than', value: 'greaterThan', type: 'DOUBLE', type2: 'DOUBLE' },
         { label: 'Less Than', value: 'lessThan', type: 'DOUBLE', type2: 'DOUBLE' },
@@ -29,7 +29,6 @@ export default class MappingComponent extends LightningElement {
         { label: 'Listing', value: 'Listing__c' },
         { label: 'Inquiry', value: 'Inquiry__c' }
     ];
-    @track plainBackgroundUrl = plainBackground;
 
     get delButtonClass() {
         return this.checkboxValue
@@ -199,6 +198,13 @@ export default class MappingComponent extends LightningElement {
     }
     
     
+    handleModalOpen(){
+        this.isModalOpen = true;
+    }
+
+    hideModalBox(){
+        this.isModalOpen = false;
+    }
 
     setCheckboxValue(isAutoSync) {
         this.checkboxValue = isAutoSync === 'true';
@@ -312,6 +318,7 @@ export default class MappingComponent extends LightningElement {
         const index = event.target.value;
         this.dropDownPairs.splice(index, 1);
         this.filterAndUpdateOptions();
+        this.updateSaveButtonState();
     }
 
     addNewPair() {

@@ -6,38 +6,29 @@
     border-radius: 5px;
     padding: 20px;
     min-height: 100%;
-    background: linear-gradient(to right, #eafdff, #f0f0f0);
+    background-image: url(/resource/backgroundImage);
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+
 }
 
 .container {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-}
-
-.title-container{
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .title {
-    font-size: 23px;
+    font-size: 20px;
     font-weight: bold;
     color: #333;
-}
-
-.buttons {
-    display: flex;
-    align-items: center;
-    margin-left: auto; 
-    position: absolute;
-    top: 1.6rem;
-    right: 1.4rem;
+    margin-left: 16px;
 }
 
 .add-button {
-    width: 5rem;
+    width: 9rem;
 }
 
 .checkbox {
@@ -52,7 +43,7 @@
 }
 
 .label-text {
-    margin-left: 5px;
+    margin-left: 1rem;
     font-size: 15px;
 }
 
@@ -75,12 +66,8 @@
 
 .del-button {
     margin-top: 15%;
-    background-color: #FFE2E2;
     border-radius: 5px; 
-}
-
-.del-button:hover {
-    background-color: #FFD2D2; 
+    border: 1px solid #acacac;
 }
 
 .del-button lightning-button-icon {
@@ -135,16 +122,39 @@
 .condition-container {
     display: flex;
     justify-content: start;
-    align-items: end;
+    flex-direction: column;
     gap: 1rem;
-    position: absolute;
-    bottom: 4rem;
-    width: 98%;
+    background-image: url(/resource/backgroundImage);
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    padding-bottom: 1rem;
+
+}
+
+.closebtn{
+    --slds-c-icon-color-foreground : #454545 !important;
+}
+
+.header{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.condition-container  .slds-form-element__label .slds-no-flex{
+    display: none;
+}
+
+.condition-input{
+    width: 95%;
 }
 
 .condition-container-item {
     margin-right: 1rem;
     margin-left: 1rem;
+    width: 100%;
 }
 
 .flex-container {
@@ -172,7 +182,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 1rem;
-    --slds-g-color-neutral-base-50: red;
+    --slds-g-color-neutral-base-50: black;
     --lwc-borderWidthThin : none;
 }
 
@@ -180,4 +190,41 @@
     min-height: 55vh;
     max-height: 55vh;
     overflow: auto;
+    --sds-c-input-radius-border: 8px;
+}
+
+.auto-sync {
+    display: flex;
+    margin-right: 1.7rem;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.custom-modal .slds-modal__header{
+    border: none;
+    font-size: 1rem;
+    display: flex;
+}
+
+
+.footer-btns{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.close-button{
+    background: #e0d8d8;
+    color: black;
+    width: 8rem;
+    display: block;
+    opacity: 51%;
+    border-radius: 6px;
+}
+
+.check-button{
+    border-radius: 6px;
 }

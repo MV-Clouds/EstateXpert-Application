@@ -7,18 +7,25 @@
             </template>
 
             <div class="container">
-                <div class="title-container">
-                    <h2 class="title">Listing-Inquiry Mapping</h2>
+                <div>
+                    <h2 class="title">Map Listing And Inquiry</h2>
                 </div>
+
+                <div class="checkbox-container">
+                    <div class="auto-sync">
+                        <input class="checkbox" type="checkbox" name="Sync" checked={checkboxValue} onchange={handleCheckboxChange}>
+                        <label class="label-text">Auto Sync</label>
+                    </div>
+                    <div>
+                        <button class="slds-button slds-button_brand" onclick={handleModalOpen} disabled={checkboxValue}>Add Custom Logic</button>
+
+                    </div>
+                </div>
+
+
             </div>
         </div>
 
-        <div class="buttons">
-            <div class="checkbox-container">
-                <input class="checkbox" type="checkbox" name="Sync" checked={checkboxValue} onchange={handleCheckboxChange}>
-                <label class="label-text">Auto Sync</label>
-            </div>
-        </div>
 
         <!-- Picklist section -->
         <div class="scrollable-container">
@@ -47,15 +54,6 @@
             </template>
         </div>
 
-        <div class="condition-container">
-            <div class="condition-container-item">
-                <lightning-input type="text" class="condition-input" data-id="condition-input" value={logicalCondition} onchange={handleConditionInputChange} disabled={checkboxValue} placeholder="1 && 2"></lightning-input>
-            </div>
-            <div>
-                <button class="slds-button slds-button_neutral" onclick={checkConditionSyntax} disabled={checkboxValue}>Check Syntax</button>
-            </div>
-        </div>
-
         <div class="save-btn">
             <button class="slds-button slds-button_brand add-button" onclick={addNewPair} disabled={checkboxValue}>Add</button>
             <button class="slds-button slds-button_brand" disabled={isSaveButtonDisabled} onclick={handleAddPairClick}>SAVE MAPPING</button>
@@ -80,4 +78,48 @@
             </div>
         </section>
     </template>
+
+
+    <template if:true={isModalOpen}>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container custom-width-33 custom-modal">
+                <header class="slds-modal__header">
+
+                    <div class="header">
+                        <div>Logical Condition</div>
+
+                        <button class="slds-button slds-button_icon slds-button_icon-inverse closebtn" title="Close" onclick={hideModalBox}>
+                            <lightning-icon icon-name="utility:close"
+                               alternative-text="close"
+                               variant="inverse"
+                               size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                         </button>
+                    </div>
+
+                </header>
+                <div class="slds-modal__content" id="modal-content-id-2">
+                    <div class="condition-container">
+                        <div class="condition-container-item">
+                            <lightning-input type="text" class="condition-input" data-id="condition-input" value={logicalCondition} onchange={handleConditionInputChange} disabled={checkboxValue} placeholder="1 && 2"></lightning-input>
+                        </div>
+
+                        <div class="footer-btns">
+                            <div>
+                                <button class="slds-button slds-button_brand check-button" onclick={checkConditionSyntax} disabled={checkboxValue}>Check Syntax</button>
+                            </div>
+
+                            <div>
+                                <button class="slds-button close-button" onclick={hideModalBox}>Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+    
 </template>
+
+
