@@ -1,10 +1,10 @@
-import { LightningElement , track} from 'lwc';
+import { LightningElement , track,api} from 'lwc';
 import sendemail from '@salesforce/apex/SupportRequestController.sendemail';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
 
 export default class SupportRequestCmp extends NavigationMixin(LightningElement) {
-
+    @api redirectfrom;
     @track supportname = '';
     @track email ='';
     @track subject = '';
@@ -108,17 +108,30 @@ export default class SupportRequestCmp extends NavigationMixin(LightningElement)
     * Created By: Vyom Soni
     */
     onClose(){
-      let componentDef = {
-          componentDef: "MVEX:estateXpertControlCenter",
-      };
-      
-      let encodedComponentDef = btoa(JSON.stringify(componentDef));
-      this[NavigationMixin.Navigate]({
-          type: 'standard__webPage',
-          attributes: {
-              url: '/one/one.app#' + encodedComponentDef
-          }
-      });
+      try {
+        console.log('redirectfrom-->',this.redirectfrom);
+        let componentDef = {};
+        if (this.redirectfrom != undefined && this.redirectfrom === 'PortalMapping') {
+          componentDef = {
+            componentDef: "MVEX:portalMappingComponent",
+          };
+        } else {
+          componentDef = {
+            componentDef: "MVEX:estateXpertControlCenter",
+          };
+        }
+        
+        let encodedComponentDef = btoa(JSON.stringify(componentDef));
+        this[NavigationMixin.Navigate]({
+            type: 'standard__webPage',
+            attributes: {
+                url: '/one/one.app#' + encodedComponentDef
+            }
+        });
+      } catch (error) {
+        console.log('error in onclose-->',error.stack);
+        
+      }
     }
 
     /**
@@ -176,6 +189,15 @@ export default class SupportRequestCmp extends NavigationMixin(LightningElement)
       handleUploadFinished(event) {
         if (event.target.files.length > 0) {
           for (let i = 0; i < event.target.files.length; i++) {
+            if(i>5){
+              const event = new ShowToastEvent({
+                title: 'Error',
+                message: 'Maximum 6 Images are Allowed.',
+                variant: 'error',
+              });
+              this.dispatchEvent(event);
+              break;
+            }
             var filesize = event.target.files[i].size;
             this.totalsize += parseInt(event.target.files[i].size);
             if (this.totalsize > 4500000) {
