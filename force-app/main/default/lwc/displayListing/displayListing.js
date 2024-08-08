@@ -77,7 +77,8 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
         return this.pagedFilteredListingData.slice(startIndex, startIndex + this.pageSize).map(property => {
             return {
                 ...property,
-                media_url: property.media_url ? property.media_url : NoImageFound
+                media_url: property.media_url ? property.media_url : NoImageFound,
+                Listing_Type__c: property.Listing_Type__c ? property.Listing_Type__c : 'Sale',
             };
         });
     }
