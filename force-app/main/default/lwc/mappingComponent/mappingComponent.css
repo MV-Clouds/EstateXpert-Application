@@ -228,3 +228,11 @@
 .check-button{
     border-radius: 6px;
 }
+
+@media only screen and (min-width: 1600px) {
+
+    .scrollable-container{
+        min-height: 65vh;
+        max-height: 65vh;
+    }
+}

@@ -79,67 +79,100 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
 
     applyFiltersData(listing) {
         try {
-            this.pagedFilteredInquiryData = [...this.inquirydata];
+            this.pagedFilteredInquiryData = this.inquirydata;
 
             console.log('logical expression ==> ' , this.logicalExpression);
             console.log('inquirydata ==> ' , JSON.stringify(this.inquirydata));
     
             console.log('filters ==> ', JSON.stringify(this.filters));
             console.log('listing ==> ', listing);
-    
-            const parsedFilters = this.filters.map(filter => {
-                const [object, field, operator, valueField] = filter.split(':');
-                return { object, field, operator, valueField };
-            });
-    
-            if (!this.logicalExpression || this.logicalExpression.trim() === '') {
-                this.logicalExpression = parsedFilters.map((_, index) => index + 1).join(' && ');
-            }
-            
-            this.pagedFilteredInquiryData = this.inquirydata.filter(inquiry => {
-                let filterResults = [];
-    
-                parsedFilters.forEach((filter, index) => {
-                    let fieldValue, filterValue;
-    
-                    if (filter.object === 'Inquiry__c') {
-                        fieldValue = inquiry[filter.field];
-                        filterValue = listing[filter.valueField];
-                    } else if (filter.object === 'Listing__c') {
-                        fieldValue = listing[filter.field];
-                        filterValue = inquiry[filter.valueField];
-                    }
 
-                    console.log('fieldValue ==> ' , fieldValue , ' filterValue ==>' , filterValue);
-                    console.log('operator ==> ' , filter.operator);
-                    console.log('object ==> ' , filter.object);
+            if(this.isAutoSync){
+                console.log('True');
 
-                    if (fieldValue === undefined || filterValue === undefined) {
-                        filterResults[index + 1] = false; 
-                        return;
-                    }
+                this.pagedFilteredInquiryData = this.inquirydata.filter(listing => {
+                    let inquiryMaxBedrooms = inquiry.Bedroom_max__c || 0;
+                    let inquiryMinBedrooms = inquiry.Bedroom_min__c || 0;
+                    let listingBedrooms = listing.Bedrooms__c || 0;
     
-                    switch (filter.operator) {
-                        case 'lessThan':
-                            filterResults[index + 1] = parseFloat(fieldValue) < parseFloat(filterValue);
-                            break;
-                        case 'greaterThan':
-                            filterResults[index + 1] = parseFloat(fieldValue) > parseFloat(filterValue);
-                            break;
-                        case 'equalTo':
-                            filterResults[index + 1] = fieldValue === filterValue;
-                            break;
-                        case 'contains':
-                            filterResults[index + 1] = fieldValue && fieldValue.includes(filterValue);
-                            break;
-                    }
+                    let inquiryMaxBathrooms = inquiry.Bathroom_max__c || 0;
+                    let inquiryMinBathrooms = inquiry.Bathroom_min__c || 0;
+                    let listingBathrooms = listing.Bathrooms__c || 0;
+    
+                    let inquiryAddress = inquiry.Address__c || '';
+                    let listingAddress = listing.Address__c || '';
+    
+                    let inquiryCity = inquiry.City__c || '';
+                    let listingCity = listing.City__c || '';
+    
+                    return (
+                        (listingBedrooms >= inquiryMinBedrooms && listingBedrooms <= inquiryMaxBedrooms) 
+                        &&
+                        (listingBathrooms >= inquiryMinBathrooms && listingBathrooms <= inquiryMaxBathrooms)
+                        &&
+                        (listingAddress.includes(inquiryAddress) || listingCity.includes(inquiryCity))
+                    );
                 });
+
+            }
+
+            else{
+                console.log('False');
+                const parsedFilters = this.filters.map(filter => {
+                    const [object, field, operator, valueField] = filter.split(':');
+                    return { object, field, operator, valueField };
+                });
+        
+                if (!this.logicalExpression || this.logicalExpression.trim() === '') {
+                    this.logicalExpression = parsedFilters.map((_, index) => index + 1).join(' && ');
+                }
+                
+                this.pagedFilteredInquiryData = this.inquirydata.filter(inquiry => {
+                    let filterResults = [];
+        
+                    parsedFilters.forEach((filter, index) => {
+                        let fieldValue, filterValue;
+        
+                        if (filter.object === 'Inquiry__c') {
+                            fieldValue = inquiry[filter.field];
+                            filterValue = listing[filter.valueField];
+                        } else if (filter.object === 'Listing__c') {
+                            fieldValue = listing[filter.field];
+                            filterValue = inquiry[filter.valueField];
+                        }
     
-                const evaluationResult = eval(this.logicalExpression.replace(/\d+/g, match => filterResults[match]));
-                console.log('evaluationResult ==> ' , evaluationResult);
-                return evaluationResult;
-            });
+                        console.log('fieldValue ==> ' , fieldValue , ' filterValue ==>' , filterValue);
+                        console.log('operator ==> ' , filter.operator);
+                        console.log('object ==> ' , filter.object);
     
+                        if (fieldValue === undefined || filterValue === undefined) {
+                            filterResults[index + 1] = false; 
+                            return;
+                        }
+        
+                        switch (filter.operator) {
+                            case 'lessThan':
+                                filterResults[index + 1] = parseFloat(fieldValue) < parseFloat(filterValue);
+                                break;
+                            case 'greaterThan':
+                                filterResults[index + 1] = parseFloat(fieldValue) > parseFloat(filterValue);
+                                break;
+                            case 'equalTo':
+                                filterResults[index + 1] = fieldValue === filterValue;
+                                break;
+                            case 'contains':
+                                filterResults[index + 1] = fieldValue && fieldValue.includes(filterValue);
+                                break;
+                        }
+                    });
+        
+                    const evaluationResult = eval(this.logicalExpression.replace(/\d+/g, match => filterResults[match]));
+                    console.log('evaluationResult ==> ' , evaluationResult);
+                    return evaluationResult;
+                });
+            }
+
+            this.inquirydata = this.pagedFilteredInquiryData;
             this.isInquiryAvailable = this.pagedFilteredInquiryData.length > 0;
             this.totalRecords = this.pagedFilteredInquiryData.length;
             this.currentPage = 1;

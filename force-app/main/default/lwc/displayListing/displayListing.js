@@ -166,54 +166,87 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
             console.log('inquiry ==> ', inquiry);
             console.log('filters ==> ', this.filters);
             console.log('logical expression ==> ', this.logicalExpression);
-    
-            const parsedFilters = this.filters.map(filter => {
-                const [object, field, operator, valueField] = filter.split(':');
-                return { object, field, operator, valueField };
-            });
-    
-            if (!this.logicalExpression || this.logicalExpression.trim() === '') {
-                this.logicalExpression = parsedFilters.map((_, index) => index + 1).join(' && ');
-            }
-    
-            this.pagedFilteredListingData = this.listingData.filter(listing => {
-                let filterResults = [];
-    
-                parsedFilters.forEach((filter, index) => {
-                    let fieldValue, filterValue;
-    
-                    if (filter.object === 'Listing__c') {
-                        fieldValue = listing[filter.field];
-                        filterValue = inquiry[filter.valueField];
-                    } else if (filter.object === 'Inquiry__c') {
-                        fieldValue = inquiry[filter.field];
-                        filterValue = listing[filter.valueField];
-                    }
 
-                    if (fieldValue === undefined || filterValue === undefined) {
-                        filterResults[index + 1] = false; 
-                        return;
-                    }
+            if(this.isAutoSync){
+                console.log('True');
+
+                this.pagedFilteredListingData = this.listingData.filter(listing => {
+                    let inquiryMaxBedrooms = inquiry.Bedroom_max__c || 0;
+                    let inquiryMinBedrooms = inquiry.Bedroom_min__c || 0;
+                    let listingBedrooms = listing.Bedrooms__c || 0;
     
-                    switch (filter.operator) {
-                        case 'lessThan':
-                            filterResults[index + 1] = parseFloat(fieldValue) < parseFloat(filterValue);
-                            break;
-                        case 'greaterThan':
-                            filterResults[index + 1] = parseFloat(fieldValue) > parseFloat(filterValue);
-                            break;
-                        case 'equalTo':
-                            filterResults[index + 1] = fieldValue === filterValue;
-                            break;
-                        case 'contains':
-                            filterResults[index + 1] = fieldValue && fieldValue.includes(filterValue);
-                            break;
-                    }
+                    let inquiryMaxBathrooms = inquiry.Bathroom_max__c || 0;
+                    let inquiryMinBathrooms = inquiry.Bathroom_min__c || 0;
+                    let listingBathrooms = listing.Bathrooms__c || 0;
+    
+                    let inquiryAddress = inquiry.Address__c || '';
+                    let listingAddress = listing.Address__c || '';
+    
+                    let inquiryCity = inquiry.City__c || '';
+                    let listingCity = listing.City__c || '';
+    
+                    return (
+                        (inquiryMaxBedrooms > listingBedrooms && inquiryMinBedrooms > listingBedrooms) 
+                        &&
+                        (inquiryMaxBathrooms > listingBathrooms && inquiryMinBathrooms > listingBathrooms)
+                        &&
+                        (listingAddress.includes(inquiryAddress) || listingCity.includes(inquiryCity))
+                    );
                 });
     
-                const evaluationResult = eval(this.logicalExpression.replace(/\d+/g, match => filterResults[match]));
-                return evaluationResult;
-            });
+
+            }
+            else{
+                const parsedFilters = this.filters.map(filter => {
+                    const [object, field, operator, valueField] = filter.split(':');
+                    return { object, field, operator, valueField };
+                });
+        
+                if (!this.logicalExpression || this.logicalExpression.trim() === '') {
+                    this.logicalExpression = parsedFilters.map((_, index) => index + 1).join(' && ');
+                }
+        
+                this.pagedFilteredListingData = this.listingData.filter(listing => {
+                    let filterResults = [];
+        
+                    parsedFilters.forEach((filter, index) => {
+                        let fieldValue, filterValue;
+        
+                        if (filter.object === 'Listing__c') {
+                            fieldValue = listing[filter.field];
+                            filterValue = inquiry[filter.valueField];
+                        } else if (filter.object === 'Inquiry__c') {
+                            fieldValue = inquiry[filter.field];
+                            filterValue = listing[filter.valueField];
+                        }
+    
+                        if (fieldValue === undefined || filterValue === undefined) {
+                            filterResults[index + 1] = false; 
+                            return;
+                        }
+        
+                        switch (filter.operator) {
+                            case 'lessThan':
+                                filterResults[index + 1] = parseFloat(fieldValue) < parseFloat(filterValue);
+                                break;
+                            case 'greaterThan':
+                                filterResults[index + 1] = parseFloat(fieldValue) > parseFloat(filterValue);
+                                break;
+                            case 'equalTo':
+                                filterResults[index + 1] = fieldValue === filterValue;
+                                break;
+                            case 'contains':
+                                filterResults[index + 1] = fieldValue && fieldValue.includes(filterValue);
+                                break;
+                        }
+                    });
+        
+                    const evaluationResult = eval(this.logicalExpression.replace(/\d+/g, match => filterResults[match]));
+                    return evaluationResult;
+                });
+            }
+    
+            
     
             this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
             this.totalRecords = this.pagedFilteredListingData.length;
