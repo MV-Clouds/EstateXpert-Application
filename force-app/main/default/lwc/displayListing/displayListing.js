@@ -74,8 +74,14 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
 
     get pagedProperties() {
         const startIndex = (this.currentPage - 1) * this.pageSize;
-        return this.pagedFilteredListingData.slice(startIndex, startIndex + this.pageSize);
+        return this.pagedFilteredListingData.slice(startIndex, startIndex + this.pageSize).map(property => {
+            return {
+                ...property,
+                media_url: property.media_url ? property.media_url : NoImageFound
+            };
+        });
     }
+    
 
     @wire(CurrentPageReference) pageRef;
     get objectName() {
