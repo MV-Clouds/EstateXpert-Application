@@ -71,7 +71,7 @@ export default class MarketingListFilterCmp extends LightningElement {
     loadPicklistValues(field) {
         getPicklistValues({apiName:field.apiName,objectName:field.objectApiName})
         .then(result => {
-            this.filterFields = this.filterFields.map(f => {
+            this.staticFields = this.staticFields.map(f => {
                 if (f.apiName === field.apiName) {
                     return {
                         ...f,
@@ -81,7 +81,7 @@ export default class MarketingListFilterCmp extends LightningElement {
                 }
                 return f;
             });
-            this.staticFields = this.filterFields;
+            this.filterFields = [...this.staticFields];
         })
         .catch(error => {
             console.error('Error loading picklist values', error);
