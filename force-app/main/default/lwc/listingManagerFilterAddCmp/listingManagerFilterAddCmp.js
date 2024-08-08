@@ -347,6 +347,16 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
             this.isFocused1 = false;
     }
 
+    /**
+    * Method Name: handlePreventDefault
+    * @description: prevent default events when the options div clicked.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
+    handlePreventDefault(event){
+        event.preventDefault();
+    }
+
       /**
     * Method Name: showOptions1
     * @description: Hide / Unhide options of the combobox.
@@ -447,16 +457,6 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
         
         // Dispatch the custom event
         this.dispatchEvent(customEvent);
-    }
-
-     /**
-    * Method Name: handlePreventDefault
-    * @description: prevent default events when the options div clicked.
-    * Date: 23/07/2024
-    * Created By: Vyom Soni
-    **/
-     handlePreventDefault(event){
-        event.preventDefault();
     }
 
 

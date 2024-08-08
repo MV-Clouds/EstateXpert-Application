@@ -90,7 +90,6 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
 
     updateScreenWidth() {
         this.screenWidth = window.innerWidth;
-        setTimeout(()=>{
             const elements = this.template.querySelectorAll('.grid-elem');
             if(this.screenWidth >= 768){
                 elements.forEach(element => {
@@ -107,7 +106,6 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
                     element.classList.add('slds-size_1-of-1');
                 });
             }
-        },0);
         console.log('screen width ->'+this.screenWidth);
     }
 
@@ -218,9 +216,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             this.pageNumber--;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 
@@ -235,9 +231,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             this.pageNumber++;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 

@@ -559,8 +559,8 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         if (this.pageNumber > 1) {
             this.pageNumber--;
             this.updateProcessedListingData();
-            this.sortData();
             this.updatePaginationButtons();
+            this.sortData();
             this.scrollToTop();
         }
     }
@@ -575,8 +575,8 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         if (this.pageNumber < this.totalPages) {
             this.pageNumber++;
             this.updateProcessedListingData();
-            this.sortData();
             this.updatePaginationButtons();
+            this.sortData();
             this.scrollToTop();
         }
     }
