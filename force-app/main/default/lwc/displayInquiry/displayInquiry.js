@@ -144,11 +144,6 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
                         console.log('fieldValue ==> ' , fieldValue , ' filterValue ==>' , filterValue);
                         console.log('operator ==> ' , filter.operator);
                         console.log('object ==> ' , filter.object);
-    
-                        if (fieldValue === undefined || filterValue === undefined) {
-                            filterResults[index + 1] = false; 
-                            return;
-                        }
         
                         switch (filter.operator) {
                             case 'lessThan':
@@ -173,6 +168,7 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
             }
 
             this.inquirydata = this.pagedFilteredInquiryData;
+            console.log('inquirydata ==> ' , JSON.stringify(this.inquirydata));
             this.isInquiryAvailable = this.pagedFilteredInquiryData.length > 0;
             this.totalRecords = this.pagedFilteredInquiryData.length;
             this.currentPage = 1;

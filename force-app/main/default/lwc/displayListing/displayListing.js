@@ -219,11 +219,6 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
                             fieldValue = inquiry[filter.field];
                             filterValue = listing[filter.valueField];
                         }
-    
-                        if (fieldValue === undefined || filterValue === undefined) {
-                            filterResults[index + 1] = false; 
-                            return;
-                        }
         
                         switch (filter.operator) {
                             case 'lessThan':
@@ -242,12 +237,13 @@ export default class DisplayListing extends NavigationMixin(LightningElement) {
                     });
         
                     const evaluationResult = eval(this.logicalExpression.replace(/\d+/g, match => filterResults[match]));
+                    console.log('evaluationResult ==> ' , evaluationResult);
                     return evaluationResult;
                 });
             }
     
             
-    
+            console.log('pagedFilteredListingData ==> ' , JSON.stringify(this.pagedFilteredListingData));
             this.isPropertyAvailable = this.pagedFilteredListingData.length > 0;
             this.totalRecords = this.pagedFilteredListingData.length;
             this.currentPage = 1;
