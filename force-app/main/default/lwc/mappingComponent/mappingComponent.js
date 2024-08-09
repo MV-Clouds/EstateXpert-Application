@@ -446,5 +446,4 @@ export default class MappingComponent extends LightningElement {
         }
     }
     
-    
 }

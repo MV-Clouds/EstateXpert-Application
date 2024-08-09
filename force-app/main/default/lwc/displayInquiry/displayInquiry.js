@@ -1,4 +1,4 @@
-import { LightningElement, track ,wire} from 'lwc';
+import { LightningElement, track ,wire , api} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getRecords from '@salesforce/apex/PropertySearchController.getRecords';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -18,8 +18,10 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
     @track isInquiryAvailable = true;
     @track filters = '';
     @track isAutoSync = false;
-    @track logicalExpression = '';
+    @track logicalExpression = '';   
     
+    @track isShowModal = false;
+
 
     get totalinquiries() {
         return this.pagedFilteredInquiryData.length;
@@ -343,4 +345,14 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
             variant
         }));
     }
+
+
+    showModalBox() {  
+        this.isShowModal = true;
+    }
+
+    hideModalBox() {  
+        this.isShowModal = false;
+    }
+    
 }

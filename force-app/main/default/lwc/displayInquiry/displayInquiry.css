@@ -112,3 +112,28 @@
     width: 100%;
     text-align: center;
 }
+
+.filter-section{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.slds-modal{
+    position: absolute;
+    /* bottom: 8rem; */
+}
+
+.slds-modal__content{
+    min-height: 15rem;
+    max-height: 16rem;
+}
+
+.slds-modal__container {
+    position: absolute;
+    right: 14rem;
+    top: 3rem;
+}
+
+
