@@ -61,9 +61,20 @@
                         
                                             <div class="slds-m-top_medium">
                                                 <template for:each={mappings} for:item="mapping">
+
+
                                                     <div key={mapping.id} class="mapping-item">
-                                                        {mapping.field} {mapping.operator} "{mapping.valueField}"
+                                                        {mapping.label} <br>
+                                                        {mapping.displayOperator} " {mapping.valueField} "
+
+                                                        <button class="slds-button slds-button_icon slds-button_icon-inverse slds-button_icon slds-button_icon-small" title="Delete" onclick={handleDeleteMapping}>
+                                                            <lightning-icon icon-name="utility:delete"  data-id={mapping.id} alternative-text="delete" size="small"></lightning-icon>
+                                                            <span class="slds-assistive-text">Delete</span>
+                                                        </button>
+                                                        
                                                     </div>
+
+     
                                                 </template>
                                             </div>
                         

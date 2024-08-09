@@ -137,8 +137,14 @@
 }
 
 .mapping-item {
-    padding: 5px;
-    border-bottom: 1px solid #dcdcdc;
+    padding: 1rem;
+    border: 1px solid black;
+    margin-bottom : 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    --lwc-squareIconSmallBoundary: 1rem;
+    line-height: 1.6rem;
 }
 
 .slds-form_element {

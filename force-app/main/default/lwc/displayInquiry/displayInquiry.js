@@ -4,6 +4,7 @@ import getRecords from '@salesforce/apex/PropertySearchController.getRecords';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { CurrentPageReference } from 'lightning/navigation';
 import getMetadata from '@salesforce/apex/DynamicMappingCmp.getMetadata';
+import getFieldMap from '@salesforce/apex/PropertySearchController.getFieldMap';
 
 export default class displayInquiry extends NavigationMixin(LightningElement) {
     @track recordId;
@@ -21,6 +22,9 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
     @track logicalExpression = '';   
     
     @track isShowModal = false;
+
+    @track listingFieldMap = {};
+    @track inquiryFieldMap = {};
 
     @track selectedConditionType = 'Custom Logic Is Met';
     @track mappings = [];
@@ -86,12 +90,46 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
     connectedCallback() {
         console.log('Object Name ==> ' , this.objectName);
         console.log('recordId ==> ' , this.recordId);
+        this.getListingFields();
+        this.getInquiryFields();
         this.fetchMetadataRecords();
         window.addEventListener('click', this.handleOutsideClick.bind(this));
 
     }
 
 
+    getListingFields(){
+        getFieldMap({ objectName: 'Listing__c' })
+        .then((result) => {
+        
+        this.listingFieldMap = result;
+        console.log('listingFieldMap ==> ' , JSON.stringify(this.listingFieldMap));
+
+        })
+        .catch((error) => {
+            console.log('Error ==> ' , error);
+        });
+
+    }
+
+    getInquiryFields(){
+        getFieldMap({ objectName: 'Inquiry__c' })
+        .then((result) => {
+        
+        this.inquiryFieldMap = result;
+        console.log('inquiryFieldMap ==> ' , JSON.stringify(this.inquiryFieldMap));
+
+        })
+        .catch((error) => {
+            console.log('Error ==> ' , error);
+        });
+
+    }
+
+    handleDeleteMapping(event) {
+        const mappingIdToDelete = event.target.dataset.id;
+        this.mappings = this.mappings.filter(mapping => mapping.id !== parseInt(mappingIdToDelete, 10));
+    }
 
     applyFiltersData(listing) {
         try {
@@ -141,20 +179,32 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
 
                 this.mappings = this.filters.map((mappingStr, index) => {
                     const [object, field, operator, valueField] = mappingStr.split(':');
+                    let fieldLabel = '';
                     
                     if (object === 'Inquiry__c') {
+                        console.log(field);
+                        
+                        fieldLabel = this.inquiryFieldMap[field] || field; 
+                        console.log('fieldLabel' ,fieldLabel );
                         return {
                             id: index + 1,
                             field: field,
                             operator: operator,
+                            displayOperator :this.displayOperator(operator),
                             valueField: listing[valueField] ? listing[valueField] : '' ,
+                            label : fieldLabel
                         };
                     } else if (object === 'Listing__c') {
+                        fieldLabel = this.inquiryFieldMap.field || field; 
+                        console.log('fieldLabel' ,fieldLabel );
+
                         return {
                             id: index + 1,
                             field: valueField,
                             operator: this.reverseOperator(operator),
+                            displayOperator :this.displayReverseOperator(operator),
                             valueField: listing[field] ? listing[field] : '',
+                            label : fieldLabel
                         };
                     }
                 });
@@ -227,6 +277,38 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
                 return 'equalTo';
             case 'contains':
                 return 'contains';
+            default:
+                return operator; 
+        }
+    }
+
+    
+
+    displayReverseOperator(operator) {
+        switch (operator) {
+            case 'lessThan':
+                return 'Greater than';
+            case 'greaterThan':
+                return 'Less than';
+            case 'equalTo':
+                return 'Equals To';
+            case 'contains':
+                return 'Contains';
+            default:
+                return operator; 
+        }
+    }
+
+    displayOperator(operator) {
+        switch (operator) {
+            case 'lessThan':
+                return 'Less than';
+            case 'greaterThan':
+                return 'Greater than';
+            case 'equalTo':
+                return 'Equals to';
+            case 'contains':
+                return 'Contains';
             default:
                 return operator; 
         }
@@ -407,17 +489,17 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
     }
 
     handleOutsideClick(event) {
-        let isButtonClicked = this.template.querySelector('.open-modal-button').contains(event.target);
-        const isClickInsideModal = this.template.querySelector('.slds-modal__container').contains(event.target);
+        // let isButtonClicked = this.template.querySelector('.open-modal-button').contains(event.target);
+        // const isClickInsideModal = this.template.querySelector('.slds-modal__container').contains(event.target);
 
-        console.log('isClickInsideModal ==> ' , isClickInsideModal);
-        console.log('isModalOpened ==> ' , this.isShowModal);
-        console.log('isButtonClicked ==> ' , isButtonClicked);
+        // console.log('isClickInsideModal ==> ' , isClickInsideModal);
+        // console.log('isModalOpened ==> ' , this.isShowModal);
+        // console.log('isButtonClicked ==> ' , isButtonClicked);
     
-        if (!isClickInsideModal && isButtonClicked) {
-            isButtonClicked = false;
-            this.hideModalBox();
-        }
+        // if (!isClickInsideModal && isButtonClicked) {
+        //     isButtonClicked = false;
+        //     this.hideModalBox();
+        // }
     }
 
     handleConditionTypeChange(event) {
@@ -429,8 +511,7 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
     }
 
     addCondition() {
-        // Logic to add a new condition to the mappings array
-        const newMapping = { id: Date.now(), inquiryField: '', operator: '', listingValue: '' };
+        const newMapping = { id: this.mappings.length + 1, inquiryField: '', operator: '', listingValue: '' };
         this.mappings = [...this.mappings, newMapping];
     }
 

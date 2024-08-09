@@ -99,4 +99,24 @@ public with sharing class PropertySearchController {
         }
         return '';
     }
+
+    @AuraEnabled
+    public static Map<String, String> getFieldMap(String objectName) {
+        Map<String, String> fieldMap = new Map<String, String>();
+
+        Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectName);
+
+        if (sObjectType != null) {
+            Map<String, Schema.SObjectField> fields = sObjectType.getDescribe().fields.getMap();
+            for (String apiName : fields.keySet()) {
+                fieldMap.put(apiName, fields.get(apiName).getDescribe().getLabel());
+            }
+        } else {
+            // throw new AuraHandledException('Invalid object name: ' + objectName);
+            System.debug('Object is null');
+            
+        }
+
+        return fieldMap;
+    }
 }
