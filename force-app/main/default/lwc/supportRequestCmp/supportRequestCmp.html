@@ -1,0 +1,74 @@
+<template>
+    <div class="slds-p-top_medium slds-p-left_large slds-p-bottom_large slds-p-right_large main-div">
+        <div class="supportcls">
+            <div class="Wel_message">
+                <div class="content-div">
+                    <div class="input-cover">
+                    <div class="head-div">
+                        <label class="heading1">Contact us</label>
+                        <label class="heading2">We are here for you! How can we help?</label>    
+                    </div>
+                    <div class="name-field">
+                        <label for="myInput"><span>*</span> Name</label>
+                        <input type="text" placeholder="Enter Your Name" 
+                        value={supportname} onchange={Support_name}
+                        class="input selectDropValues1" maxlength="50" minlength="0"/>
+                        <div class="error-message" if:false={name_msg}>Please Enter Valid Name
+                            Details..!</div>
+                    </div>
+                    <div class="name-field">
+                        <label for="myInput"><span>*</span> Email</label>
+                        <input type="text" placeholder="Enter Your Email"
+                        value={email} onkeyup={Support_email}
+                        class="input selectDropValues1"  maxlength="255" minlength="0"/>
+                        <div class="error-message" if:false={email_msg}>Please Enter Valid Email
+                            Details..!</div>
+                    </div>
+                    <div class="name-field">
+                        <label for="myInput"><span>*</span> Subject</label>
+                        <input type="text" placeholder="Enter Your Subject"
+                        value={subject} onchange={Support_subject}
+                        class="input selectDropValues1" maxlength="100" minlength="0"/>
+                        <div class="error-message" if:false={subject_msg}>Please Enter Valid Subject
+                            Details..!</div>
+                    </div>
+                    <div class="name-field">
+                        <label for="myInput"><span>*</span> Message</label>
+                        <textarea rows="3" placeholder="Enter your Message"
+                         onchange={Support_message} value={message}
+                        class="message selectDropValues1"></textarea>
+                        <div class="error-message" if:false={message_msg}>Please Enter Valid Message
+                            Details..!</div>
+                    </div>
+                    <div class="attachment-div">
+                            <lightning-input label="Add Attachment" onchange={handleUploadFinished} type="file"
+                                name="file" accept=".png , .jpeg , .jpg" class="quick_message" multiple></lightning-input>
+                            <template if:true={filesData}>
+                                    <ul class="image-list">
+                                <template for:each={filesData} for:item="imgName" for:index="index">
+                                    <li key={imgName.id}>
+                                        <div class="container">
+                                            <div class="box box1">
+                                                <p>{imgName.fileName}</p>
+                                            </div>
+                                            <div class="box removeImage" key={imgName.fileName} data-id={index} onclick={removeReceiptImage}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="52" width="52" viewBox="0 0 520 520" fill="#fff"><path d="m310 254 130-131c6-6 6-15 0-21l-20-21c-6-6-15-6-21 0L268 212a10 10 0 0 1-14 0L123 80c-6-6-15-6-21 0l-21 21c-6 6-6 15 0 21l131 131c4 4 4 10 0 14L80 399c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l131-131a10 10 0 0 1 14 0l131 131c6 6 15 6 21 0l21-21c6-6 6-15 0-21L310 268a10 10 0 0 1 0-14z"/></svg>
+                                            </div>
+                                        </div>
+                                    </li>     
+                                </template>
+                                    </ul>
+                            </template>
+                    </div>
+                </div>
+                <div class="button">
+                    <div class="btn-div close-btn" onclick={onClose}>   Cancel   </div>
+                    <div class="btn-div" onclick={onSubmit}>Send Message</div>
+                </div>
+                    
+                </div>    
+                <div class="image-div"></div>
+            </div>
+        </div>
+    </div>
+</template>
