@@ -3,28 +3,17 @@ import getStaticFields from '@salesforce/apex/ListingManagerFilterController.get
 import getPicklistValues from '@salesforce/apex/ListingManagerFilterController.getPicklistValues';
 import getListingsWithRelatedRecords from '@salesforce/apex/ListingManagerFilterController.getListingsWithRelatedRecords';
 import getTheOfferRecords from '@salesforce/apex/ListingManagerFilterController.getTheOfferRecords';
-import Icons from '@salesforce/resourceUrl/listingManagerIcons';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class ListingManagerFilterCmp extends LightningElement {
 
     @track addModal = false;
     @track listings = [];
-    //Icons
-    @track deleteIcon = Icons + '/DeleteeIcon.png'
-    @track addIcon = Icons + '/PlusIcon.png'
-    @track searchIcon = Icons + '/SearchIcon.png'
-    @track upIcon = Icons + '/up.png'
-    @track downIcon = Icons + '/down.png'
-    @track resetIcon = Icons + '/ResetIcon.png'
-    @track closeIcon = Icons + '/close.png'
-
     @track objectApiName = '';
     @track valueFromChild = [];
     @track isAddButtonDisabled = true;
     @track filterFields =[];
     @track offerRecords = [];
-    @track ListingsWrapper = [];
     @track filteredListings;
     @track staticFields=[];
 
@@ -71,8 +60,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
             if (field.picklist) {
                 this.loadPicklistValues(field);
                 }
-        });
-        
+        });     
     }
 
     /**
@@ -95,7 +83,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 }
                 return f;
             });
-
             this.filterFields = [...this.staticFields];
         })
         .catch(error => {
@@ -390,7 +377,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const customEvent = new CustomEvent('valueselected', {
             detail: this.filteredListings
         });
-        
         // Dispatch the custom event
         this.dispatchEvent(customEvent);
     }  
@@ -422,7 +408,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
                     if (field.selectedOptions == null) {
                         field.selectedOptions = [];
                     }
-        
                     // Check if the value already exists in selectedOptions
                     const exists = field.selectedOptions.some(option => option.value === value);
                     if (!exists) {
@@ -436,7 +421,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
                             }
                             return option;
                         });
-        
                         field.picklistValue = newPicklistValue;
                         field.unchangePicklistValue = newPicklistValue;
                         fields[index] = field;
@@ -874,7 +858,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
-     clearSearch(event) {
+    clearSearch(event) {
         const index = event.currentTarget.dataset.id;
         if (index > -1 && index < this.filterFields.length) {
             this.filterFields.splice(index, 1);
@@ -903,7 +887,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
               });
             }
           });
-        console.log('static fields'+JSON.stringify(this.staticFields));
         this.filterFields = this.staticFields;
         this.filterFields = this.staticFields.map(field => {
             return {

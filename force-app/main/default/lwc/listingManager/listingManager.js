@@ -269,7 +269,6 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         this.sortField = '';
         this.sortOrder = 'asc';
         const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown img');
-        const filteredContact = event.detail.filtercontacts;
         allHeaders.forEach(icon => {
             icon.classList.remove('rotate-asc', 'rotate-desc');
         });

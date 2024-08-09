@@ -1,10 +1,7 @@
 import { LightningElement,track,api} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import Icons from '@salesforce/resourceUrl/listingManagerIcons';
-
 export default class ListingManagerTileViewCmp extends NavigationMixin(LightningElement) {
     @api listings = [];
-    @track shareIcon = Icons + '/shareIcon.png';
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
