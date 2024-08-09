@@ -75,6 +75,8 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
         console.log('Object Name ==> ' , this.objectName);
         console.log('recordId ==> ' , this.recordId);
         this.fetchMetadataRecords();
+        window.addEventListener('click', this.handleOutsideClick.bind(this));
+
     }
 
 
@@ -353,6 +355,26 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
 
     hideModalBox() {  
         this.isShowModal = false;
+    }
+
+    handleOutsideClick(event) {
+        let isButtonClicked = this.template.querySelector('.open-modal-button').contains(event.target);
+        const isClickInsideModal = this.template.querySelector('.slds-modal__container').contains(event.target);
+
+        console.log('isClickInsideModal ==> ' , isClickInsideModal);
+        console.log('isModalOpened ==> ' , this.isShowModal);
+        console.log('isButtonClicked ==> ' , isButtonClicked);
+    
+        if (!isClickInsideModal && isButtonClicked) {
+            isButtonClicked = false;
+            this.hideModalBox();
+        }
+    }
+    
+
+    disconnectedCallback() {
+        // Clean up the event listener when the component is removed
+        window.removeEventListener('click', this.handleOutsideClick.bind(this));
     }
     
 }
