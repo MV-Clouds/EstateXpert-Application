@@ -2,7 +2,7 @@
     <template if:false={showSection}>
         <div class="slds-grid slds-wrap slds-gutters slds-p-left_large slds-p-right_large mainDiv">
             <template for:each={shownProcessedListingData} for:item="listing" for:index="index">
-                <div key={listing.Id} class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+                <div key={listing.Id} class="slds-col slds-size_1-of-4 grid-elem slds-p-around_x-small">
                     <div class="outerCover">
                         <div class="imageSection">
                             <img src={listing.media_url}/>
@@ -20,9 +20,6 @@
                             <div class="nameSection"><p data-id={listing.Id} onclick={redirectToRecord}>{listing.Name}</p></div>
                             <div class="descSection"><p>{listing.Title}</p></div>
                             <div class="addSection"><p>Rs.{listing.Listing_Price__c}</p></div>
-                            <div class="shareIconDiv" data-id={listing.Id} onclick={redirectToRecord} >
-                                <img class="listing-manager-icon" src={shareIcon} />
-                            </div>
                         </div>
                     </div>   
                 </div>

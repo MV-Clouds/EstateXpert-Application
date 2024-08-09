@@ -20,7 +20,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     @track ListingFields=[];
     @track isDisabled = true;
 
- /**
+    /**
     * Method Name: connectedCallback
     * @description:handle add button disable, fetch listing fields.
     * Date: 07/06/2024
@@ -223,7 +223,7 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     
         if (selectedValue && selectedField && !this.selectedValues.includes(selectedValue)) {
             
-            this.selectedFields.push({ label: selectedField.label, objectApiName: selectedField.objectApiName,value:selectedField.value,type:selectedField.type,picklistValues:selectedField.picklistValues,prevApiName:this.selectedValues.length > 0 ? this.selectedValues[this.selectedValues.length - 1]:''}); // Only store the label
+            this.selectedFields.push({ label: selectedField.label, objectApiName: selectedField.objectApiName,value:selectedField.value,type:selectedField.type,picklistValues:selectedField.picklistValues,prevApiName:this.selectedValues.length > 0 ? this.selectedValues[this.selectedValues.length - 1]:'',isNot:false}); // Only store the label
             this.selectedValues.push(selectedValue);
             this.updateBreadcrumbs();
         }
@@ -344,9 +344,17 @@ export default class ListingManagerFilterAddCmp extends LightningElement {
     **/
     handleBlur1() {
         // Delay the blur action to allow click event to be registered
-        setTimeout(() => {
             this.isFocused1 = false;
-        }, 700);
+    }
+
+    /**
+    * Method Name: handlePreventDefault
+    * @description: prevent default events when the options div clicked.
+    * Date: 07/06/2024
+    * Created By: Vyom Soni
+    **/
+    handlePreventDefault(event){
+        event.preventDefault();
     }
 
       /**

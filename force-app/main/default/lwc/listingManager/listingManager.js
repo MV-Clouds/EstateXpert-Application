@@ -34,11 +34,12 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
-    @track pageSize = 30;
+    @track pageSize = 28;
     @track totalPages;
     @track shownProcessedListingData = [];
     @track wrapOn = false;
     @track propertyMediaUrls = [];
+    @track screenWidth = 0;
      /**
     * Method Name : checkAll
     * @description : handle the checkAll checkbox in list view.
@@ -59,6 +60,76 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         return this.shownProcessedListingData.length === 0;
     }
 
+    /**
+    * Method Name : sortDescription
+    * @description : set the header sort description.
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get sortDescription() {
+        if(this.sortField != '' && this.showTile == false && this.showMap == false){
+            const orderDisplayName = this.sortOrder === 'asc' ? 'Ascending' : 'Descending';
+            
+            let field = null;
+            // Assuming `listings` is an array of objects where each object has a `value` and a `label` property
+            if(this.sortField != 'Name'){
+                field = this.fields.find(item => item.fieldName === this.sortField);
+            }else{
+                field = {fieldName:'Name',fieldLabel:'Listing Name'};
+            }
+            console.log('fields'+JSON.stringify(this.fields));
+            if (!field) {
+                return '';
+            }
+        
+            const fieldDisplayName = field.fieldLabel;
+            
+            return `- Sorted by ${fieldDisplayName} (${orderDisplayName})`;
+        }else{
+            return '';
+        }
+    }
+
+    /**
+    * Method Name : totalContacts
+    * @description : set the total filtered contacts.
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get totalListings(){
+        return this.processedListingData.length;
+    }
+
+    /**
+    * Method Name : isSelected
+    * @description : set value true if any option is true.
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get isSelected(){
+        return this.totalSelected>0;
+    }
+
+    /**
+    * Method Name : items
+    * @description : set 'Items' string when the user select more then 1 options.
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get items(){
+        return this.totalSelected > 1 ? 'Items' : 'Item';
+    }
+    
+    /**
+    * Method Name : contactItems
+    * @description : set 'Items' when the filtered items is more then the 1  .
+    * Date: 16/07/2024
+    * Created By:Vyom Soni
+    */
+    get lisitngItems(){
+        return this.processedListingData.length>1 ? 'Items' :'Item';
+    }
+
      /**
     * Method Name : connectedCallback
     * @description : retrieve fields name from the field-set and retrieve listing records.
@@ -66,9 +137,44 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     * Created By:Vyom Soni
     */
     connectedCallback(){
+        this.updateScreenWidth();
+        // Add event listener for window resize
+        window.addEventListener('resize', this.handleResize.bind(this));
         loadStyle(this, designcss);
         this.loadFormData();
         this.getListingData();
+    }
+
+    /**
+    * Method Name : disconnectedCallback
+    * @description : remove the resize event.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
+    disconnectedCallback() {
+        // Remove event listener when component is destroyed
+        window.removeEventListener('resize', this.handleResize.bind(this));
+    }
+
+     /**
+    * Method Name : handleResize
+    * @description : call when component is resize.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
+    handleResize() {
+        // Update screen width when window is resized
+        this.updateScreenWidth();
+    }
+
+     /**
+    * Method Name : updateScreenWidth
+    * @description : update the width variable.
+    * * Date: 3/06/2024
+    * Created By:Vyom Soni
+    */
+    updateScreenWidth() {
+        this.screenWidth = window.innerWidth;
     }
 
      /**
@@ -160,6 +266,18 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     * Created By:Vyom Soni
     */
     handleFilteredListings(event){
+        this.sortField = '';
+        this.sortOrder = 'asc';
+        const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown img');
+        allHeaders.forEach(icon => {
+            icon.classList.remove('rotate-asc', 'rotate-desc');
+        });
+        this.processedListingData = this.processedListingData.map(item => {
+            return { ...item, isChecked: false };
+        });
+        this.unchangedProcessListings = this.unchangedProcessListings.map(item => {
+            return { ...item, isChecked: false };
+        });
         const filteredListing = event.detail;
         this.processedListingData = this.unchangedProcessListings;
         this.listingData = this.unchangedListingData;
@@ -213,14 +331,10 @@ export default class ListingManager extends NavigationMixin(LightningElement){
         }else if(target == "3"){
             this.showMap = true;
         }
-                this.template.querySelectorAll(".menuButton").forEach(tabel => {
-                        tabel.classList.remove("activeButton");
-                });
-                this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("activeButton");
-                this.template.querySelectorAll(".menuButton svg").forEach(tabdata => {
-                    tabdata.classList.remove("activeSvg");
-                });
-                this.template.querySelector('[data-id="' + target + '"]').classList.add("activeSvg");
+            this.template.querySelectorAll(".menuButton").forEach(tabel => {
+                    tabel.classList.remove("activeButton");
+            });
+            this.template.querySelector('[data-tab-id="' + target + '"]').classList.add("activeButton");
     }
 
     /**
@@ -231,13 +345,15 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     redirectToRecord(event){
         const recordId = event.target.dataset.id;
-        this[NavigationMixin.Navigate]({
+        this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
                 recordId: recordId,
-                objectApiName: 'MVEX__Listing__c', 
+                objectApiName: 'MVEX__Listing__c',
                 actionName: 'view'
             }
+        }).then(url => {
+            window.open(url, '_blank');
         });
     }
 
@@ -286,6 +402,12 @@ export default class ListingManager extends NavigationMixin(LightningElement){
     */
     selectAllCheckbox(event){
         const isChecked = event.target.checked;
+        this.sortField = '';
+        this.sortOrder = 'asc';
+        const allHeaders = this.template.querySelectorAll('.slds-icon-utility-arrowdown svg');
+        allHeaders.forEach(icon => {
+            icon.classList.remove('rotate-asc', 'rotate-desc');
+        });
         this.listingData = this.listingData.map(item => {
             return { ...item, isChecked: isChecked };
         });
@@ -437,9 +559,8 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             this.pageNumber--;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.sortData();
+            this.scrollToTop();
         }
     }
 
@@ -454,9 +575,8 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             this.pageNumber++;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.sortData();
+            this.scrollToTop();
         }
     }
 
@@ -488,12 +608,22 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
             filterDiv.classList.remove('removeInnerDiv1');
 
-            const div1 = this.template.querySelector('.innerDiv1');
-            div1.style.width = '30%';
+            if(this.screenWidth >= 768){
+                const div1 = this.template.querySelector('.innerDiv1');
+                div1.style.width = '30%';
+                div1.style.height = '100%';
+                const div2 = this.template.querySelector('.innerDiv2');
+                div2.style.width = '70%';
+                div2.style.height = '100%';
+            }else{
+                const div1 = this.template.querySelector('.innerDiv1');
+                div1.style.height = 'fit-content';
+                div1.style.width = '100%';
 
-            const div2 = this.template.querySelector('.innerDiv2');
-            div2.style.width = '70%';
-
+                const div2 = this.template.querySelector('.innerDiv2');
+                div2.style.height = '30rem';
+                div2.style.width = '100%';
+            }
             this.wrapOn = false;
         } else {
             const svgElement = this.template.querySelector('.innerDiv1 .filterWrap img');
@@ -502,11 +632,21 @@ export default class ListingManager extends NavigationMixin(LightningElement){
             const filterDiv = this.template.querySelector('.innerDiv1 .filterDiv');
             filterDiv.classList.add('removeInnerDiv1');
 
-            const div1 = this.template.querySelector('.innerDiv1');
-            div1.style.width = 'fit-content';
-
-            const div2 = this.template.querySelector('.innerDiv2');
-            div2.style.width = '100%';
+            if(this.screenWidth >= 768){
+                const div1 = this.template.querySelector('.innerDiv1');
+                div1.style.width = 'fit-content';
+                div1.style.height = '100%';
+                const div2 = this.template.querySelector('.innerDiv2');
+                div2.style.height = '100%';
+                div2.style.width = '100%';
+            }else{
+                const div1 = this.template.querySelector('.innerDiv1');
+                div1.style.height = 'fit-content';
+                div1.style.width = '100%';
+                const div2 = this.template.querySelector('.innerDiv2');
+                div2.style.height = '100%';
+                div2.style.width = '100%';
+            }
 
             this.wrapOn = true;
         }

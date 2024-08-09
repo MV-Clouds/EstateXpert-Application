@@ -2,7 +2,7 @@
     <div class="slds-grid slds-wrap slds-align_absolute-center full-page-container">
         <div class="main">
             <templete if:true={spinnerShow}>
-                <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+                <c-spinner-component></c-spinner-component>
             </templete>
             <lightning-card hide-header="true" variant="narrow" class="slds-size_full full-page-card">
                 <div class="slds-page-header slds-page-header_related-list">
@@ -31,7 +31,12 @@
                     </div>
                     <div class="slds-page-header__row second-row">
                         <div class="slds-page-header__col-meta">
-                            <p class="slds-page-header__meta-text">{totalSelected} Items Selected</p>
+                            <template if:false={isSelected}>
+                                <p class="slds-page-header__meta-text">{totalListings} {lisitngItems} {sortDescription}</p>
+                            </template>
+                            <template if:true={isSelected}>
+                                <p class="slds-page-header__meta-text">{totalSelected} {items} Selected {sortDescription}</p>
+                            </template>
                         </div>
                         <div class="slds-page-header__col-controls">
                             <div class="slds-page-header__controls">
@@ -70,7 +75,7 @@
                         </c-listing-manager-filter-cmp>
                     </div>
                     <div class="filterWrap" onclick={wrapFilter}>
-                        <img class="listing-manager-icon" src={leftIcon} />
+                        <img class="listing-manager-icon wrap-icon" src={leftIcon} />
                     </div>
                 </div>
                
@@ -80,7 +85,7 @@
                         <div class="tableDiv" id="tableDiv">
                             <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid" aria-label="Example advanced table of Opportunities in actionable mode">
                                 <thead>
-                                  <tr class="slds-line-height_reset">
+                                  <tr class="slds-line-height_reset fields-names">
                                     <th class="slds-text-align_right slds-cell_action-mode colume1" scope="col">
                                       <span id="column-group-header" class="slds-assistive-text">Choose a row</span>
                                       <div class="slds-th__action slds-th__action_form">
@@ -96,7 +101,7 @@
                                         <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
                                     </th>
                                     <th key={listing.fieldName} aria-sort="none" data-id="Name" onclick={sortClick} class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
-                                      <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                      <div class="slds-th__action slds-text-link_reset" role="button" tabindex="0">
                                         <span class="slds-assistive-text">Sort by: </span>
                                         <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
                                           <span class="slds-truncate" title="Title">Listing Name</span>
@@ -104,11 +109,11 @@
                                             <img data-index="Name" class="listing-manager-icon" src={arrowUp} />
                                           </span>
                                         </div>
-                                      </a>
+                                    </div>
                                     </th>
                                     <template for:each={fields} for:item="listing" for:index="index">
                                       <th key={listing.fieldName} data-id={listing.fieldName} onclick={sortClick} aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode colume2" scope="col">
-                                        <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                                        <div class="slds-th__action slds-text-link_reset" role="button" tabindex="0">
                                           <span class="slds-assistive-text">Sort by: </span>
                                           <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
                                             <span class="slds-truncate" title="Title">{listing.fieldLabel}</span>
@@ -116,7 +121,7 @@
                                                 <img data-index={listing.fieldName} class="listing-manager-icon" src={arrowUp} />
                                             </span>
                                           </div>
-                                        </a>
+                                        </div>
                                       </th>
                                     </template>
                                   </tr>
@@ -140,7 +145,7 @@
                                         </td>
                                         <th class="slds-cell_action-mode" scope="row">
                                             <div class="slds-truncate">
-                                                <a href="#" data-id={listing.Id} onclick={redirectToRecord} tabindex="0">{listing.Name}</a>
+                                                <a data-id={listing.Id} onclick={redirectToRecord} tabindex="0">{listing.Name}</a>
                                             </div>
                                         </th>
                                         <template for:each={listing.orderedFields} for:item="field" for:index="index2">

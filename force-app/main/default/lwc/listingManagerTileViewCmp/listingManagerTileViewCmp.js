@@ -1,16 +1,14 @@
 import { LightningElement,track,api} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import Icons from '@salesforce/resourceUrl/listingManagerIcons';
-
 export default class ListingManagerTileViewCmp extends NavigationMixin(LightningElement) {
     @api listings = [];
-    @track shareIcon = Icons + '/shareIcon.png';
     @track isPrevDisabled = true;
     @track isNextDisabled = false;
     @track pageNumber = 1;
-    @track pageSize = 30;
+    @track pageSize = 28;
     @track totalPages;
     @track shownProcessedListingData = [];
+    @track screenWidth = 0;
 
       /**
     * Method Name : get listingsdata
@@ -32,12 +30,19 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     */
     set listingsdata(value) {
             if (value && Array.isArray(value)) {
+                if(this.listings.length != value.length){
+                    this.pageNumber = 1;
+                }
                 this.listings = value;
                 this.totalPages = Math.ceil(this.listings.length / this.pageSize);
+                if(this.totalPages == 0){
+                    this.totalPages = 1;
+                }
                 this.updateProcessedListingData();
                 this.updatePaginationButtons();
             } else {
                 this.listings = [];
+                this.pageNumber = 1;
                 this.totalPages = 1;
                 this.shownProcessedListingData = [];
                 this.updatePaginationButtons();
@@ -61,9 +66,44 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
     * Created By: Vyom Soni
     */
     connectedCallback(){
+        this.updateScreenWidth();
+        // Add event listener for window resize
+        window.addEventListener('resize', this.handleResize.bind(this));
         this.totalPages = Math.ceil(this.listings.length / this.pageSize);
         this.updateProcessedListingData();
         this.updatePaginationButtons();
+    }
+
+    disconnectedCallback() {
+        // Remove event listener when component is destroyed
+        window.removeEventListener('resize', this.handleResize.bind(this));
+    }
+
+    handleResize() {
+        // Update screen width when window is resized
+        this.updateScreenWidth();
+
+    }
+
+    updateScreenWidth() {
+        this.screenWidth = window.innerWidth;
+            const elements = this.template.querySelectorAll('.grid-elem');
+            if(this.screenWidth >= 768){
+                elements.forEach(element => {
+                    // Remove the class from each element
+                    element.classList.remove('slds-size_1-of-1');
+                    // Add the new class to each element
+                    element.classList.add('slds-size_1-of-4');
+                });
+            }else{
+                elements.forEach(element => {
+                    // Remove the class from each element
+                    element.classList.remove('slds-size_1-of-4');
+                    // Add the new class to each element
+                    element.classList.add('slds-size_1-of-1');
+                });
+            }
+        console.log('screen width ->'+this.screenWidth);
     }
 
       /**
@@ -148,6 +188,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
         const start = (this.pageNumber - 1) * this.pageSize;
         const end = start + this.pageSize;
         this.shownProcessedListingData = this.listings.slice(start, end);
+        this.updateScreenWidth();
     }
 
     /**
@@ -172,9 +213,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             this.pageNumber--;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 
@@ -189,9 +228,7 @@ export default class ListingManagerTileViewCmp extends NavigationMixin(Lightning
             this.pageNumber++;
             this.updateProcessedListingData();
             this.updatePaginationButtons();
-            setTimeout(() => {
-                this.scrollToTop();
-            }, 0);
+            this.scrollToTop();
         }
     }
 

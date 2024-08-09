@@ -19,6 +19,13 @@ public without sharing class ListingManagerFilterController {
     public static List<FieldDetails> getListingFields(String objectApiName) {
         List<FieldDetails> fieldDetailsList = new List<FieldDetails>();
 
+        ListingManagerFilterConfig__mdt filterConfig = [SELECT BlockedFields__c FROM ListingManagerFilterConfig__mdt WITH SECURITY_ENFORCED  LIMIT 1];
+
+        // Parse the blocked fields
+        Set<String> blockedFields = new Set<String>();
+        if (filterConfig != null && filterConfig.BlockedFields__c != null) {
+            blockedFields.addAll(filterConfig.BlockedFields__c.split(';'));
+        }
         // Get the Describe result for the given object
         Schema.DescribeSObjectResult objDescribe = Schema.getGlobalDescribe().get(objectApiName).getDescribe();
 
@@ -27,6 +34,9 @@ public without sharing class ListingManagerFilterController {
 
         // Iterate through each field
         for (String fieldName : fieldsMap.keySet()) {
+            if (blockedFields.contains(fieldName)) {
+                continue;
+            }
             Schema.SObjectField field = fieldsMap.get(fieldName);
             Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
 
@@ -299,7 +309,7 @@ public without sharing class ListingManagerFilterController {
     */
     @AuraEnabled
     public static String getStaticFields() {
-        ListingManagerFilterConfig__mdt filterConfig = [SELECT StaticFields__c FROM ListingManagerFilterConfig__mdt LIMIT 1];
+        ListingManagerFilterConfig__mdt filterConfig = [SELECT StaticFields__c FROM ListingManagerFilterConfig__mdt WITH SECURITY_ENFORCED LIMIT 1];
         return filterConfig.StaticFields__c;
     }
 }

@@ -3,30 +3,19 @@ import getStaticFields from '@salesforce/apex/ListingManagerFilterController.get
 import getPicklistValues from '@salesforce/apex/ListingManagerFilterController.getPicklistValues';
 import getListingsWithRelatedRecords from '@salesforce/apex/ListingManagerFilterController.getListingsWithRelatedRecords';
 import getTheOfferRecords from '@salesforce/apex/ListingManagerFilterController.getTheOfferRecords';
-import Icons from '@salesforce/resourceUrl/listingManagerIcons';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class ListingManagerFilterCmp extends LightningElement {
 
     @track addModal = false;
     @track listings = [];
-    //Icons
-    @track deleteIcon = Icons + '/DeleteeIcon.png'
-    @track addIcon = Icons + '/PlusIcon.png'
-    @track searchIcon = Icons + '/SearchIcon.png'
-    @track upIcon = Icons + '/up.png'
-    @track downIcon = Icons + '/down.png'
-    @track resetIcon = Icons + '/ResetIcon.png'
-    @track closeIcon = Icons + '/close.png'
-
     @track objectApiName = '';
     @track valueFromChild = [];
     @track isAddButtonDisabled = true;
     @track filterFields =[];
     @track offerRecords = [];
-    @track ListingsWrapper = [];
     @track filteredListings;
     @track staticFields=[];
-    @track unchangeFields = [];
 
     /**
     * Method Name: connectedCallback
@@ -71,8 +60,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
             if (field.picklist) {
                 this.loadPicklistValues(field);
                 }
-        });
-        
+        });     
     }
 
     /**
@@ -85,7 +73,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     loadPicklistValues(field) {
         getPicklistValues({apiName:field.apiName,objectName:field.objectApiName})
         .then(result => {
-            this.filterFields = this.filterFields.map(f => {
+            this.staticFields = this.staticFields.map(f => {
                 if (f.apiName === field.apiName) {
                     return {
                         ...f,
@@ -95,7 +83,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 }
                 return f;
             });
-            this.staticFields = this.filterFields;
+            this.filterFields = [...this.staticFields];
         })
         .catch(error => {
             console.error('Error loading picklist values', error);
@@ -111,6 +99,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     setListingWapper(){
         getListingsWithRelatedRecords().then(result => {
             this.listings = result.map(item => JSON.parse(item));
+            this.staticFields = [...this.filterFields];
         })
         .catch(error => {
             console.error('Error fetching listings', error);
@@ -132,7 +121,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         });
     }
 
-      /**
+    /**
     * Method Name: handleValueSelected
     * @description: this method is set the field from the child field-add cmp .
     * Date: 07/06/2024
@@ -152,11 +141,11 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 picklistValue: field.picklistValues||[], // Set operatorName based on type
                 unchangePicklistValue: field.picklistValues||[], // Set operatorName based on type
                 prevApiName : field.prevApiName,
-                minValue:0,
-                maxValue:0,
+                minValue:null,
+                maxValue:null,
                 minDate:null,
                 maxDate:null,
-                isNot: field.isNot,
+                isNot: field.isNot || false,
                 searchTerm:'',
                 isFocused:false,
                 picklist: field.type === 'PICKLIST',
@@ -173,10 +162,28 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 isRange:field.operation === 'range',
                 isMax:field.operation === 'minimum',
                 isMin :field.operation === 'maximum',
-
+                message:''
             };
         });
-        this.filterFields = [...this.filterFields, ...this.valueFromChild];
+        this.valueFromChild.forEach(newField => {
+            const isFieldPresent = this.filterFields.some(field => 
+                (field.apiName === newField.apiName ||field.value === newField.apiName)&&
+                field.label === newField.label &&
+                field.objectApiName === newField.objectApiName &&
+                field.type === newField.type &&
+                field.isNot === newField.isNot
+            );
+            if (!isFieldPresent) {
+                this.filterFields = [...this.filterFields, newField];
+            }else{
+                const evt = new ShowToastEvent({
+                    title: 'Field is not added',
+                    message: `${newField.label} is already added in filter fields`,
+                    variant: 'error',
+                });
+                this.dispatchEvent(evt);
+            }
+        });
     }
 
     /**
@@ -370,7 +377,6 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const customEvent = new CustomEvent('valueselected', {
             detail: this.filteredListings
         });
-        
         // Dispatch the custom event
         this.dispatchEvent(customEvent);
     }  
@@ -387,9 +393,48 @@ export default class ListingManagerFilterCmp extends LightningElement {
     
         const index = event.currentTarget.dataset.id;
         this.filterFields[index].searchTerm = event.target.value;
+        if (this.filterFields[index].searchTerm.length > 50) {
+            this.filterFields[index].message = 'The character length should not greater then 50 characters.';
+        } else {
+            this.filterFields[index].message = null; // Clear the message if the input length is valid
             this.filterFields[index].picklistValue =this.filterFields[index].unchangePicklistValue.filter(option =>
-                option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase())
+                option.label.toLowerCase().includes(this.filterFields[index].searchTerm.toLowerCase().trim())
             );
+            if (event.key === 'Enter') { // Check if Enter key was pressed
+                let fields = this.filterFields; // Assuming this is where 'fields' should be declared
+                const value = this.filterFields[index].picklistValue[0].value;
+                const field = fields[index]; // Access 'fields' instead of 'this.filterFields'
+                if (field != null) {
+                    if (field.selectedOptions == null) {
+                        field.selectedOptions = [];
+                    }
+                    // Check if the value already exists in selectedOptions
+                    const exists = field.selectedOptions.some(option => option.value === value);
+                    if (!exists) {
+                        this.filterFields[index].searchTerm = '';
+                        field.selectedOptions = [...field.selectedOptions, {"label": value, "value": value}];
+                        this.applyFilters();
+        
+                        const newPicklistValue = field.unchangePicklistValue.map(option => {
+                            if (option.value === value) {
+                                return {...option, showRightIcon: true};
+                            }
+                            return option;
+                        });
+                        field.picklistValue = newPicklistValue;
+                        field.unchangePicklistValue = newPicklistValue;
+                        fields[index] = field;
+                        this.filterFields = fields;
+                        const inputs = this.template.querySelectorAll('.picklist-input');
+                        // Loop through each input and call the blur method
+                        inputs.forEach(input => input.blur());
+                        this.handleBlur1(event);
+                    } else {
+                       console.log('Value already exists in selectedOptions');
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -413,13 +458,21 @@ export default class ListingManagerFilterCmp extends LightningElement {
     handleBlur1(event) {
         // Delay the blur action to allow click event to be registered
         const index = event.currentTarget.dataset.id;
-        setTimeout(()=>{
-            this.filterFields[index].isFocused = false;
-        },300);
-        
+        this.filterFields[index].isFocused = false;
     }
 
-       /**
+
+     /**
+    * Method Name: handlePreventDefault
+    * @description: prevent default events when the options div clicked.
+    * Date: 23/07/2024
+    * Created By: Vyom Soni
+    **/
+    handlePreventDefault(event){
+        event.preventDefault();
+    }
+
+    /**
     * Method Name: selectOption1
     * @description: Handle the slection of option in picklist fiedls.
     * Date: 14/06/2024
@@ -430,6 +483,10 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
      
         let fields = this.filterFields; // Assuming this is where 'fields' should be declared
+        const inputs = this.template.querySelectorAll('.picklist-input');
+        // Loop through each input and call the blur method
+        inputs.forEach(input => input.blur());
+
 
         const field = fields[index]; // Access 'fields' instead of 'this.filterFields'
         
@@ -456,9 +513,10 @@ export default class ListingManagerFilterCmp extends LightningElement {
                 field.unchangePicklistValue = newPicklistValue;
                 fields[index] = field;
                 this.filterFields = fields;
-             
+                this.filterFields[index].isFocused = false;
             } else {
                console.log('Value already exists in selectedOptions');
+               this.filterFields[index].isFocused = false;
             }
         }
     }
@@ -471,9 +529,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     **/
     removeOptionMethod(event){
         this.removeOption1(event);
-        setTimeout(()=>{
-            this.applyFilters();
-        },1000);
+        this.applyFilters();
     }
 
      /**
@@ -524,9 +580,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     **/
     removeOptionMethodString(event){
         this.removeOptionString(event);
-        setTimeout(()=>{
-            this.applyFilters();
-        },1000);
+        this.applyFilters();
     }
 
      /**
@@ -558,11 +612,17 @@ export default class ListingManagerFilterCmp extends LightningElement {
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
-    handleSearchChangeString(event) {
+     handleSearchChangeString(event) {
         const index = event.currentTarget.dataset.id;
         this.filterFields[index].searchTerm = event.target.value;
-        if (event.key === 'Enter') { // Check if Enter key was pressed
-            this.addTheString(event);
+        // this.filterFields[index].message = 'The character length execceded 50 characters.';
+        if (this.filterFields[index].searchTerm.length > 50) {
+            this.filterFields[index].message = 'The character length should not greater then 50 characters.';
+        } else {
+            this.filterFields[index].message = null; // Clear the message if the input length is valid
+            if (event.key === 'Enter') { // Check if Enter key was pressed
+                this.addTheString(event);
+            }
         }
     }
 
@@ -575,7 +635,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     **/
     addTheString(event) {
         const index = event.currentTarget.dataset.id;
-        const value = this.filterFields[index].searchTerm;
+        const value = this.filterFields[index].searchTerm.trim();
         
         
         if (value !== '') {
@@ -608,13 +668,14 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let value = parseInt(event.target.value, 10);
         if(isNaN(value)){
-            value = 0;
+            value = null;
         }
         this.filterFields[index].minValue = value;
         if ( this.filterFields[index].isMin == true|| value <= this.filterFields[index].maxValue|| value === 0) {
             this.applyFilters();
-        } else {
-           console.log('value'+value);
+            this.filterFields[index].message = null;
+        } else{
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
         }
     }
 
@@ -628,11 +689,18 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let value = parseInt(event.target.value, 10);
         if(isNaN(value)){
-            value = 0;
+            value = null;
         }
-        this.filterFields[index].maxValue = value;
-        if ((this.filterFields[index].isMax ==true ||value === 0 || value >= this.filterFields[index].minValue)) {
-            this.applyFilters();
+        try{
+            this.filterFields[index].maxValue = value;
+            if ((this.filterFields[index].isMax ==true ||value === 0 || value >= this.filterFields[index].minValue)) {
+                this.applyFilters();
+                this.filterFields[index].message = '';
+            }else{
+                this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
+            }
+        }catch(e){
+            console.log('errro ->'+e);
         }
     }
 
@@ -646,12 +714,15 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let currentValue = parseInt(this.filterFields[index].minValue, 10);
         if (isNaN(currentValue)) {
-            currentValue = 0;
+            currentValue = null;
         }
         this.filterFields[index].minValue = currentValue + 1;
         if (this.filterFields[index].isMin == true||currentValue + 1 <= this.filterFields[index].maxValue) {
             this.applyFilters();
-        } 
+            this.filterFields[index].message = null;
+        }else{
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
+        }
     
     }
 
@@ -665,16 +736,18 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let currentValue = parseInt(this.filterFields[index].minValue, 10);
         if (isNaN(currentValue) || currentValue <= 0) {
-            currentValue = 0;
+            currentValue = null;
         } else {
             currentValue--;
         }
         this.filterFields[index].minValue = currentValue;
         if (this.filterFields[index].isMin == true||currentValue - 1 <= this.filterFields[index].maxValue) {
             this.applyFilters();
-        } 
+            this.filterFields[index].message = null;
+        } else{
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
+        }
     }
-
     /**
      * Method Name: incrementMaxValue
      * @description: Increment the max input value
@@ -685,12 +758,15 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let currentValue = parseInt(this.filterFields[index].maxValue, 10);
         if (isNaN(currentValue)) {
-            currentValue = 0;
+            currentValue = null;
         }
         this.filterFields[index].maxValue = currentValue + 1;
         if (this.filterFields[index].isMax == true||currentValue + 1 >= this.filterFields[index].minValue) {
             this.applyFilters();
-        } 
+            this.filterFields[index].message = null;
+        } else{
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
+        }
     }
 
     /**
@@ -703,18 +779,21 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const index = event.currentTarget.dataset.index;
         let currentValue = parseInt(this.filterFields[index].maxValue, 10);
         if (isNaN(currentValue) || currentValue <= this.filterFields[index].minValue) {
-            console.log('Max value cannot be less than min value.');
+            //alert('Max value cannot be less than min value.');
+            currentValue = null;
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
         } else {
             currentValue--;
         }
         this.filterFields[index].maxValue = currentValue;
         if (this.filterFields[index].isMax == true||currentValue - 1 >= this.filterFields[index].minValue) {
             this.applyFilters();
+            this.filterFields[index].message = null;
         } 
     }
 
 
-        /**
+    /**
     * Method Name: checkboxFieldChange
     * @description:  handle th checkbox field change
     * Date: 9/06/2024
@@ -726,13 +805,13 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.applyFilters();
     }
 
-       /**
+    /**
     * Method Name: handleMinDate
     * @description:  handle min date field change
     * Date: 9/06/2024
     * Created By: Vyom Soni
     **/
-       handleMinDate(event) {
+    handleMinDate(event) {
         const index = event.currentTarget.dataset.id;
         const newValue = event.target.value;
         this.filterFields[index].minDate = newValue;
@@ -742,7 +821,9 @@ export default class ListingManagerFilterCmp extends LightningElement {
         
         if (minDate <= maxDate || this.filterFields[index].isDateMin == true) {
             this.applyFilters();
+            this.filterFields[index].message = null;
         } else {
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
             console.warn(`Min date should be less than or equal to max date for field ${this.filterFields[index].apiName}`);
         }
     }
@@ -762,8 +843,10 @@ export default class ListingManagerFilterCmp extends LightningElement {
         const maxDate = new Date(this.filterFields[index].maxDate);
     
         if (minDate <= maxDate || this.filterFields[index].isDateMax == true) {
-            this.applyFilters();
+            this.applyFilters(); 
+            this.filterFields[index].message = null;
         } else {
+            this.filterFields[index].message = 'Min Value can not be Greater than the Max Value';
             console.warn(`Max date should be greater than or equal to min date for field ${this.filterFields[index].apiName}`);
         }
     }
@@ -775,7 +858,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
-     clearSearch(event) {
+    clearSearch(event) {
         const index = event.currentTarget.dataset.id;
         if (index > -1 && index < this.filterFields.length) {
             this.filterFields.splice(index, 1);
@@ -784,32 +867,44 @@ export default class ListingManagerFilterCmp extends LightningElement {
     }
 
      //handel reset
-       /**
+    /**
     * Method Name: handleReset
     * @description: Remove the all except static fields.
     * Date: 14/06/2024
     * Created By: Vyom Soni
     **/
     handleReset(){
-        this.staticFields[0].picklistValue[0].showRightIcon = false;
+        console.log('static fields'+JSON.stringify(this.staticFields));
+        this.staticFields.forEach(field => {
+            if (field.picklistValue) {
+              field.picklistValue.forEach(picklist => {
+                picklist.showRightIcon = false;
+              });
+            }
+            if (field.unchangePicklistValue) {
+              field.unchangePicklistValue.forEach(picklist => {
+                picklist.showRightIcon = false;
+              });
+            }
+          });
         this.filterFields = this.staticFields;
-        this.filterFields = this.filterFields.map(field => {
+        this.filterFields = this.staticFields.map(field => {
             return {
                 ...field, // Spread the existing field properties
                 selectedOptions: null,
+                picklistValue:field.picklistValue,
                 minValue: null,
                 maxValue: null,
                 minDate: null,
                 maxDate: null,
-                fieldChecked: null,
-                picklistValue:field.picklistValue
+                fieldChecked: null
             };
         });
         this.applyFilters();
     }
 
     // Modal cmp 
-       /**
+    /**
     * Method Name: handleClose
     * @description: handle the close event of modal.
     * Date: 14/06/2024
@@ -819,7 +914,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         this.addModal = false;
     }
 
-        /**
+    /**
     * Method Name: handleSave
     * @description: handle the sae evnet in modal.
     * Date: 14/06/2024
@@ -835,7 +930,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         }
     }
  
-        /**
+    /**
     * Method Name: handleFieldChange
     * @description: fetch the custom event data and set pop-up add button disable.
     * Date: 14/06/2024
@@ -847,7 +942,7 @@ export default class ListingManagerFilterCmp extends LightningElement {
         
     }
 
-        /**
+    /**
     * Method Name: openModal
     * @description: open the moda.
     * Date: 14/06/2024

@@ -23,13 +23,10 @@
                         <div class="input-delete-cover">
                             <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right combox-div" role="none">
                                 <input type="text" class="slds-input slds-combobox__input" placeholder="Select Field" value={searchTerm1} onkeyup={handleSearchChange1} onfocus={handleFocus1} onblur={handleBlur1}  disabled={isDisabled}/>
-                                <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
-                                    <!-- <lightning-icon icon-name="utility:search" alternative-text="Search"></lightning-icon> -->
-                                </span>
                             </div>
                         </div>
                         <template if:true={showOptions1}>
-                            <div class="slds-dropdown slds-dropdown_length-5">
+                            <div class="slds-dropdown slds-dropdown_length-5" onmousedown={handlePreventDefault}>
                                 <ul class="slds-listbox slds-listbox_vertical ul-div">
                                     <template for:each={filteredOptions1} for:item="option">
                                             <template if:false={option.showRightIcon}>
