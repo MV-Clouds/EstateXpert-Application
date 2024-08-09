@@ -136,4 +136,11 @@
     top: 3rem;
 }
 
+.mapping-item {
+    padding: 5px;
+    border-bottom: 1px solid #dcdcdc;
+}
 
+.slds-form_element {
+    margin-bottom: 1rem;
+}

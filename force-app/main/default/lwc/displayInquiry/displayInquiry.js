@@ -22,6 +22,18 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
     
     @track isShowModal = false;
 
+    @track selectedConditionType = 'Custom Logic Is Met';
+    @track mappings = [];
+
+    conditionOptions = [
+        { label: 'All Condition Are Met', value: 'All Condition Are Met' },
+        { label: 'Any Condition Is Met', value: 'Any Condition Is Met' },
+        { label: 'Custom Logic Is Met', value: 'Custom Logic Is Met' }
+    ];
+
+    get isCustomLogicSelected() {
+        return this.selectedConditionType === 'Custom Logic Is Met';
+    }
 
     get totalinquiries() {
         return this.pagedFilteredInquiryData.length;
@@ -121,11 +133,33 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
             }
 
             else{
-                console.log('False');
                 const parsedFilters = this.filters.map(filter => {
                     const [object, field, operator, valueField] = filter.split(':');
                     return { object, field, operator, valueField };
                 });
+
+
+                this.mappings = this.filters.map((mappingStr, index) => {
+                    const [object, field, operator, valueField] = mappingStr.split(':');
+                    
+                    if (object === 'Inquiry__c') {
+                        return {
+                            id: index + 1,
+                            field: field,
+                            operator: operator,
+                            valueField: listing[valueField] ? listing[valueField] : '' ,
+                        };
+                    } else if (object === 'Listing__c') {
+                        return {
+                            id: index + 1,
+                            field: valueField,
+                            operator: this.reverseOperator(operator),
+                            valueField: listing[field] ? listing[field] : '',
+                        };
+                    }
+                });
+    
+
         
                 if (!this.logicalExpression || this.logicalExpression.trim() === '') {
                     this.logicalExpression = parsedFilters.map((_, index) => index + 1).join(' && ');
@@ -180,6 +214,21 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
         } catch (error) {
             console.log('Error applying filters:', error);
             this.showToast('Error', 'Error applying filters', 'error');
+        }
+    }
+
+    reverseOperator(operator) {
+        switch (operator) {
+            case 'lessThan':
+                return 'greaterThan';
+            case 'greaterThan':
+                return 'lessThan';
+            case 'equalTo':
+                return 'equalTo';
+            case 'contains':
+                return 'contains';
+            default:
+                return operator; 
         }
     }
     
@@ -370,6 +419,25 @@ export default class displayInquiry extends NavigationMixin(LightningElement) {
             this.hideModalBox();
         }
     }
+
+    handleConditionTypeChange(event) {
+        this.selectedConditionType = event.detail.value;
+    }
+
+    handleLogicalExpressionChange(event) {
+        this.logicalExpression = event.detail.value;
+    }
+
+    addCondition() {
+        // Logic to add a new condition to the mappings array
+        const newMapping = { id: Date.now(), inquiryField: '', operator: '', listingValue: '' };
+        this.mappings = [...this.mappings, newMapping];
+    }
+
+    applyModalFilters(){
+        console.log('filter button is clicked');
+    }
+
     
 
     disconnectedCallback() {
