@@ -152,10 +152,8 @@
 }
 .button{
     display: flex;
-    /* position: absolute; */
     height: 8%;
     bottom: 0.5rem;
-    /* width: 95%; */
     justify-content: center;
     gap: 1rem;
     cursor: pointer;

@@ -13,7 +13,6 @@ export default class SupportRequestCmp extends NavigationMixin(LightningElement)
     @track email_msg = true;
     @track message_msg = true;
     @track subject_msg = true;
-    @track email_validation = false;
     @track filesData = [];
     @track FName = [];     
     @track FBase64 = [];
